@@ -12,8 +12,8 @@ import (
 // Resistant element defined between two structural nodes, a section and a material.
 // An element can have loads applied to it.
 type Element struct {
-	Id int
-	Start, End Node
+	Id, StartNodeId, EndNodeId int
+	Geometry inkgeom.Segment
 	StartLink, EndLink Constraint
 	material Material
 	section Section
@@ -28,16 +28,20 @@ func MakeElement(
 	material Material,
 	section Section,
 	loads []load.Load) Element {
-	return Element{id, startNode, endNode, startLink, endLink, material, section, loads}
+	return Element{
+		id, startNode.Id, endNode.Id,
+		inkgeom.MakeSegment(startNode.Position, endNode.Position),
+		startLink, endLink,
+		material, section, loads}
 }
 
 /* Properties */
 func (e Element) StartPoint() inkgeom.Projectable {
-	return e.Start.Position
+	return e.Geometry.Start
 }
 
 func (e Element) EndPoint() inkgeom.Projectable {
-	return e.End.Position
+	return e.Geometry.End
 }
 
 /* Methods */
