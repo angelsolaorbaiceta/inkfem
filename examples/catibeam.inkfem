@@ -1,0 +1,20 @@
+inkfem v1.0
+# this is a comment and should be ignored
+
+|nodes| 2
+# nodes are given with their id, coordinates and externally constrained degrees of freedom
+1 -> 0.0 0.0 {dx dy rz}
+2 -> 300.0 0.0 {}
+
+|materials| 1
+'mat_A' -> 1.0 1.0 1.0 1.0 1.0 1.0
+
+|sections| 1
+'sec_A' -> 1.0 1.0 1.0 1.0 1.0
+
+|loads| 2
+fy ld 1 0.0 -50.0 1.0 -75.0 # distrubuted load
+fy lc 1 1.0 -100.0 # concentrated load
+
+|elements| 1
+1 -> 1{dx dy rz} 2{dx dy rz} 'mat_A' 'sec_A'
