@@ -24,21 +24,22 @@ const (
 var (
     versionRegex = regexp.MustCompile(`(?:inkfem\s+v)(\d+)(?:[.])(\d+)`)
 
-    nodesHeaderRegex = regexp.MustCompile(`(?:\|nodes\|\s*)(\d)+`)
+    nodesHeaderRegex = regexp.MustCompile(`(?:\|nodes\|\s*)(\d+)`)
     nodeDefinitionRegex = regexp.MustCompile(`(?P<id>\d+)(?:\s*->\s*)(?P<x>\d+\.*\d*)(?:\s+)(?P<y>\d+\.*\d*)(?:\s+)(?P<constraints>{.*})`)
 
-    materialsHeaderRegex = regexp.MustCompile(`(?:\|materials\|\s*)(\d)+`)
+    materialsHeaderRegex = regexp.MustCompile(`(?:\|materials\|\s*)(\d+)`)
     materialDefinitionRegex = regexp.MustCompile(`(?P<name>'\w+')(?:\s*->\s*)(?P<density>\d+\.*\d*)(?:\s+)(?P<young>\d+\.+\d+)(?:\s+)(?P<shear>\d+\.+\d+)(?:\s+)(?P<poisson>\d+\.+\d+)(?:\s+)(?P<yield>\d+\.+\d+)(?:\s+)(?P<ultimate>\d+\.+\d+)`)
 
-    sectionsHeaderRegex = regexp.MustCompile(`(?:\|sections\|\s*)(\d)+`)
+    sectionsHeaderRegex = regexp.MustCompile(`(?:\|sections\|\s*)(\d+)`)
     sectionDefinitionRegex = regexp.MustCompile(`(?P<name>'\w+')(?:\s*->\s*)(?P<area>\d+\.*\d*)(?:\s+)(?P<istrong>\d+\.+\d+)(?:\s+)(?P<iweak>\d+\.+\d+)(?:\s+)(?P<sstrong>\d+\.+\d+)(?:\s+)(?P<sweak>\d+\.+\d+)`)
 
-    loadsHeaderRegex = regexp.MustCompile(`(?:\|loads\|\s*)(\d)+`)
+    loadsHeaderRegex = regexp.MustCompile(`(?:\|loads\|\s*)(\d+)`)
     distLoadDefinitionRegex = regexp.MustCompile(`(?P<term>[fm]{1}[xyz]{1})(?:\s+)(?P<ref>[lg]{1})(?:d{1})(?:\s+)(?P<element>\d+)(?:\s+)(?P<t_start>\d+\.*\d*)(?:\s+)(?P<val_start>-*\d+\.*\d*)(?:\s+)(?P<t_end>\d+\.*\d*)(?:\s+)(?P<val_end>-*\d+\.*\d*)`)
     concLoadDefinitionRegex = regexp.MustCompile(`(?P<term>[fm]{1}[xyz]{1})(?:\s+)(?P<ref>[lg]{1})(?:c{1})(?:\s+)(?P<element>\d+)(?:\s+)(?P<t>\d+\.*\d*)(?:\s+)(?P<val>-*\d+\.*\d*)`)
 
-    elementsHeaderRegex = regexp.MustCompile(`(?:\|elements\|\s*)(\d)+`)
-    elementDefinitionRegex = regexp.MustCompile(`(?P<id>\d+)(?:\s*->\s*)(?P<start_node>\d+)(?P<start_link>{.*})(?:\s+)(?P<end_node>\d+)(?P<end_link>{.*})(?:\s+)(?P<material>'[A-Za-z0-9_ ]+')(?:\s+)(?P<section>'[A-Za-z0-9_ ]+')`)
+    // <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section>
+    elementsHeaderRegex = regexp.MustCompile(`(?:\|elements\|\s*)(\d+)`)
+    elementDefinitionRegex = regexp.MustCompile(`(?P<id>\d+)(?:\s*->\s*)(?P<start_node>\d+)(?:\s*)(?P<start_link>{.*})(?:\s+)(?P<end_node>\d+)(?:\s*)(?P<end_link>{.*})(?:\s+)(?P<material>'[A-Za-z0-9_ ]+')(?:\s+)(?P<section>'[A-Za-z0-9_ ]+')`)
 )
 
 /*
@@ -250,7 +251,7 @@ func readLoads(scanner *bufio.Scanner, count int) map[int][]load.Load {
 
         default:
             // shouldn't happen
-            panic("Unknown kind of load?")
+            panic("Unknown type of load?")
         }
 
         loads[elementNumber] = append(loads[elementNumber], _load)
@@ -313,7 +314,7 @@ func readElements(scanner *bufio.Scanner, count int, nodes map[int]structure.Nod
         startNodeId, _ = strconv.Atoi(groups[2])
         startNode, ok = nodes[startNodeId]
         if !ok {
-            panic(fmt.Sprintf("Element with unknown start node id: %s", startNodeId))
+            panic(fmt.Sprintf("Element %d with unknown start node id: %s", id, startNodeId))
         }
 
         startLink = groups[3]
@@ -321,19 +322,19 @@ func readElements(scanner *bufio.Scanner, count int, nodes map[int]structure.Nod
         endNodeId, _ = strconv.Atoi(groups[4])
         endNode, ok = nodes[endNodeId]
         if !ok {
-            panic(fmt.Sprintf("Element with unknown end node id: %s", endNodeId))
+            panic(fmt.Sprintf("Element %d with unknown end node id: %s", id, endNodeId))
         }
 
         endLink = groups[5]
 
         material, ok = materials[groups[6]]
         if !ok {
-            panic(fmt.Sprintf("Element with unknown material name: %s", groups[6]))
+            panic(fmt.Sprintf("Element %d with unknown material name: %s", id, groups[6]))
         }
 
         section, ok = sections[groups[7]]
         if !ok {
-            panic(fmt.Sprintf("Element with unknown section name: %s", groups[7]))
+            panic(fmt.Sprintf("Element %d with unknown section name: %s", id, groups[7]))
         }
 
         elements[i] = structure.MakeElement(id, startNode, endNode, constraintFromString(startLink), constraintFromString(endLink), material, section, loads[id])
