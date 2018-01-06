@@ -27,9 +27,11 @@ var (
     nodesHeaderRegex = regexp.MustCompile(`(?:\|nodes\|\s*)(\d+)`)
     nodeDefinitionRegex = regexp.MustCompile(`(?P<id>\d+)(?:\s*->\s*)(?P<x>\d+\.*\d*)(?:\s+)(?P<y>\d+\.*\d*)(?:\s+)(?P<constraints>{.*})`)
 
+    // <name> -> <density> <young> <shear> <poisson> <yield> <ultimate>
     materialsHeaderRegex = regexp.MustCompile(`(?:\|materials\|\s*)(\d+)`)
     materialDefinitionRegex = regexp.MustCompile(`(?P<name>'\w+')(?:\s*->\s*)(?P<density>\d+\.*\d*)(?:\s+)(?P<young>\d+\.+\d+)(?:\s+)(?P<shear>\d+\.+\d+)(?:\s+)(?P<poisson>\d+\.+\d+)(?:\s+)(?P<yield>\d+\.+\d+)(?:\s+)(?P<ultimate>\d+\.+\d+)`)
 
+    // <name> -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
     sectionsHeaderRegex = regexp.MustCompile(`(?:\|sections\|\s*)(\d+)`)
     sectionDefinitionRegex = regexp.MustCompile(`(?P<name>'\w+')(?:\s*->\s*)(?P<area>\d+\.*\d*)(?:\s+)(?P<istrong>\d+\.+\d+)(?:\s+)(?P<iweak>\d+\.+\d+)(?:\s+)(?P<sstrong>\d+\.+\d+)(?:\s+)(?P<sweak>\d+\.+\d+)`)
 

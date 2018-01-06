@@ -44,6 +44,10 @@ func (e Element) EndPoint() inkgeom.Projectable {
 	return e.Geometry.End
 }
 
+func (e Element) PointAt (t inkgeom.TParam) inkgeom.Projectable  {
+	return e.Geometry.PointAt(t)
+}
+
 /* Methods */
 func (e Element) IsAxialMember() bool {
 	for _, ld := range(e.Loads) {

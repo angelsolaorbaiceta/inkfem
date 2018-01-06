@@ -13,7 +13,7 @@ func DoElement(e structure.Element, c chan Element, wg *sync.WaitGroup) {
     if e.IsAxialMember() {
         c <- nonSlicedElement(e)
     } else {
-        c <- slicedElement(e)
+        c <- slicedElement(e, 12)
     }
 }
 
@@ -21,12 +21,20 @@ func DoElement(e structure.Element, c chan Element, wg *sync.WaitGroup) {
 func nonSlicedElement(e structure.Element) Element {
     return MakeElement(
         e,
-        []Node{
-            MakeUnloadedNode(inkgeom.MakeTParam(inkgeom.MIN_T), e.StartPoint()),
-            MakeUnloadedNode(inkgeom.MakeTParam(inkgeom.MAX_T), e.EndPoint())})
+        []Node{ // TODO: add loads
+            MakeUnloadedNode(inkgeom.MIN_T, e.StartPoint()),
+            MakeUnloadedNode(inkgeom.MAX_T, e.EndPoint()),
+        })
 }
 
 /* <---------- Sliced ----------> */
-func slicedElement(e structure.Element) Element {
-    return MakeElement(e, make([]Node, 10))
+func slicedElement(e structure.Element, times int) Element {
+    tPos := inkgeom.SubTParamCompleteRangeTimes(times)
+
+    nodes := make([]Node, len(tPos))
+    for i := 0; i < len(tPos); i++ { // TODO: add loads
+        nodes[i] = MakeUnloadedNode(tPos[i], e.PointAt(tPos[i]))
+    }
+
+    return MakeElement(e, nodes)
 }
