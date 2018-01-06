@@ -1,7 +1,11 @@
 package structure
 
+import (
+	"bytes"
+)
+
 var (
-	NIL_CONSTRAINT Constraint = Constraint{false, false, false}
+	NIL_CONSTRAINT  Constraint = Constraint{false, false, false}
 	DISP_CONSTRAINT Constraint = Constraint{true, true, false}
 	FULL_CONSTRAINT Constraint = Constraint{true, true, true}
 )
@@ -42,4 +46,23 @@ func MakeFullConstraint() Constraint {
 /* Methods */
 func (c Constraint) AllowsRotation() bool {
 	return !c.isRzConst
+}
+
+/* Stringer */
+func (c Constraint) String() string {
+	var buffer bytes.Buffer
+	buffer.WriteString("{")
+
+	if c.isDxConstr {
+		buffer.WriteString("dx ")
+	}
+	if c.isDyConstr {
+		buffer.WriteString("dy ")
+	}
+	if c.isRzConst {
+		buffer.WriteString("rz")
+	}
+
+	buffer.WriteString("}")
+	return buffer.String()
 }

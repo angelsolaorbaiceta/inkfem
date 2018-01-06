@@ -1,18 +1,20 @@
 package preprocess
 
 import (
+	"fmt"
+
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
 
 type Node struct {
-	T inkgeom.TParam
-	Position inkgeom.Projectable
-    localActions []float64
+	T            inkgeom.TParam
+	Position     inkgeom.Projectable
+	localActions []float64
 }
 
 /* Construction */
 func MakeNode(t inkgeom.TParam, position inkgeom.Projectable, fx, fy, mz float64) Node {
-    return Node{t, position, []float64{fx, fy, mz}}
+	return Node{t, position, []float64{fx, fy, mz}}
 }
 
 func MakeUnloadedNode(t inkgeom.TParam, position inkgeom.Projectable) Node {
@@ -46,4 +48,16 @@ func (n Node) LocalMz() float64 {
 	}
 
 	return 0.0
+}
+
+/* Stringer */
+func (n Node) String() string {
+	var loads string
+	if n.IsLoaded() {
+		loads = fmt.Sprintf("{%f %f %f}", n.LocalFx(), n.LocalFy(), n.LocalMz())
+	} else {
+		loads = "{}"
+	}
+
+	return fmt.Sprintf("%f: {%f, %f} | %s", n.T.Value(), n.Position.X, n.Position.Y, loads)
 }

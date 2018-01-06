@@ -5,19 +5,21 @@ Finite Element Method analysis.
 package structure
 
 import (
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"fmt"
+
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
+	"github.com/angelsolaorbaiceta/inkgeom"
 )
 
 // Resistant element defined between two structural nodes, a section and a material.
 // An element can have loads applied to it.
 type Element struct {
 	Id, StartNodeId, EndNodeId int
-	Geometry inkgeom.Segment
-	StartLink, EndLink Constraint
-	material Material
-	section Section
-	Loads []load.Load
+	Geometry                   inkgeom.Segment
+	StartLink, EndLink         Constraint
+	material                   Material
+	section                    Section
+	Loads                      []load.Load
 }
 
 /* Construction */
@@ -44,13 +46,13 @@ func (e Element) EndPoint() inkgeom.Projectable {
 	return e.Geometry.End
 }
 
-func (e Element) PointAt (t inkgeom.TParam) inkgeom.Projectable  {
+func (e Element) PointAt(t inkgeom.TParam) inkgeom.Projectable {
 	return e.Geometry.PointAt(t)
 }
 
 /* Methods */
 func (e Element) IsAxialMember() bool {
-	for _, ld := range(e.Loads) {
+	for _, ld := range e.Loads {
 		if !ld.IsNodal() || ld.Term == load.MZ {
 			return false
 		}
@@ -66,3 +68,13 @@ func (e Element) HasLoadsApplied() bool {
 // func (e Element) StiffnessValue(actionDof, effectDof int, startT, entT inkgeom.TParam) float64 {
 // 	return 0.0
 // }
+
+/* Stringer */
+func (e Element) String() string {
+	return fmt.Sprintf(
+		"%d -> %d%s %d%s %s %s",
+		e.Id,
+		e.StartNodeId, e.StartLink.String(),
+		e.EndNodeId, e.EndLink.String(),
+		e.material.Name, e.section.Name)
+}
