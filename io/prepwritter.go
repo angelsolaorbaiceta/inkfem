@@ -20,7 +20,7 @@ func PreprocessedStructureToFile(structure preprocess.Structure, filePath string
 	file.WriteString(fmt.Sprintf("inkfem v%d.%d\n", structure.Metadata.MajorVersion, structure.Metadata.MinorVersion))
 	file.WriteString("|sliced_structure|\n\n")
 
-	// writeNodesToFile(structure.Nodes, file)
+	writeNodesToFile(structure.Nodes, file)
 	writeElementsToFile(structure.Elements, file)
 }
 
@@ -32,8 +32,8 @@ func writeNodesToFile(nodes map[int]structure.Node, file *os.File) {
 }
 
 func writeElementsToFile(elements []preprocess.Element, file *os.File) {
-	// sort.Sort(utils.ByID(elements))
-	file.WriteString(fmt.Sprintf("|elements| %d\n", len(elements)))
+	// utils.SortById(utils.ByID(elements))
+	file.WriteString(fmt.Sprintf("\n|elements| %d\n", len(elements)))
 
 	for _, element := range elements {
 		file.WriteString(

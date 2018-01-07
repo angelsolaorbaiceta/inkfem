@@ -25,6 +25,7 @@ const (
 var (
 	versionRegex = regexp.MustCompile(`(?:inkfem\s+v)(\d+)(?:[.])(\d+)`)
 
+	// <id> -> <xCoord> <yCoord> {[dx dy dz]}
 	nodesHeaderRegex    = regexp.MustCompile(`(?:\|nodes\|\s*)(\d+)`)
 	nodeDefinitionRegex = regexp.MustCompile(`(?P<id>\d+)(?:\s*->\s*)(?P<x>\d+\.*\d*)(?:\s+)(?P<y>\d+\.*\d*)(?:\s+)(?P<constraints>{.*})`)
 
@@ -155,7 +156,7 @@ func readNodes(scanner *bufio.Scanner, count int) map[int]structure.Node {
 		id                 int
 		x, y               float64
 		externalConstraint string
-		nodes              map[int]structure.Node = make(map[int]structure.Node)
+		nodes              = make(map[int]structure.Node)
 	)
 
 	for _, line := range definitionLines(scanner, count) {
@@ -184,7 +185,7 @@ func readMaterials(scanner *bufio.Scanner, count int) map[string]structure.Mater
 	var (
 		name                                                                      string
 		density, youngMod, shearMod, possonRatio, yieldStrength, ultimateStrength float64
-		materials                                                                 map[string]structure.Material = make(map[string]structure.Material)
+		materials                                                                 = make(map[string]structure.Material)
 	)
 
 	for _, line := range definitionLines(scanner, count) {
@@ -202,7 +203,14 @@ func readMaterials(scanner *bufio.Scanner, count int) map[string]structure.Mater
 		yieldStrength, _ = strconv.ParseFloat(groups[6], 64)
 		ultimateStrength, _ = strconv.ParseFloat(groups[7], 64)
 
-		materials[name] = structure.Material{name, density, youngMod, shearMod, possonRatio, yieldStrength, ultimateStrength}
+		materials[name] = structure.Material{
+			Name:             name,
+			Density:          density,
+			YoungMod:         youngMod,
+			ShearMod:         shearMod,
+			PoissonRatio:     possonRatio,
+			YieldStrength:    yieldStrength,
+			UltimateStrength: ultimateStrength}
 	}
 
 	return materials
@@ -213,7 +221,7 @@ func readSections(scanner *bufio.Scanner, count int) map[string]structure.Sectio
 	var (
 		name                                 string
 		area, iStrong, iWeak, sStrong, sWeak float64
-		sections                             map[string]structure.Section = make(map[string]structure.Section)
+		sections                             = make(map[string]structure.Section)
 	)
 
 	for _, line := range definitionLines(scanner, count) {
@@ -230,7 +238,13 @@ func readSections(scanner *bufio.Scanner, count int) map[string]structure.Sectio
 		sStrong, _ = strconv.ParseFloat(groups[5], 64)
 		sWeak, _ = strconv.ParseFloat(groups[6], 64)
 
-		sections[name] = structure.Section{name, area, iStrong, iWeak, sStrong, sWeak}
+		sections[name] = structure.Section{
+			Name:    name,
+			Area:    area,
+			IStrong: iStrong,
+			IWeak:   iWeak,
+			SStrong: sStrong,
+			SWeak:   sWeak}
 	}
 
 	return sections
@@ -241,7 +255,7 @@ func readLoads(scanner *bufio.Scanner, count int) map[int][]load.Load {
 	var (
 		elementNumber int
 		_load         load.Load
-		loads         map[int][]load.Load = make(map[int][]load.Load)
+		loads         = make(map[int][]load.Load)
 	)
 
 	for _, line := range definitionLines(scanner, count) {
@@ -300,13 +314,13 @@ func concentratedLoadFromString(line string) (int, load.Load) {
 /* <---------- READ : Elements ----------> */
 func readElements(scanner *bufio.Scanner, count int, nodes map[int]structure.Node, materials map[string]structure.Material, sections map[string]structure.Section, loads map[int][]load.Load) []structure.Element {
 	var (
-		id, startNodeId, endNodeId int
+		id, startNodeID, endNodeID int
 		startNode, endNode         structure.Node
 		startLink, endLink         string
 		material                   structure.Material
 		section                    structure.Section
 		ok                         bool
-		elements                   []structure.Element = make([]structure.Element, count)
+		elements                   = make([]structure.Element, count)
 	)
 
 	for i, line := range definitionLines(scanner, count) {
@@ -318,18 +332,18 @@ func readElements(scanner *bufio.Scanner, count int, nodes map[int]structure.Nod
 
 		id, _ = strconv.Atoi(groups[1])
 
-		startNodeId, _ = strconv.Atoi(groups[2])
-		startNode, ok = nodes[startNodeId]
+		startNodeID, _ = strconv.Atoi(groups[2])
+		startNode, ok = nodes[startNodeID]
 		if !ok {
-			panic(fmt.Sprintf("Element %d with unknown start node id: %s", id, startNodeId))
+			panic(fmt.Sprintf("Element %d with unknown start node id: %d", id, startNodeID))
 		}
 
 		startLink = groups[3]
 
-		endNodeId, _ = strconv.Atoi(groups[4])
-		endNode, ok = nodes[endNodeId]
+		endNodeID, _ = strconv.Atoi(groups[4])
+		endNode, ok = nodes[endNodeID]
 		if !ok {
-			panic(fmt.Sprintf("Element %d with unknown end node id: %s", id, endNodeId))
+			panic(fmt.Sprintf("Element %d with unknown end node id: %d", id, endNodeID))
 		}
 
 		endLink = groups[5]
@@ -344,7 +358,13 @@ func readElements(scanner *bufio.Scanner, count int, nodes map[int]structure.Nod
 			panic(fmt.Sprintf("Element %d with unknown section name: %s", id, groups[7]))
 		}
 
-		elements[i] = structure.MakeElement(id, startNode, endNode, constraintFromString(startLink), constraintFromString(endLink), material, section, loads[id])
+		elements[i] = structure.MakeElement(
+			id, startNode, endNode,
+			constraintFromString(startLink),
+			constraintFromString(endLink),
+			material,
+			section,
+			loads[id])
 	}
 
 	return elements
@@ -362,7 +382,7 @@ func lineIsEmpty(line string) bool {
 func definitionLines(scanner *bufio.Scanner, count int) []string {
 	var (
 		line  string
-		lines []string = make([]string, count)
+		lines = make([]string, count)
 	)
 
 	for i := 0; i < count; {

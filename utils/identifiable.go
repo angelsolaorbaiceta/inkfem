@@ -1,7 +1,9 @@
 package utils
 
+import "sort"
+
 type Identifiable interface {
-	Id() int
+	GetId() int
 }
 
 // ByID implements the sort.Interface for []Identifiable based in their id
@@ -16,5 +18,9 @@ func (a ByID) Swap(i, j int) {
 }
 
 func (a ByID) Less(i, j int) bool {
-	return a[i].Id() < a[j].Id()
+	return a[i].GetId() < a[j].GetId()
+}
+
+func SortById(elements []Identifiable) {
+	sort.Sort(ByID(elements))
 }

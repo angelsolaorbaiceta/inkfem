@@ -6,6 +6,11 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
 
+/*
+Node represents an intermediate point in a sliced element.
+This point has a T Parameter associated, loads applied and degrees of freedom
+numbering for the global system.
+*/
 type Node struct {
 	T            inkgeom.TParam
 	Position     inkgeom.Projectable

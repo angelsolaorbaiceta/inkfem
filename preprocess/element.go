@@ -26,6 +26,8 @@ func MakeElement(originalElement structure.Element, nodes []Node) Element {
 }
 
 /* Sorting */
-func (e Element) Id() int {
+
+// GetId returns the id of the original element, which is the id of the sliced element.
+func (e Element) GetId() int {
 	return e.OriginalElement.Id
 }

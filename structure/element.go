@@ -1,5 +1,5 @@
 /*
-Structure package defines the structure model used for the
+Package structure defines the structure model used for the
 Finite Element Method analysis.
 */
 package structure
@@ -11,7 +11,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
 
-// Resistant element defined between two structural nodes, a section and a material.
+// Element represents s resistant element defined between two structural nodes, a section and a material.
 // An element can have loads applied to it.
 type Element struct {
 	Id, StartNodeId, EndNodeId int
@@ -23,6 +23,8 @@ type Element struct {
 }
 
 /* Construction */
+
+// MakeElement creates a new element with all properties initialized.
 func MakeElement(
 	id int,
 	startNode, endNode Node,
@@ -38,19 +40,29 @@ func MakeElement(
 }
 
 /* Properties */
+
+// StartPoint returns the position of the start node of this element's geometry.
 func (e Element) StartPoint() inkgeom.Projectable {
 	return e.Geometry.Start
 }
 
+// EndPoint returns the position of the end node of this element's geometry.
 func (e Element) EndPoint() inkgeom.Projectable {
 	return e.Geometry.End
 }
 
+// PointAt returns the position of an intermediate point in this element's geometry.
 func (e Element) PointAt(t inkgeom.TParam) inkgeom.Projectable {
 	return e.Geometry.PointAt(t)
 }
 
 /* Methods */
+
+/*
+IsAxialMember returns true if this element is pinned in both ends and, in case of having loads
+applied, they are always in the end positions of the directrix and do not include moments about Z,
+but just forces in X and Y directions.
+*/
 func (e Element) IsAxialMember() bool {
 	for _, ld := range e.Loads {
 		if !ld.IsNodal() || ld.Term == load.MZ {
@@ -61,6 +73,7 @@ func (e Element) IsAxialMember() bool {
 	return e.StartLink.AllowsRotation() && e.EndLink.AllowsRotation()
 }
 
+// HasLoadsApplied returns true if any load of any type is applied to the element.
 func (e Element) HasLoadsApplied() bool {
 	return len(e.Loads) > 0
 }
