@@ -2,11 +2,13 @@ package preprocess
 
 import (
 	// "fmt"
+
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkmath"
 )
 
 /* Axial Member */
@@ -53,6 +55,21 @@ func TestSliceAxialMemberEndNodeLoads(t *testing.T) {
 	}
 	if slicedEl.Nodes[1].LocalFy() != 75.0 {
 		t.Error("Node Fy value not as expected")
+	}
+}
+
+func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
+	loads := []load.Load{load.MakeConcentrated(load.FY, false, inkgeom.MIN_T, 100.0)}
+	element := makeElementWithLoads(loads)
+	slicedEl := sliceAxialElement(element)
+	expectedProjLoadX := inkgeom.MakeVector(0, 100).DotTimes(element.Geometry.DirectionVersor())
+	expectedProjLoadY := inkgeom.MakeVector(0, 100).DotTimes(element.Geometry.NormalVersor())
+
+	if !inkmath.FuzzyEqual(slicedEl.Nodes[0].LocalFx(), expectedProjLoadX) {
+		t.Error("Node projected Fx value was not as expected")
+	}
+	if !inkmath.FuzzyEqual(slicedEl.Nodes[0].LocalFy(), expectedProjLoadY) {
+		t.Error("Node projected Fy value was not as expected")
 	}
 }
 

@@ -32,7 +32,7 @@ only happens in their axial direction: tension or compression.
 */
 func sliceAxialElement(e structure.Element) Element {
 	if e.HasLoadsApplied() {
-		sFx, sFy, eFx, eFy := netNodalLoadValues(e.Loads)
+		sFx, sFy, eFx, eFy := netNodalLoadValues(e.Loads, e.Geometry.RefFrame())
 
 		return MakeElement(
 			e,
@@ -50,22 +50,22 @@ func sliceAxialElement(e structure.Element) Element {
 		})
 }
 
-func netNodalLoadValues(loads []load.Load) (sFx, sFy, eFx, eFy float64) {
+func netNodalLoadValues(loads []load.Load, localRefFrame inkgeom.RefFrame) (sFx, sFy, eFx, eFy float64) {
+	var localForcesVector inkgeom.Projectable
+
 	for _, _load := range loads {
+		if _load.IsInLocalCoords {
+			localForcesVector = _load.ForcesVector()
+		} else {
+			localForcesVector = localRefFrame.ProjectVector(_load.ForcesVector())
+		}
+
 		if _load.T().IsMin() {
-			switch _load.Term {
-			case load.FX:
-				sFx += _load.Value()
-			case load.FY:
-				sFy += _load.Value()
-			}
+			sFx += localForcesVector.X
+			sFy += localForcesVector.Y
 		} else if _load.T().IsMax() {
-			switch _load.Term {
-			case load.FX:
-				eFx += _load.Value()
-			case load.FY:
-				eFy += _load.Value()
-			}
+			eFx += localForcesVector.X
+			eFy += localForcesVector.Y
 		}
 	}
 

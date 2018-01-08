@@ -85,6 +85,32 @@ func (load Load) Value() float64 {
 	return load.startValue
 }
 
+// VectorValue returns a vector for a concentrated load with the components of the load.
+func (load Load) VectorValue() [3]float64 {
+	switch load.Term {
+	case FX:
+		return [3]float64{load.Value(), 0.0, 0.0}
+	case FY:
+		return [3]float64{0.0, load.Value(), 0.0}
+	case MZ:
+		return [3]float64{0.0, 0.0, load.Value()}
+	default:
+		panic("Unknown load term: " + load.Term)
+	}
+}
+
+// ForcesVector returns a vector for a concentrated load with the components of {Fx, Fy}.
+func (load Load) ForcesVector() inkgeom.Projectable {
+	switch load.Term {
+	case FX:
+		return inkgeom.MakeVector(load.Value(), 0.0)
+	case FY:
+		return inkgeom.MakeVector(0.0, load.Value())
+	default:
+		return inkgeom.MakeVector(0.0, 0.0)
+	}
+}
+
 // StartT returns the start T parameter value for distributed loads.
 func (load Load) StartT() inkgeom.TParam {
 	return load.startT

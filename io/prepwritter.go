@@ -18,14 +18,14 @@ func PreprocessedStructureToFile(structure preprocess.Structure, filePath string
 
 	// Write header
 	file.WriteString(fmt.Sprintf("inkfem v%d.%d\n", structure.Metadata.MajorVersion, structure.Metadata.MinorVersion))
-	file.WriteString("|sliced_structure|\n\n")
+	file.WriteString("|sliced_structure|\n")
 
 	writeNodesToFile(structure.Nodes, file)
 	writeElementsToFile(structure.Elements, file)
 }
 
 func writeNodesToFile(nodes map[int]structure.Node, file *os.File) {
-	file.WriteString(fmt.Sprintf("|nodes| %d\n", len(nodes)))
+	file.WriteString(fmt.Sprintf("\n|nodes| %d\n", len(nodes)))
 	for _, val := range nodes {
 		file.WriteString(val.String() + "\n")
 	}

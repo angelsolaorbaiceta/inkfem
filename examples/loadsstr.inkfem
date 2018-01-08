@@ -13,9 +13,10 @@ inkfem v1.0
 |sections| 1
 'sec_A' -> 1.0 1.0 1.0 1.0 1.0
 
-|loads| 2
+|loads| 3
 fy ld 4 0.22 -50.0 0.83 -75.0
 fy lc 1 0.35 -45.0
+fy gc 7 1.0 -70.0
 
 |elements| 7
 1 -> 1{dx dy} 2{dx dy} 'mat_A' 'sec_A'
