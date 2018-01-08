@@ -5,6 +5,7 @@ package load
 
 import (
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkmath"
 )
 
 /*
@@ -109,6 +110,38 @@ func (load Load) ForcesVector() inkgeom.Projectable {
 	default:
 		return inkgeom.MakeVector(0.0, 0.0)
 	}
+}
+
+// ValueAt returns the value of the distributed load at a given t Parameter value.
+func (load Load) ValueAt(t inkgeom.TParam) float64 {
+	if load.IsConcentrated() {
+		panic("Can't get value at of a concentrated load at a given point")
+	}
+
+	if t.IsLessThan(load.StartT()) || t.IsGreaterThan(load.EndT()) {
+		return 0.0
+	}
+
+	return inkmath.LinInterpol(load.startT.Value(), load.startValue, load.endT.Value(), load.endValue, t.Value())
+}
+
+// AvgValueBetween return the average load value inside the given range for the distributed load.
+func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
+	ok, maxStartT, minEndT := inkmath.RangesOverlap(load.startT.Value(), load.endT.Value(), startT.Value(), endT.Value())
+	if !ok {
+		return 0.0
+	}
+
+	startVal := load.ValueAt(inkgeom.MakeTParam(maxStartT))
+	endVal := load.ValueAt(inkgeom.MakeTParam(minEndT))
+	applicationLength := minEndT - maxStartT
+	rangeLength := startT.DistanceTo(endT)
+
+	if inkmath.IsCloseToZero(startVal * endVal) {
+		return (startVal + endVal) * applicationLength / rangeLength
+	}
+
+	return applicationLength * 0.5 * (startVal + endVal) / rangeLength
 }
 
 // StartT returns the start T parameter value for distributed loads.

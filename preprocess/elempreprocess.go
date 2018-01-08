@@ -53,17 +53,17 @@ func sliceAxialElement(e structure.Element) Element {
 func netNodalLoadValues(loads []load.Load, localRefFrame inkgeom.RefFrame) (sFx, sFy, eFx, eFy float64) {
 	var localForcesVector inkgeom.Projectable
 
-	for _, _load := range loads {
-		if _load.IsInLocalCoords {
-			localForcesVector = _load.ForcesVector()
+	for _, ld := range loads {
+		if ld.IsInLocalCoords {
+			localForcesVector = ld.ForcesVector()
 		} else {
-			localForcesVector = localRefFrame.ProjectVector(_load.ForcesVector())
+			localForcesVector = localRefFrame.ProjectVector(ld.ForcesVector())
 		}
 
-		if _load.T().IsMin() {
+		if ld.T().IsMin() {
 			sFx += localForcesVector.X
 			sFy += localForcesVector.Y
-		} else if _load.T().IsMax() {
+		} else if ld.T().IsMax() {
 			eFx += localForcesVector.X
 			eFy += localForcesVector.Y
 		}
@@ -75,6 +75,7 @@ func netNodalLoadValues(loads []load.Load, localRefFrame inkgeom.RefFrame) (sFx,
 /* <---------- Sliced ----------> */
 func sliceElement(e structure.Element, times int) Element {
 	tPos := inkgeom.SubTParamCompleteRangeTimes(times)
+	loadTPos := tValsForLoadApplications(e.Loads)
 
 	nodes := make([]Node, len(tPos))
 	for i := 0; i < len(tPos); i++ { // TODO: add loads
@@ -82,4 +83,22 @@ func sliceElement(e structure.Element, times int) Element {
 	}
 
 	return MakeElement(e, nodes)
+}
+
+func tValsForLoadApplications(loads []load.Load) []inkgeom.TParam {
+	var tVals []inkgeom.TParam
+	for _, ld := range loads {
+		if ld.IsConcentrated() && !ld.T().IsExtreme() {
+			tVals = append(tVals, ld.T())
+		} else if ld.IsDistributed() {
+			if !ld.StartT().IsExtreme() {
+				tVals = append(tVals, ld.StartT())
+			}
+			if !ld.EndT().IsExtreme() {
+				tVals = append(tVals, ld.EndT())
+			}
+		}
+	}
+
+	return tVals
 }
