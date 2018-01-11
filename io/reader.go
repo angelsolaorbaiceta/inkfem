@@ -284,7 +284,7 @@ func readLoads(scanner *bufio.Scanner, count int) map[int][]load.Load {
 func distributedLoadFromString(line string) (int, load.Load) {
 	groups := distLoadDefinitionRegex.FindStringSubmatch(line)
 
-	term := load.LoadTerm(groups[1])
+	term := load.Term(groups[1])
 	load.EnsureValidTerm(term)
 
 	isInLocalCoords := groups[2] == "l"
@@ -300,7 +300,7 @@ func distributedLoadFromString(line string) (int, load.Load) {
 func concentratedLoadFromString(line string) (int, load.Load) {
 	groups := concLoadDefinitionRegex.FindStringSubmatch(line)
 
-	term := load.LoadTerm(groups[1])
+	term := load.Term(groups[1])
 	load.EnsureValidTerm(term)
 
 	isInLocalCoords := groups[2] == "l"

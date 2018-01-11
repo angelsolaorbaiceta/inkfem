@@ -73,10 +73,10 @@ func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
 	}
 }
 
-/* Non Axial Member */
-func TestSliceNonAxialMemberNodePositions(t *testing.T) {
+/* Non Axial Member : Unloaded */
+func TestSliceNonAxialUnloadedMemberNodePositions(t *testing.T) {
 	element := makeElementWithLoads(make([]load.Load, 0))
-	slicedEl := sliceElement(element, 2)
+	slicedEl := sliceUnloadedElement(element, 2)
 
 	if len(slicedEl.Nodes) != 3 {
 		t.Error("Expected element to have three nodes")
@@ -92,6 +92,87 @@ func TestSliceNonAxialMemberNodePositions(t *testing.T) {
 		t.Error("Last node's position was not as expected")
 	}
 }
+
+/* Non Axial Member : Loaded -> slicing */
+func TestDistributedLoadInEntireLengthAddsNoPositions(t *testing.T) {
+	loads := []load.Load{load.MakeDistributed(load.FY, true, inkgeom.MIN_T, 45.0, inkgeom.MAX_T, 55.0)}
+	tPos := sliceLoadedElementPositions(loads, 2)
+
+	if posCount := len(tPos); posCount != 3 {
+		t.Errorf("Expected 3 positions, got %d", posCount)
+	}
+}
+
+func TestConcentratedLoadAddsPosition(t *testing.T) {
+	loads := []load.Load{load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0)}
+	tPos := sliceLoadedElementPositions(loads, 2)
+
+	if posCount := len(tPos); posCount != 4 {
+		t.Errorf("Expected 4 positions, got %d", posCount)
+	}
+	if loadPos := tPos[2]; loadPos.Value() != 0.75 {
+		t.Errorf("Expected load position to be at 0.75, fount it at %f", loadPos)
+	}
+}
+
+func TestDistributedLoadAddsTwoPositions(t *testing.T) {
+	loads := []load.Load{load.MakeDistributed(load.FY, true, inkgeom.MakeTParam(0.25), 45.0, inkgeom.MakeTParam(0.75), 55.0)}
+	tPos := sliceLoadedElementPositions(loads, 2)
+
+	if posCount := len(tPos); posCount != 5 {
+		t.Errorf("Expected 5 positions, got %d", posCount)
+	}
+	if loadPos := tPos[1]; loadPos.Value() != 0.25 {
+		t.Errorf("Expected load position to be at 0.25, fount it at %f", loadPos)
+	}
+	if loadPos := tPos[3]; loadPos.Value() != 0.75 {
+		t.Errorf("Expected load position to be at 0.75, fount it at %f", loadPos)
+	}
+}
+
+func TestMultipleLoadsNotAddingPositionTwice(t *testing.T) {
+	loads := []load.Load{
+		load.MakeDistributed(load.FY, true, inkgeom.MakeTParam(0.25), 45.0, inkgeom.MakeTParam(0.75), 55.0),
+		load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0),
+	}
+	tPos := sliceLoadedElementPositions(loads, 2)
+
+	if posCount := len(tPos); posCount != 5 {
+		t.Errorf("Expected 5 positions, got %d", posCount)
+	}
+}
+
+/* Non Axial Member : Loaded */
+// func TestSliceNonAxialLoadedMemberConcLoadAddsNode(t *testing.T) {
+// 	loads := []load.Load{load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0)}
+// 	element := makeElementWithLoads(loads)
+// 	slicedEl := sliceLoadedElement(element, 2)
+//
+// 	if count := len(slicedEl.Nodes); count != 4 {
+// 		t.Errorf("Expected 4 nodes, but got %d", count)
+// 	}
+// }
+//
+// func TestSliceNonAxialLoadedMemberDistribFYLoadSlicing(t *testing.T) {
+// 	loads := []load.Load{load.MakeDistributed(load.FY, true, inkgeom.MIN_T, 50.0, inkgeom.MAX_T, 50.0)}
+// 	element := makeElementWithLoads(loads)
+// 	slicedEl := sliceLoadedElement(element, 2)
+//
+// 	if fy, expected := slicedEl.Nodes[0].LocalFy(), 25.0*math.Sqrt2; !inkmath.FuzzyEqual(fy, expected) {
+// 		t.Errorf("First node's local Fy was not as expected. Got %f, expected %f", fy, 25.0*math.Sqrt2)
+// 	}
+// }
+//
+// func TestSliceNonAxialLoadedMemberConcLoadAppliedToNode(t *testing.T) {
+// 	loads := []load.Load{load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0)}
+// 	element := makeElementWithLoads(loads)
+// 	slicedEl := sliceLoadedElement(element, 2)
+//
+// 	if fy := slicedEl.Nodes[2].LocalFy(); fy != 45.0 {
+// 		fmt.Println(slicedEl.Nodes)
+// 		t.Errorf("Nodal load not applied as expected. Expected 45.0 but got %f", fy)
+// 	}
+// }
 
 /* Utils */
 func makeElementWithLoads(loads []load.Load) structure.Element {

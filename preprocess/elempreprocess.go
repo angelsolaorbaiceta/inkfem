@@ -1,6 +1,7 @@
 package preprocess
 
 import (
+	"sort"
 	"sync"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -15,8 +16,10 @@ func DoElement(e structure.Element, c chan Element, wg *sync.WaitGroup) {
 
 	if e.IsAxialMember() {
 		c <- sliceAxialElement(e)
+	} else if e.HasLoadsApplied() {
+		c <- sliceUnloadedElement(e, 12)
 	} else {
-		c <- sliceElement(e, 12)
+		c <- sliceLoadedElement(e, 18)
 	}
 }
 
@@ -50,6 +53,10 @@ func sliceAxialElement(e structure.Element) Element {
 		})
 }
 
+/*
+Assuming all loads are nodal (concentrated and applied to the ends of the element), computes
+the net, locally projected loads at the start end (sFx & sFy) and at the end end (eFx & eFy).
+*/
 func netNodalLoadValues(loads []load.Load, localRefFrame inkgeom.RefFrame) (sFx, sFy, eFx, eFy float64) {
 	var localForcesVector inkgeom.Projectable
 
@@ -72,17 +79,54 @@ func netNodalLoadValues(loads []load.Load, localRefFrame inkgeom.RefFrame) (sFx,
 	return
 }
 
-/* <---------- Sliced ----------> */
-func sliceElement(e structure.Element, times int) Element {
-	tPos := inkgeom.SubTParamCompleteRangeTimes(times)
-	loadTPos := tValsForLoadApplications(e.Loads)
+/* <---------- Sliced : Loaded ----------> */
+func sliceLoadedElement(e structure.Element, times int) Element {
+	// tPos := sliceLoadedElementPositions(e.Loads, times)
 
-	nodes := make([]Node, len(tPos))
-	for i := 0; i < len(tPos); i++ { // TODO: add loads
-		nodes[i] = MakeUnloadedNode(tPos[i], e.PointAt(tPos[i]))
-	}
+	var (
+		// trailT, leadT inkgeom.TParam
+		nodes []Node
+	)
+
+	// for i, j := 0, 1; j < len(tPos); i, j = i+1, j+1 {
+	// 	trailT, leadT = tPos[i], tPos[j]
+	//
+	// 	if inkmath.FuzzyEqualEps(trailT.Value(), leadT.Value(), 1e-5) {
+	// 		continue
+	// 	}
+	//
+	// 	if len(nodes) == 0 {
+	// 		// apply concentrated  start node load here
+	// 		nodes = append(nodes, MakeUnloadedNode(trailT, e.PointAt(trailT)))
+	// 	}
+	// 	nodes = append(nodes, MakeUnloadedNode(trailT, e.PointAt(leadT)))
+	//
+	// 	for _, ld := range e.Loads {
+	// 		if ld.IsConcentrated() && inkmath.IsCloseToZero(ld.T().DistanceTo(leadT)) {
+	// 			// TODO: projected in local
+	// 			nodes[len(nodes)-1].AddLoad(ld.VectorValue())
+	// 		} else {
+	//
+	// 		}
+	// 	}
+	// }
 
 	return MakeElement(e, nodes)
+}
+
+func sliceLoadedElementPositions(loads []load.Load, times int) []inkgeom.TParam {
+	tPos := append(inkgeom.SubTParamCompleteRangeTimes(times), tValsForLoadApplications(loads)...)
+	sort.Sort(inkgeom.ByTParamValue(tPos))
+
+	var correctedTPos []inkgeom.TParam
+	correctedTPos = append(correctedTPos, tPos[0])
+	for i := 1; i < len(tPos); i++ {
+		if tPos[i-1].DistanceTo(tPos[i]) > 1e-3 {
+			correctedTPos = append(correctedTPos, tPos[i])
+		}
+	}
+
+	return correctedTPos
 }
 
 func tValsForLoadApplications(loads []load.Load) []inkgeom.TParam {
@@ -101,4 +145,16 @@ func tValsForLoadApplications(loads []load.Load) []inkgeom.TParam {
 	}
 
 	return tVals
+}
+
+/* <---------- Sliced : Unloaded ----------> */
+func sliceUnloadedElement(e structure.Element, times int) Element {
+	tPos := inkgeom.SubTParamCompleteRangeTimes(times)
+	nodes := make([]Node, len(tPos))
+
+	for i := 0; i < len(tPos); i++ {
+		nodes[i] = MakeUnloadedNode(tPos[i], e.PointAt(tPos[i]))
+	}
+
+	return MakeElement(e, nodes)
 }

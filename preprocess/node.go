@@ -63,6 +63,17 @@ func (n Node) LocalMz() float64 {
 	return 0.0
 }
 
+// AddLoad adds the given load to the node applied load.
+func (n *Node) AddLoad(localComponents [3]float64) {
+	if !n.IsLoaded() {
+		n.localActions = make([]float64, 3)
+	}
+
+	n.localActions[0] += localComponents[0]
+	n.localActions[1] += localComponents[1]
+	n.localActions[2] += localComponents[2]
+}
+
 /* Stringer */
 func (n Node) String() string {
 	var loads string

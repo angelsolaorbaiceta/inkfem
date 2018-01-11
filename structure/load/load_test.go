@@ -1,7 +1,6 @@
 package load
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkgeom"
@@ -35,7 +34,7 @@ func TestAvgValueAllCoveredByLoad(t *testing.T) {
 	l := MakeDistributed(FY, true, inkgeom.MIN_T, 50.0, inkgeom.MAX_T, 50.0)
 
 	if value := l.AvgValueBetween(inkgeom.MakeTParam(0.2), inkgeom.MakeTParam(0.7)); !inkmath.FuzzyEqual(value, 50.0) {
-		t.Error(fmt.Sprintf("Average value not as expected: got %f, expected: %f", value, 50.0))
+		t.Errorf("Average value not as expected: got %f, expected: %f", value, 50.0)
 	}
 }
 
@@ -43,7 +42,7 @@ func TestAvgValueNoneCoveredByLoad(t *testing.T) {
 	l := MakeDistributed(FY, true, inkgeom.MakeTParam(0.2), 50.0, inkgeom.MakeTParam(0.3), 50.0)
 
 	if value := l.AvgValueBetween(inkgeom.MakeTParam(0.4), inkgeom.MakeTParam(0.7)); !inkmath.FuzzyEqual(value, 0.0) {
-		t.Error(fmt.Sprintf("Average value not as expected: got %f, expected: %f", value, 0.0))
+		t.Errorf("Average value not as expected: got %f, expected: %f", value, 0.0)
 	}
 }
 
@@ -51,9 +50,9 @@ func TestAvgValuePartiallyCoveredByLoad(t *testing.T) {
 	l := MakeDistributed(FY, true, inkgeom.MakeTParam(0.2), 100.0, inkgeom.MakeTParam(0.5), 100.0)
 
 	if value := l.AvgValueBetween(inkgeom.MakeTParam(0.2), inkgeom.MakeTParam(0.8)); !inkmath.FuzzyEqual(value, 50.0) {
-		t.Error(fmt.Sprintf("Average value not as expected: got %f, expected: %f", value, 50.0))
+		t.Errorf("Average value not as expected: got %f, expected: %f", value, 50.0)
 	}
 	if value := l.AvgValueBetween(inkgeom.MakeTParam(0.1), inkgeom.MakeTParam(0.7)); !inkmath.FuzzyEqual(value, 50.0) {
-		t.Error(fmt.Sprintf("Average value not as expected: got %f, expected: %f", value, 50.0))
+		t.Errorf("Average value not as expected: got %f, expected: %f", value, 50.0)
 	}
 }

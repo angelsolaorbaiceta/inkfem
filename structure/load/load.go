@@ -15,7 +15,7 @@ Load represents a distributed or concentrated load definition. A load is express
     - start/end position and value
 */
 type Load struct {
-	Term            LoadTerm
+	Term            Term
 	IsInLocalCoords bool
 
 	startT, endT         inkgeom.TParam
@@ -31,7 +31,7 @@ Distributed loads are defined by a start position - value and an end position - 
 tuples.
 */
 func MakeDistributed(
-	term LoadTerm,
+	term Term,
 	isInLocalCoords bool,
 	startT inkgeom.TParam /* -> */, startValue float64,
 	endT inkgeom.TParam /* -> */, endValue float64) Load {
@@ -44,7 +44,7 @@ locally to the element it will be applied to or referenced in global coordinates
 Concentrated loads are defined by a position - value tuple.
 */
 func MakeConcentrated(
-	term LoadTerm,
+	term Term,
 	isInLocalCoords bool,
 	t inkgeom.TParam,
 	value float64) Load {
@@ -137,6 +137,7 @@ func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
 	applicationLength := minEndT - maxStartT
 	rangeLength := startT.DistanceTo(endT)
 
+	// one of both ends has a zero value load -> No need to average values
 	if inkmath.IsCloseToZero(startVal * endVal) {
 		return (startVal + endVal) * applicationLength / rangeLength
 	}
