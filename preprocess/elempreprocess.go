@@ -80,40 +80,63 @@ func netNodalLoadValues(loads []load.Load, localRefFrame inkgeom.RefFrame) (sFx,
 }
 
 /* <---------- Sliced : Loaded ----------> */
-func sliceLoadedElement(e structure.Element, times int) Element {
-	// tPos := sliceLoadedElementPositions(e.Loads, times)
 
+/*
+Elemets with loads applied are firts sliced a given number of times, and then, all t parameters
+derived from the positions of the applied loads are included.
+
+The positions where concentrated loads are applied are critical as there will be a discontinuity,
+so a node must be added.
+
+The positions where distributed loads start and end also introduce discontinuities, so we also
+include nodes in those positions.
+*/
+func sliceLoadedElement(e structure.Element, times int) Element {
+	tPos := sliceLoadedElementPositions(e.Loads, times)
 	var (
-		// trailT, leadT inkgeom.TParam
-		nodes []Node
+		trailNode, leadNode *Node
+		length, halfLength  float64
+		avgLoadValVect      [3]float64
+		nodes               = make([]Node, len(tPos))
 	)
 
-	// for i, j := 0, 1; j < len(tPos); i, j = i+1, j+1 {
-	// 	trailT, leadT = tPos[i], tPos[j]
-	//
-	// 	if inkmath.FuzzyEqualEps(trailT.Value(), leadT.Value(), 1e-5) {
-	// 		continue
-	// 	}
-	//
-	// 	if len(nodes) == 0 {
-	// 		// apply concentrated  start node load here
-	// 		nodes = append(nodes, MakeUnloadedNode(trailT, e.PointAt(trailT)))
-	// 	}
-	// 	nodes = append(nodes, MakeUnloadedNode(trailT, e.PointAt(leadT)))
-	//
-	// 	for _, ld := range e.Loads {
-	// 		if ld.IsConcentrated() && inkmath.IsCloseToZero(ld.T().DistanceTo(leadT)) {
-	// 			// TODO: projected in local
-	// 			nodes[len(nodes)-1].AddLoad(ld.VectorValue())
-	// 		} else {
-	//
-	// 		}
-	// 	}
-	// }
+	// Nodes creation & concentrated laod application
+	for i, t := range tPos {
+		// TODO: add concentrated loads after projecting them
+		nodes[i] = MakeUnloadedNode(t, e.Geometry.PointAt(t))
+	}
+
+	// Distributed load application
+	for i, j := 0, 1; j < len(tPos); i, j = i+1, j+1 {
+		trailNode, leadNode = &nodes[i], &nodes[j]
+		length = e.Geometry.LengthBetween(trailNode.T, leadNode.T)
+		halfLength = 0.5 * length
+
+		for _, load := range e.Loads {
+			avgLoadValVect = load.AvgValueVectorBetween(trailNode.T, leadNode.T)
+			// TODO: basis change
+
+			trailNode.AddLoad([3]float64{
+				avgLoadValVect[0] * halfLength,
+				avgLoadValVect[1] * halfLength,
+				(avgLoadValVect[2] * halfLength) + (avgLoadValVect[1] * length * length / 12.0),
+			})
+			leadNode.AddLoad([3]float64{
+				avgLoadValVect[0] * halfLength,
+				avgLoadValVect[1] * halfLength,
+				(avgLoadValVect[2] * halfLength) - (avgLoadValVect[1] * length * length / 12.0),
+			})
+		}
+	}
 
 	return MakeElement(e, nodes)
 }
 
+/*
+Computes all the t values where to slice an element with loads applied.
+It starts by slicing the element a given number of times, and then adds all the load
+start and end t values, removing any possible duplications.
+*/
 func sliceLoadedElementPositions(loads []load.Load, times int) []inkgeom.TParam {
 	tPos := append(inkgeom.SubTParamCompleteRangeTimes(times), tValsForLoadApplications(loads)...)
 	sort.Sort(inkgeom.ByTParamValue(tPos))
@@ -148,6 +171,11 @@ func tValsForLoadApplications(loads []load.Load) []inkgeom.TParam {
 }
 
 /* <---------- Sliced : Unloaded ----------> */
+
+/*
+Non axial elements which have no loads applied are sliced just by subdividint their geometry
+a given number of times, so that the slices have the same length.
+*/
 func sliceUnloadedElement(e structure.Element, times int) Element {
 	tPos := inkgeom.SubTParamCompleteRangeTimes(times)
 	nodes := make([]Node, len(tPos))

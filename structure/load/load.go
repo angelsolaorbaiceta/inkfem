@@ -125,7 +125,7 @@ func (load Load) ValueAt(t inkgeom.TParam) float64 {
 	return inkmath.LinInterpol(load.startT.Value(), load.startValue, load.endT.Value(), load.endValue, t.Value())
 }
 
-// AvgValueBetween return the average load value inside the given range for the distributed load.
+// AvgValueBetween returns the average load value inside the given range for the distributed load.
 func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
 	ok, maxStartT, minEndT := inkmath.RangesOverlap(load.startT.Value(), load.endT.Value(), startT.Value(), endT.Value())
 	if !ok {
@@ -143,6 +143,19 @@ func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
 	}
 
 	return applicationLength * 0.5 * (startVal + endVal) / rangeLength
+}
+
+// AvgValueVectorBetween returns the average load value inside the given range in vector format.
+func (load Load) AvgValueVectorBetween(startT, endT inkgeom.TParam) [3]float64 {
+	val := load.AvgValueBetween(startT, endT)
+	switch load.Term {
+	case FX:
+		return [3]float64{val, 0.0, 0.0}
+	case FY:
+		return [3]float64{0.0, val, 0.0}
+	default:
+		return [3]float64{0.0, 0.0, val}
+	}
 }
 
 // StartT returns the start T parameter value for distributed loads.

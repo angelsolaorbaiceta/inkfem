@@ -3,6 +3,7 @@ package preprocess
 import (
 	// "fmt"
 
+	"fmt"
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -139,6 +140,31 @@ func TestMultipleLoadsNotAddingPositionTwice(t *testing.T) {
 
 	if posCount := len(tPos); posCount != 5 {
 		t.Errorf("Expected 5 positions, got %d", posCount)
+	}
+}
+
+/* Non Axial Member : Loaded -> loads */
+func TestDistributedLocalLoadDistribution(t *testing.T) {
+	element := structure.MakeElement(
+		1,
+		structure.MakeFreeNodeFromProjs(1, 0.0, 0.0),
+		structure.MakeFreeNodeFromProjs(2, 4.0, 0.0),
+		structure.MakeDispConstraint(),
+		structure.MakeDispConstraint(),
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
+		[]load.Load{load.MakeDistributed(load.FY, true, inkgeom.MIN_T, 5.0, inkgeom.MAX_T, 5.0)},
+	)
+	slicedEl := sliceLoadedElement(element, 2)
+	fmt.Println(slicedEl.Nodes[0].localActions)
+	if fx := slicedEl.Nodes[0].LocalFx(); fx != 0.0 {
+		t.Errorf("First node Fx expected to be 0.0, but was %f", fx)
+	}
+	if fy := slicedEl.Nodes[0].LocalFy(); fy != 5.0 {
+		t.Errorf("First node Fy expected to be 5.0, but was %f", fy)
+	}
+	if mz := slicedEl.Nodes[0].LocalMz(); !inkmath.FuzzyEqual(mz, 5.0/3.0) {
+		t.Errorf("First node Mz expected to be %f, but was %f", 5.0/3.0, mz)
 	}
 }
 
