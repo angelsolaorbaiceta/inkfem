@@ -3,7 +3,7 @@ package preprocess
 import (
 	// "fmt"
 
-	"fmt"
+	"math"
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -156,7 +156,8 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 		[]load.Load{load.MakeDistributed(load.FY, true, inkgeom.MIN_T, 5.0, inkgeom.MAX_T, 5.0)},
 	)
 	slicedEl := sliceLoadedElement(element, 2)
-	fmt.Println(slicedEl.Nodes[0].localActions)
+
+	// First Node
 	if fx := slicedEl.Nodes[0].LocalFx(); fx != 0.0 {
 		t.Errorf("First node Fx expected to be 0.0, but was %f", fx)
 	}
@@ -165,6 +166,129 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 	}
 	if mz := slicedEl.Nodes[0].LocalMz(); !inkmath.FuzzyEqual(mz, 5.0/3.0) {
 		t.Errorf("First node Mz expected to be %f, but was %f", 5.0/3.0, mz)
+	}
+
+	// Second Node
+	if fx := slicedEl.Nodes[1].LocalFx(); fx != 0.0 {
+		t.Errorf("Second node Fx expected to be 0.0, but was %f", fx)
+	}
+	if fy := slicedEl.Nodes[1].LocalFy(); fy != 10.0 {
+		t.Errorf("Second node Fy expected to be 10.0, but was %f", fy)
+	}
+	if mz := slicedEl.Nodes[1].LocalMz(); mz != 0.0 {
+		t.Errorf("Second node Mz expected to be 0.0, but was %f", mz)
+	}
+
+	// Third Node
+	if fx := slicedEl.Nodes[2].LocalFx(); fx != 0.0 {
+		t.Errorf("Third node Fx expected to be 0.0, but was %f", fx)
+	}
+	if fy := slicedEl.Nodes[2].LocalFy(); fy != 5.0 {
+		t.Errorf("Third node Fy expected to be 5.0, but was %f", fy)
+	}
+	if mz := slicedEl.Nodes[2].LocalMz(); !inkmath.FuzzyEqual(mz, -5.0/3.0) {
+		t.Errorf("Third node Mz expected to be %f, but was %f", -5.0/3.0, mz)
+	}
+}
+
+func TestDistributedGlobalLoadDistribution(t *testing.T) {
+	element := structure.MakeElement(
+		1,
+		structure.MakeFreeNodeFromProjs(1, 0.0, 0.0),
+		structure.MakeFreeNodeFromProjs(2, 4.0, 4.0),
+		structure.MakeDispConstraint(),
+		structure.MakeDispConstraint(),
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
+		[]load.Load{load.MakeDistributed(load.FY, false, inkgeom.MIN_T, 5.0, inkgeom.MAX_T, 5.0)},
+	)
+	slicedEl := sliceLoadedElement(element, 2)
+
+	// First Node
+	if fx := slicedEl.Nodes[0].LocalFx(); !inkmath.FuzzyEqual(fx, 5.0) {
+		t.Errorf("First node Fx expected to be 5.0, but was %f", fx)
+	}
+	if fy := slicedEl.Nodes[0].LocalFy(); !inkmath.FuzzyEqual(fy, 5.0) {
+		t.Errorf("First node Fy expected to be 5.0, but was %f", fy)
+	}
+	if mz, expected := slicedEl.Nodes[0].LocalMz(), 10.0/math.Sqrt(18.0); !inkmath.FuzzyEqual(mz, expected) {
+		t.Errorf("First node Mz expected to be %f, but was %f", expected, mz)
+	}
+
+	// Second Node
+	if fx := slicedEl.Nodes[1].LocalFx(); !inkmath.FuzzyEqual(fx, 10.0) {
+		t.Errorf("Second node Fx expected to be 10.0, but was %f", fx)
+	}
+	if fy := slicedEl.Nodes[1].LocalFy(); !inkmath.FuzzyEqual(fy, 10.0) {
+		t.Errorf("Second node Fy expected to be 10.0, but was %f", fy)
+	}
+	if mz := slicedEl.Nodes[1].LocalMz(); mz != 0.0 {
+		t.Errorf("Second node Mz expected to be 0.0, but was %f", mz)
+	}
+
+	// Third Node
+	if fx := slicedEl.Nodes[2].LocalFx(); !inkmath.FuzzyEqual(fx, 5.0) {
+		t.Errorf("Third node Fx expected to be 5.0, but was %f", fx)
+	}
+	if fy := slicedEl.Nodes[2].LocalFy(); !inkmath.FuzzyEqual(fy, 5.0) {
+		t.Errorf("Third node Fy expected to be 5.0, but was %f", fy)
+	}
+	if mz, expected := slicedEl.Nodes[2].LocalMz(), -10.0/math.Sqrt(18.0); !inkmath.FuzzyEqual(mz, expected) {
+		t.Errorf("Third node Mz expected to be %f, but was %f", expected, mz)
+	}
+}
+
+func TestConcentratedLocalLoadDistribution(t *testing.T) {
+	element := structure.MakeElement(
+		1,
+		structure.MakeFreeNodeFromProjs(1, 0.0, 0.0),
+		structure.MakeFreeNodeFromProjs(2, 4.0, 0.0),
+		structure.MakeDispConstraint(),
+		structure.MakeDispConstraint(),
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
+		[]load.Load{
+			load.MakeConcentrated(load.FX, true, inkgeom.MakeTParam(0.25), 3.0),
+			load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.25), 5.0),
+			load.MakeConcentrated(load.MZ, true, inkgeom.MakeTParam(0.25), 7.0),
+		},
+	)
+	slicedEl := sliceLoadedElement(element, 2)
+
+	if fx := slicedEl.Nodes[1].LocalFx(); fx != 3.0 {
+		t.Errorf("First node Fx expected to be 3.0, but was %f", fx)
+	}
+	if fy := slicedEl.Nodes[1].LocalFy(); fy != 5.0 {
+		t.Errorf("First node Fy expected to be 5.0, but was %f", fy)
+	}
+	if mz := slicedEl.Nodes[1].LocalMz(); mz != 7.0 {
+		t.Errorf("First node Mz expected to be 7.0, but was %f", mz)
+	}
+}
+
+func TestConcentratedGlobalLoadDistribution(t *testing.T) {
+	element := structure.MakeElement(
+		1,
+		structure.MakeFreeNodeFromProjs(1, 0.0, 0.0),
+		structure.MakeFreeNodeFromProjs(2, 4.0, 4.0),
+		structure.MakeDispConstraint(),
+		structure.MakeDispConstraint(),
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
+		[]load.Load{
+			load.MakeConcentrated(load.FY, false, inkgeom.MakeTParam(0.25), 5.0),
+		},
+	)
+	slicedEl := sliceLoadedElement(element, 2)
+
+	if fx := slicedEl.Nodes[1].LocalFx(); !inkmath.FuzzyEqual(fx, 5.0/math.Sqrt2) {
+		t.Errorf("First node Fx expected to be %f, but was %f", 5.0/math.Sqrt2, fx)
+	}
+	if fy := slicedEl.Nodes[1].LocalFy(); !inkmath.FuzzyEqual(fy, 5.0/math.Sqrt2) {
+		t.Errorf("First node Fy expected to be %f, but was %f", 5.0/math.Sqrt2, fy)
+	}
+	if mz := slicedEl.Nodes[1].LocalMz(); mz != 0.0 {
+		t.Errorf("First node Mz expected to be 0.0, but was %f", mz)
 	}
 }
 

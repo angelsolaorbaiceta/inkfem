@@ -93,41 +93,8 @@ include nodes in those positions.
 */
 func sliceLoadedElement(e structure.Element, times int) Element {
 	tPos := sliceLoadedElementPositions(e.Loads, times)
-	var (
-		trailNode, leadNode *Node
-		length, halfLength  float64
-		avgLoadValVect      [3]float64
-		nodes               = make([]Node, len(tPos))
-	)
-
-	// Nodes creation & concentrated laod application
-	for i, t := range tPos {
-		// TODO: add concentrated loads after projecting them
-		nodes[i] = MakeUnloadedNode(t, e.Geometry.PointAt(t))
-	}
-
-	// Distributed load application
-	for i, j := 0, 1; j < len(tPos); i, j = i+1, j+1 {
-		trailNode, leadNode = &nodes[i], &nodes[j]
-		length = e.Geometry.LengthBetween(trailNode.T, leadNode.T)
-		halfLength = 0.5 * length
-
-		for _, load := range e.Loads {
-			avgLoadValVect = load.AvgValueVectorBetween(trailNode.T, leadNode.T)
-			// TODO: basis change
-
-			trailNode.AddLoad([3]float64{
-				avgLoadValVect[0] * halfLength,
-				avgLoadValVect[1] * halfLength,
-				(avgLoadValVect[2] * halfLength) + (avgLoadValVect[1] * length * length / 12.0),
-			})
-			leadNode.AddLoad([3]float64{
-				avgLoadValVect[0] * halfLength,
-				avgLoadValVect[1] * halfLength,
-				(avgLoadValVect[2] * halfLength) - (avgLoadValVect[1] * length * length / 12.0),
-			})
-		}
-	}
+	nodes := makeNodesWithConcentratedLoads(e, tPos)
+	applyDistributedLoadsToNodes(nodes, e)
 
 	return MakeElement(e, nodes)
 }
@@ -168,6 +135,70 @@ func tValsForLoadApplications(loads []load.Load) []inkgeom.TParam {
 	}
 
 	return tVals
+}
+
+/*
+Creates all the nodes for the given t positions and applies the concentrated loads on them.
+*/
+func makeNodesWithConcentratedLoads(e structure.Element, tPos []inkgeom.TParam) []Node {
+	nodes := make([]Node, len(tPos))
+	elemRefFrame := e.Geometry.RefFrame()
+
+	for i, t := range tPos {
+		node := MakeUnloadedNode(t, e.Geometry.PointAt(t))
+
+		for _, load := range e.Loads {
+			if load.IsConcentrated() && t.Equals(load.T()) {
+				var localLoadForces inkgeom.Projectable
+				if load.IsInLocalCoords {
+					localLoadForces = load.ForcesVector()
+				} else {
+					localLoadForces = elemRefFrame.ProjectVector(load.ForcesVector())
+				}
+
+				node.AddLoad([3]float64{localLoadForces.X, localLoadForces.Y, load.VectorValue()[2]})
+			}
+		}
+
+		nodes[i] = node
+	}
+
+	return nodes
+}
+
+func applyDistributedLoadsToNodes(nodes []Node, e structure.Element) {
+	var (
+		trailNode, leadNode *Node
+		length, halfLength  float64
+		avgLoadValVect      [3]float64
+		elemRefFrame        = e.Geometry.RefFrame()
+	)
+
+	for i, j := 0, 1; j < len(nodes); i, j = i+1, j+1 {
+		trailNode, leadNode = &nodes[i], &nodes[j]
+		length = e.Geometry.LengthBetween(trailNode.T, leadNode.T)
+		halfLength = 0.5 * length
+
+		for _, load := range e.Loads {
+			avgLoadValVect = load.AvgValueVectorBetween(trailNode.T, leadNode.T)
+			if !load.IsInLocalCoords {
+				localForces := elemRefFrame.ProjectVector(inkgeom.MakeVector(avgLoadValVect[0], avgLoadValVect[1]))
+				avgLoadValVect[0] = localForces.X
+				avgLoadValVect[1] = localForces.Y
+			}
+
+			trailNode.AddLoad([3]float64{
+				avgLoadValVect[0] * halfLength,
+				avgLoadValVect[1] * halfLength,
+				(avgLoadValVect[2] * halfLength) + (avgLoadValVect[1] * length * length / 12.0),
+			})
+			leadNode.AddLoad([3]float64{
+				avgLoadValVect[0] * halfLength,
+				avgLoadValVect[1] * halfLength,
+				(avgLoadValVect[2] * halfLength) - (avgLoadValVect[1] * length * length / 12.0),
+			})
+		}
+	}
 }
 
 /* <---------- Sliced : Unloaded ----------> */
