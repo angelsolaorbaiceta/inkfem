@@ -17,9 +17,9 @@ func DoElement(e structure.Element, c chan Element, wg *sync.WaitGroup) {
 	if e.IsAxialMember() {
 		c <- sliceAxialElement(e)
 	} else if e.HasLoadsApplied() {
-		c <- sliceUnloadedElement(e, 12)
-	} else {
 		c <- sliceLoadedElement(e, 18)
+	} else {
+		c <- sliceUnloadedElement(e, 12)
 	}
 }
 
