@@ -1,2 +1,5 @@
 # Ignore compiled binary
 inkfem
+
+# Ignore sliced structure files
+examples/*_sliced
