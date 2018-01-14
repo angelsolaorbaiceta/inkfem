@@ -41,16 +41,21 @@ func MakeFreeNodeFromProjs(id int, x, y float64) Node {
 
 /* ::::::::::::::: Properties ::::::::::::::: */
 
-// SetDegreesOfFreedomNums assigns numbers to the degress of freedom of the node.
-func (n *Node) SetDegreesOfFreedomNums(dx, dy, rz int) {
+// SetDegreesOfFreedomNum assigns numbers to the degress of freedom of the node.
+func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
 	n.globalDof[0] = dx
 	n.globalDof[1] = dy
 	n.globalDof[2] = rz
 }
 
-// DegreesOfFreedomNums returns the degrees of freedom numbers assigned to the node.
-func (n Node) DegreesOfFreedomNums() [3]int {
+// DegreesOfFreedomNum returns the degrees of freedom numbers assigned to the node.
+func (n Node) DegreesOfFreedomNum() [3]int {
 	return n.globalDof
+}
+
+// HasDegreesOfFreedomNum returns true if the node has already been assigned degress of freedom.
+func (n Node) HasDegreesOfFreedomNum() bool {
+	return n.globalDof[0] != 0 || n.globalDof[1] != 0 || n.globalDof[2] != 0
 }
 
 /* ::::::::::::::: Stringer ::::::::::::::: */
@@ -59,6 +64,6 @@ func (n Node) String() string {
 		"%d -> %f %f %s | DOF: %v",
 		n.Id, n.Position.X, n.Position.Y,
 		n.ExternalConstraint.String(),
-		n.DegreesOfFreedomNums(),
+		n.DegreesOfFreedomNum(),
 	)
 }

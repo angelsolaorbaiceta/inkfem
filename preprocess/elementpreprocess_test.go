@@ -290,38 +290,6 @@ func TestConcentratedGlobalLoadDistribution(t *testing.T) {
 	}
 }
 
-/* Non Axial Member : Loaded */
-// func TestSliceNonAxialLoadedMemberConcLoadAddsNode(t *testing.T) {
-// 	loads := []load.Load{load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0)}
-// 	element := makeElementWithLoads(loads)
-// 	slicedEl := sliceLoadedElement(element, 2)
-//
-// 	if count := len(slicedEl.Nodes); count != 4 {
-// 		t.Errorf("Expected 4 nodes, but got %d", count)
-// 	}
-// }
-//
-// func TestSliceNonAxialLoadedMemberDistribFYLoadSlicing(t *testing.T) {
-// 	loads := []load.Load{load.MakeDistributed(load.FY, true, inkgeom.MIN_T, 50.0, inkgeom.MAX_T, 50.0)}
-// 	element := makeElementWithLoads(loads)
-// 	slicedEl := sliceLoadedElement(element, 2)
-//
-// 	if fy, expected := slicedEl.Nodes[0].LocalFy(), 25.0*math.Sqrt2; !inkmath.FuzzyEqual(fy, expected) {
-// 		t.Errorf("First node's local Fy was not as expected. Got %f, expected %f", fy, 25.0*math.Sqrt2)
-// 	}
-// }
-//
-// func TestSliceNonAxialLoadedMemberConcLoadAppliedToNode(t *testing.T) {
-// 	loads := []load.Load{load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0)}
-// 	element := makeElementWithLoads(loads)
-// 	slicedEl := sliceLoadedElement(element, 2)
-//
-// 	if fy := slicedEl.Nodes[2].LocalFy(); fy != 45.0 {
-// 		fmt.Println(slicedEl.Nodes)
-// 		t.Errorf("Nodal load not applied as expected. Expected 45.0 but got %f", fy)
-// 	}
-// }
-
 /* Utils */
 func makeElementWithLoads(loads []load.Load) structure.Element {
 	return structure.MakeElement(

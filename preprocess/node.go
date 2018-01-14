@@ -18,7 +18,7 @@ type Node struct {
 	globalDof    [3]int
 }
 
-/* Construction */
+/* ::::::::::::::: Construction ::::::::::::::: */
 
 // MakeNode creates a new node with given T parameter value, position and local loads {fx, fy, mz}.
 func MakeNode(t inkgeom.TParam, position inkgeom.Projectable, fx, fy, mz float64) Node {
@@ -30,7 +30,7 @@ func MakeUnloadedNode(t inkgeom.TParam, position inkgeom.Projectable) Node {
 	return Node{t, position, [3]float64{}, [3]int{0, 0, 0}}
 }
 
-/* Properties */
+/* ::::::::::::::: Properties ::::::::::::::: */
 
 // LocalFx returns the magnitude of the local force in X. 0.0 if it has no loads applied.
 func (n Node) LocalFx() float64 {
@@ -47,9 +47,11 @@ func (n Node) LocalMz() float64 {
 	return n.localActions[2]
 }
 
-// AddDegreesOfFreedomNum adds degrees of freedom numbers to the node. These degrees of freedom numbers
-// are also the position in the system of equations for the corresponding stiffness terms.
-func (n *Node) AddDegreesOfFreedomNum(dx, dy, rz int) {
+/*
+SetDegreesOfFreedomNum adds degrees of freedom numbers to the node. These degrees of freedom numbers
+are also the position in the system of equations for the corresponding stiffness terms.
+*/
+func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
 	n.globalDof[0] = dx
 	n.globalDof[1] = dy
 	n.globalDof[2] = rz
@@ -60,12 +62,15 @@ func (n Node) DegreesOfFreedomNum() [3]int {
 	return n.globalDof
 }
 
-// HasDegreesOfFreedomNum returns true if the node has already been assigned degress of freedom.
+/*
+HasDegreesOfFreedomNum returns true if the node has already been assigned degress of freedom.
+If all DOFs are 0, it is assumed that this node hasn't been assigned DOFs.
+*/
 func (n Node) HasDegreesOfFreedomNum() bool {
 	return n.globalDof[0] != 0 || n.globalDof[1] != 0 || n.globalDof[2] != 0
 }
 
-/* Methods */
+/* ::::::::::::::: Methods ::::::::::::::: */
 
 // AddLoad adds the given load to the node applied load.
 func (n *Node) AddLoad(localComponents [3]float64) {
@@ -74,8 +79,12 @@ func (n *Node) AddLoad(localComponents [3]float64) {
 	n.localActions[2] += localComponents[2]
 }
 
-/* Stringer */
+/* ::::::::::::::: Stringer ::::::::::::::: */
 func (n Node) String() string {
 	loads := fmt.Sprintf("{%f %f %f}", n.LocalFx(), n.LocalFy(), n.LocalMz())
-	return fmt.Sprintf("%f: {%f, %f} | %s", n.T.Value(), n.Position.X, n.Position.Y, loads)
+	return fmt.Sprintf(
+		"%f: {%f, %f} | %s | DOF: %v",
+		n.T.Value(), n.Position.X, n.Position.Y,
+		loads, n.DegreesOfFreedomNum(),
+	)
 }

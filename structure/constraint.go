@@ -65,6 +65,16 @@ func (c Constraint) AllowsRotation() bool {
 	return !c.isRzConst
 }
 
+// AllowsDispX returns true if displacement in x degree of freedom is not constrainted.
+func (c Constraint) AllowsDispX() bool {
+	return !c.isDxConstr
+}
+
+// AllowsDispY returns true if displacement in y degree of freedom is not constrainted.
+func (c Constraint) AllowsDispY() bool {
+	return !c.isDyConstr
+}
+
 /* ::::::::::::::: Stringer ::::::::::::::: */
 func (c Constraint) String() string {
 	var buffer bytes.Buffer

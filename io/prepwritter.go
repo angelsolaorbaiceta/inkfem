@@ -37,7 +37,7 @@ func writeElementsToFile(elements []preprocess.Element, file *os.File) {
 
 	for _, element := range elements {
 		file.WriteString(
-			fmt.Sprintf("%s (%d)\n", element.OriginalElement.String(), len(element.Nodes)))
+			fmt.Sprintf("%s (%d)\n", element.OriginalElementString(), len(element.Nodes)))
 		for _, node := range element.Nodes {
 			file.WriteString("\t" + node.String() + "\n")
 		}
