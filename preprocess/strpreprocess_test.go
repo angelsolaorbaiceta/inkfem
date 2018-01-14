@@ -68,13 +68,13 @@ func makeStructure() Structure {
 		Nodes: map[int]structure.Node{nA.Id: nA, nB.Id: nB, nC.Id: nC},
 		Elements: []Element{
 			MakeElement(elemOrigA, []Node{
-				MakeUnloadedNode(inkgeom.MIN_T, nA.Position),
+				MakeUnloadedNode(inkgeom.MinT, nA.Position),
 				MakeUnloadedNode(inkgeom.MakeTParam(0.5), inkgeom.MakePoint(0, 50)),
-				MakeUnloadedNode(inkgeom.MAX_T, nB.Position)}),
+				MakeUnloadedNode(inkgeom.MaxT, nB.Position)}),
 			MakeElement(elemOrigB, []Node{
-				MakeUnloadedNode(inkgeom.MIN_T, nA.Position),
+				MakeUnloadedNode(inkgeom.MinT, nA.Position),
 				MakeUnloadedNode(inkgeom.MakeTParam(0.5), inkgeom.MakePoint(50, 0)),
-				MakeUnloadedNode(inkgeom.MAX_T, nC.Position)}),
+				MakeUnloadedNode(inkgeom.MaxT, nC.Position)}),
 		},
 	}
 }

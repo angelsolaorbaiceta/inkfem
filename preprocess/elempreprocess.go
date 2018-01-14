@@ -45,16 +45,16 @@ func sliceAxialElement(e structure.Element) Element {
 		return MakeElement(
 			e,
 			[]Node{
-				MakeNode(inkgeom.MIN_T, e.StartPoint(), sFx, sFy, 0.0),
-				MakeNode(inkgeom.MAX_T, e.EndPoint(), eFx, eFy, 0.0),
+				MakeNode(inkgeom.MinT, e.StartPoint(), sFx, sFy, 0.0),
+				MakeNode(inkgeom.MaxT, e.EndPoint(), eFx, eFy, 0.0),
 			})
 	}
 
 	return MakeElement(
 		e,
 		[]Node{
-			MakeUnloadedNode(inkgeom.MIN_T, e.StartPoint()),
-			MakeUnloadedNode(inkgeom.MAX_T, e.EndPoint()),
+			MakeUnloadedNode(inkgeom.MinT, e.StartPoint()),
+			MakeUnloadedNode(inkgeom.MaxT, e.EndPoint()),
 		})
 }
 

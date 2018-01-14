@@ -20,18 +20,18 @@ func TestLoadIsDistributed(t *testing.T) {
 }
 
 func TestLoadIsNodal(t *testing.T) {
-	if load := MakeConcentrated(FX, true, inkgeom.MIN_T, 45.0); !load.IsNodal() {
+	if load := MakeConcentrated(FX, true, inkgeom.MinT, 45.0); !load.IsNodal() {
 		t.Error("Expected load to be nodal (t = 0.0)")
 	}
 
-	if load := MakeConcentrated(FX, true, inkgeom.MAX_T, 45.0); !load.IsNodal() {
+	if load := MakeConcentrated(FX, true, inkgeom.MaxT, 45.0); !load.IsNodal() {
 		t.Error("Expected load to be nodal (t = 1.0)")
 	}
 }
 
 /* <---------- Avg Value ----------> */
 func TestAvgValueAllCoveredByLoad(t *testing.T) {
-	l := MakeDistributed(FY, true, inkgeom.MIN_T, 50.0, inkgeom.MAX_T, 50.0)
+	l := MakeDistributed(FY, true, inkgeom.MinT, 50.0, inkgeom.MaxT, 50.0)
 
 	if value := l.AvgValueBetween(inkgeom.MakeTParam(0.2), inkgeom.MakeTParam(0.7)); !inkmath.FuzzyEqual(value, 50.0) {
 		t.Errorf("Average value not as expected: got %f, expected: %f", value, 50.0)

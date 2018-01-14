@@ -29,8 +29,8 @@ func TestSliceAxialMemberNodePositions(t *testing.T) {
 
 func TestSliceAxialMemberStartNodeLoads(t *testing.T) {
 	loads := []load.Load{
-		load.MakeConcentrated(load.FX, true, inkgeom.MIN_T, 50.0),
-		load.MakeConcentrated(load.FY, true, inkgeom.MIN_T, 75.0)}
+		load.MakeConcentrated(load.FX, true, inkgeom.MinT, 50.0),
+		load.MakeConcentrated(load.FY, true, inkgeom.MinT, 75.0)}
 	element := makeElementWithLoads(loads)
 	slicedEl := sliceAxialElement(element)
 
@@ -44,8 +44,8 @@ func TestSliceAxialMemberStartNodeLoads(t *testing.T) {
 
 func TestSliceAxialMemberEndNodeLoads(t *testing.T) {
 	loads := []load.Load{
-		load.MakeConcentrated(load.FX, true, inkgeom.MAX_T, 50.0),
-		load.MakeConcentrated(load.FY, true, inkgeom.MAX_T, 75.0)}
+		load.MakeConcentrated(load.FX, true, inkgeom.MaxT, 50.0),
+		load.MakeConcentrated(load.FY, true, inkgeom.MaxT, 75.0)}
 	element := makeElementWithLoads(loads)
 	slicedEl := sliceAxialElement(element)
 
@@ -58,7 +58,7 @@ func TestSliceAxialMemberEndNodeLoads(t *testing.T) {
 }
 
 func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
-	loads := []load.Load{load.MakeConcentrated(load.FY, false, inkgeom.MIN_T, 100.0)}
+	loads := []load.Load{load.MakeConcentrated(load.FY, false, inkgeom.MinT, 100.0)}
 	element := makeElementWithLoads(loads)
 	slicedEl := sliceAxialElement(element)
 	expectedProjLoadX := inkgeom.MakeVector(0, 100).DotTimes(element.Geometry.DirectionVersor())
@@ -94,7 +94,7 @@ func TestSliceNonAxialUnloadedMemberNodePositions(t *testing.T) {
 
 /* Non Axial Member : Loaded -> slicing */
 func TestDistributedLoadInEntireLengthAddsNoPositions(t *testing.T) {
-	loads := []load.Load{load.MakeDistributed(load.FY, true, inkgeom.MIN_T, 45.0, inkgeom.MAX_T, 55.0)}
+	loads := []load.Load{load.MakeDistributed(load.FY, true, inkgeom.MinT, 45.0, inkgeom.MaxT, 55.0)}
 	tPos := sliceLoadedElementPositions(loads, 2)
 
 	if posCount := len(tPos); posCount != 3 {
@@ -151,7 +151,7 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 		structure.MakeDispConstraint(),
 		structure.MakeUnitMaterial(),
 		structure.MakeUnitSection(),
-		[]load.Load{load.MakeDistributed(load.FY, true, inkgeom.MIN_T, 5.0, inkgeom.MAX_T, 5.0)},
+		[]load.Load{load.MakeDistributed(load.FY, true, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0)},
 	)
 	slicedEl := sliceLoadedElement(element, 2)
 
@@ -198,7 +198,7 @@ func TestDistributedGlobalLoadDistribution(t *testing.T) {
 		structure.MakeDispConstraint(),
 		structure.MakeUnitMaterial(),
 		structure.MakeUnitSection(),
-		[]load.Load{load.MakeDistributed(load.FY, false, inkgeom.MIN_T, 5.0, inkgeom.MAX_T, 5.0)},
+		[]load.Load{load.MakeDistributed(load.FY, false, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0)},
 	)
 	slicedEl := sliceLoadedElement(element, 2)
 
