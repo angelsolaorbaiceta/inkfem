@@ -12,16 +12,44 @@ func TestStartNodesDofs(t *testing.T) {
 	str := makeStructure()
 	assignDof(&str)
 
-	expectedDofs := [3]int{0, 1, 2}
-	actualDofs := [2][3]int{
-		str.Nodes[1].DegreesOfFreedomNum(),
-		str.Elements[0].Nodes[0].DegreesOfFreedomNum(),
+	if dofs := str.Elements[0].Nodes[0].DegreesOfFreedomNum(); dofs != [3]int{0, 1, 2} {
+		t.Errorf("Structural node expected to have DOFs [0 1 2], but found %v", dofs)
 	}
+	if dofs := str.Elements[1].Nodes[0].DegreesOfFreedomNum(); dofs != [3]int{0, 1, 9} {
+		t.Errorf("Structural node expected to have DOFs [0 1 9], but found %v", dofs)
+	}
+}
 
-	for _, dofs := range actualDofs {
-		if dofs != expectedDofs {
-			t.Errorf("Structural node expected to have DOFs %v, but found %v", expectedDofs, dofs)
-		}
+func TestMiddleNodesDofs(t *testing.T) {
+	str := makeStructure()
+	assignDof(&str)
+
+	if dofs := str.Elements[0].Nodes[1].DegreesOfFreedomNum(); dofs != [3]int{3, 4, 5} {
+		t.Errorf("Structural node expected to have DOFs [3 4 5], but found %v", dofs)
+	}
+	if dofs := str.Elements[1].Nodes[1].DegreesOfFreedomNum(); dofs != [3]int{10, 11, 12} {
+		t.Errorf("Structural node expected to have DOFs [10 11 12], but found %v", dofs)
+	}
+}
+
+func TestEndNodesDofs(t *testing.T) {
+	str := makeStructure()
+	assignDof(&str)
+
+	if dofs := str.Elements[0].Nodes[2].DegreesOfFreedomNum(); dofs != [3]int{6, 7, 8} {
+		t.Errorf("Structural node expected to have DOFs [6 7 8], but found %v", dofs)
+	}
+	if dofs := str.Elements[1].Nodes[2].DegreesOfFreedomNum(); dofs != [3]int{13, 14, 15} {
+		t.Errorf("Structural node expected to have DOFs [13 14 15], but found %v", dofs)
+	}
+}
+
+func TestDofsCount(t *testing.T) {
+	str := makeStructure()
+	dofsCount := assignDof(&str)
+
+	if dofsCount != 16 {
+		t.Errorf("Sliced structure expected to have 16 degrees of freedom, but had %d", dofsCount)
 	}
 }
 

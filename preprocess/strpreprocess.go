@@ -25,8 +25,9 @@ func DoStructure(s structure.Structure, wg *sync.WaitGroup) Structure {
 		slicedElements = append(slicedElements, slicedEl)
 	}
 
-	str := Structure{s.Metadata, s.Nodes, slicedElements}
-	assignDof(&str)
+	str := Structure{Metadata: s.Metadata, Nodes: s.Nodes, Elements: slicedElements}
+	dofsCount := assignDof(&str)
+	str.DofsCount = dofsCount
 
 	return str
 }
@@ -35,16 +36,19 @@ func DoStructure(s structure.Structure, wg *sync.WaitGroup) Structure {
 Assings degrees of freedom numbers to all nodes on sliced elements.
 
 Structural nodes are given degrees of freedom to help in the correct assignment of DOF numbers
-to the elements that meet in the node.
+to the elements that meet in the node. Structural elements are first sorted by their geometry
+positions, so the degrees of freedom numbers follow a logical sequence.
+
+The method returns the number degrees of freedom assigned.
 */
-func assignDof(s *Structure) {
+func assignDof(s *Structure) (dofsCount int) {
 	sort.Sort(ByGeometryPos(s.Elements))
 
 	var (
-		startNode/*, endNode*/ structure.Node
-		startLink/*, endLink*/ *structure.Constraint
-		dxDof, dyDof, rzDof int
-		dof                 = 0
+		startNode, endNode structure.Node
+		startLink, endLink *structure.Constraint
+		nodesCount         int
+		dof                = 0
 	)
 
 	updateStructuralNodeDof := func(n *structure.Node) {
@@ -55,39 +59,57 @@ func assignDof(s *Structure) {
 		}
 	}
 
-	for _, element := range s.Elements {
-		startNode = s.Nodes[element.StartNodeID()]
-		// endNode = s.Nodes[element.EndNodeID()]
-		startLink = element.StartLink()
-		// endLink = element.OriginalElement.EndLink
-
-		// First Node
-		updateStructuralNodeDof(&startNode)
-
-		if startLink.AllowsDispX() {
+	endNodesDof := func(link *structure.Constraint, node structure.Node) (dxDof, dyDof, rzDof int) {
+		if link.AllowsDispX() {
 			dxDof = dof
 			dof++
 		} else {
-			dxDof = startNode.DegreesOfFreedomNum()[0]
+			dxDof = node.DegreesOfFreedomNum()[0]
 		}
 
-		if startLink.AllowsDispY() {
+		if link.AllowsDispY() {
 			dyDof = dof
 			dof++
 		} else {
-			dyDof = startNode.DegreesOfFreedomNum()[1]
+			dyDof = node.DegreesOfFreedomNum()[1]
 		}
 
-		if startLink.AllowsRotation() {
+		if link.AllowsRotation() {
 			rzDof = dof
 			dof++
 		} else {
-			rzDof = startNode.DegreesOfFreedomNum()[2]
+			rzDof = node.DegreesOfFreedomNum()[2]
 		}
 
-		element.Nodes[0].SetDegreesOfFreedomNum(dxDof, dyDof, rzDof)
-
-		// Last Node
-		// updateStructuralNodeDof(endNode)
+		return
 	}
+
+	for _, element := range s.Elements {
+		startNode = s.Nodes[element.StartNodeID()]
+		endNode = s.Nodes[element.EndNodeID()]
+		startLink = element.StartLink()
+		endLink = element.EndLink()
+		nodesCount = len(element.Nodes)
+
+		/* First Node */
+		updateStructuralNodeDof(&startNode)
+		element.Nodes[0].SetDegreesOfFreedomNum(
+			endNodesDof(startLink, startNode),
+		)
+
+		/* Middle Nodes */
+		for i := 1; i < nodesCount-1; i++ {
+			element.Nodes[i].SetDegreesOfFreedomNum(dof, dof+1, dof+2)
+			dof += 3
+		}
+
+		/* Last Node */
+		updateStructuralNodeDof(&endNode)
+		element.Nodes[nodesCount-1].SetDegreesOfFreedomNum(
+			endNodesDof(endLink, endNode),
+		)
+	}
+
+	dofsCount = dof
+	return
 }
