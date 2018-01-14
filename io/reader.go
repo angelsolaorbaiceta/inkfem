@@ -358,7 +358,7 @@ func readElements(scanner *bufio.Scanner, count int, nodes map[int]structure.Nod
 			panic(fmt.Sprintf("Element %d with unknown section name: %s", id, groups[7]))
 		}
 
-		elements[i] = structure.MakeElement(
+		elements[i] = *structure.MakeElement(
 			id, startNode, endNode,
 			constraintFromString(startLink),
 			constraintFromString(endLink),

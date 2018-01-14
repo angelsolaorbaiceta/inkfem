@@ -31,8 +31,8 @@ func MakeElement(
 	startLink, endLink *Constraint,
 	material Material,
 	section Section,
-	loads []load.Load) Element {
-	return Element{
+	loads []load.Load) *Element {
+	return &Element{
 		id, startNode.Id, endNode.Id,
 		inkgeom.MakeSegment(startNode.Position, endNode.Position),
 		startLink, endLink,
