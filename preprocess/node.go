@@ -15,18 +15,19 @@ type Node struct {
 	T            inkgeom.TParam
 	Position     inkgeom.Projectable
 	localActions [3]float64
+	globalDof    [3]int
 }
 
 /* Construction */
 
 // MakeNode creates a new node with given T parameter value, position and local loads {fx, fy, mz}.
 func MakeNode(t inkgeom.TParam, position inkgeom.Projectable, fx, fy, mz float64) Node {
-	return Node{t, position, [3]float64{fx, fy, mz}}
+	return Node{t, position, [3]float64{fx, fy, mz}, [3]int{0, 0, 0}}
 }
 
 // MakeUnloadedNode creates a new node with given T parameter value and position. It has no loads applied.
 func MakeUnloadedNode(t inkgeom.TParam, position inkgeom.Projectable) Node {
-	return Node{t, position, [3]float64{}}
+	return Node{t, position, [3]float64{}, [3]int{0, 0, 0}}
 }
 
 /* Properties */
@@ -45,6 +46,26 @@ func (n Node) LocalFy() float64 {
 func (n Node) LocalMz() float64 {
 	return n.localActions[2]
 }
+
+// AddDegreesOfFreedomNum adds degrees of freedom numbers to the node. These degrees of freedom numbers
+// are also the position in the system of equations for the corresponding stiffness terms.
+func (n *Node) AddDegreesOfFreedomNum(dx, dy, rz int) {
+	n.globalDof[0] = dx
+	n.globalDof[1] = dy
+	n.globalDof[2] = rz
+}
+
+// DegreesOfFreedomNum returns the degrees of freedom numbers assigned to the node.
+func (n Node) DegreesOfFreedomNum() [3]int {
+	return n.globalDof
+}
+
+// HasDegreesOfFreedomNum returns true if the node has already been assigned degress of freedom.
+func (n Node) HasDegreesOfFreedomNum() bool {
+	return n.globalDof[0] != 0 || n.globalDof[1] != 0 || n.globalDof[2] != 0
+}
+
+/* Methods */
 
 // AddLoad adds the given load to the node applied load.
 func (n *Node) AddLoad(localComponents [3]float64) {

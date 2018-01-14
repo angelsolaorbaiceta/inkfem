@@ -16,19 +16,19 @@ import (
 type Element struct {
 	Id, StartNodeId, EndNodeId int
 	Geometry                   inkgeom.Segment
-	StartLink, EndLink         Constraint
+	StartLink, EndLink         *Constraint
 	material                   Material
 	section                    Section
 	Loads                      []load.Load
 }
 
-/* Construction */
+/* ::::::::::::::: Construction ::::::::::::::: */
 
 // MakeElement creates a new element with all properties initialized.
 func MakeElement(
 	id int,
 	startNode, endNode Node,
-	startLink, endLink Constraint,
+	startLink, endLink *Constraint,
 	material Material,
 	section Section,
 	loads []load.Load) Element {
@@ -39,7 +39,7 @@ func MakeElement(
 		material, section, loads}
 }
 
-/* Properties */
+/* ::::::::::::::: Properties ::::::::::::::: */
 
 // StartPoint returns the position of the start node of this element's geometry.
 func (e Element) StartPoint() inkgeom.Projectable {
@@ -56,7 +56,7 @@ func (e Element) PointAt(t inkgeom.TParam) inkgeom.Projectable {
 	return e.Geometry.PointAt(t)
 }
 
-/* Methods */
+/* ::::::::::::::: Methods ::::::::::::::: */
 
 /*
 IsAxialMember returns true if this element is pinned in both ends and, in case of having loads
@@ -82,7 +82,7 @@ func (e Element) HasLoadsApplied() bool {
 // 	return 0.0
 // }
 
-/* Stringer */
+/* ::::::::::::::: Stringer ::::::::::::::: */
 func (e Element) String() string {
 	return fmt.Sprintf(
 		"%d -> %d%s %d%s %s %s",

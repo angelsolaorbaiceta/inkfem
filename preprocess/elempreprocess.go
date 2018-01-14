@@ -9,6 +9,11 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
 
+const (
+	loadedElementSlices   = 18
+	unloadedElementSlices = 12
+)
+
 // DoElement preprocesses the given structural element subdividing it as corresponds.
 // The result is sent through a channel.
 func DoElement(e structure.Element, c chan Element, wg *sync.WaitGroup) {
@@ -17,9 +22,9 @@ func DoElement(e structure.Element, c chan Element, wg *sync.WaitGroup) {
 	if e.IsAxialMember() {
 		c <- sliceAxialElement(e)
 	} else if e.HasLoadsApplied() {
-		c <- sliceLoadedElement(e, 18)
+		c <- sliceLoadedElement(e, loadedElementSlices)
 	} else {
-		c <- sliceUnloadedElement(e, 12)
+		c <- sliceUnloadedElement(e, unloadedElementSlices)
 	}
 }
 

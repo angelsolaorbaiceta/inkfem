@@ -1,6 +1,7 @@
 package preprocess
 
 import (
+	"sort"
 	"sync"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -24,5 +25,12 @@ func DoStructure(s structure.Structure, wg *sync.WaitGroup) Structure {
 		slicedElements = append(slicedElements, slicedEl)
 	}
 
-	return Structure{s.Metadata, s.Nodes, slicedElements}
+	str := Structure{s.Metadata, s.Nodes, slicedElements}
+	assignDof(&str)
+
+	return str
+}
+
+func assignDof(s *Structure) {
+	sort.Sort(ByGeometryPos(s.Elements))
 }
