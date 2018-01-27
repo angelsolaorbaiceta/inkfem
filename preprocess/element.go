@@ -14,15 +14,17 @@ import (
 
 // Element after slicing original structural element
 type Element struct {
-	originalElement structure.Element
+	originalElement *structure.Element
 	Nodes           []Node
 }
 
 /* ::::::::::::::: Construction ::::::::::::::: */
 
-// MakeElement creates a new element given the original element and the nodes
-// of the sliced result.
-func MakeElement(originalElement structure.Element, nodes []Node) Element {
+/*
+MakeElement creates a new element given the original element and the nodes
+of the sliced result.
+*/
+func MakeElement(originalElement *structure.Element, nodes []Node) Element {
 	return Element{originalElement, nodes}
 }
 

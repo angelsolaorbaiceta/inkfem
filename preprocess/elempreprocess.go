@@ -20,11 +20,11 @@ func DoElement(e structure.Element, c chan Element, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	if e.IsAxialMember() {
-		c <- sliceAxialElement(e)
+		c <- sliceAxialElement(&e)
 	} else if e.HasLoadsApplied() {
-		c <- sliceLoadedElement(e, loadedElementSlices)
+		c <- sliceLoadedElement(&e, loadedElementSlices)
 	} else {
-		c <- sliceUnloadedElement(e, unloadedElementSlices)
+		c <- sliceUnloadedElement(&e, unloadedElementSlices)
 	}
 }
 
@@ -38,7 +38,7 @@ An axial element is an element which:
 Axial elements can be sliced using only it's end nodes. Axial elements deformation
 only happens in their axial direction: tension or compression.
 */
-func sliceAxialElement(e structure.Element) Element {
+func sliceAxialElement(e *structure.Element) Element {
 	if e.HasLoadsApplied() {
 		sFx, sFy, eFx, eFy := netNodalLoadValues(e.Loads, e.Geometry.RefFrame())
 
@@ -96,7 +96,7 @@ so a node must be added.
 The positions where distributed loads start and end also introduce discontinuities, so we also
 include nodes in those positions.
 */
-func sliceLoadedElement(e structure.Element, times int) Element {
+func sliceLoadedElement(e *structure.Element, times int) Element {
 	tPos := sliceLoadedElementPositions(e.Loads, times)
 	nodes := makeNodesWithConcentratedLoads(e, tPos)
 	applyDistributedLoadsToNodes(nodes, e)
@@ -145,7 +145,7 @@ func tValsForLoadApplications(loads []load.Load) []inkgeom.TParam {
 /*
 Creates all the nodes for the given t positions and applies the concentrated loads on them.
 */
-func makeNodesWithConcentratedLoads(e structure.Element, tPos []inkgeom.TParam) []Node {
+func makeNodesWithConcentratedLoads(e *structure.Element, tPos []inkgeom.TParam) []Node {
 	nodes := make([]Node, len(tPos))
 	elemRefFrame := e.Geometry.RefFrame()
 
@@ -171,7 +171,7 @@ func makeNodesWithConcentratedLoads(e structure.Element, tPos []inkgeom.TParam) 
 	return nodes
 }
 
-func applyDistributedLoadsToNodes(nodes []Node, e structure.Element) {
+func applyDistributedLoadsToNodes(nodes []Node, e *structure.Element) {
 	var (
 		trailNode, leadNode *Node
 		length, halfLength  float64
@@ -212,7 +212,7 @@ func applyDistributedLoadsToNodes(nodes []Node, e structure.Element) {
 Non axial elements which have no loads applied are sliced just by subdividint their geometry
 a given number of times, so that the slices have the same length.
 */
-func sliceUnloadedElement(e structure.Element, times int) Element {
+func sliceUnloadedElement(e *structure.Element, times int) Element {
 	tPos := inkgeom.SubTParamCompleteRangeTimes(times)
 	nodes := make([]Node, len(tPos))
 

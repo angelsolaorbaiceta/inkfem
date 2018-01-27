@@ -9,6 +9,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
+	"github.com/angelsolaorbaiceta/inkfem/process"
 )
 
 func main() {
@@ -33,6 +34,8 @@ func main() {
 		filePath := fileNameWithoutExtension + "_sliced"
 		io.PreprocessedStructureToFile(preStructure, filePath)
 	}
+
+	process.Solve(&preStructure)
 }
 
 func printUsage() {

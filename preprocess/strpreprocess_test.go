@@ -60,8 +60,14 @@ func makeStructure() Structure {
 		nB = structure.MakeFreeNodeFromProjs(2, 0, 100)
 		nC = structure.MakeFreeNodeFromProjs(3, 100, 0)
 
-		elemOrigA = structure.MakeElement(1, nA, nB, structure.MakeFullConstraint(), structure.MakeFullConstraint(), structure.MakeUnitMaterial(), structure.MakeUnitSection(), []load.Load{})
-		elemOrigB = structure.MakeElement(2, nA, nC, structure.MakeDispConstraint(), structure.MakeFullConstraint(), structure.MakeUnitMaterial(), structure.MakeUnitSection(), []load.Load{})
+		elemOrigA = structure.MakeElement(
+			1, nA, nB, structure.MakeFullConstraint(), structure.MakeFullConstraint(),
+			*structure.MakeUnitMaterial(), *structure.MakeUnitSection(), []load.Load{},
+		)
+		elemOrigB = structure.MakeElement(
+			2, nA, nC, structure.MakeDispConstraint(), structure.MakeFullConstraint(),
+			*structure.MakeUnitMaterial(), *structure.MakeUnitSection(), []load.Load{},
+		)
 	)
 
 	return Structure{
