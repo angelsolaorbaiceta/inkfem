@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"sync"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
@@ -25,9 +24,8 @@ func main() {
 	fmt.Println("FILE:", *inputFilePathFlagPtr)
 	fmt.Println("PREPROCESS:", *preprocessFlagPtr)
 
-	wg := new(sync.WaitGroup)
 	structure := io.StructureFromFile(*inputFilePathFlagPtr)
-	preStructure := preprocess.DoStructure(structure, wg)
+	preStructure := preprocess.DoStructure(structure)
 
 	if *preprocessFlagPtr {
 		fileNameWithoutExtension := strings.TrimSuffix(*inputFilePathFlagPtr, ".inkfem")

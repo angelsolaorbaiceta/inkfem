@@ -2,7 +2,6 @@ package preprocess
 
 import (
 	"sort"
-	"sync"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
@@ -10,19 +9,16 @@ import (
 /*
 DoStructure preprocesses the structure by concurrently slicing each of the structural members.
 */
-func DoStructure(s structure.Structure, wg *sync.WaitGroup) Structure {
-	channel := make(chan Element, len(s.Elements))
+func DoStructure(s structure.Structure) Structure {
+	channel := make(chan Element)
 
 	for _, element := range s.Elements {
-		wg.Add(1)
-		go DoElement(element, channel, wg)
+		go DoElement(element, channel)
 	}
-	wg.Wait()
-	close(channel)
 
 	var slicedElements []Element
-	for slicedEl := range channel {
-		slicedElements = append(slicedElements, slicedEl)
+	for i := 0; i < len(s.Elements); i++ {
+		slicedElements = append(slicedElements, <-channel)
 	}
 
 	str := Structure{Metadata: s.Metadata, Nodes: s.Nodes, Elements: slicedElements}

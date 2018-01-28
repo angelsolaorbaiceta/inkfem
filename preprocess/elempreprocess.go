@@ -2,7 +2,6 @@ package preprocess
 
 import (
 	"sort"
-	"sync"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
@@ -16,9 +15,7 @@ const (
 
 // DoElement preprocesses the given structural element subdividing it as corresponds.
 // The result is sent through a channel.
-func DoElement(e structure.Element, c chan Element, wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func DoElement(e structure.Element, c chan Element) {
 	if e.IsAxialMember() {
 		c <- sliceAxialElement(&e)
 	} else if e.HasLoadsApplied() {
