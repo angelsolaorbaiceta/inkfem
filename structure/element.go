@@ -9,6 +9,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkmath/mat"
 )
 
 // Element represents s resistant element defined between two structural nodes, a section and a material.
@@ -78,9 +79,15 @@ func (e Element) HasLoadsApplied() bool {
 	return len(e.Loads) > 0
 }
 
-// func (e Element) StiffnessValue(actionDof, effectDof int, startT, entT inkgeom.TParam) float64 {
-// 	return 0.0
-// }
+/*
+StiffnessGlobalMat generates the local stiffness matrix for the element and applies
+the rotation defined by the elements' geometry reference frame.
+*/
+func (e Element) StiffnessGlobalMat(startT, entT inkgeom.TParam) mat.Matrixable {
+	k := mat.MakeSquareDense(6)
+	// TODO: implement
+	return k
+}
 
 /* ::::::::::::::: Stringer ::::::::::::::: */
 func (e Element) String() string {
