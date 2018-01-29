@@ -47,6 +47,11 @@ func (n Node) LocalMz() float64 {
 	return n.localActions[2]
 }
 
+// LocalActions returns the array of local load values {Fx, Fy, Mz}.
+func (n Node) LocalActions() [3]float64 {
+	return n.localActions
+}
+
 /*
 SetDegreesOfFreedomNum adds degrees of freedom numbers to the node. These degrees of freedom numbers
 are also the position in the system of equations for the corresponding stiffness terms.

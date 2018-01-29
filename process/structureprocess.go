@@ -6,26 +6,38 @@ and creates a solution.
 package process
 
 import (
+	"fmt"
+
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkmath"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
+	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
 /*
 Solve ...
 */
 func Solve(s *preprocess.Structure) {
+	sysMatrix, sysVector := makeSystemOfEqs(s)
+	fmt.Println(sysMatrix)
+	fmt.Println(sysVector)
+}
+
+func makeSystemOfEqs(s *preprocess.Structure) (mat.Matrixable, *vec.Vector) {
 	c := make(chan preprocess.Element)
 
 	for _, element := range s.Elements {
 		go element.ComputeStiffnessMatrices(c)
 	}
 
-	sysMatrix /*, sysVector*/ := mat.MakeSparse(s.DofsCount, s.DofsCount) //, vec.Make(s.DofsCount)
+	sysMatrix, sysVector := mat.MakeSparse(s.DofsCount, s.DofsCount), vec.Make(s.DofsCount)
 	for i := 0; i < len(s.Elements); i++ {
 		element := <-c
 		addTermsToStiffnessMatrix(sysMatrix, &element)
+		addTermsToLoadVector(sysVector, &element)
 	}
+
+	return sysMatrix, sysVector
 }
 
 func addTermsToStiffnessMatrix(m mat.Matrixable, e *preprocess.Element) {
@@ -52,5 +64,21 @@ func addTermsToStiffnessMatrix(m mat.Matrixable, e *preprocess.Element) {
 				}
 			}
 		}
+	}
+}
+
+func addTermsToLoadVector(v *vec.Vector, e *preprocess.Element) {
+	var (
+		localActions [3]float64
+		dofs         [3]int
+	)
+
+	for _, node := range e.Nodes {
+		localActions = node.LocalActions() // TODO: basis change
+		dofs = node.DegreesOfFreedomNum()
+
+		v.SetValue(dofs[0], localActions[0])
+		v.SetValue(dofs[1], localActions[1])
+		v.SetValue(dofs[2], localActions[2])
 	}
 }
