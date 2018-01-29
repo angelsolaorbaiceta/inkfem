@@ -21,7 +21,7 @@ func Solve(s *preprocess.Structure) {
 
 	for _, element := range s.Elements {
 		fmt.Printf("*** Element [%d]\n", element.ID())
-		go ComputeElementStiffnessMatrices(element, c)
+		go element.ComputeStiffnessMatrices(c)
 	}
 
 	sysMatrix, sysVector := mat.MakeSparse(s.DofsCount, s.DofsCount), vec.Make(s.DofsCount)

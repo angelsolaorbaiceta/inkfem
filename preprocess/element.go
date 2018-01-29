@@ -10,12 +10,14 @@ package preprocess
 import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkmath/mat"
 )
 
 // Element after slicing original structural element
 type Element struct {
 	originalElement *structure.Element
 	Nodes           []Node
+	globalStiffMat  []mat.Matrixable
 }
 
 /* ::::::::::::::: Construction ::::::::::::::: */
@@ -25,7 +27,7 @@ MakeElement creates a new element given the original element and the nodes
 of the sliced result.
 */
 func MakeElement(originalElement *structure.Element, nodes []Node) Element {
-	return Element{originalElement, nodes}
+	return Element{originalElement, nodes, make([]mat.Matrixable, len(nodes)-1)}
 }
 
 /* ::::::::::::::: Properties ::::::::::::::: */
@@ -63,6 +65,32 @@ func (e Element) EndLink() *structure.Constraint {
 // OriginalElementString returns the string representation of the original structural element.
 func (e Element) OriginalElementString() string {
 	return e.originalElement.String()
+}
+
+/*
+StiffnessGlobalMat generates the local stiffness matrix for the element and applies
+the rotation defined by the elements' geometry reference frame.
+*/
+func (e Element) StiffnessGlobalMat(startT, entT inkgeom.TParam) mat.Matrixable {
+	return e.originalElement.StiffnessGlobalMat(startT, entT)
+}
+
+/* ::::::::::::::: Methods ::::::::::::::: */
+
+/*
+ComputeStiffnessMatrices sets the global stiffness matrices for this element.
+Each element has a stiffness matrix between two contiguous nodes, so
+in total that makes n - 1 matrices, where n is the number of nodes.
+*/
+func (e Element) ComputeStiffnessMatrices(c chan<- Element) {
+	var trail, lead Node
+	for i := 1; i < len(e.Nodes); i++ {
+		trail = e.Nodes[i-1]
+		lead = e.Nodes[i]
+		e.globalStiffMat[i-1] = e.StiffnessGlobalMat(trail.T, lead.T)
+	}
+
+	c <- e
 }
 
 /* ::::::::::::::: sort.Interface ::::::::::::::: */

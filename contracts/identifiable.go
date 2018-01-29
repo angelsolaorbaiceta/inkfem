@@ -1,7 +1,8 @@
-package utils
+package contracts
 
 import "sort"
 
+// Identifiable is anything that can be referenced with an id
 type Identifiable interface {
 	GetId() int
 }
