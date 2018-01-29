@@ -93,6 +93,14 @@ func (e Element) ComputeStiffnessMatrices(c chan<- Element) {
 	c <- e
 }
 
+/*
+GlobalStiffMatrixAt returns the global stiffness matrix at position i, that is,
+between nodes i and i + 1.
+*/
+func (e Element) GlobalStiffMatrixAt(i int) mat.Matrixable {
+	return e.globalStiffMat[i]
+}
+
 /* ::::::::::::::: sort.Interface ::::::::::::::: */
 
 // ByGeometryPos implements sort.Interface for []Element based on the position of the original geometry.
