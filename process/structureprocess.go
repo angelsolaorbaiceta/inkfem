@@ -11,6 +11,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkmath"
+	"github.com/angelsolaorbaiceta/inkmath/lineq"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
@@ -19,10 +20,11 @@ import (
 Solve ...
 */
 func Solve(s *preprocess.Structure) {
+	solver := lineq.JacobiSolver{MaxError: 1e-3, MaxIter: 100}
 	sysMatrix, sysVector := makeSystemOfEqs(s)
+	displSolutions := solver.Solve(sysMatrix, sysVector)
 
-	fmt.Println(sysVector)
-	fmt.Println("Sys Matrix Symmetric?", mat.IsSymmetric(sysMatrix))
+	fmt.Println(displSolutions)
 }
 
 func makeSystemOfEqs(s *preprocess.Structure) (mat.Matrixable, *vec.Vector) {
