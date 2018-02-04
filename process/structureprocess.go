@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
+	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkmath"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
@@ -19,8 +20,9 @@ Solve ...
 */
 func Solve(s *preprocess.Structure) {
 	sysMatrix, sysVector := makeSystemOfEqs(s)
-	fmt.Println(sysMatrix)
+
 	fmt.Println(sysVector)
+	fmt.Println("Sys Matrix Symmetric?", mat.IsSymmetric(sysMatrix))
 }
 
 func makeSystemOfEqs(s *preprocess.Structure) (mat.Matrixable, *vec.Vector) {
@@ -70,15 +72,18 @@ func addTermsToStiffnessMatrix(m mat.Matrixable, e *preprocess.Element) {
 func addTermsToLoadVector(v *vec.Vector, e *preprocess.Element) {
 	var (
 		localActions [3]float64
+		globalForces inkgeom.Projectable
 		dofs         [3]int
+		refFrame     = e.Geometry().RefFrame()
 	)
 
 	for _, node := range e.Nodes {
-		localActions = node.LocalActions() // TODO: basis change
+		localActions = node.LocalActions()
+		globalForces = refFrame.ProjectionsToGlobal(localActions[0], localActions[1])
 		dofs = node.DegreesOfFreedomNum()
 
-		v.SetValue(dofs[0], localActions[0])
-		v.SetValue(dofs[1], localActions[1])
+		v.SetValue(dofs[0], globalForces.X)
+		v.SetValue(dofs[1], globalForces.Y)
 		v.SetValue(dofs[2], localActions[2])
 	}
 }

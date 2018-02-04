@@ -8,6 +8,8 @@ as it is defined in the 'structure' package.
 package preprocess
 
 import (
+	"fmt"
+
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
@@ -88,6 +90,8 @@ func (e Element) ComputeStiffnessMatrices(c chan<- Element) {
 		trail = e.Nodes[i-1]
 		lead = e.Nodes[i]
 		e.globalStiffMat[i-1] = e.StiffnessGlobalMat(trail.T, lead.T)
+
+		fmt.Println("Matrix is sym: ", mat.IsSymmetric(e.globalStiffMat[i-1]))
 	}
 
 	c <- e
