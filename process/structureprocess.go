@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
+	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkmath"
 	"github.com/angelsolaorbaiceta/inkmath/lineq"
@@ -20,10 +21,12 @@ import (
 Solve ...
 */
 func Solve(s *preprocess.Structure) {
-	solver := lineq.JacobiSolver{MaxError: 1e-3, MaxIter: 100}
 	sysMatrix, sysVector := makeSystemOfEqs(s)
+	solver := lineq.ConjugateGradientSolver{MaxError: 1e-5, MaxIter: sysVector.Length()}
+	if !solver.CanSolve(sysMatrix, sysVector) {
+		panic("Solver cannot solve system!")
+	}
 	displSolutions := solver.Solve(sysMatrix, sysVector)
-
 	fmt.Println(displSolutions)
 }
 
@@ -40,6 +43,7 @@ func makeSystemOfEqs(s *preprocess.Structure) (mat.Matrixable, *vec.Vector) {
 		addTermsToStiffnessMatrix(sysMatrix, &element)
 		addTermsToLoadVector(sysVector, &element)
 	}
+	addDispConstraints(sysMatrix, sysVector, s.Nodes)
 
 	return sysMatrix, sysVector
 }
@@ -66,6 +70,36 @@ func addTermsToStiffnessMatrix(m mat.Matrixable, e *preprocess.Element) {
 				if stiffVal = stiffMat.Value(i, j); !inkmath.IsCloseToZero(stiffVal) {
 					m.AddToValue(dofs[i], dofs[j], stiffVal)
 				}
+			}
+		}
+	}
+}
+
+func addDispConstraints(m mat.Matrixable, v *vec.Vector, nodes map[int]structure.Node) {
+	var (
+		constraint *structure.Constraint
+		dofs       [3]int
+	)
+
+	addConstraintAtDof := func(dof int) {
+		m.SetZeroCol(dof)
+		m.SetIdentityRow(dof)
+		v.SetZero(dof)
+	}
+
+	for _, node := range nodes {
+		if node.IsExternallyConstrained() {
+			constraint = node.ExternalConstraint
+			dofs = node.DegreesOfFreedomNum()
+
+			if !constraint.AllowsDispX() {
+				addConstraintAtDof(dofs[0])
+			}
+			if !constraint.AllowsDispY() {
+				addConstraintAtDof(dofs[1])
+			}
+			if !constraint.AllowsRotation() {
+				addConstraintAtDof(dofs[2])
 			}
 		}
 	}
