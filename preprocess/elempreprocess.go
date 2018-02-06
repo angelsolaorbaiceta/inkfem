@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	loadedElementSlices   = 18
-	unloadedElementSlices = 12
+	loadedElementSlices   = 10
+	unloadedElementSlices = 7
 )
 
 // DoElement preprocesses the given structural element subdividing it as corresponds.
 // The result is sent through a channel.
-func DoElement(e structure.Element, c chan Element) {
+func DoElement(e structure.Element, c chan<- Element) {
 	if e.IsAxialMember() {
 		c <- sliceAxialElement(&e)
 	} else if e.HasLoadsApplied() {
