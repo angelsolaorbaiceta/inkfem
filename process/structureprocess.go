@@ -22,6 +22,8 @@ Solve ...
 */
 func Solve(s *preprocess.Structure) {
 	sysMatrix, sysVector := makeSystemOfEqs(s)
+	path := "/Users/angelsola/go/src/github.com/angelsolaorbaiceta/inkfem/examples/"
+	mat.ToImage(sysMatrix, path, "sys_matrix")
 	solver := lineq.ConjugateGradientSolver{MaxError: 1e-5, MaxIter: sysVector.Length()}
 	if !solver.CanSolve(sysMatrix, sysVector) {
 		panic("Solver cannot solve system!")
