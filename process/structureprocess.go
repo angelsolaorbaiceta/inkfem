@@ -18,12 +18,23 @@ import (
 )
 
 /*
+SolveOptions includes configuration parameters for structural solving process.
+*/
+type SolveOptions struct {
+	SaveSysMatrixImage bool
+	OutputPath         string
+}
+
+/*
 Solve ...
 */
-func Solve(s *preprocess.Structure) {
+func Solve(s *preprocess.Structure, options SolveOptions) {
 	sysMatrix, sysVector := makeSystemOfEqs(s)
-	path := "/Users/angelsola/go/src/github.com/angelsolaorbaiceta/inkfem/examples/"
-	mat.ToImage(sysMatrix, path, "sys_matrix")
+
+	if options.SaveSysMatrixImage {
+		go mat.ToImage(sysMatrix, options.OutputPath)
+	}
+
 	solver := lineq.ConjugateGradientSolver{MaxError: 1e-5, MaxIter: sysVector.Length()}
 	if !solver.CanSolve(sysMatrix, sysVector) {
 		panic("Solver cannot solve system!")

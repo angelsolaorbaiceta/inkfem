@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
@@ -12,31 +11,38 @@ import (
 )
 
 func main() {
-	inputFilePathFlagPtr := flag.String("i", "", "input file path")
-	preprocessFlagPtr := flag.Bool("p", false, "should dump preprocessed structure to file?")
+	var (
+		inputFilePathFlag  = flag.String("i", "", "input file path")
+		preprocessFlag     = flag.Bool("p", false, "should dump preprocessed structure to file?")
+		sysMatrixToPngFlag = flag.Bool("m", false, "should save system of equations matrix to png image file?")
+	)
 	flag.Parse()
 
-	if len(*inputFilePathFlagPtr) == 0 {
+	if len(*inputFilePathFlag) == 0 {
 		printUsage()
-		os.Exit(1)
+		return
 	}
 
-	fmt.Println("FILE:", *inputFilePathFlagPtr)
-	fmt.Println("PREPROCESS:", *preprocessFlagPtr)
+	var (
+		outPath      = strings.TrimSuffix(*inputFilePathFlag, ".inkfem")
+		structure    = io.StructureFromFile(*inputFilePathFlag)
+		preStructure = preprocess.DoStructure(structure)
+	)
 
-	structure := io.StructureFromFile(*inputFilePathFlagPtr)
-	preStructure := preprocess.DoStructure(structure)
-
-	if *preprocessFlagPtr {
-		fileNameWithoutExtension := strings.TrimSuffix(*inputFilePathFlagPtr, ".inkfem")
-		filePath := fileNameWithoutExtension + "_sliced"
+	if *preprocessFlag {
+		filePath := outPath + "_sliced"
 		io.PreprocessedStructureToFile(preStructure, filePath)
 	}
 
-	process.Solve(&preStructure)
+	solveOptions := process.SolveOptions{SaveSysMatrixImage: *sysMatrixToPngFlag, OutputPath: outPath}
+	process.Solve(&preStructure, solveOptions)
 }
 
 func printUsage() {
 	fmt.Println("InkFEM usage:")
-	fmt.Println("\tinkfem -i=<input_file_path> [-p]")
+	fmt.Println("\tinkfem -i=<input_file_path> [options]")
+	fmt.Println("")
+	fmt.Println("Options:")
+	fmt.Println("\t-p: save preprocessed structure to file")
+	fmt.Println("\t-m: save system of equations matrix to png image file")
 }
