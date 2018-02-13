@@ -39,8 +39,8 @@ func MakeElement(
 		inkgeom.MakeSegment(startNode.Position, endNode.Position),
 		startLink, endLink,
 		material, section, loads,
-		material.YieldStrength * section.Area,
-		material.YieldStrength * section.IStrong,
+		material.YoungMod * section.Area,
+		material.YoungMod * section.IStrong,
 	}
 }
 

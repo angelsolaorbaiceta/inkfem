@@ -41,7 +41,6 @@ func Solve(s *preprocess.Structure, options SolveOptions) {
 	}
 	displSolutions := solver.Solve(sysMatrix, sysVector)
 	fmt.Println(displSolutions)
-	fmt.Println(sysMatrix.TimesVector(displSolutions.Solution).Minus(sysVector))
 }
 
 func makeSystemOfEqs(s *preprocess.Structure) (mat.Matrixable, *vec.Vector) {
@@ -82,7 +81,6 @@ func addTermsToStiffnessMatrix(m mat.Matrixable, e *preprocess.Element) {
 		for i := 0; i < stiffMat.Rows(); i++ {
 			for j := 0; j < stiffMat.Cols(); j++ {
 				if stiffVal = stiffMat.Value(i, j); !inkmath.IsCloseToZero(stiffVal) {
-					fmt.Println("i,j = ", i, ",", j, "VAL:", stiffVal, "->", dofs[i], ", ", dofs[j])
 					m.AddToValue(dofs[i], dofs[j], stiffVal)
 				}
 			}
