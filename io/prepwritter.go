@@ -20,7 +20,7 @@ func PreprocessedStructureToFile(structure preprocess.Structure, filePath string
 	file.WriteString(
 		fmt.Sprintf("inkfem v%d.%d\n", structure.Metadata.MajorVersion, structure.Metadata.MinorVersion))
 	file.WriteString(
-		fmt.Sprintf("|sliced_structure| %d DOFs |\n", structure.DofsCount))
+		fmt.Sprintf("|sliced_structure| %d DOFs\n", structure.DofsCount))
 
 	writeNodesToFile(structure.Nodes, file)
 	writeElementsToFile(structure.Elements, file)

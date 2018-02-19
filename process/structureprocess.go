@@ -6,8 +6,6 @@ and creates a solution.
 package process
 
 import (
-	"fmt"
-
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
@@ -21,26 +19,48 @@ import (
 SolveOptions includes configuration parameters for structural solving process.
 */
 type SolveOptions struct {
-	SaveSysMatrixImage bool
-	OutputPath         string
+	SaveSysMatrixImage    bool
+	OutputPath            string
+	SafeChecks            bool
+	MaxDisplacementsError float64
 }
 
 /*
-Solve ...
+Solve assembles the system of equations for the structure and solves it using a numerical
+procedure. Using the displacements obtained from the solution of the system, the local
+stresses are computed.
 */
-func Solve(s *preprocess.Structure, options SolveOptions) {
+func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
 	sysMatrix, sysVector := makeSystemOfEqs(s)
 
 	if options.SaveSysMatrixImage {
 		go mat.ToImage(sysMatrix, options.OutputPath)
 	}
 
-	solver := lineq.PreconditionedConjugateGradientSolver{MaxError: 1e-5, MaxIter: sysVector.Length()}
-	if !solver.CanSolve(sysMatrix, sysVector) {
+	solver := lineq.PreconditionedConjugateGradientSolver{MaxError: options.MaxDisplacementsError, MaxIter: sysVector.Length()}
+	if options.SafeChecks && !solver.CanSolve(sysMatrix, sysVector) {
 		panic("Solver cannot solve system!")
 	}
-	displSolutions := solver.Solve(sysMatrix, sysVector)
-	fmt.Println(displSolutions)
+
+	var (
+		globalDisplacements = solver.Solve(sysMatrix, sysVector)
+		elementSolutions    = make([]ElementSolution, len(s.Elements))
+		nodeDofs            [3]int
+	)
+	for i, element := range s.Elements {
+		elementSolutions[i] = MakeElementSolution(element)
+		for _, node := range element.Nodes {
+			nodeDofs = node.DegreesOfFreedomNum()
+			elementSolutions[i].GlobalDispl[node.T] = [3]float64{
+				globalDisplacements.Solution.Value(nodeDofs[0]),
+				globalDisplacements.Solution.Value(nodeDofs[1]),
+				globalDisplacements.Solution.Value(nodeDofs[2]),
+			}
+			elementSolutions[i].Points[node.T] = node.Position
+		}
+	}
+
+	return &Solution{Metadata: &s.Metadata, Elements: elementSolutions}
 }
 
 func makeSystemOfEqs(s *preprocess.Structure) (mat.Matrixable, *vec.Vector) {

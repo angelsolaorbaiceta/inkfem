@@ -4,3 +4,4 @@ inkfem
 # Ignore sliced structure files & matrix images
 examples/*_sliced
 examples/*.png
+examples/*.inksol
