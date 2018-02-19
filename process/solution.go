@@ -1,10 +1,22 @@
 package process
 
 import (
+	"fmt"
+
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
+
+// PointSolutionValue is a tuple of T and Value.
+type PointSolutionValue struct {
+	T     inkgeom.TParam
+	Value float64
+}
+
+func (psv PointSolutionValue) String() string {
+	return fmt.Sprintf("T = %f : %f", psv.T.Value(), psv.Value)
+}
 
 /*
 ElementSolution is the displacements and stresses for a given preprocessed element.
@@ -13,13 +25,21 @@ Displacements are stored in both local and global coordinates. Stresses are refe
 only to the local reference frame.
 */
 type ElementSolution struct {
-	Element       *preprocess.Element
-	GlobalDispl   map[inkgeom.TParam][3]float64
-	LocalDispl    map[inkgeom.TParam][3]float64
-	Points        map[inkgeom.TParam]inkgeom.Projectable
-	AxialStress   map[inkgeom.TParam]float64
-	ShearStress   map[inkgeom.TParam]float64
-	BendingMoment map[inkgeom.TParam]float64
+	Element *preprocess.Element
+
+	GlobalXDispl []PointSolutionValue
+	GlobalYDispl []PointSolutionValue
+	GlobalZRot   []PointSolutionValue
+
+	LocalXDispl []PointSolutionValue
+	LocalYDispl []PointSolutionValue
+	LocalZRot   []PointSolutionValue
+
+	// Points map[inkgeom.TParam]inkgeom.Projectable
+
+	AxialStress   []PointSolutionValue
+	ShearStress   []PointSolutionValue
+	BendingMoment []PointSolutionValue
 }
 
 /*
@@ -29,13 +49,17 @@ func MakeElementSolution(element preprocess.Element) ElementSolution {
 	nOfNodes := len(element.Nodes)
 
 	return ElementSolution{
-		Element:       &element,
-		GlobalDispl:   make(map[inkgeom.TParam][3]float64, nOfNodes),
-		LocalDispl:    make(map[inkgeom.TParam][3]float64, nOfNodes),
-		Points:        make(map[inkgeom.TParam]inkgeom.Projectable, nOfNodes),
-		AxialStress:   make(map[inkgeom.TParam]float64, nOfNodes),
-		ShearStress:   make(map[inkgeom.TParam]float64, nOfNodes),
-		BendingMoment: make(map[inkgeom.TParam]float64, 2*nOfNodes-1),
+		Element:      &element,
+		GlobalXDispl: make([]PointSolutionValue, nOfNodes),
+		GlobalYDispl: make([]PointSolutionValue, nOfNodes),
+		GlobalZRot:   make([]PointSolutionValue, nOfNodes),
+		LocalXDispl:  make([]PointSolutionValue, nOfNodes),
+		LocalYDispl:  make([]PointSolutionValue, nOfNodes),
+		LocalZRot:    make([]PointSolutionValue, nOfNodes),
+		// Points:        make([]PointSolutionValue, nOfNodes),
+		AxialStress:   make([]PointSolutionValue, nOfNodes),
+		ShearStress:   make([]PointSolutionValue, nOfNodes),
+		BendingMoment: make([]PointSolutionValue, 2*nOfNodes-1),
 	}
 }
 

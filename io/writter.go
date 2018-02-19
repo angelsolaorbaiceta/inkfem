@@ -20,7 +20,6 @@ func StructureSolutionToFile(solution *process.Solution, filePath string) {
 		fmt.Sprintf("inkfem v%d.%d\n", solution.Metadata.MajorVersion, solution.Metadata.MinorVersion))
 	file.WriteString(
 		fmt.Sprintf("|solution| %d Elements\n", len(solution.Elements)))
-	file.WriteString("[points, globalDisp, localDisp, axial, shear, bending]\n")
 
 	writeElementSolutionsToFile(solution.Elements, file)
 }
@@ -29,14 +28,60 @@ func writeElementSolutionsToFile(elementsSolution []process.ElementSolution, fil
 	for _, element := range elementsSolution {
 		file.WriteString("\n" + element.Element.OriginalElementString())
 
-		file.WriteString("\n\t")
-		for t, point := range element.Points {
-			file.WriteString(fmt.Sprintf("T = %f : %s ", t.Value(), point.String()))
+		// Points
+		// file.WriteString("\n\t")
+		// for _, point := range element.Points {
+		// 	file.WriteString(fmt.Sprintf("T = %f : %s ", t.Value(), point.String()))
+		// }
+
+		// Global Displacements
+		file.WriteString("\n\tgDx >> ")
+		for _, disp := range element.GlobalXDispl {
+			file.WriteString(disp.String() + " ")
 		}
 
-		file.WriteString("\n\t")
-		for t, disp := range element.GlobalDispl {
-			file.WriteString(fmt.Sprintf("T = %f : {%f, %f, %f} ", t.Value(), disp[0], disp[1], disp[2]))
+		file.WriteString("\n\tgDy >> ")
+		for _, disp := range element.GlobalYDispl {
+			file.WriteString(disp.String() + " ")
+		}
+
+		file.WriteString("\n\tgRz >> ")
+		for _, rot := range element.GlobalZRot {
+			file.WriteString(rot.String() + " ")
+		}
+
+		// Local Displacements
+		file.WriteString("\n\tlDx >> ")
+		for _, disp := range element.LocalXDispl {
+			file.WriteString(disp.String() + " ")
+		}
+
+		file.WriteString("\n\tlDy >> ")
+		for _, disp := range element.LocalYDispl {
+			file.WriteString(disp.String() + " ")
+		}
+
+		file.WriteString("\n\tlRz >> ")
+		for _, rot := range element.LocalZRot {
+			file.WriteString(rot.String() + " ")
+		}
+
+		// Axial Stress
+		file.WriteString("\n\tN >> ")
+		for _, axial := range element.AxialStress {
+			file.WriteString(axial.String() + " ")
+		}
+
+		// Shear Stress
+		file.WriteString("\n\tV >> ")
+		for _, shear := range element.ShearStress {
+			file.WriteString(shear.String() + " ")
+		}
+
+		// Bending Moment
+		file.WriteString("\n\tM >> ")
+		for _, bending := range element.BendingMoment {
+			file.WriteString(bending.String() + " ")
 		}
 
 		file.WriteString("\n")

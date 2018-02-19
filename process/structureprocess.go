@@ -6,6 +6,8 @@ and creates a solution.
 package process
 
 import (
+	"sync"
+
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
@@ -43,26 +45,41 @@ func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
 	}
 
 	var (
-		globalDisplacements = solver.Solve(sysMatrix, sysVector)
-		elementSolutions    = make([]ElementSolution, len(s.Elements))
-		nodeDofs            [3]int
+		globalDisplacements     = solver.Solve(sysMatrix, sysVector)
+		globalDisplacementsProj inkgeom.Projectable
+		elementSolution         ElementSolution
+		elementSolutions        = make([]ElementSolution, len(s.Elements))
+		wg                      sync.WaitGroup
+		nodeDofs                [3]int
 	)
+
 	for i, element := range s.Elements {
-		elementSolutions[i] = MakeElementSolution(element)
-		for _, node := range element.Nodes {
+		elementSolution = MakeElementSolution(element)
+
+		for j, node := range element.Nodes {
 			nodeDofs = node.DegreesOfFreedomNum()
-			elementSolutions[i].GlobalDispl[node.T] = [3]float64{
-				globalDisplacements.Solution.Value(nodeDofs[0]),
-				globalDisplacements.Solution.Value(nodeDofs[1]),
-				globalDisplacements.Solution.Value(nodeDofs[2]),
-			}
-			elementSolutions[i].Points[node.T] = node.Position
+
+			// global displacements
+			elementSolution.GlobalXDispl[j] = PointSolutionValue{node.T, globalDisplacements.Solution.Value(nodeDofs[0])}
+			elementSolution.GlobalYDispl[j] = PointSolutionValue{node.T, globalDisplacements.Solution.Value(nodeDofs[1])}
+			elementSolution.GlobalZRot[j] = PointSolutionValue{node.T, globalDisplacements.Solution.Value(nodeDofs[2])}
+
+			// local displacements
+			globalDisplacementsProj = element.Geometry().RefFrame().ProjectProjections(elementSolution.GlobalXDispl[j].Value, elementSolution.GlobalYDispl[j].Value)
+			elementSolution.LocalXDispl[j] = PointSolutionValue{node.T, globalDisplacementsProj.X}
+			elementSolution.LocalYDispl[j] = PointSolutionValue{node.T, globalDisplacementsProj.X}
+			elementSolution.LocalZRot[j] = PointSolutionValue{node.T, elementSolution.GlobalZRot[j].Value}
 		}
+
+		wg.Add(1)
+		elementSolutions[i] = elementSolution
+		go computeStresses(&elementSolutions[i], &wg)
 	}
 
 	return &Solution{Metadata: &s.Metadata, Elements: elementSolutions}
 }
 
+/* ::::::::::::::: Solve Displacements ::::::::::::::: */
 func makeSystemOfEqs(s *preprocess.Structure) (mat.Matrixable, *vec.Vector) {
 	c := make(chan preprocess.Element)
 
@@ -154,5 +171,19 @@ func addTermsToLoadVector(v *vec.Vector, e *preprocess.Element) {
 		v.SetValue(dofs[0], globalForces.X)
 		v.SetValue(dofs[1], globalForces.Y)
 		v.SetValue(dofs[2], localActions[2])
+	}
+}
+
+/* ::::::::::::::: Compute Stresses ::::::::::::::: */
+func computeStresses(es *ElementSolution, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	var trailNode, leadNode preprocess.Node
+	for i := 1; i < len(es.Element.Nodes); i++ {
+		trailNode, leadNode = es.Element.Nodes[i-1], es.Element.Nodes[i]
+
+		es.AxialStress[i] = PointSolutionValue{trailNode.T, 0.0}
+		es.ShearStress[i] = PointSolutionValue{leadNode.T, 0.0}
+		es.BendingMoment[i] = PointSolutionValue{leadNode.T, 0.0}
 	}
 }
