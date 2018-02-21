@@ -15,7 +15,7 @@ type PointSolutionValue struct {
 }
 
 func (psv PointSolutionValue) String() string {
-	return fmt.Sprintf("T = %f : %f", psv.T.Value(), psv.Value)
+	return fmt.Sprintf("T = %f : {%f} ", psv.T.Value(), psv.Value)
 }
 
 /*
@@ -35,8 +35,6 @@ type ElementSolution struct {
 	LocalYDispl []PointSolutionValue
 	LocalZRot   []PointSolutionValue
 
-	// Points map[inkgeom.TParam]inkgeom.Projectable
-
 	AxialStress   []PointSolutionValue
 	ShearStress   []PointSolutionValue
 	BendingMoment []PointSolutionValue
@@ -49,17 +47,16 @@ func MakeElementSolution(element preprocess.Element) ElementSolution {
 	nOfNodes := len(element.Nodes)
 
 	return ElementSolution{
-		Element:      &element,
-		GlobalXDispl: make([]PointSolutionValue, nOfNodes),
-		GlobalYDispl: make([]PointSolutionValue, nOfNodes),
-		GlobalZRot:   make([]PointSolutionValue, nOfNodes),
-		LocalXDispl:  make([]PointSolutionValue, nOfNodes),
-		LocalYDispl:  make([]PointSolutionValue, nOfNodes),
-		LocalZRot:    make([]PointSolutionValue, nOfNodes),
-		// Points:        make([]PointSolutionValue, nOfNodes),
-		AxialStress:   make([]PointSolutionValue, nOfNodes),
-		ShearStress:   make([]PointSolutionValue, nOfNodes),
-		BendingMoment: make([]PointSolutionValue, 2*nOfNodes-1),
+		Element:       &element,
+		GlobalXDispl:  make([]PointSolutionValue, nOfNodes),
+		GlobalYDispl:  make([]PointSolutionValue, nOfNodes),
+		GlobalZRot:    make([]PointSolutionValue, nOfNodes),
+		LocalXDispl:   make([]PointSolutionValue, nOfNodes),
+		LocalYDispl:   make([]PointSolutionValue, nOfNodes),
+		LocalZRot:     make([]PointSolutionValue, nOfNodes),
+		AxialStress:   make([]PointSolutionValue, 2*nOfNodes-2),
+		ShearStress:   make([]PointSolutionValue, 2*nOfNodes-2),
+		BendingMoment: make([]PointSolutionValue, 3*nOfNodes-3),
 	}
 }
 

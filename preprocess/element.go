@@ -67,6 +67,16 @@ func (e Element) OriginalElementString() string {
 	return e.originalElement.String()
 }
 
+// Material returns the material defined in the orifinal element.
+func (e Element) Material() structure.Material {
+	return e.originalElement.Material()
+}
+
+// Section returns the material defined in the orifinal element.
+func (e Element) Section() structure.Section {
+	return e.originalElement.Section()
+}
+
 /*
 StiffnessGlobalMat generates the local stiffness matrix for the element and applies
 the rotation defined by the elements' geometry reference frame.

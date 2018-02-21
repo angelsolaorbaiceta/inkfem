@@ -61,6 +61,16 @@ func (e Element) PointAt(t inkgeom.TParam) inkgeom.Projectable {
 	return e.Geometry.PointAt(t)
 }
 
+// Material returns the material for the element.
+func (e Element) Material() Material {
+	return e.material
+}
+
+// Section returns the section for the element.
+func (e Element) Section() Section {
+	return e.section
+}
+
 /* ::::::::::::::: Methods ::::::::::::::: */
 
 /*

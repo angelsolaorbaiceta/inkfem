@@ -49,8 +49,8 @@ func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
 		globalDisplacementsProj inkgeom.Projectable
 		elementSolution         ElementSolution
 		elementSolutions        = make([]ElementSolution, len(s.Elements))
-		wg                      sync.WaitGroup
 		nodeDofs                [3]int
+		wg                      sync.WaitGroup
 	)
 
 	for i, element := range s.Elements {
@@ -76,6 +76,7 @@ func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
 		go computeStresses(&elementSolutions[i], &wg)
 	}
 
+	wg.Wait()
 	return &Solution{Metadata: &s.Metadata, Elements: elementSolutions}
 }
 
@@ -175,15 +176,56 @@ func addTermsToLoadVector(v *vec.Vector, e *preprocess.Element) {
 }
 
 /* ::::::::::::::: Compute Stresses ::::::::::::::: */
-func computeStresses(es *ElementSolution, wg *sync.WaitGroup) {
+func computeStresses(sol *ElementSolution, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	var trailNode, leadNode preprocess.Node
-	for i := 1; i < len(es.Element.Nodes); i++ {
-		trailNode, leadNode = es.Element.Nodes[i-1], es.Element.Nodes[i]
+	var (
+		trailNode, leadNode                    preprocess.Node
+		youngMod                               = sol.Element.Material().YoungMod
+		iStrong                                = sol.Element.Section().IStrong
+		nIndex, vIndex, mIndex                 = 0, 0, 0
+		incX, trailDy, leadDy, trailRz, leadRz float64
+		length                                 float64
+	)
 
-		es.AxialStress[i] = PointSolutionValue{trailNode.T, 0.0}
-		es.ShearStress[i] = PointSolutionValue{leadNode.T, 0.0}
-		es.BendingMoment[i] = PointSolutionValue{leadNode.T, 0.0}
+	for i := 1; i < len(sol.Element.Nodes); i++ {
+		trailNode, leadNode = sol.Element.Nodes[i-1], sol.Element.Nodes[i]
+		length = sol.Element.Geometry().LengthBetween(trailNode.T, leadNode.T)
+		incX = sol.GlobalXDispl[i].Value - sol.GlobalXDispl[i-1].Value
+		trailDy = sol.GlobalYDispl[i-1].Value
+		leadDy = sol.GlobalYDispl[i].Value
+		trailRz = sol.GlobalZRot[i-1].Value
+		leadRz = sol.GlobalZRot[i].Value
+
+		/* Axial */
+		n := incX * youngMod / length
+		sol.AxialStress[nIndex] = PointSolutionValue{trailNode.T, n - trailNode.LocalFx()}
+		sol.AxialStress[nIndex+1] = PointSolutionValue{leadNode.T, n + leadNode.LocalFx()}
+		nIndex += 2
+
+		/* Shear */
+		v := (6.0 * youngMod * iStrong / (length * length * length)) * ((2.0 * (trailDy - leadDy)) + (length * (leadRz - trailRz)))
+		sol.ShearStress[vIndex] = PointSolutionValue{trailNode.T, v - trailNode.LocalFy()}
+		sol.ShearStress[vIndex+1] = PointSolutionValue{leadNode.T, v + leadNode.LocalFy()}
+		vIndex += 2
+
+		/* Bending */
+		eil2 := youngMod * iStrong / (length * length)
+		sol.BendingMoment[mIndex] =
+			PointSolutionValue{
+				trailNode.T,
+				eil2*(-6.0*trailDy+2.0*length*trailRz-6.0*leadDy+4.0*length*leadRz) + trailNode.LocalMz(),
+			}
+		sol.BendingMoment[mIndex+1] =
+			PointSolutionValue{
+				inkgeom.AverageT(trailNode.T, leadNode.T),
+				(youngMod * iStrong / length) * (leadRz - trailRz),
+			}
+		sol.BendingMoment[mIndex+2] =
+			PointSolutionValue{
+				leadNode.T,
+				eil2*(-6.0*trailDy+4.0*length*trailRz+6.0*leadDy-2.0*length*leadRz) + leadNode.LocalMz(),
+			}
+		mIndex += 3
 	}
 }
