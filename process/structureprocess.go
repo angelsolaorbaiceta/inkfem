@@ -191,11 +191,11 @@ func computeStresses(sol *ElementSolution, wg *sync.WaitGroup) {
 	for i := 1; i < len(sol.Element.Nodes); i++ {
 		trailNode, leadNode = sol.Element.Nodes[i-1], sol.Element.Nodes[i]
 		length = sol.Element.Geometry().LengthBetween(trailNode.T, leadNode.T)
-		incX = sol.GlobalXDispl[i].Value - sol.GlobalXDispl[i-1].Value
-		trailDy = sol.GlobalYDispl[i-1].Value
-		leadDy = sol.GlobalYDispl[i].Value
-		trailRz = sol.GlobalZRot[i-1].Value
-		leadRz = sol.GlobalZRot[i].Value
+		incX = sol.LocalXDispl[i].Value - sol.LocalXDispl[i-1].Value
+		trailDy = sol.LocalYDispl[i-1].Value
+		leadDy = sol.LocalYDispl[i].Value
+		trailRz = sol.LocalZRot[i-1].Value
+		leadRz = sol.LocalZRot[i].Value
 
 		/* Axial */
 		n := incX * youngMod / length
