@@ -1,6 +1,7 @@
 package io
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 
@@ -16,32 +17,35 @@ func PreprocessedStructureToFile(structure preprocess.Structure, filePath string
 	}
 	defer file.Close()
 
+	writer := bufio.NewWriter(file)
+
 	// Write header
-	file.WriteString(
+	writer.WriteString(
 		fmt.Sprintf("inkfem v%d.%d\n", structure.Metadata.MajorVersion, structure.Metadata.MinorVersion))
-	file.WriteString(
+	writer.WriteString(
 		fmt.Sprintf("|sliced_structure| %d DOFs\n", structure.DofsCount))
 
-	writeNodesToFile(structure.Nodes, file)
-	writeElementsToFile(structure.Elements, file)
+	writeNodesToFile(structure.Nodes, writer)
+	writeElementsToFile(structure.Elements, writer)
+	writer.Flush()
 }
 
-func writeNodesToFile(nodes map[int]structure.Node, file *os.File) {
-	file.WriteString(fmt.Sprintf("\n|nodes| %d\n", len(nodes)))
+func writeNodesToFile(nodes map[int]structure.Node, writer *bufio.Writer) {
+	writer.WriteString(fmt.Sprintf("\n|nodes| %d\n", len(nodes)))
 	for _, val := range nodes {
-		file.WriteString(val.String() + "\n")
+		writer.WriteString(val.String() + "\n")
 	}
 }
 
-func writeElementsToFile(elements []preprocess.Element, file *os.File) {
+func writeElementsToFile(elements []preprocess.Element, writer *bufio.Writer) {
 	// utils.SortById(utils.ByID(elements))
-	file.WriteString(fmt.Sprintf("\n|elements| %d\n", len(elements)))
+	writer.WriteString(fmt.Sprintf("\n|elements| %d\n", len(elements)))
 
 	for _, element := range elements {
-		file.WriteString(
+		writer.WriteString(
 			fmt.Sprintf("%s (%d)\n", element.OriginalElementString(), len(element.Nodes)))
 		for _, node := range element.Nodes {
-			file.WriteString("\t" + node.String() + "\n")
+			writer.WriteString("\t" + node.String() + "\n")
 		}
 	}
 }
