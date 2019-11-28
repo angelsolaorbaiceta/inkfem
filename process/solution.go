@@ -15,7 +15,7 @@ type PointSolutionValue struct {
 }
 
 func (psv PointSolutionValue) String() string {
-	return fmt.Sprintf("T = %f : {%f} ", psv.T.Value(), psv.Value)
+	return fmt.Sprintf("T = %f : %f ", psv.T.Value(), psv.Value)
 }
 
 /*

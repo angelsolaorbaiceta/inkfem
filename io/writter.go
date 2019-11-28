@@ -28,66 +28,70 @@ func StructureSolutionToFile(solution *process.Solution, filePath string) {
 	writer.Flush()
 }
 
-func writeElementSolutionsToFile(elementsSolution []process.ElementSolution, writter *bufio.Writer) {
+func writeElementSolutionsToFile(elementsSolution []process.ElementSolution, writer *bufio.Writer) {
 	for _, element := range elementsSolution {
-		writter.WriteString("\n" + element.Element.OriginalElementString())
+		writer.WriteString("\n" + element.Element.OriginalElementString())
 
-		// Points
-		// file.WriteString("\n\t")
-		// for _, point := range element.Points {
-		// 	file.WriteString(fmt.Sprintf("T = %f : %s ", t.Value(), point.String()))
-		// }
+		writeGlobalDispl(&element, writer)
+		writeLocalDispl(&element, writer)
+		writeAxialStress(&element, writer)
+		writeShearStress(&element, writer)
+		writeBendingMoment(&element, writer)
+		writer.WriteString("\n")
+	}
+}
 
-		// Global Displacements
-		writter.WriteString("\n\tgDx >> ")
-		for _, disp := range element.GlobalXDispl {
-			writter.WriteString(disp.String() + " ")
-		}
+func writeGlobalDispl(element *process.ElementSolution, writter *bufio.Writer) {
+	writter.WriteString("\n\tgDx >> ")
+	for _, disp := range element.GlobalXDispl {
+		writter.WriteString(disp.String() + " ")
+	}
 
-		writter.WriteString("\n\tgDy >> ")
-		for _, disp := range element.GlobalYDispl {
-			writter.WriteString(disp.String() + " ")
-		}
+	writter.WriteString("\n\tgDy >> ")
+	for _, disp := range element.GlobalYDispl {
+		writter.WriteString(disp.String() + " ")
+	}
 
-		writter.WriteString("\n\tgRz >> ")
-		for _, rot := range element.GlobalZRot {
-			writter.WriteString(rot.String() + " ")
-		}
+	writter.WriteString("\n\tgRz >> ")
+	for _, rot := range element.GlobalZRot {
+		writter.WriteString(rot.String() + " ")
+	}
+}
 
-		// Local Displacements
-		writter.WriteString("\n\tlDx >> ")
-		for _, disp := range element.LocalXDispl {
-			writter.WriteString(disp.String() + " ")
-		}
+func writeLocalDispl(element *process.ElementSolution, writter *bufio.Writer) {
+	writter.WriteString("\n\tlDx >> ")
+	for _, disp := range element.LocalXDispl {
+		writter.WriteString(disp.String() + " ")
+	}
 
-		writter.WriteString("\n\tlDy >> ")
-		for _, disp := range element.LocalYDispl {
-			writter.WriteString(disp.String() + " ")
-		}
+	writter.WriteString("\n\tlDy >> ")
+	for _, disp := range element.LocalYDispl {
+		writter.WriteString(disp.String() + " ")
+	}
 
-		writter.WriteString("\n\tlRz >> ")
-		for _, rot := range element.LocalZRot {
-			writter.WriteString(rot.String() + " ")
-		}
+	writter.WriteString("\n\tlRz >> ")
+	for _, rot := range element.LocalZRot {
+		writter.WriteString(rot.String() + " ")
+	}
+}
 
-		// Axial Stress
-		writter.WriteString("\n\tN >> ")
-		for _, axial := range element.AxialStress {
-			writter.WriteString(axial.String() + " ")
-		}
+func writeAxialStress(element *process.ElementSolution, writter *bufio.Writer) {
+	writter.WriteString("\n\tN >> ")
+	for _, axial := range element.AxialStress {
+		writter.WriteString(axial.String() + " ")
+	}
+}
 
-		// Shear Stress
-		writter.WriteString("\n\tV >> ")
-		for _, shear := range element.ShearStress {
-			writter.WriteString(shear.String() + " ")
-		}
+func writeShearStress(element *process.ElementSolution, writter *bufio.Writer) {
+	writter.WriteString("\n\tV >> ")
+	for _, shear := range element.ShearStress {
+		writter.WriteString(shear.String() + " ")
+	}
+}
 
-		// Bending Moment
-		writter.WriteString("\n\tM >> ")
-		for _, bending := range element.BendingMoment {
-			writter.WriteString(bending.String() + " ")
-		}
-
-		writter.WriteString("\n")
+func writeBendingMoment(element *process.ElementSolution, writter *bufio.Writer) {
+	writter.WriteString("\n\tM >> ")
+	for _, bending := range element.BendingMoment {
+		writter.WriteString(bending.String() + " ")
 	}
 }
