@@ -19,25 +19,27 @@ func PreprocessedStructureToFile(structure preprocess.Structure, filePath string
 
 	writer := bufio.NewWriter(file)
 
-	// Write header
+	writeHeader(&structure, writer)
+	writeNodes(structure.Nodes, writer)
+	writeElements(structure.Elements, writer)
+	writer.Flush()
+}
+
+func writeHeader(structure *preprocess.Structure, writer *bufio.Writer) {
 	writer.WriteString(
 		fmt.Sprintf("inkfem v%d.%d\n", structure.Metadata.MajorVersion, structure.Metadata.MinorVersion))
 	writer.WriteString(
 		fmt.Sprintf("|sliced_structure| %d DOFs\n", structure.DofsCount))
-
-	writeNodesToFile(structure.Nodes, writer)
-	writeElementsToFile(structure.Elements, writer)
-	writer.Flush()
 }
 
-func writeNodesToFile(nodes map[int]structure.Node, writer *bufio.Writer) {
+func writeNodes(nodes map[int]structure.Node, writer *bufio.Writer) {
 	writer.WriteString(fmt.Sprintf("\n|nodes| %d\n", len(nodes)))
 	for _, val := range nodes {
 		writer.WriteString(val.String() + "\n")
 	}
 }
 
-func writeElementsToFile(elements []preprocess.Element, writer *bufio.Writer) {
+func writeElements(elements []preprocess.Element, writer *bufio.Writer) {
 	// utils.SortById(utils.ByID(elements))
 	writer.WriteString(fmt.Sprintf("\n|elements| %d\n", len(elements)))
 

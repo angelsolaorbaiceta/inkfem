@@ -18,16 +18,6 @@ import (
 )
 
 /*
-SolveOptions includes configuration parameters for structural solving process.
-*/
-type SolveOptions struct {
-	SaveSysMatrixImage    bool
-	OutputPath            string
-	SafeChecks            bool
-	MaxDisplacementsError float64
-}
-
-/*
 Solve assembles the system of equations for the structure and solves it using a numerical
 procedure. Using the displacements obtained from the solution of the system, the local
 stresses are computed.

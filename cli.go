@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"strings"
 
@@ -11,34 +10,23 @@ import (
 )
 
 func main() {
-	var (
-		inputFilePathFlag  = flag.String("i", "", "input file path")
-		preprocessFlag     = flag.Bool("p", false, "should dump preprocessed structure to file?")
-		sysMatrixToPngFlag = flag.Bool("m", false, "should save system of equations matrix to png image file?")
-		safeFlag           = flag.Bool("safe", false, "should perform safety checks?")
-	)
-	flag.Parse()
-
-	if len(*inputFilePathFlag) == 0 {
-		printUsage()
-		return
-	}
+	flags := process.ParseOrShowUsage()
 
 	var (
-		outPath      = strings.TrimSuffix(*inputFilePathFlag, ".inkfem")
-		structure    = io.StructureFromFile(*inputFilePathFlag)
+		outPath      = strings.TrimSuffix(*flags.InputFilePath, ".inkfem")
+		structure    = io.StructureFromFile(*flags.InputFilePath)
 		preStructure = preprocess.DoStructure(structure)
 	)
 
-	if *preprocessFlag {
+	if *flags.Preprocess {
 		filePath := outPath + "_sliced"
-		io.PreprocessedStructureToFile(preStructure, filePath)
+		go io.PreprocessedStructureToFile(preStructure, filePath)
 	}
 
 	solveOptions := process.SolveOptions{
-		SaveSysMatrixImage:    *sysMatrixToPngFlag,
+		SaveSysMatrixImage:    *flags.SysMatrixToPng,
 		OutputPath:            outPath,
-		SafeChecks:            *safeFlag,
+		SafeChecks:            *flags.SafeChecks,
 		MaxDisplacementsError: 1e-5,
 	}
 
