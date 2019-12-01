@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
@@ -32,14 +31,4 @@ func main() {
 
 	solution := process.Solve(&preStructure, solveOptions)
 	io.StructureSolutionToFile(solution, outPath+".inksol")
-}
-
-func printUsage() {
-	fmt.Println("InkFEM usage:")
-	fmt.Println("\tinkfem -i=<input_file_path> [options]")
-	fmt.Println("")
-	fmt.Println("Options:")
-	fmt.Println("\t-p: save preprocessed structure to file")
-	fmt.Println("\t-m: save system of equations matrix to png image file")
-	fmt.Println("\t-safe: do safe checks for conditions that must be satisfied during analysis")
 }
