@@ -30,5 +30,5 @@ func main() {
 	}
 
 	solution := process.Solve(&preStructure, solveOptions)
-	io.StructureSolutionToFile(solution, outPath+".inksol")
+	io.StructureSolutionToFile(solution, outPath+"_solution.json")
 }

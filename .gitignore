@@ -5,3 +5,4 @@ inkfem
 examples/*_sliced
 examples/*.png
 examples/*.inksol
+examples/*_solution.json

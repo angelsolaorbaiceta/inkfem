@@ -1,22 +1,9 @@
 package process
 
 import (
-	"fmt"
-
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom"
 )
-
-// PointSolutionValue is a tuple of T and Value.
-type PointSolutionValue struct {
-	T     inkgeom.TParam
-	Value float64
-}
-
-func (psv PointSolutionValue) String() string {
-	return fmt.Sprintf("T = %f : %f ", psv.T.Value(), psv.Value)
-}
 
 /*
 ElementSolution is the displacements and stresses for a given preprocessed element.
@@ -25,19 +12,19 @@ Displacements are stored in both local and global coordinates. Stresses are refe
 only to the local reference frame.
 */
 type ElementSolution struct {
-	Element *preprocess.Element
+	Element *preprocess.Element `json:"-"`
 
-	GlobalXDispl []PointSolutionValue
-	GlobalYDispl []PointSolutionValue
-	GlobalZRot   []PointSolutionValue
+	GlobalXDispl []PointSolutionValue `json:"g_x_disp"`
+	GlobalYDispl []PointSolutionValue `json:"g_y_disp"`
+	GlobalZRot   []PointSolutionValue `json:"g_z_rot"`
 
-	LocalXDispl []PointSolutionValue
-	LocalYDispl []PointSolutionValue
-	LocalZRot   []PointSolutionValue
+	LocalXDispl []PointSolutionValue `json:"l_x_disp"`
+	LocalYDispl []PointSolutionValue `json:"l_y_disp"`
+	LocalZRot   []PointSolutionValue `json:"l_z_rot"`
 
-	AxialStress   []PointSolutionValue
-	ShearStress   []PointSolutionValue
-	BendingMoment []PointSolutionValue
+	AxialStress   []PointSolutionValue `json:"axial"`
+	ShearStress   []PointSolutionValue `json:"shear"`
+	BendingMoment []PointSolutionValue `json:"bending"`
 }
 
 /*
@@ -64,6 +51,6 @@ func MakeElementSolution(element preprocess.Element) ElementSolution {
 Solution is the group of all element solutions with the structure metadata.
 */
 type Solution struct {
-	Metadata *structure.StrMetadata
-	Elements []ElementSolution
+	Metadata *structure.StrMetadata `json:"metadata"`
+	Elements []ElementSolution      `json:"elements"`
 }
