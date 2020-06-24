@@ -40,7 +40,6 @@ func writeNodes(nodes map[int]structure.Node, writer *bufio.Writer) {
 }
 
 func writeElements(elements []preprocess.Element, writer *bufio.Writer) {
-	// utils.SortById(utils.ByID(elements))
 	writer.WriteString(fmt.Sprintf("\n|elements| %d\n", len(elements)))
 
 	for _, element := range elements {
