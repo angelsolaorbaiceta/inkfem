@@ -12,8 +12,12 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 )
 
-// Element represents s resistant element defined between two structural nodes, a section and a material.
-// An element can have loads applied to it.
+/*
+Element represents s resistant element defined between two structural nodes,
+a section and a material.
+
+An element can have loads applied to it.
+*/
 type Element struct {
 	Id, StartNodeId, EndNodeId int
 	Geometry                   inkgeom.Segment
@@ -33,7 +37,8 @@ func MakeElement(
 	startLink, endLink *Constraint,
 	material Material,
 	section Section,
-	loads []load.Load) *Element {
+	loads []load.Load,
+) *Element {
 	return &Element{
 		id, startNode.Id, endNode.Id,
 		inkgeom.MakeSegment(startNode.Position, endNode.Position),
@@ -94,8 +99,8 @@ func (e Element) HasLoadsApplied() bool {
 }
 
 /*
-StiffnessGlobalMat generates the local stiffness matrix for the element and applies
-the rotation defined by the elements' geometry reference frame.
+StiffnessGlobalMat generates the local stiffness matrix for the element and
+applies the rotation defined by the elements' geometry reference frame.
 */
 func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMatrix {
 	var (
@@ -109,9 +114,8 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 		eil3 = 12.0 * e._ei / (l * l * l)
 		eil2 = 6.0 * e._ei / (l * l)
 		eil  = e._ei / l
+		k    = mat.MakeSquareDense(6)
 	)
-
-	k := mat.MakeSquareDense(6)
 
 	// First Row
 	k.SetValue(0, 0, (c2*eal + s2*eil3))
@@ -165,11 +169,13 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 }
 
 /* ::::::::::::::: Stringer ::::::::::::::: */
+
 func (e Element) String() string {
 	return fmt.Sprintf(
 		"%d -> %d%s %d%s %s %s",
 		e.Id,
 		e.StartNodeId, e.StartLink.String(),
 		e.EndNodeId, e.EndLink.String(),
-		e.material.Name, e.section.Name)
+		e.material.Name, e.section.Name,
+	)
 }
