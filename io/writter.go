@@ -8,7 +8,10 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/process"
 )
 
-// StructureSolutionToFile writes the solution of a structure to a file with the given path.
+/*
+StructureSolutionToFile writes the solution of a structure to a file with the
+given path.
+*/
 func StructureSolutionToFile(solution *process.Solution, filePath string) {
 	file, err := os.Create(filePath)
 	if err != nil {

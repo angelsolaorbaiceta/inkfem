@@ -2,7 +2,6 @@
 inkfem
 
 # Ignore sliced structure files & matrix images
-examples/*_sliced
+examples/*.inkfempre
+examples/*.inkfemsol
 examples/*.png
-examples/*.inksol
-examples/*_solution.json

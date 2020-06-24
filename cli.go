@@ -18,10 +18,10 @@ func main() {
 	)
 
 	if *flags.Preprocess {
-		filePath := outPath + "_sliced"
-		go io.PreprocessedStructureToFile(preStructure, filePath)
+		go io.PreprocessedStructureToFile(preStructure, outPath+".inkfempre")
 	}
 
+	// TODO: allow displacement error as flag
 	solveOptions := process.SolveOptions{
 		SaveSysMatrixImage:    *flags.SysMatrixToPng,
 		OutputPath:            outPath,
@@ -30,5 +30,5 @@ func main() {
 	}
 
 	solution := process.Solve(&preStructure, solveOptions)
-	io.StructureSolutionToFile(solution, outPath+"_solution.json")
+	io.StructureSolutionToFile(solution, outPath+".inkfemsol")
 }

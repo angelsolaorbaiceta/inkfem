@@ -107,7 +107,10 @@ func (e Element) GlobalStiffMatrixAt(i int) mat.ReadOnlyMatrix {
 
 /* ::::::::::::::: sort.Interface ::::::::::::::: */
 
-// ByGeometryPos implements sort.Interface for []Element based on the position of the original geometry.
+/*
+ByGeometryPos implements sort.Interface for []Element based on the position of
+the original geometry.
+*/
 type ByGeometryPos []Element
 
 func (a ByGeometryPos) Len() int {

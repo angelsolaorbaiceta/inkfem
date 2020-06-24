@@ -36,9 +36,8 @@ func ParseOrShowUsage() CLIFlags {
 
 func printUsage() {
 	fmt.Println("InkFEM usage:")
-	fmt.Println("\tinkfem -i=<input_file_path> [options]")
-	fmt.Println("")
-	fmt.Println("Options:")
+	fmt.Println("\n\tinkfem -i <input_file_path> [options]")
+	fmt.Println("\nOptions:")
 	fmt.Println("\t-p: save preprocessed structure to file")
 	fmt.Println("\t-m: save system of equations matrix to png image file")
 	fmt.Println("\t-safe: do safe checks for conditions that must be satisfied during analysis")
