@@ -10,7 +10,14 @@ import (
 )
 
 // <name> -> <density> <young> <shear> <poisson> <yield> <ultimate>
-var materialDefinitionRegex = regexp.MustCompile(`(?P<name>'\w+')(?:\s*->\s*)(?P<density>\d+\.*\d*)(?:\s+)(?P<young>\d+\.+\d+)(?:\s+)(?P<shear>\d+\.+\d+)(?:\s+)(?P<poisson>\d+\.+\d+)(?:\s+)(?P<yield>\d+\.+\d+)(?:\s+)(?P<ultimate>\d+\.+\d+)`)
+var materialDefinitionRegex = regexp.MustCompile(
+	`(?P<name>'\w+')(?:\s*->\s*)` +
+		`(?P<density>\d+\.*\d*)(?:\s+)` +
+		`(?P<young>\d+\.+\d+)(?:\s+)` +
+		`(?P<shear>\d+\.+\d+)(?:\s+)` +
+		`(?P<poisson>\d+\.+\d+)(?:\s+)` +
+		`(?P<yield>\d+\.+\d+)(?:\s+)` +
+		`(?P<ultimate>\d+\.+\d+)`)
 
 func readMaterials(scanner *bufio.Scanner, count int) map[string]structure.Material {
 	var (

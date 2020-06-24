@@ -11,8 +11,20 @@ import (
 )
 
 var (
-	distLoadDefinitionRegex = regexp.MustCompile(`(?P<term>[fm]{1}[xyz]{1})(?:\s+)(?P<ref>[lg]{1})(?:d{1})(?:\s+)(?P<element>\d+)(?:\s+)(?P<t_start>\d+\.*\d*)(?:\s+)(?P<val_start>-*\d+\.*\d*)(?:\s+)(?P<t_end>\d+\.*\d*)(?:\s+)(?P<val_end>-*\d+\.*\d*)`)
-	concLoadDefinitionRegex = regexp.MustCompile(`(?P<term>[fm]{1}[xyz]{1})(?:\s+)(?P<ref>[lg]{1})(?:c{1})(?:\s+)(?P<element>\d+)(?:\s+)(?P<t>\d+\.*\d*)(?:\s+)(?P<val>-*\d+\.*\d*)`)
+	distLoadDefinitionRegex = regexp.MustCompile(
+		`(?P<term>[fm]{1}[xyz]{1})(?:\s+)` +
+			`(?P<ref>[lg]{1})(?:d{1})(?:\s+)` +
+			`(?P<element>\d+)(?:\s+)` +
+			`(?P<t_start>\d+\.*\d*)(?:\s+)` +
+			`(?P<val_start>-*\d+\.*\d*)(?:\s+)` +
+			`(?P<t_end>\d+\.*\d*)(?:\s+)` +
+			`(?P<val_end>-*\d+\.*\d*)`)
+	concLoadDefinitionRegex = regexp.MustCompile(
+		`(?P<term>[fm]{1}[xyz]{1})(?:\s+)` +
+			`(?P<ref>[lg]{1})(?:c{1})(?:\s+)` +
+			`(?P<element>\d+)(?:\s+)` +
+			`(?P<t>\d+\.*\d*)(?:\s+)` +
+			`(?P<val>-*\d+\.*\d*)`)
 )
 
 func readLoads(scanner *bufio.Scanner, count int) map[int][]load.Load {

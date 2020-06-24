@@ -22,7 +22,11 @@ const (
 
 // <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section>
 var elementDefinitionRegex = regexp.MustCompile(
-	`(?P<id>\d+)(?:\s*->\s*)(?P<start_node>\d+)(?:\s*)(?P<start_link>{.*})(?:\s+)(?P<end_node>\d+)(?:\s*)(?P<end_link>{.*})(?:\s+)(?P<material>'[A-Za-z0-9_ ]+')(?:\s+)(?P<section>'[A-Za-z0-9_ ]+')`)
+	`(?P<id>\d+)(?:\s*->\s*)` +
+		`(?P<start_node>\d+)(?:\s*)(?P<start_link>{.*})(?:\s+)` +
+		`(?P<end_node>\d+)(?:\s*)(?P<end_link>{.*})(?:\s+)` +
+		`(?P<material>'[A-Za-z0-9_ ]+')(?:\s+)` +
+		`(?P<section>'[A-Za-z0-9_ ]+')`)
 
 func readElements(
 	scanner *bufio.Scanner,
@@ -50,23 +54,19 @@ func readElements(
 
 		groups := elementDefinitionRegex.FindStringSubmatch(line)
 
-		id, _ = strconv.Atoi(groups[idIndex])
-
-		startNodeID, _ = strconv.Atoi(groups[startNodeIDIndex])
+		groupName = groups[startNodeIDIndex]
+		startNodeID, _ = strconv.Atoi(groupName)
 		startNode, ok = (*nodes)[startNodeID]
 		if !ok {
 			panic(fmt.Sprintf("Element %d with unknown start node id: %d", id, startNodeID))
 		}
 
-		startLink = groups[startLinkIndex]
-
-		endNodeID, _ = strconv.Atoi(groups[endNodeIDIndex])
+		groupName = groups[endNodeIDIndex]
+		endNodeID, _ = strconv.Atoi(groupName)
 		endNode, ok = (*nodes)[endNodeID]
 		if !ok {
 			panic(fmt.Sprintf("Element %d with unknown end node id: %d", id, endNodeID))
 		}
-
-		endLink = groups[endLinkIndex]
 
 		groupName = groups[materialNameIndex]
 		material, ok = (*materials)[groupName]
@@ -79,6 +79,10 @@ func readElements(
 		if !ok {
 			panic(fmt.Sprintf("Element %d: unknown section name: %s", id, groupName))
 		}
+
+		id, _ = strconv.Atoi(groups[idIndex])
+		startLink = groups[startLinkIndex]
+		endLink = groups[endLinkIndex]
 
 		elements[i] = *structure.MakeElement(
 			id, startNode, endNode,

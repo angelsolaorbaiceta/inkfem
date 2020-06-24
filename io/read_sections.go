@@ -10,7 +10,13 @@ import (
 )
 
 // <name> -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
-var sectionDefinitionRegex = regexp.MustCompile(`(?P<name>'\w+')(?:\s*->\s*)(?P<area>\d+\.*\d*)(?:\s+)(?P<istrong>\d+\.+\d+)(?:\s+)(?P<iweak>\d+\.+\d+)(?:\s+)(?P<sstrong>\d+\.+\d+)(?:\s+)(?P<sweak>\d+\.+\d+)`)
+var sectionDefinitionRegex = regexp.MustCompile(
+	`(?P<name>'\w+')(?:\s*->\s*)` +
+		`(?P<area>\d+\.*\d*)(?:\s+)` +
+		`(?P<istrong>\d+\.+\d+)(?:\s+)` +
+		`(?P<iweak>\d+\.+\d+)(?:\s+)` +
+		`(?P<sstrong>\d+\.+\d+)(?:\s+)` +
+		`(?P<sweak>\d+\.+\d+)`)
 
 func readSections(scanner *bufio.Scanner, count int) map[string]structure.Section {
 	var (
