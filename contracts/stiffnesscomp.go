@@ -6,9 +6,10 @@ import (
 )
 
 /*
-StiffnessComputer should be implemented by anyone which can generate a
-global stiffness matrix between two positions.
+A StiffnessComputer can generate a global stiffness matrix between two positions
+of a directrix defined by the startT and endT parameter values.
 */
 type StiffnessComputer interface {
-	StiffnessGlobalMat(startT, entT inkgeom.TParam) mat.Matrixable
+	// TODO: should return pointer
+	StiffnessGlobalMat(startT, entT inkgeom.TParam) mat.ReadOnlyMatrix
 }

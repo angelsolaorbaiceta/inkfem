@@ -74,9 +74,9 @@ func (e Element) Section() Section {
 /* ::::::::::::::: Methods ::::::::::::::: */
 
 /*
-IsAxialMember returns true if this element is pinned in both ends and, in case of having loads
-applied, they are always in the end positions of the directrix and do not include moments about Z,
-but just forces in X and Y directions.
+IsAxialMember returns true if this element is pinned in both ends and, in case
+of having loads applied, they are always in the end positions of the directrix
+and do not include moments about Z, but just forces in X and Y directions.
 */
 func (e Element) IsAxialMember() bool {
 	for _, ld := range e.Loads {
@@ -97,7 +97,7 @@ func (e Element) HasLoadsApplied() bool {
 StiffnessGlobalMat generates the local stiffness matrix for the element and applies
 the rotation defined by the elements' geometry reference frame.
 */
-func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.Matrixable {
+func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMatrix {
 	var (
 		l    = e.Geometry.LengthBetween(startT, endT)
 		c    = e.Geometry.RefFrame().Cos()

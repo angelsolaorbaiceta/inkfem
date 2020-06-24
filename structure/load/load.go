@@ -5,7 +5,7 @@ package load
 
 import (
 	"github.com/angelsolaorbaiceta/inkgeom"
-	"github.com/angelsolaorbaiceta/inkmath"
+	"github.com/angelsolaorbaiceta/inkmath/nums"
 )
 
 /*
@@ -122,12 +122,12 @@ func (load Load) ValueAt(t inkgeom.TParam) float64 {
 		return 0.0
 	}
 
-	return inkmath.LinInterpol(load.startT.Value(), load.startValue, load.endT.Value(), load.endValue, t.Value())
+	return nums.LinInterpol(load.startT.Value(), load.startValue, load.endT.Value(), load.endValue, t.Value())
 }
 
 // AvgValueBetween returns the average load value inside the given range for the distributed load.
 func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
-	ok, maxStartT, minEndT := inkmath.RangesOverlap(load.startT.Value(), load.endT.Value(), startT.Value(), endT.Value())
+	ok, maxStartT, minEndT := nums.RangesOverlap(load.startT.Value(), load.endT.Value(), startT.Value(), endT.Value())
 	if !ok {
 		return 0.0
 	}
@@ -138,7 +138,7 @@ func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
 	rangeLength := startT.DistanceTo(endT)
 
 	// one of both ends has a zero value load -> No need to average values
-	if inkmath.IsCloseToZero(startVal * endVal) {
+	if nums.IsCloseToZero(startVal * endVal) {
 		return (startVal + endVal) * applicationLength / rangeLength
 	}
 

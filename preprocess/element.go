@@ -17,7 +17,7 @@ import (
 type Element struct {
 	originalElement *structure.Element
 	Nodes           []Node
-	globalStiffMat  []mat.Matrixable
+	globalStiffMat  []mat.ReadOnlyMatrix
 }
 
 /* ::::::::::::::: Construction ::::::::::::::: */
@@ -27,7 +27,8 @@ MakeElement creates a new element given the original element and the nodes
 of the sliced result.
 */
 func MakeElement(originalElement *structure.Element, nodes []Node) Element {
-	return Element{originalElement, nodes, make([]mat.Matrixable, len(nodes)-1)}
+	matrices := make([]mat.ReadOnlyMatrix, len(nodes)-1)
+	return Element{originalElement, nodes, matrices}
 }
 
 /* ::::::::::::::: Properties ::::::::::::::: */
@@ -81,7 +82,7 @@ func (e Element) Section() structure.Section {
 StiffnessGlobalMat generates the local stiffness matrix for the element and applies
 the rotation defined by the elements' geometry reference frame.
 */
-func (e Element) StiffnessGlobalMat(startT, entT inkgeom.TParam) mat.Matrixable {
+func (e Element) StiffnessGlobalMat(startT, entT inkgeom.TParam) mat.ReadOnlyMatrix {
 	return e.originalElement.StiffnessGlobalMat(startT, entT)
 }
 
@@ -107,7 +108,7 @@ func (e Element) ComputeStiffnessMatrices(c chan<- Element) {
 GlobalStiffMatrixAt returns the global stiffness matrix at position i, that is,
 between nodes i and i + 1.
 */
-func (e Element) GlobalStiffMatrixAt(i int) mat.Matrixable {
+func (e Element) GlobalStiffMatrixAt(i int) mat.ReadOnlyMatrix {
 	return e.globalStiffMat[i]
 }
 

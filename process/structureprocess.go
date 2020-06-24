@@ -11,9 +11,9 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
-	"github.com/angelsolaorbaiceta/inkmath"
 	"github.com/angelsolaorbaiceta/inkmath/lineq"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
+	"github.com/angelsolaorbaiceta/inkmath/nums"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
@@ -29,7 +29,10 @@ func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
 		go mat.ToImage(sysMatrix, options.OutputPath)
 	}
 
-	solver := lineq.PreconditionedConjugateGradientSolver{MaxError: options.MaxDisplacementsError, MaxIter: sysVector.Length()}
+	solver := lineq.PreconditionedConjugateGradientSolver{
+		MaxError: options.MaxDisplacementsError,
+		MaxIter:  sysVector.Length(),
+	}
 	if options.SafeChecks && !solver.CanSolve(sysMatrix, sysVector) {
 		panic("Solver cannot solve system!")
 	}
@@ -71,7 +74,7 @@ func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
 }
 
 /* ::::::::::::::: Solve Displacements ::::::::::::::: */
-func makeSystemOfEqs(s *preprocess.Structure) (mat.Matrixable, *vec.Vector) {
+func makeSystemOfEqs(s *preprocess.Structure) (mat.ReadOnlyMatrix, *vec.Vector) {
 	c := make(chan preprocess.Element)
 
 	for _, element := range s.Elements {
@@ -89,9 +92,10 @@ func makeSystemOfEqs(s *preprocess.Structure) (mat.Matrixable, *vec.Vector) {
 	return sysMatrix, sysVector
 }
 
-func addTermsToStiffnessMatrix(m mat.Matrixable, e *preprocess.Element) {
+// TODO: m should be pointer
+func addTermsToStiffnessMatrix(m mat.MutableMatrix, e *preprocess.Element) {
 	var (
-		stiffMat                    mat.Matrixable
+		stiffMat                    mat.ReadOnlyMatrix
 		trailNodeDofs, leadNodeDofs [3]int
 		dofs                        [6]int
 		stiffVal                    float64
@@ -108,7 +112,7 @@ func addTermsToStiffnessMatrix(m mat.Matrixable, e *preprocess.Element) {
 
 		for i := 0; i < stiffMat.Rows(); i++ {
 			for j := 0; j < stiffMat.Cols(); j++ {
-				if stiffVal = stiffMat.Value(i, j); !inkmath.IsCloseToZero(stiffVal) {
+				if stiffVal = stiffMat.Value(i, j); !nums.IsCloseToZero(stiffVal) {
 					m.AddToValue(dofs[i], dofs[j], stiffVal)
 				}
 			}
@@ -116,7 +120,11 @@ func addTermsToStiffnessMatrix(m mat.Matrixable, e *preprocess.Element) {
 	}
 }
 
-func addDispConstraints(m mat.Matrixable, v *vec.Vector, nodes map[int]structure.Node) {
+func addDispConstraints(
+	m mat.MutableMatrix,
+	v *vec.Vector,
+	nodes map[int]structure.Node,
+) {
 	var (
 		constraint *structure.Constraint
 		dofs       [3]int
