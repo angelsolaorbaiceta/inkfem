@@ -2,8 +2,9 @@ package io
 
 import (
 	"bufio"
-	"encoding/json"
+	"fmt"
 	"os"
+	"text/template"
 
 	"github.com/angelsolaorbaiceta/inkfem/process"
 )
@@ -19,12 +20,15 @@ func StructureSolutionToFile(solution *process.Solution, filePath string) {
 	}
 	defer file.Close()
 
-	solutionJSON, err := json.Marshal(solution)
-	if err != nil {
-		panic("Could not convert the structure solution to JSON")
+	var (
+		tmpl   = template.Must(template.ParseFiles("io/solution.template.txt"))
+		writer = bufio.NewWriter(file)
+	)
+
+	for _, bar := range solution.Elements {
+		fmt.Printf("-> bar solution %s\n", bar.OriginalElementString())
 	}
 
-	writer := bufio.NewWriter(file)
-	writer.Write(solutionJSON)
+	tmpl.Execute(writer, solution)
 	writer.Flush()
 }
