@@ -1,7 +1,33 @@
 inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 
 |elements| {{.ElementCount}}
-
 {{range .Elements}}
 {{.OriginalElementString}}
+
+__gxd__{{range .GlobalXDispl}}
+{{.String}}{{end}}
+
+__gyd__{{range .GlobalYDispl}}
+{{.String}}{{end}}
+
+__grz__{{range .GlobalZRot}}
+{{.String}}{{end}}
+
+__lxd__{{range .LocalXDispl}}
+{{.String}}{{end}}
+
+__lyd__{{range .LocalYDispl}}
+{{.String}}{{end}}
+
+__lrz__{{range .LocalZRot}}
+{{.String}}{{end}}
+
+__axial__{{range .AxialStress}}
+{{.String}}{{end}}
+
+__shear__{{range .ShearStress}}
+{{.String}}{{end}}
+
+__bend__{{range .BendingMoment}}
+{{.String}}{{end}}
 {{end}}

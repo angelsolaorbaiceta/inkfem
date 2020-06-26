@@ -8,10 +8,10 @@ import (
 
 // PointSolutionValue is a tuple of T and Value.
 type PointSolutionValue struct {
-	T     inkgeom.TParam `json:"t"`
-	Value float64        `json:"val"`
+	T     inkgeom.TParam
+	Value float64
 }
 
 func (psv PointSolutionValue) String() string {
-	return fmt.Sprintf("T = %f : %f ", psv.T.Value(), psv.Value)
+	return fmt.Sprintf("%f : %f ", psv.T.Value(), psv.Value)
 }
