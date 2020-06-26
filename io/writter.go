@@ -25,8 +25,9 @@ func StructureSolutionToFile(solution *process.Solution, filePath string) {
 		writer = bufio.NewWriter(file)
 	)
 
+	fmt.Printf("[solution.Elements] -> %v\n", solution.Elements)
 	for _, bar := range solution.Elements {
-		fmt.Printf("-> bar solution %s\n", bar.OriginalElementString())
+		fmt.Printf("-> bar solution %p %s\n", bar, bar.OriginalElementString())
 	}
 
 	tmpl.Execute(writer, solution)

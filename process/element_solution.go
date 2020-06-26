@@ -1,9 +1,9 @@
 package process
 
 import (
-	"fmt"
-
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
+	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
 /*
@@ -38,8 +38,6 @@ MakeElementSolution creates an empty solution for the given element.
 func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 	nOfNodes := len(element.Nodes)
 
-	fmt.Printf("-> make element %s\n", element.OriginalElementString())
-
 	return &ElementSolution{
 		Element:       element,
 		GlobalXDispl:  make([]PointSolutionValue, nOfNodes),
@@ -51,5 +49,121 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 		AxialStress:   make([]PointSolutionValue, 2*nOfNodes-2),
 		ShearStress:   make([]PointSolutionValue, 2*nOfNodes-2),
 		BendingMoment: make([]PointSolutionValue, 3*nOfNodes-3),
+	}
+}
+
+/*
+SetDisplacements sets the gloal and local displacements given the structure's
+system of equations solution vector (the global node displacements).
+*/
+func (es *ElementSolution) SetDisplacements(globalDisp *vec.Vector) {
+	var (
+		nodeDofs               [3]int
+		localDisplacementsProj inkgeom.Projectable
+		elementFrame           inkgeom.RefFrame
+	)
+
+	for j, node := range es.Element.Nodes {
+		nodeDofs = node.DegreesOfFreedomNum()
+
+		// global displacements
+		es.GlobalXDispl[j] = PointSolutionValue{
+			node.T,
+			globalDisp.Value(nodeDofs[0]),
+		}
+		es.GlobalYDispl[j] = PointSolutionValue{
+			node.T,
+			globalDisp.Value(nodeDofs[1]),
+		}
+		es.GlobalZRot[j] = PointSolutionValue{
+			node.T,
+			globalDisp.Value(nodeDofs[2]),
+		}
+
+		// local displacements
+		elementFrame = es.Element.Geometry().RefFrame()
+		localDisplacementsProj = elementFrame.ProjectProjections(
+			es.GlobalXDispl[j].Value,
+			es.GlobalYDispl[j].Value,
+		)
+		es.LocalXDispl[j] = PointSolutionValue{
+			node.T,
+			localDisplacementsProj.X,
+		}
+		es.LocalYDispl[j] = PointSolutionValue{
+			node.T,
+			localDisplacementsProj.X,
+		}
+		es.LocalZRot[j] = PointSolutionValue{
+			node.T,
+			es.GlobalZRot[j].Value,
+		}
+	}
+}
+
+/*
+ComputeStresses use the displacements to compute the stress in each of the
+slices of the preprocessed structure.
+
+This method should be called after SetDisplacements, as it depends on the
+displacements.
+*/
+func (es *ElementSolution) ComputeStresses() {
+	var (
+		trailNode, leadNode                    preprocess.Node
+		youngMod                               = es.Element.Material().YoungMod
+		iStrong                                = es.Element.Section().IStrong
+		nIndex, vIndex, mIndex                 = 0, 0, 0
+		incX, trailDy, leadDy, trailRz, leadRz float64
+		length, length2, length3               float64
+	)
+
+	for i := 1; i < len(es.Element.Nodes); i++ {
+		trailNode, leadNode = es.Element.Nodes[i-1], es.Element.Nodes[i]
+		length = es.Element.Geometry().LengthBetween(trailNode.T, leadNode.T)
+		length2 = length * length
+		length3 = length2 * length
+		incX = es.LocalXDispl[i].Value - es.LocalXDispl[i-1].Value
+		trailDy = es.LocalYDispl[i-1].Value
+		leadDy = es.LocalYDispl[i].Value
+		trailRz = es.LocalZRot[i-1].Value
+		leadRz = es.LocalZRot[i].Value
+
+		/* Axial */
+		n := incX * youngMod / length
+		es.AxialStress[nIndex] = PointSolutionValue{
+			trailNode.T,
+			n - trailNode.LocalFx(),
+		}
+		es.AxialStress[nIndex+1] = PointSolutionValue{
+			leadNode.T,
+			n + leadNode.LocalFx(),
+		}
+		nIndex += 2
+
+		/* Shear */
+		v := (6.0 * youngMod * iStrong / length3) * ((2.0 * (trailDy - leadDy)) + (length * (leadRz - trailRz)))
+		es.ShearStress[vIndex] = PointSolutionValue{trailNode.T, v - trailNode.LocalFy()}
+		es.ShearStress[vIndex+1] = PointSolutionValue{leadNode.T, v + leadNode.LocalFy()}
+		vIndex += 2
+
+		/* Bending */
+		eil2 := youngMod * iStrong / length2
+		es.BendingMoment[mIndex] =
+			PointSolutionValue{
+				trailNode.T,
+				eil2*(-6.0*trailDy+2.0*length*trailRz-6.0*leadDy+4.0*length*leadRz) + trailNode.LocalMz(),
+			}
+		es.BendingMoment[mIndex+1] =
+			PointSolutionValue{
+				inkgeom.AverageT(trailNode.T, leadNode.T),
+				(youngMod * iStrong / length) * (leadRz - trailRz),
+			}
+		es.BendingMoment[mIndex+2] =
+			PointSolutionValue{
+				leadNode.T,
+				eil2*(-6.0*trailDy+4.0*length*trailRz+6.0*leadDy-2.0*length*leadRz) + leadNode.LocalMz(),
+			}
+		mIndex += 3
 	}
 }

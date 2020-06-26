@@ -56,7 +56,8 @@ func (e Element) EndLink() *structure.Constraint {
 	return e.originalElement.EndLink
 }
 
-// OriginalElementString returns the string representation of the original structural element.
+// OriginalElementString returns the string representation of the original
+// structural element.
 func (e Element) OriginalElementString() string {
 	return e.originalElement.String()
 }
