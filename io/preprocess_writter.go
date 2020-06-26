@@ -2,7 +2,6 @@ package io
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"text/template"
 
@@ -24,16 +23,4 @@ func PreprocessedStructureToFile(structure *preprocess.Structure, filePath strin
 
 	tmpl.Execute(writer, structure)
 	writer.Flush()
-}
-
-func writeElements(elements []preprocess.Element, writer *bufio.Writer) {
-	writer.WriteString(fmt.Sprintf("\n|elements| %d\n", len(elements)))
-
-	for _, element := range elements {
-		writer.WriteString(
-			fmt.Sprintf("%s (%d)\n", element.OriginalElementString(), len(element.Nodes)))
-		for _, node := range element.Nodes {
-			writer.WriteString("\t" + node.String() + "\n")
-		}
-	}
 }
