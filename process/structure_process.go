@@ -1,8 +1,6 @@
 package process
 
 import (
-	"fmt"
-
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 )
 
@@ -23,14 +21,9 @@ func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
 
 	for i, element := range s.Elements {
 		elementSolution = MakeElementSolution(&element)
-		elementSolution.SetDisplacements(globalDisplacements)
-		elementSolution.ComputeStresses()
-
-		fmt.Printf("[elementSolution] -> %p, %s\n", elementSolution, elementSolution.OriginalElementString())
-
+		elementSolution.SolveUsingDisplacements(globalDisplacements)
 		elementSolutions[i] = elementSolution
 	}
-	fmt.Printf("[list] -> %v\n", elementSolutions)
 
 	return &Solution{Metadata: &s.Metadata, Elements: elementSolutions}
 }

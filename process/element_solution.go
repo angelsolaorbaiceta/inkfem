@@ -53,10 +53,21 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 }
 
 /*
-SetDisplacements sets the gloal and local displacements given the structure's
+SolveUsingDisplacements sets the element's global and local displacements
+given the structure's system of equations solution vector (the global node
+displacements) and computes the stresses in each of the slices of the
+preprocessed element.
+*/
+func (es *ElementSolution) SolveUsingDisplacements(globalDisp *vec.Vector) {
+	es.setDisplacements(globalDisp)
+	es.computeStresses()
+}
+
+/*
+setDisplacements sets the gloal and local displacements given the structure's
 system of equations solution vector (the global node displacements).
 */
-func (es *ElementSolution) SetDisplacements(globalDisp *vec.Vector) {
+func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
 	var (
 		nodeDofs               [3]int
 		localDisplacementsProj inkgeom.Projectable
@@ -102,13 +113,13 @@ func (es *ElementSolution) SetDisplacements(globalDisp *vec.Vector) {
 }
 
 /*
-ComputeStresses use the displacements to compute the stress in each of the
+computeStresses use the displacements to compute the stress in each of the
 slices of the preprocessed structure.
 
 This method should be called after SetDisplacements, as it depends on the
 displacements.
 */
-func (es *ElementSolution) ComputeStresses() {
+func (es *ElementSolution) computeStresses() {
 	var (
 		trailNode, leadNode                    preprocess.Node
 		youngMod                               = es.Element.Material().YoungMod
