@@ -7,7 +7,6 @@ import (
 	"text/template"
 
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
 // PreprocessedStructureToFile Writes the given preprocessed structure to a file.
@@ -25,27 +24,6 @@ func PreprocessedStructureToFile(structure *preprocess.Structure, filePath strin
 
 	tmpl.Execute(writer, structure)
 	writer.Flush()
-
-	// writer := bufio.NewWriter(file)
-
-	// writeHeader(&structure, writer)
-	// writeNodes(structure.Nodes, writer)
-	// writeElements(structure.Elements, writer)
-	// writer.Flush()
-}
-
-func writeHeader(structure *preprocess.Structure, writer *bufio.Writer) {
-	writer.WriteString(
-		fmt.Sprintf("inkfem v%d.%d\n", structure.Metadata.MajorVersion, structure.Metadata.MinorVersion))
-	writer.WriteString(
-		fmt.Sprintf("|sliced_structure| %d DOFs\n", structure.DofsCount))
-}
-
-func writeNodes(nodes map[int]structure.Node, writer *bufio.Writer) {
-	writer.WriteString(fmt.Sprintf("\n|nodes| %d\n", len(nodes)))
-	for _, val := range nodes {
-		writer.WriteString(val.String() + "\n")
-	}
 }
 
 func writeElements(elements []preprocess.Element, writer *bufio.Writer) {
