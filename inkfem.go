@@ -18,7 +18,7 @@ func main() {
 	)
 
 	if *flags.Preprocess {
-		go io.PreprocessedStructureToFile(preStructure, outPath+".inkfempre")
+		go io.PreprocessedStructureToFile(&preStructure, outPath+".inkfempre")
 	}
 
 	// TODO: allow displacement error as flag

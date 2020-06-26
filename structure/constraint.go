@@ -78,7 +78,7 @@ func (c Constraint) AllowsDispY() bool {
 /* ::::::::::::::: Stringer ::::::::::::::: */
 func (c Constraint) String() string {
 	var buffer bytes.Buffer
-	buffer.WriteString("{")
+	buffer.WriteString("{ ")
 
 	if c.isDxConstr {
 		buffer.WriteString("dx ")

@@ -1,0 +1,11 @@
+inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
+
+--->
+dof_count: {{.DofsCount}}
+<---
+
+|nodes| {{.NodesCount}}
+{{range .Nodes}}
+{{.String}}{{end}}
+
+|elements| {{.ElementsCount}}

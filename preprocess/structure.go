@@ -14,3 +14,13 @@ type Structure struct {
 	Elements  []Element
 	DofsCount int
 }
+
+// NodesCount returns the number of nodes in the original structure.
+func (s *Structure) NodesCount() int {
+	return len(s.Nodes)
+}
+
+// ElementsCount returns the number of elements in the original structure.
+func (s *Structure) ElementsCount() int {
+	return len(s.Elements)
+}

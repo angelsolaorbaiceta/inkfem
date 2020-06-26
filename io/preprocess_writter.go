@@ -4,25 +4,34 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"text/template"
 
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
 // PreprocessedStructureToFile Writes the given preprocessed structure to a file.
-func PreprocessedStructureToFile(structure preprocess.Structure, filePath string) {
+func PreprocessedStructureToFile(structure *preprocess.Structure, filePath string) {
 	file, err := os.Create(filePath)
 	if err != nil {
 		panic("Could not create file for preprocessed structure")
 	}
 	defer file.Close()
 
-	writer := bufio.NewWriter(file)
+	var (
+		tmpl   = template.Must(template.ParseFiles("io/preprocess.template.txt"))
+		writer = bufio.NewWriter(file)
+	)
 
-	writeHeader(&structure, writer)
-	writeNodes(structure.Nodes, writer)
-	writeElements(structure.Elements, writer)
+	tmpl.Execute(writer, structure)
 	writer.Flush()
+
+	// writer := bufio.NewWriter(file)
+
+	// writeHeader(&structure, writer)
+	// writeNodes(structure.Nodes, writer)
+	// writeElements(structure.Elements, writer)
+	// writer.Flush()
 }
 
 func writeHeader(structure *preprocess.Structure, writer *bufio.Writer) {
