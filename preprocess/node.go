@@ -88,8 +88,11 @@ func (n *Node) AddLoad(localComponents [3]float64) {
 func (n Node) String() string {
 	loads := fmt.Sprintf("{%f %f %f}", n.LocalFx(), n.LocalFy(), n.LocalMz())
 	return fmt.Sprintf(
-		"%f: {%f, %f} | %s | DOF: %v",
-		n.T.Value(), n.Position.X, n.Position.Y,
-		loads, n.DegreesOfFreedomNum(),
+		"%f: %f %f | %s | DOF: %v",
+		n.T.Value(),
+		n.Position.X,
+		n.Position.Y,
+		loads,
+		n.DegreesOfFreedomNum(),
 	)
 }

@@ -9,3 +9,7 @@ dof_count: {{.DofsCount}}
 {{.String}}{{end}}
 
 |elements| {{.ElementsCount}}
+{{range .Elements}}
+{{.OriginalElementString}} >> {{.NodesCount}} {{range .Nodes}}
+{{.String}}{{end}}
+{{end}}

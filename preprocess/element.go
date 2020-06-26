@@ -31,6 +31,11 @@ func (e Element) ID() int {
 	return e.originalElement.Id
 }
 
+// NodesCount returns the number of nodes in the sliced element.
+func (e *Element) NodesCount() int {
+	return len(e.Nodes)
+}
+
 // Geometry returns a pointer to the geometry of the original structural element.
 func (e Element) Geometry() *inkgeom.Segment {
 	return &e.originalElement.Geometry
