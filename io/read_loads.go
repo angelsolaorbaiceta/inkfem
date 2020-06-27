@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	// <term> <reference-type> <elementId> <tStart> <valueStart> <tEnd> <valueEnd>
 	distLoadDefinitionRegex = regexp.MustCompile(
 		`(?P<term>[fm]{1}[xyz]{1})(?:\s+)` +
 			`(?P<ref>[lg]{1})(?:d{1})(?:\s+)` +
@@ -19,6 +20,8 @@ var (
 			`(?P<val_start>-*\d+\.*\d*)(?:\s+)` +
 			`(?P<t_end>\d+\.*\d*)(?:\s+)` +
 			`(?P<val_end>-*\d+\.*\d*)`)
+
+	// <term> <reference> <elementId> <t> <value>
 	concLoadDefinitionRegex = regexp.MustCompile(
 		`(?P<term>[fm]{1}[xyz]{1})(?:\s+)` +
 			`(?P<ref>[lg]{1})(?:c{1})(?:\s+)` +
@@ -70,7 +73,15 @@ func distributedLoadFromString(line string) (int, load.Load) {
 	tEnd, _ := strconv.ParseFloat(groups[6], 64)
 	valEnd, _ := strconv.ParseFloat(groups[7], 64)
 
-	return elementNumber, load.MakeDistributed(term, isInLocalCoords, inkgeom.MakeTParam(tStart), valStart, inkgeom.MakeTParam(tEnd), valEnd)
+	return elementNumber,
+		load.MakeDistributed(
+			term,
+			isInLocalCoords,
+			inkgeom.MakeTParam(tStart),
+			valStart,
+			inkgeom.MakeTParam(tEnd),
+			valEnd,
+		)
 }
 
 func concentratedLoadFromString(line string) (int, load.Load) {
