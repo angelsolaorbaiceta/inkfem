@@ -22,3 +22,12 @@ $ inkfem -i path/to/structure.inkfem -p
 ```
 
 This will generate an additional file with the `.inkfempre` extension containing the information about how the structure has been sliced into finite elements.
+
+## Code Structure
+
+The code is split into four main packages:
+
+- _structure_: defines the structure model
+- _preprocess_: implements the preprocessing or slicing of the structure
+- _process_: implements the processing of a sliced/preprocessed structure
+- _io_: reading from `.inkfem` files and writing to `.inkfempre`and `.inkfemsol` files
