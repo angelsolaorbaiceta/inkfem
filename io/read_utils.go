@@ -45,7 +45,7 @@ func definitionLines(scanner *bufio.Scanner, count int) []string {
 	return lines
 }
 
-func constraintFromString(str string) *structure.Constraint {
+func constraintFromString(str string) structure.Constraint {
 	var (
 		dxConst = strings.Contains(str, dispX)
 		dyConst = strings.Contains(str, dispY)

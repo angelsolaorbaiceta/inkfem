@@ -81,10 +81,10 @@ func addTermsToStiffnessMatrix(m mat.MutableMatrix, e *preprocess.Element) {
 func addDispConstraints(
 	m mat.MutableMatrix,
 	v *vec.Vector,
-	nodes map[int]structure.Node,
+	nodes map[int]*structure.Node,
 ) {
 	var (
-		constraint *structure.Constraint
+		constraint structure.Constraint
 		dofs       [3]int
 	)
 

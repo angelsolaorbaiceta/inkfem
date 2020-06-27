@@ -10,17 +10,21 @@ The elements of a preprocessed structure are already sliced.
 */
 type Structure struct {
 	Metadata  structure.StrMetadata
-	Nodes     map[int]structure.Node
-	Elements  []Element
+	Nodes     map[int]*structure.Node
+	Elements  []*Element
 	DofsCount int
 }
 
-// NodesCount returns the number of nodes in the original structure.
+/*
+NodesCount returns the number of nodes in the original structure.
+*/
 func (s *Structure) NodesCount() int {
 	return len(s.Nodes)
 }
 
-// ElementsCount returns the number of elements in the original structure.
+/*
+ElementsCount returns the number of elements in the original structure.
+*/
 func (s *Structure) ElementsCount() int {
 	return len(s.Elements)
 }

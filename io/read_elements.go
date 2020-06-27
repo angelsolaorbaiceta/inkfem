@@ -31,19 +31,19 @@ var elementDefinitionRegex = regexp.MustCompile(
 func readElements(
 	scanner *bufio.Scanner,
 	count int,
-	nodes *map[int]structure.Node,
-	materials *map[string]structure.Material,
-	sections *map[string]structure.Section,
+	nodes *map[int]*structure.Node,
+	materials *map[string]*structure.Material,
+	sections *map[string]*structure.Section,
 	loads *map[int][]load.Load,
-) []structure.Element {
+) *[]*structure.Element {
 	var (
 		id, startNodeID, endNodeID int
-		startNode, endNode         structure.Node
+		startNode, endNode         *structure.Node
 		startLink, endLink         string
-		material                   structure.Material
-		section                    structure.Section
+		material                   *structure.Material
+		section                    *structure.Section
 		ok                         bool
-		elements                   = make([]structure.Element, count)
+		elements                   = make([]*structure.Element, count)
 		groupName                  string
 	)
 
@@ -84,7 +84,7 @@ func readElements(
 		startLink = groups[startLinkIndex]
 		endLink = groups[endLinkIndex]
 
-		elements[i] = *structure.MakeElement(
+		elements[i] = structure.MakeElement(
 			id, startNode, endNode,
 			constraintFromString(startLink),
 			constraintFromString(endLink),
@@ -93,5 +93,5 @@ func readElements(
 			(*loads)[id])
 	}
 
-	return elements
+	return &elements
 }

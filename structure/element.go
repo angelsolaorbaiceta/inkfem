@@ -1,7 +1,3 @@
-/*
-Package structure defines the structure model used for the
-Finite Element Method analysis.
-*/
 package structure
 
 import (
@@ -13,30 +9,32 @@ import (
 )
 
 /*
-Element represents s resistant element defined between two structural nodes,
+An Element represents s resistant element defined between two structural nodes,
 a section and a material.
 
-An element can have loads applied to it.
+An Element can have loads applied to it.
 */
 type Element struct {
 	Id, StartNodeId, EndNodeId int
 	Geometry                   inkgeom.Segment
-	StartLink, EndLink         *Constraint
-	material                   Material
-	section                    Section
+	StartLink, EndLink         Constraint
+	material                   *Material
+	section                    *Section
 	Loads                      []load.Load
 	_ea, _ei                   float64
 }
 
-/* ::::::::::::::: Construction ::::::::::::::: */
+/* <-- Construction --> */
 
-// MakeElement creates a new element with all properties initialized.
+/*
+MakeElement creates a new element with all properties initialized.
+*/
 func MakeElement(
 	id int,
-	startNode, endNode Node,
-	startLink, endLink *Constraint,
-	material Material,
-	section Section,
+	startNode, endNode *Node,
+	startLink, endLink Constraint,
+	material *Material,
+	section *Section,
 	loads []load.Load,
 ) *Element {
 	return &Element{
@@ -49,34 +47,51 @@ func MakeElement(
 	}
 }
 
-/* ::::::::::::::: Properties ::::::::::::::: */
+/* <-- Properties --> */
 
-// StartPoint returns the position of the start node of this element's geometry.
+/*
+StartPoint returns the position of the start node of this element's geometry.
+*/
 func (e Element) StartPoint() inkgeom.Projectable {
 	return e.Geometry.Start
 }
 
-// EndPoint returns the position of the end node of this element's geometry.
+/*
+EndPoint returns the position of the end node of this element's geometry.
+*/
 func (e Element) EndPoint() inkgeom.Projectable {
 	return e.Geometry.End
 }
 
-// PointAt returns the position of an intermediate point in this element's geometry.
+/*
+PointAt returns the position of an intermediate point in this element's geometry.
+*/
 func (e Element) PointAt(t inkgeom.TParam) inkgeom.Projectable {
 	return e.Geometry.PointAt(t)
 }
 
-// Material returns the material for the element.
-func (e Element) Material() Material {
+/*
+Material returns the material for the element.
+*/
+func (e Element) Material() *Material {
 	return e.material
 }
 
-// Section returns the section for the element.
-func (e Element) Section() Section {
+/*
+Section returns the section for the element.
+*/
+func (e Element) Section() *Section {
 	return e.section
 }
 
-/* ::::::::::::::: Methods ::::::::::::::: */
+/*
+HasLoadsApplied returns true if any load of any type is applied to the element.
+*/
+func (e Element) HasLoadsApplied() bool {
+	return len(e.Loads) > 0
+}
+
+/* <-- Methods --> */
 
 /*
 IsAxialMember returns true if this element is pinned in both ends and, in case
@@ -93,16 +108,13 @@ func (e Element) IsAxialMember() bool {
 	return e.StartLink.AllowsRotation() && e.EndLink.AllowsRotation()
 }
 
-// HasLoadsApplied returns true if any load of any type is applied to the element.
-func (e Element) HasLoadsApplied() bool {
-	return len(e.Loads) > 0
-}
-
 /*
 StiffnessGlobalMat generates the local stiffness matrix for the element and
 applies the rotation defined by the elements' geometry reference frame.
 */
-func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMatrix {
+func (e Element) StiffnessGlobalMat(
+	startT, endT inkgeom.TParam,
+) mat.ReadOnlyMatrix {
 	var (
 		l    = e.Geometry.LengthBetween(startT, endT)
 		c    = e.Geometry.RefFrame().Cos()
@@ -168,7 +180,7 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 	return k
 }
 
-/* ::::::::::::::: Stringer ::::::::::::::: */
+/* <-- Stringer --> */
 
 func (e Element) String() string {
 	return fmt.Sprintf(

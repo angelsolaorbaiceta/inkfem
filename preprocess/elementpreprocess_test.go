@@ -149,8 +149,8 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 		structure.MakeFreeNodeFromProjs(2, 4.0, 0.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
-		*structure.MakeUnitMaterial(),
-		*structure.MakeUnitSection(),
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
 		[]load.Load{load.MakeDistributed(load.FY, true, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0)},
 	)
 	slicedEl := sliceLoadedElement(element, 2)
@@ -196,8 +196,8 @@ func TestDistributedGlobalLoadDistribution(t *testing.T) {
 		structure.MakeFreeNodeFromProjs(2, 4.0, 4.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
-		*structure.MakeUnitMaterial(),
-		*structure.MakeUnitSection(),
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
 		[]load.Load{load.MakeDistributed(load.FY, false, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0)},
 	)
 	slicedEl := sliceLoadedElement(element, 2)
@@ -243,8 +243,8 @@ func TestConcentratedLocalLoadDistribution(t *testing.T) {
 		structure.MakeFreeNodeFromProjs(2, 4.0, 0.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
-		*structure.MakeUnitMaterial(),
-		*structure.MakeUnitSection(),
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
 		[]load.Load{
 			load.MakeConcentrated(load.FX, true, inkgeom.MakeTParam(0.25), 3.0),
 			load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.25), 5.0),
@@ -271,8 +271,8 @@ func TestConcentratedGlobalLoadDistribution(t *testing.T) {
 		structure.MakeFreeNodeFromProjs(2, 4.0, 4.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
-		*structure.MakeUnitMaterial(),
-		*structure.MakeUnitSection(),
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
 		[]load.Load{
 			load.MakeConcentrated(load.FY, false, inkgeom.MakeTParam(0.25), 5.0),
 		},
@@ -298,7 +298,7 @@ func makeElementWithLoads(loads []load.Load) *structure.Element {
 		structure.MakeFreeNodeFromProjs(2, 3.0, 4.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
-		*structure.MakeUnitMaterial(),
-		*structure.MakeUnitSection(),
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
 		loads)
 }

@@ -17,12 +17,12 @@ var nodeDefinitionRegex = regexp.MustCompile(
 		`(?P<y>\d+\.*\d*)(?:\s+)` +
 		`(?P<constraints>{.*})`)
 
-func readNodes(scanner *bufio.Scanner, count int) map[int]structure.Node {
+func readNodes(scanner *bufio.Scanner, count int) *map[int]*structure.Node {
 	var (
 		id                 int
 		x, y               float64
 		externalConstraint string
-		nodes              = make(map[int]structure.Node)
+		nodes              = make(map[int]*structure.Node)
 	)
 
 	for _, line := range definitionLines(scanner, count) {
@@ -43,5 +43,5 @@ func readNodes(scanner *bufio.Scanner, count int) map[int]structure.Node {
 			constraintFromString(externalConstraint))
 	}
 
-	return nodes
+	return &nodes
 }

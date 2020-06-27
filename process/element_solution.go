@@ -28,6 +28,9 @@ type ElementSolution struct {
 	BendingMoment []PointSolutionValue
 }
 
+/*
+OriginalElementString returns the string definition for the original element.
+*/
 func (es *ElementSolution) OriginalElementString() string {
 	return es.Element.OriginalElementString()
 }
@@ -121,7 +124,7 @@ displacements.
 */
 func (es *ElementSolution) computeStresses() {
 	var (
-		trailNode, leadNode                    preprocess.Node
+		trailNode, leadNode                    *preprocess.Node
 		youngMod                               = es.Element.Material().YoungMod
 		iStrong                                = es.Element.Section().IStrong
 		nIndex, vIndex, mIndex                 = 0, 0, 0

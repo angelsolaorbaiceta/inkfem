@@ -11,13 +11,17 @@ Materials have the properties of:
 	- Ultimate Strength
 */
 type Material struct {
-	Name                                                                       string
-	Density, YoungMod, ShearMod, PoissonRatio, YieldStrength, UltimateStrength float64
+	Name                             string
+	Density                          float64
+	YoungMod, ShearMod, PoissonRatio float64
+	YieldStrength, UltimateStrength  float64
 }
 
-/* ::::::::::::::: Construction ::::::::::::::: */
+/* <-- Construction --> */
 
-// MakeUnitMaterial returns a material with all properties set to 1.0.
+/*
+MakeUnitMaterial returns a material with all properties set to 1.0.
+*/
 func MakeUnitMaterial() *Material {
 	return &Material{"unit_material", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0}
 }

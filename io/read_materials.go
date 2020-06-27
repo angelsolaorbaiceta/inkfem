@@ -19,13 +19,13 @@ var materialDefinitionRegex = regexp.MustCompile(
 		`(?P<yield>\d+\.+\d+)(?:\s+)` +
 		`(?P<ultimate>\d+\.+\d+)`)
 
-func readMaterials(scanner *bufio.Scanner, count int) map[string]structure.Material {
+func readMaterials(scanner *bufio.Scanner, count int) *map[string]*structure.Material {
 	var (
 		name                            string
 		density, youngMod, shearMod     float64
 		possonRatio                     float64
 		yieldStrength, ultimateStrength float64
-		materials                       = make(map[string]structure.Material)
+		materials                       = make(map[string]*structure.Material)
 	)
 
 	for _, line := range definitionLines(scanner, count) {
@@ -43,7 +43,7 @@ func readMaterials(scanner *bufio.Scanner, count int) map[string]structure.Mater
 		yieldStrength, _ = strconv.ParseFloat(groups[6], 64)
 		ultimateStrength, _ = strconv.ParseFloat(groups[7], 64)
 
-		materials[name] = structure.Material{
+		materials[name] = &structure.Material{
 			Name:             name,
 			Density:          density,
 			YoungMod:         youngMod,
@@ -53,5 +53,5 @@ func readMaterials(scanner *bufio.Scanner, count int) map[string]structure.Mater
 			UltimateStrength: ultimateStrength}
 	}
 
-	return materials
+	return &materials
 }

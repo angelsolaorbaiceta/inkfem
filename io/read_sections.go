@@ -18,11 +18,11 @@ var sectionDefinitionRegex = regexp.MustCompile(
 		`(?P<sstrong>\d+\.+\d+)(?:\s+)` +
 		`(?P<sweak>\d+\.+\d+)`)
 
-func readSections(scanner *bufio.Scanner, count int) map[string]structure.Section {
+func readSections(scanner *bufio.Scanner, count int) *map[string]*structure.Section {
 	var (
 		name                                 string
 		area, iStrong, iWeak, sStrong, sWeak float64
-		sections                             = make(map[string]structure.Section)
+		sections                             = make(map[string]*structure.Section)
 	)
 
 	for _, line := range definitionLines(scanner, count) {
@@ -39,7 +39,7 @@ func readSections(scanner *bufio.Scanner, count int) map[string]structure.Sectio
 		sStrong, _ = strconv.ParseFloat(groups[5], 64)
 		sWeak, _ = strconv.ParseFloat(groups[6], 64)
 
-		sections[name] = structure.Section{
+		sections[name] = &structure.Section{
 			Name:    name,
 			Area:    area,
 			IStrong: iStrong,
@@ -48,5 +48,5 @@ func readSections(scanner *bufio.Scanner, count int) map[string]structure.Sectio
 			SWeak:   sWeak}
 	}
 
-	return sections
+	return &sections
 }

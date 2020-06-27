@@ -62,22 +62,22 @@ func makeStructure() Structure {
 
 		elemOrigA = structure.MakeElement(
 			1, nA, nB, structure.MakeFullConstraint(), structure.MakeFullConstraint(),
-			*structure.MakeUnitMaterial(), *structure.MakeUnitSection(), []load.Load{},
+			structure.MakeUnitMaterial(), structure.MakeUnitSection(), []load.Load{},
 		)
 		elemOrigB = structure.MakeElement(
 			2, nA, nC, structure.MakeDispConstraint(), structure.MakeFullConstraint(),
-			*structure.MakeUnitMaterial(), *structure.MakeUnitSection(), []load.Load{},
+			structure.MakeUnitMaterial(), structure.MakeUnitSection(), []load.Load{},
 		)
 	)
 
 	return Structure{
-		Nodes: map[int]structure.Node{nA.Id: nA, nB.Id: nB, nC.Id: nC},
-		Elements: []Element{
-			MakeElement(elemOrigA, []Node{
+		Nodes: map[int]*structure.Node{nA.Id: nA, nB.Id: nB, nC.Id: nC},
+		Elements: []*Element{
+			MakeElement(elemOrigA, []*Node{
 				MakeUnloadedNode(inkgeom.MinT, nA.Position),
 				MakeUnloadedNode(inkgeom.MakeTParam(0.5), inkgeom.MakePoint(0, 50)),
 				MakeUnloadedNode(inkgeom.MaxT, nB.Position)}),
-			MakeElement(elemOrigB, []Node{
+			MakeElement(elemOrigB, []*Node{
 				MakeUnloadedNode(inkgeom.MinT, nA.Position),
 				MakeUnloadedNode(inkgeom.MakeTParam(0.5), inkgeom.MakePoint(50, 0)),
 				MakeUnloadedNode(inkgeom.MaxT, nC.Position)}),

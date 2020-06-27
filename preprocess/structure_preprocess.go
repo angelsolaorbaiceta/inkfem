@@ -7,16 +7,21 @@ import (
 )
 
 /*
-DoStructure preprocesses the structure by concurrently slicing each of the structural members.
+DoStructure preprocesses the structure by concurrently slicing each of the structural
+members.
+
+TODO: rename this: Do is a horrible verb
 */
 func DoStructure(s structure.Structure) Structure {
-	channel := make(chan Element)
+	var (
+		channel        = make(chan *Element)
+		slicedElements []*Element
+	)
 
 	for _, element := range s.Elements {
 		go DoElement(element, channel)
 	}
 
-	var slicedElements []Element
 	for i := 0; i < len(s.Elements); i++ {
 		slicedElements = append(slicedElements, <-channel)
 	}
@@ -31,9 +36,9 @@ func DoStructure(s structure.Structure) Structure {
 /*
 Assings degrees of freedom numbers to all nodes on sliced elements.
 
-Structural nodes are given degrees of freedom to help in the correct assignment of DOF numbers
-to the elements that meet in the node. Structural elements are first sorted by their geometry
-positions, so the degrees of freedom numbers follow a logical sequence.
+Structural nodes are given degrees of freedom to help in the correct assignment of DOF
+numbers to the elements that meet in the node. Structural elements are first sorted by
+their geometry positions, so the degrees of freedom numbers follow a logical sequence.
 
 The method returns the number degrees of freedom assigned.
 */
@@ -41,8 +46,8 @@ func assignDof(s *Structure) (dofsCount int) {
 	sort.Sort(ByGeometryPos(s.Elements))
 
 	var (
-		startNode, endNode structure.Node
-		startLink, endLink *structure.Constraint
+		startNode, endNode *structure.Node
+		startLink, endLink structure.Constraint
 		nodesCount         int
 		dof                = 0
 	)
@@ -50,12 +55,15 @@ func assignDof(s *Structure) (dofsCount int) {
 	updateStructuralNodeDof := func(n *structure.Node) {
 		if !n.HasDegreesOfFreedomNum() {
 			n.SetDegreesOfFreedomNum(dof, dof+1, dof+2)
-			s.Nodes[n.Id] = *n
+			s.Nodes[n.Id] = n
 			dof += 3
 		}
 	}
 
-	endNodesDof := func(link *structure.Constraint, node structure.Node) (dxDof, dyDof, rzDof int) {
+	endNodesDof := func(
+		link structure.Constraint,
+		node *structure.Node,
+	) (dxDof, dyDof, rzDof int) {
 		if link.AllowsDispX() {
 			dxDof = dof
 			dof++
@@ -88,7 +96,7 @@ func assignDof(s *Structure) (dofsCount int) {
 		nodesCount = len(element.Nodes)
 
 		/* First Node */
-		updateStructuralNodeDof(&startNode)
+		updateStructuralNodeDof(startNode)
 		element.Nodes[0].SetDegreesOfFreedomNum(
 			endNodesDof(startLink, startNode),
 		)
@@ -100,7 +108,7 @@ func assignDof(s *Structure) (dofsCount int) {
 		}
 
 		/* Last Node */
-		updateStructuralNodeDof(&endNode)
+		updateStructuralNodeDof(endNode)
 		element.Nodes[nodesCount-1].SetDegreesOfFreedomNum(
 			endNodesDof(endLink, endNode),
 		)

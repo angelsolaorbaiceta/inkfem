@@ -20,7 +20,7 @@ func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
 	)
 
 	for i, element := range s.Elements {
-		elementSolution = MakeElementSolution(&element)
+		elementSolution = MakeElementSolution(element)
 		elementSolution.SolveUsingDisplacements(globalDisplacements)
 		elementSolutions[i] = elementSolution
 	}

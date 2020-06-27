@@ -8,7 +8,7 @@ type Section struct {
 	SStrong, SWeak float64 // Section Moduli
 }
 
-/* ::::::::::::::: Construction ::::::::::::::: */
+/* <-- Construction --> */
 
 // MakeUnitSection returns a section with all properties set to 1.0.
 func MakeUnitSection() *Section {

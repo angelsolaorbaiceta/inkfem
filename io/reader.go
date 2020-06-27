@@ -22,12 +22,12 @@ var (
 )
 
 /*
-StructureFromFile Reads the given .inkfem file and tries to parse a structure
-from the data defined.
+StructureFromFile Reads the given .inkfem file and tries to parse a structure from the
+data defined.
 
-The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm'
-are the major and minor version numbers of inkfem used to produce the file or
-required to compute the structure.
+The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm' are the
+major and minor version numbers of inkfem used to produce the file or required to compute
+the structure.
 */
 func StructureFromFile(filePath string) structure.Structure {
 	file, error := os.Open(filePath)
@@ -48,11 +48,11 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		sectionsDefined            = false
 		loadsDefined               = false
 		majorVersion, minorVersion int
-		nodes                      map[int]structure.Node
-		materials                  map[string]structure.Material
-		sections                   map[string]structure.Section
+		nodes                      *map[int]*structure.Node
+		materials                  *map[string]*structure.Material
+		sections                   *map[string]*structure.Section
 		loads                      map[int][]load.Load
-		elements                   []structure.Element
+		elements                   *[]*structure.Element
 	)
 
 	// First line must be "inkfem vM.m"
@@ -98,11 +98,14 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		case elementsHeaderRegex.MatchString(line):
 			{
 				if !(nodesDefined && materialsDefined && sectionsDefined && loadsDefined) {
-					panic("Cannot define elements if some of the following not already defined: nodes, materials, sections and loads")
+					panic(
+						"Can't' define elements if some of the following not already defined: " +
+							"nodes, materials, sections and loads",
+					)
 				}
 
 				elementsCount, _ := strconv.Atoi(elementsHeaderRegex.FindStringSubmatch(line)[1])
-				elements = readElements(scanner, elementsCount, &nodes, &materials, &sections, &loads)
+				elements = readElements(scanner, elementsCount, nodes, materials, sections, &loads)
 			}
 		}
 	}
@@ -115,14 +118,17 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		Metadata: structure.StrMetadata{
 			MajorVersion: majorVersion,
 			MinorVersion: minorVersion},
-		Nodes:    nodes,
-		Elements: elements}
+		Nodes:    *nodes,
+		Elements: *elements}
 }
 
 /* <---------- READ : Version Numbers ----------> */
 func parseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {
 	if foundMatch := versionRegex.MatchString(firstLine); !foundMatch {
-		panic("Could not parse major and minor version numbers. Missing 'inkfem vM.m' in your file's first line?")
+		panic(
+			"Could not parse major and minor version numbers." +
+				"Are you missing 'inkfem vM.m' in your file's first line?",
+		)
 	}
 
 	versions := versionRegex.FindStringSubmatch(firstLine)
