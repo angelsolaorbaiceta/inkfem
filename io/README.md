@@ -261,3 +261,13 @@ fy ld 4 0.0 -50.0 1.0 -75.0
 6 -> 3{dx dy rz} 5{dx dy rz} 'mat_A' 'sec_A'
 7 -> 4{dx dy rz} 5{dx dy rz} 'mat_A' 'sec_A'
 ```
+
+# Preprocess File Format
+
+The preprocessed structure is saved into a `.inkfempre` file if the `-p` flag is passed to inkfem.
+The file's template is defined in [preprocess.template.txt](./templates/preprocess.template.txt).
+
+# Solution File Format
+
+The solution structure is saved into a `.inkfemsol` file.
+The file's template is defined in [solution.template.txt](./templates/solution.template.txt).

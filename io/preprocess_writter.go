@@ -8,6 +8,8 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 )
 
+const solTemplatePath = "io/templates/preprocess.template.txt"
+
 // PreprocessedStructureToFile Writes the given preprocessed structure to a file.
 func PreprocessedStructureToFile(structure *preprocess.Structure, filePath string) {
 	file, err := os.Create(filePath)
@@ -17,7 +19,7 @@ func PreprocessedStructureToFile(structure *preprocess.Structure, filePath strin
 	defer file.Close()
 
 	var (
-		tmpl   = template.Must(template.ParseFiles("io/preprocess.template.txt"))
+		tmpl   = template.Must(template.ParseFiles(solTemplatePath))
 		writer = bufio.NewWriter(file)
 	)
 
