@@ -1,8 +1,7 @@
 package process
 
 import (
-	"fmt"
-
+	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 )
 
@@ -14,9 +13,7 @@ Using the displacements obtained from the solution of the system's solution,
 the local stresses are computed.
 */
 func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
-	if options.Verbose {
-		fmt.Printf("----- [ inkfem ] -----\n")
-	}
+	log.StartSolve()
 
 	globalDisplacements := computeGlobalDisplacements(s, options)
 

@@ -4,12 +4,14 @@ import (
 	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
+	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/process"
 )
 
 func main() {
 	flags := process.ParseOrShowUsage()
+	log.SetVerbosity(*flags.Verbose)
 
 	var (
 		outPath      = strings.TrimSuffix(*flags.InputFilePath, ".inkfem")
@@ -23,7 +25,6 @@ func main() {
 
 	solveOptions := process.SolveOptions{
 		SaveSysMatrixImage:    *flags.SysMatrixToPng,
-		Verbose:               *flags.Verbose,
 		OutputPath:            outPath,
 		SafeChecks:            *flags.SafeChecks,
 		MaxDisplacementsError: *flags.DispMaxError,

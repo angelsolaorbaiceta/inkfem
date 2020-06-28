@@ -1,8 +1,7 @@
 package process
 
 import (
-	"fmt"
-
+	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
@@ -22,23 +21,15 @@ func computeGlobalDisplacements(
 	structure *preprocess.Structure,
 	options SolveOptions,
 ) *vec.Vector {
-	if options.Verbose {
-		fmt.Println("> assembling system of equations...")
-	}
-
+	log.StartAssembleSysEqs()
 	sysMatrix, sysVector := makeSystemOfEquations(structure)
-	if options.Verbose {
-		fmt.Printf("[DONE] assembled system with %d equations\n", sysVector.Length())
-	}
+	log.EndAssembleSysEqs(sysVector.Length())
 
 	if options.SaveSysMatrixImage {
 		go mat.ToImage(sysMatrix, options.OutputPath)
 	}
 
-	if options.Verbose {
-		fmt.Println("> solving sytem of equations for global displacements")
-	}
-
+	log.StartSolveSysEqs()
 	solver := lineq.PreconditionedConjugateGradientSolver{
 		MaxError: options.MaxDisplacementsError,
 		MaxIter:  sysVector.Length(),
@@ -48,13 +39,7 @@ func computeGlobalDisplacements(
 	}
 
 	globalDispSolution := solver.Solve(sysMatrix, sysVector)
-	if options.Verbose {
-		fmt.Printf(
-			"[DONE] solved system in %d iterations, error = %f\n",
-			globalDispSolution.IterCount,
-			globalDispSolution.MinError,
-		)
-	}
+	log.EndSolveSysEqs(globalDispSolution.IterCount, globalDispSolution.MinError)
 
 	return globalDispSolution.Solution
 }
