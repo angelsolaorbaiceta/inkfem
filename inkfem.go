@@ -21,12 +21,12 @@ func main() {
 		go io.PreprocessedStructureToFile(&preStructure, outPath+".inkfempre")
 	}
 
-	// TODO: allow displacement error as flag
 	solveOptions := process.SolveOptions{
 		SaveSysMatrixImage:    *flags.SysMatrixToPng,
+		Verbose:               *flags.Verbose,
 		OutputPath:            outPath,
 		SafeChecks:            *flags.SafeChecks,
-		MaxDisplacementsError: 1e-5,
+		MaxDisplacementsError: *flags.DispMaxError,
 	}
 
 	solution := process.Solve(&preStructure, solveOptions)

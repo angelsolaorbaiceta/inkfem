@@ -2,16 +2,17 @@ package process
 
 import (
 	"flag"
-	"fmt"
 	"os"
 )
 
 // CLIFlags contains the input flags to the CLI program
 type CLIFlags struct {
 	InputFilePath  *string
+	Verbose        *bool
 	Preprocess     *bool
 	SysMatrixToPng *bool
 	SafeChecks     *bool
+	DispMaxError   *float64
 }
 
 // ParseOrShowUsage reads the program flags and parses them.
@@ -19,26 +20,19 @@ type CLIFlags struct {
 func ParseOrShowUsage() CLIFlags {
 	flags := CLIFlags{
 		InputFilePath:  flag.String("i", "", "input file path"),
+		Verbose:        flag.Bool("v", false, "verbose?"),
 		Preprocess:     flag.Bool("p", false, "dump preprocessed structure to file?"),
 		SysMatrixToPng: flag.Bool("m", false, "save system of equations matrix to png image file?"),
 		SafeChecks:     flag.Bool("safe", false, "perform safety checks?"),
+		DispMaxError:   flag.Float64("e", 1e-5, "maximum allowed displacements error"),
 	}
 
 	flag.Parse()
 
 	if len(*flags.InputFilePath) == 0 {
-		printUsage()
+		flag.Usage()
 		os.Exit(1)
 	}
 
 	return flags
-}
-
-func printUsage() {
-	fmt.Println("InkFEM usage:")
-	fmt.Println("\n\tinkfem -i <input_file_path> [options]")
-	fmt.Println("\nOptions:")
-	fmt.Println("\t-p: save preprocessed structure to file")
-	fmt.Println("\t-m: save system of equations matrix to png image file")
-	fmt.Println("\t-safe: do safe checks for conditions that must be satisfied during analysis")
 }

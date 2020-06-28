@@ -1,6 +1,8 @@
 package process
 
 import (
+	"fmt"
+
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
@@ -10,14 +12,31 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
+/*
+Computes the structure's global displacements given the preprocessed structure.
+
+The process involves generating the structure's system of equations and solving it
+using the Preconditioned Conjugate Gradiend numerical procedure.
+*/
 func computeGlobalDisplacements(
-	s *preprocess.Structure,
+	structure *preprocess.Structure,
 	options SolveOptions,
 ) *vec.Vector {
-	sysMatrix, sysVector := makeSystemOfEqs(s)
+	if options.Verbose {
+		fmt.Println("> assembling system of equations...")
+	}
+
+	sysMatrix, sysVector := makeSystemOfEquations(structure)
+	if options.Verbose {
+		fmt.Printf("[DONE] assembled system with %d equations\n", sysVector.Length())
+	}
 
 	if options.SaveSysMatrixImage {
 		go mat.ToImage(sysMatrix, options.OutputPath)
+	}
+
+	if options.Verbose {
+		fmt.Println("> solving sytem of equations for global displacements")
 	}
 
 	solver := lineq.PreconditionedConjugateGradientSolver{
@@ -28,30 +47,49 @@ func computeGlobalDisplacements(
 		panic("Solver cannot solve system!")
 	}
 
-	globalDisplacements := solver.Solve(sysMatrix, sysVector)
+	globalDispSolution := solver.Solve(sysMatrix, sysVector)
+	if options.Verbose {
+		fmt.Printf(
+			"[DONE] solved system in %d iterations, error = %f\n",
+			globalDispSolution.IterCount,
+			globalDispSolution.MinError,
+		)
+	}
 
-	return globalDisplacements.Solution
+	return globalDispSolution.Solution
 }
 
-func makeSystemOfEqs(s *preprocess.Structure) (mat.ReadOnlyMatrix, *vec.Vector) {
+/*
+Generates the system of equations matrix and vector from the preprocessed structure.
+
+It computes each of the sliced element's stiffness matrices and assembles them into one
+global matrix. It also assembles the global loads vector from the sliced element nodes.
+*/
+func makeSystemOfEquations(
+	structure *preprocess.Structure,
+) (mat.ReadOnlyMatrix, *vec.Vector) {
 	c := make(chan preprocess.Element)
 
-	for _, element := range s.Elements {
+	for _, element := range structure.Elements {
 		go element.ComputeStiffnessMatrices(c)
 	}
 
-	sysMatrix, sysVector := mat.MakeSparse(s.DofsCount, s.DofsCount), vec.Make(s.DofsCount)
-	for i := 0; i < len(s.Elements); i++ {
+	var (
+		sysMatrix = mat.MakeSparse(structure.DofsCount, structure.DofsCount)
+		sysVector = vec.Make(structure.DofsCount)
+	)
+
+	for i := 0; i < len(structure.Elements); i++ {
 		element := <-c
 		addTermsToStiffnessMatrix(sysMatrix, &element)
 		addTermsToLoadVector(sysVector, &element)
 	}
-	addDispConstraints(sysMatrix, sysVector, s.Nodes)
+	addDispConstraints(sysMatrix, sysVector, &structure.Nodes)
 
 	return sysMatrix, sysVector
 }
 
-func addTermsToStiffnessMatrix(m mat.MutableMatrix, e *preprocess.Element) {
+func addTermsToStiffnessMatrix(matrix mat.MutableMatrix, element *preprocess.Element) {
 	var (
 		stiffMat                    mat.ReadOnlyMatrix
 		trailNodeDofs, leadNodeDofs [3]int
@@ -59,19 +97,20 @@ func addTermsToStiffnessMatrix(m mat.MutableMatrix, e *preprocess.Element) {
 		stiffVal                    float64
 	)
 
-	for i := 1; i < len(e.Nodes); i++ {
-		stiffMat = e.GlobalStiffMatrixAt(i - 1)
-		trailNodeDofs = e.Nodes[i-1].DegreesOfFreedomNum()
-		leadNodeDofs = e.Nodes[i].DegreesOfFreedomNum()
+	for i := 1; i < len(element.Nodes); i++ {
+		stiffMat = element.GlobalStiffMatrixAt(i - 1)
+		trailNodeDofs = element.Nodes[i-1].DegreesOfFreedomNum()
+		leadNodeDofs = element.Nodes[i].DegreesOfFreedomNum()
 		dofs = [6]int{
 			trailNodeDofs[0], trailNodeDofs[1], trailNodeDofs[2],
 			leadNodeDofs[0], leadNodeDofs[1], leadNodeDofs[2],
 		}
 
+		// TODO: this i is dangerous: shadows earlier def of i
 		for i := 0; i < stiffMat.Rows(); i++ {
 			for j := 0; j < stiffMat.Cols(); j++ {
 				if stiffVal = stiffMat.Value(i, j); !nums.IsCloseToZero(stiffVal) {
-					m.AddToValue(dofs[i], dofs[j], stiffVal)
+					matrix.AddToValue(dofs[i], dofs[j], stiffVal)
 				}
 			}
 		}
@@ -79,9 +118,9 @@ func addTermsToStiffnessMatrix(m mat.MutableMatrix, e *preprocess.Element) {
 }
 
 func addDispConstraints(
-	m mat.MutableMatrix,
-	v *vec.Vector,
-	nodes map[int]*structure.Node,
+	matrix mat.MutableMatrix,
+	vector *vec.Vector,
+	nodes *map[int]*structure.Node,
 ) {
 	var (
 		constraint structure.Constraint
@@ -89,12 +128,12 @@ func addDispConstraints(
 	)
 
 	addConstraintAtDof := func(dof int) {
-		m.SetZeroCol(dof)
-		m.SetIdentityRow(dof)
-		v.SetZero(dof)
+		matrix.SetZeroCol(dof)
+		matrix.SetIdentityRow(dof)
+		vector.SetZero(dof)
 	}
 
-	for _, node := range nodes {
+	for _, node := range *nodes {
 		if node.IsExternallyConstrained() {
 			constraint = node.ExternalConstraint
 			dofs = node.DegreesOfFreedomNum()
@@ -112,21 +151,21 @@ func addDispConstraints(
 	}
 }
 
-func addTermsToLoadVector(v *vec.Vector, e *preprocess.Element) {
+func addTermsToLoadVector(vector *vec.Vector, element *preprocess.Element) {
 	var (
 		localActions [3]float64
 		globalForces inkgeom.Projectable
 		dofs         [3]int
-		refFrame     = e.Geometry().RefFrame()
+		refFrame     = element.Geometry().RefFrame()
 	)
 
-	for _, node := range e.Nodes {
+	for _, node := range element.Nodes {
 		localActions = node.LocalActions()
 		globalForces = refFrame.ProjectionsToGlobal(localActions[0], localActions[1])
 		dofs = node.DegreesOfFreedomNum()
 
-		v.SetValue(dofs[0], globalForces.X)
-		v.SetValue(dofs[1], globalForces.Y)
-		v.SetValue(dofs[2], localActions[2])
+		vector.SetValue(dofs[0], globalForces.X)
+		vector.SetValue(dofs[1], globalForces.Y)
+		vector.SetValue(dofs[2], localActions[2])
 	}
 }
