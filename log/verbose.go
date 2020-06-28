@@ -6,12 +6,22 @@ import (
 )
 
 var (
-	isVerbose                = false
-	readFileStartTime        time.Time
-	preprocessStartTime      time.Time
-	assembleSystemStartTime  time.Time
-	solveSystemStartTime     time.Time
+	isVerbose = false
+
+	readFileStartTime   time.Time
+	readFileElapsedTime time.Duration
+
+	preprocessStartTime   time.Time
+	preprocessElapsedTime time.Duration
+
+	assembleSystemStartTime   time.Time
+	assembleSystemElapsedTime time.Duration
+
+	solveSystemStartTime   time.Time
+	solveSystemElapsedTime time.Duration
+
 	computeStressesStartTime time.Time
+	computeStressesEndTime   time.Duration
 )
 
 /*
@@ -50,11 +60,11 @@ has been completed successfully.
 */
 func EndReadFile(nodesCount, elementsCount int) {
 	if isVerbose {
-		elapsedTime := time.Since(readFileStartTime)
+		readFileElapsedTime = time.Since(readFileStartTime)
 		message := fmt.Sprintf(
 			"reading input file (%d nodes and %d elements)", nodesCount, elementsCount,
 		)
-		writeDone(message, elapsedTime)
+		writeDone(message, readFileElapsedTime)
 	}
 }
 
@@ -74,8 +84,8 @@ EndPreprocess should be called when the structure has been successfully preproce
 */
 func EndPreprocess() {
 	if isVerbose {
-		elapsedTime := time.Since(preprocessStartTime)
-		writeDone("stucture preprocessed", elapsedTime)
+		preprocessElapsedTime = time.Since(preprocessStartTime)
+		writeDone("stucture preprocessed", preprocessElapsedTime)
 	}
 }
 
@@ -96,9 +106,9 @@ completely assembled.
 */
 func EndAssembleSysEqs(sysSize int) {
 	if isVerbose {
-		elapsedTime := time.Since(assembleSystemStartTime)
+		assembleSystemElapsedTime = time.Since(assembleSystemStartTime)
 		message := fmt.Sprintf("assembled system of %d equations", sysSize)
-		writeDone(message, elapsedTime)
+		writeDone(message, assembleSystemElapsedTime)
 	}
 }
 
@@ -118,11 +128,11 @@ EndSolveSysEqs should be called when the structure's system of equations has bee
 */
 func EndSolveSysEqs(iterations int, minError float64) {
 	if isVerbose {
-		elapsedTime := time.Since(solveSystemStartTime)
+		solveSystemElapsedTime = time.Since(solveSystemStartTime)
 		message := fmt.Sprintf(
 			"solved system in %d iterations, error = %f", iterations, minError,
 		)
-		writeDone(message, elapsedTime)
+		writeDone(message, solveSystemElapsedTime)
 	}
 }
 
@@ -142,8 +152,42 @@ EndComputeStresses should be called when the stresses on all elements have been 
 */
 func EndComputeStresses() {
 	if isVerbose {
-		elapsedTime := time.Since(computeStressesStartTime)
-		writeDone("computed stresses for all elements", elapsedTime)
+		computeStressesEndTime = time.Since(computeStressesStartTime)
+		writeDone("computed stresses for all elements", computeStressesEndTime)
+	}
+}
+
+/*
+ResultTable should be called at the end of the execution to display the overall
+execution time results.
+*/
+func ResultTable() {
+	if isVerbose {
+		totalMs := readFileElapsedTime.Milliseconds() +
+			preprocessElapsedTime.Milliseconds() +
+			assembleSystemElapsedTime.Milliseconds() +
+			solveSystemElapsedTime.Milliseconds() +
+			computeStressesEndTime.Milliseconds()
+
+		var (
+			floatTotal        = 100.0 / float64(totalMs)
+			readFilePerc      = floatTotal * float64(readFileElapsedTime.Milliseconds())
+			preprocessPerc    = floatTotal * float64(preprocessElapsedTime.Milliseconds())
+			assemblePerc      = floatTotal * float64(assembleSystemElapsedTime.Milliseconds())
+			solvePerc         = floatTotal * float64(solveSystemElapsedTime.Milliseconds())
+			computeStressPerc = floatTotal * float64(computeStressesEndTime.Milliseconds())
+		)
+
+		println()
+		println("========================================")
+		fmt.Printf("TOTAL TIME: %dms\n", totalMs)
+		println()
+		fmt.Printf("read file         -> %.4f%%\n", readFilePerc)
+		fmt.Printf("preprocess        -> %.4f%%\n", preprocessPerc)
+		fmt.Printf("assemble system   -> %.4f%%\n", assemblePerc)
+		fmt.Printf("solve system      -> %.4f%%\n", solvePerc)
+		fmt.Printf("compute stresses  -> %.4f%%\n", computeStressPerc)
+		println("========================================")
 	}
 }
 

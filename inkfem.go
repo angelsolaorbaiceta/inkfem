@@ -34,6 +34,8 @@ func main() {
 
 	solution := process.Solve(preStructure, solveOptions)
 	io.StructureSolutionToFile(solution, outPath+".inkfemsol")
+
+	log.ResultTable()
 }
 
 func readStructureFromFile(filePath string) *structure.Structure {
