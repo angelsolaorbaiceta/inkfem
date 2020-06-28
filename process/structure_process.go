@@ -12,21 +12,21 @@ the Preconditioned Conjugate Gradient numerical procedure.
 Using the displacements obtained from the solution of the system's solution,
 the local stresses are computed.
 */
-func Solve(s *preprocess.Structure, options SolveOptions) *Solution {
-	log.StartSolve()
-
-	globalDisplacements := computeGlobalDisplacements(s, options)
+func Solve(structure *preprocess.Structure, options SolveOptions) *Solution {
+	globalDisplacements := computeGlobalDisplacements(structure, options)
 
 	var (
 		elementSolution  *ElementSolution
-		elementSolutions = make([]*ElementSolution, len(s.Elements))
+		elementSolutions = make([]*ElementSolution, len(structure.Elements))
 	)
 
-	for i, element := range s.Elements {
+	log.StartComputeStresses()
+	for i, element := range structure.Elements {
 		elementSolution = MakeElementSolution(element)
 		elementSolution.SolveUsingDisplacements(globalDisplacements)
 		elementSolutions[i] = elementSolution
 	}
+	log.EndComputeStresses()
 
-	return &Solution{Metadata: &s.Metadata, Elements: elementSolutions}
+	return &Solution{Metadata: &structure.Metadata, Elements: elementSolutions}
 }

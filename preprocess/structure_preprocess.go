@@ -11,8 +11,9 @@ DoStructure preprocesses the structure by concurrently slicing each of the struc
 members.
 
 TODO: rename this: Do is a horrible verb
+TODO: should return pointer
 */
-func DoStructure(s structure.Structure) Structure {
+func DoStructure(s *structure.Structure) Structure {
 	var (
 		channel        = make(chan *Element)
 		slicedElements []*Element
