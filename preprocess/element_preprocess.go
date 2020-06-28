@@ -17,7 +17,6 @@ const (
 DoElement preprocesses the given structural element subdividing it as corresponds.
 The result is sent through a channel.
 */
-// TODO: rename this: Do is a horrible verb
 func DoElement(e *structure.Element, c chan<- *Element) {
 	if e.IsAxialMember() {
 		c <- sliceAxialElement(e)

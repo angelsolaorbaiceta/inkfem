@@ -7,12 +7,10 @@ import (
 )
 
 /*
-PreprocessStructure preprocesses the structure by concurrently slicing each of the
+DoStructure preprocesses the structure by concurrently slicing each of the
 structural members.
-
-TODO: should return pointer
 */
-func PreprocessStructure(s *structure.Structure) Structure {
+func DoStructure(s *structure.Structure) *Structure {
 	var (
 		channel        = make(chan *Element)
 		slicedElements []*Element
@@ -26,9 +24,8 @@ func PreprocessStructure(s *structure.Structure) Structure {
 		slicedElements = append(slicedElements, <-channel)
 	}
 
-	str := Structure{Metadata: s.Metadata, Nodes: s.Nodes, Elements: slicedElements}
-	dofsCount := assignDof(&str)
-	str.DofsCount = dofsCount
+	str := &Structure{Metadata: s.Metadata, Nodes: s.Nodes, Elements: slicedElements}
+	assignDof(str)
 
 	return str
 }
@@ -42,8 +39,8 @@ their geometry positions, so the degrees of freedom numbers follow a logical seq
 
 The method returns the number degrees of freedom assigned.
 */
-func assignDof(s *Structure) (dofsCount int) {
-	sort.Sort(ByGeometryPos(s.Elements))
+func assignDof(str *Structure) {
+	sort.Sort(ByGeometryPos(str.Elements))
 
 	var (
 		startNode, endNode *structure.Node
@@ -55,7 +52,7 @@ func assignDof(s *Structure) (dofsCount int) {
 	updateStructuralNodeDof := func(n *structure.Node) {
 		if !n.HasDegreesOfFreedomNum() {
 			n.SetDegreesOfFreedomNum(dof, dof+1, dof+2)
-			s.Nodes[n.Id] = n
+			str.Nodes[n.Id] = n
 			dof += 3
 		}
 	}
@@ -88,9 +85,9 @@ func assignDof(s *Structure) (dofsCount int) {
 		return
 	}
 
-	for _, element := range s.Elements {
-		startNode = s.Nodes[element.StartNodeID()]
-		endNode = s.Nodes[element.EndNodeID()]
+	for _, element := range str.Elements {
+		startNode = str.Nodes[element.StartNodeID()]
+		endNode = str.Nodes[element.EndNodeID()]
 		startLink = element.StartLink()
 		endLink = element.EndLink()
 		nodesCount = len(element.Nodes)
@@ -114,6 +111,6 @@ func assignDof(s *Structure) (dofsCount int) {
 		)
 	}
 
-	dofsCount = dof
-	return
+	println("DOF = ", dof)
+	str.DofsCount = dof
 }

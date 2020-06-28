@@ -10,7 +10,7 @@ import (
 
 func TestStartNodesDofs(t *testing.T) {
 	str := makeStructure()
-	assignDof(&str)
+	assignDof(str)
 
 	if dofs := str.Elements[0].Nodes[0].DegreesOfFreedomNum(); dofs != [3]int{0, 1, 2} {
 		t.Errorf("Structural node expected to have DOFs [0 1 2], but found %v", dofs)
@@ -22,7 +22,7 @@ func TestStartNodesDofs(t *testing.T) {
 
 func TestMiddleNodesDofs(t *testing.T) {
 	str := makeStructure()
-	assignDof(&str)
+	assignDof(str)
 
 	if dofs := str.Elements[0].Nodes[1].DegreesOfFreedomNum(); dofs != [3]int{3, 4, 5} {
 		t.Errorf("Structural node expected to have DOFs [3 4 5], but found %v", dofs)
@@ -34,7 +34,7 @@ func TestMiddleNodesDofs(t *testing.T) {
 
 func TestEndNodesDofs(t *testing.T) {
 	str := makeStructure()
-	assignDof(&str)
+	assignDof(str)
 
 	if dofs := str.Elements[0].Nodes[2].DegreesOfFreedomNum(); dofs != [3]int{6, 7, 8} {
 		t.Errorf("Structural node expected to have DOFs [6 7 8], but found %v", dofs)
@@ -46,15 +46,15 @@ func TestEndNodesDofs(t *testing.T) {
 
 func TestDofsCount(t *testing.T) {
 	str := makeStructure()
-	dofsCount := assignDof(&str)
+	assignDof(str)
 
-	if dofsCount != 16 {
-		t.Errorf("Sliced structure expected to have 16 degrees of freedom, but had %d", dofsCount)
+	if count := str.DofsCount; count != 16 {
+		t.Errorf("Sliced structure expected to have 16 degrees of freedom, but had %d", count)
 	}
 }
 
 /* Utils */
-func makeStructure() Structure {
+func makeStructure() *Structure {
 	var (
 		nA = structure.MakeFreeNodeFromProjs(1, 0, 0)
 		nB = structure.MakeFreeNodeFromProjs(2, 0, 100)
@@ -70,7 +70,7 @@ func makeStructure() Structure {
 		)
 	)
 
-	return Structure{
+	return &Structure{
 		Nodes: map[int]*structure.Node{nA.Id: nA, nB.Id: nB, nC.Id: nC},
 		Elements: []*Element{
 			MakeElement(elemOrigA, []*Node{
