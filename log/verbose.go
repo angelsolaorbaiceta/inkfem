@@ -39,7 +39,7 @@ StartProcess should be called when the solving process starts.
 func StartProcess() {
 	if isVerbose {
 		// TODO: read version from file
-		fmt.Printf("----- [ inkfem v1.0 ] -----\n")
+		fmt.Printf("---------- [ inkfem v1.0 ] ----------\n")
 	}
 }
 

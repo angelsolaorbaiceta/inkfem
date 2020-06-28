@@ -7,13 +7,12 @@ import (
 )
 
 /*
-DoStructure preprocesses the structure by concurrently slicing each of the structural
-members.
+PreprocessStructure preprocesses the structure by concurrently slicing each of the
+structural members.
 
-TODO: rename this: Do is a horrible verb
 TODO: should return pointer
 */
-func DoStructure(s *structure.Structure) Structure {
+func PreprocessStructure(s *structure.Structure) Structure {
 	var (
 		channel        = make(chan *Element)
 		slicedElements []*Element

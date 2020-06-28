@@ -48,7 +48,7 @@ func readStructureFromFile(filePath string) *structure.Structure {
 
 func preprocessStructure(structure *structure.Structure) *preprocess.Structure {
 	log.StartPreprocess()
-	preprocessedStructure := preprocess.DoStructure(structure)
+	preprocessedStructure := preprocess.PreprocessStructure(structure)
 	log.EndPreprocess()
 
 	return &preprocessedStructure
