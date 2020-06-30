@@ -122,7 +122,7 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		Elements: *elements}
 }
 
-/* <---------- READ : Version Numbers ----------> */
+/* <-- READ : Version Numbers --> */
 func parseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {
 	if foundMatch := versionRegex.MatchString(firstLine); !foundMatch {
 		panic(

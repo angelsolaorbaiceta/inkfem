@@ -29,7 +29,7 @@ func TestLoadIsNodal(t *testing.T) {
 	}
 }
 
-/* <---------- Avg Value ----------> */
+/* <-- Avg Value --> */
 func TestAvgValueAllCoveredByLoad(t *testing.T) {
 	l := MakeDistributed(FY, true, inkgeom.MinT, 50.0, inkgeom.MaxT, 50.0)
 

@@ -27,7 +27,7 @@ func DoElement(e *structure.Element, c chan<- *Element) {
 	}
 }
 
-/* <---------- Non Sliced ----------> */
+/* <-- Non Sliced --> */
 
 /*
 An axial element is an element which:
@@ -88,7 +88,7 @@ func netNodalLoadValues(
 	return
 }
 
-/* <---------- Sliced : Loaded ----------> */
+/* <-- Sliced : Loaded --> */
 
 /*
 Elemets with loads applied are firts sliced a given number of times, and then, all t
@@ -223,7 +223,7 @@ func applyDistributedLoadsToNodes(nodes []*Node, e *structure.Element) {
 	}
 }
 
-/* <---------- Sliced : Unloaded ----------> */
+/* <-- Sliced : Unloaded --> */
 
 /*
 Non axial elements which have no loads applied are sliced just by subdividint their
