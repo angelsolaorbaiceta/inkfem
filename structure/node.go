@@ -28,10 +28,10 @@ func MakeNode(
 }
 
 /*
-MakeNodeFromProjs creates a new node with the given id, position coordinates and
+MakeNodeAtPosition creates a new node with the given id, position coordinates and
 external constraint.
 */
-func MakeNodeFromProjs(
+func MakeNodeAtPosition(
 	id int,
 	x, y float64,
 	externalConstraint Constraint,
@@ -40,11 +40,11 @@ func MakeNodeFromProjs(
 }
 
 /*
-MakeFreeNodeFromProjs creates a new node without external constraint, with the
+MakeFreeNodeAtPosition creates a new node without external constraint, with the
 given id and position by coordinates.
 */
-func MakeFreeNodeFromProjs(id int, x, y float64) *Node {
-	return &Node{id, inkgeom.MakePoint(x, y), MakeNilConstraint(), [3]int{0, 0, 0}}
+func MakeFreeNodeAtPosition(id int, x, y float64) *Node {
+	return &Node{id, inkgeom.MakePoint(x, y), nilConstraint, [3]int{0, 0, 0}}
 }
 
 /* <-- Properties --> */
@@ -53,7 +53,7 @@ func MakeFreeNodeFromProjs(id int, x, y float64) *Node {
 IsExternallyConstrained returns true if this node is externally constrained.
 */
 func (n Node) IsExternallyConstrained() bool {
-	return n.ExternalConstraint != MakeNilConstraint()
+	return n.ExternalConstraint != nilConstraint
 }
 
 /*

@@ -56,9 +56,9 @@ func TestDofsCount(t *testing.T) {
 /* Utils */
 func makeStructure() *Structure {
 	var (
-		nA = structure.MakeFreeNodeFromProjs(1, 0, 0)
-		nB = structure.MakeFreeNodeFromProjs(2, 0, 100)
-		nC = structure.MakeFreeNodeFromProjs(3, 100, 0)
+		nA = structure.MakeFreeNodeAtPosition(1, 0, 0)
+		nB = structure.MakeFreeNodeAtPosition(2, 0, 100)
+		nC = structure.MakeFreeNodeAtPosition(3, 100, 0)
 
 		elemOrigA = structure.MakeElement(
 			1, nA, nB, structure.MakeFullConstraint(), structure.MakeFullConstraint(),

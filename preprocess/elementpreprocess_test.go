@@ -145,8 +145,8 @@ func TestMultipleLoadsNotAddingPositionTwice(t *testing.T) {
 func TestDistributedLocalLoadDistribution(t *testing.T) {
 	element := structure.MakeElement(
 		1,
-		structure.MakeFreeNodeFromProjs(1, 0.0, 0.0),
-		structure.MakeFreeNodeFromProjs(2, 4.0, 0.0),
+		structure.MakeFreeNodeAtPosition(1, 0.0, 0.0),
+		structure.MakeFreeNodeAtPosition(2, 4.0, 0.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
 		structure.MakeUnitMaterial(),
@@ -192,8 +192,8 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 func TestDistributedGlobalLoadDistribution(t *testing.T) {
 	element := structure.MakeElement(
 		1,
-		structure.MakeFreeNodeFromProjs(1, 0.0, 0.0),
-		structure.MakeFreeNodeFromProjs(2, 4.0, 4.0),
+		structure.MakeFreeNodeAtPosition(1, 0.0, 0.0),
+		structure.MakeFreeNodeAtPosition(2, 4.0, 4.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
 		structure.MakeUnitMaterial(),
@@ -239,8 +239,8 @@ func TestDistributedGlobalLoadDistribution(t *testing.T) {
 func TestConcentratedLocalLoadDistribution(t *testing.T) {
 	element := structure.MakeElement(
 		1,
-		structure.MakeFreeNodeFromProjs(1, 0.0, 0.0),
-		structure.MakeFreeNodeFromProjs(2, 4.0, 0.0),
+		structure.MakeFreeNodeAtPosition(1, 0.0, 0.0),
+		structure.MakeFreeNodeAtPosition(2, 4.0, 0.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
 		structure.MakeUnitMaterial(),
@@ -267,8 +267,8 @@ func TestConcentratedLocalLoadDistribution(t *testing.T) {
 func TestConcentratedGlobalLoadDistribution(t *testing.T) {
 	element := structure.MakeElement(
 		1,
-		structure.MakeFreeNodeFromProjs(1, 0.0, 0.0),
-		structure.MakeFreeNodeFromProjs(2, 4.0, 4.0),
+		structure.MakeFreeNodeAtPosition(1, 0.0, 0.0),
+		structure.MakeFreeNodeAtPosition(2, 4.0, 4.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
 		structure.MakeUnitMaterial(),
@@ -294,8 +294,8 @@ func TestConcentratedGlobalLoadDistribution(t *testing.T) {
 func makeElementWithLoads(loads []load.Load) *structure.Element {
 	return structure.MakeElement(
 		1,
-		structure.MakeFreeNodeFromProjs(1, 1.0, 2.0),
-		structure.MakeFreeNodeFromProjs(2, 3.0, 4.0),
+		structure.MakeFreeNodeAtPosition(1, 1.0, 2.0),
+		structure.MakeFreeNodeAtPosition(2, 3.0, 4.0),
 		structure.MakeDispConstraint(),
 		structure.MakeDispConstraint(),
 		structure.MakeUnitMaterial(),
