@@ -13,6 +13,8 @@ An Element represents s resistant element defined between two structural nodes,
 a section and a material.
 
 An Element can have loads applied to it.
+
+TODO: choose the bending axis
 */
 type Element struct {
 	Id, StartNodeId, EndNodeId int
@@ -38,12 +40,17 @@ func MakeElement(
 	loads []load.Load,
 ) *Element {
 	return &Element{
-		id, startNode.Id, endNode.Id,
-		inkgeom.MakeSegment(startNode.Position, endNode.Position),
-		startLink, endLink,
-		material, section, loads,
-		material.YoungMod * section.Area,
-		material.YoungMod * section.IStrong,
+		Id:          id,
+		StartNodeId: startNode.Id,
+		EndNodeId:   endNode.Id,
+		Geometry:    inkgeom.MakeSegment(startNode.Position, endNode.Position),
+		StartLink:   startLink,
+		EndLink:     endLink,
+		material:    material,
+		section:     section,
+		Loads:       loads,
+		_ea:         material.YoungMod * section.Area,
+		_ei:         material.YoungMod * section.IStrong,
 	}
 }
 
@@ -64,7 +71,7 @@ func (e Element) EndPoint() inkgeom.Projectable {
 }
 
 /*
-PointAt returns the position of an intermediate point in this element's geometry.
+PointAt returns the position of a middle point in this element's geometry.
 */
 func (e Element) PointAt(t inkgeom.TParam) inkgeom.Projectable {
 	return e.Geometry.PointAt(t)
@@ -96,7 +103,7 @@ func (e Element) HasLoadsApplied() bool {
 /*
 IsAxialMember returns true if this element is pinned in both ends and, in case
 of having loads applied, they are always in the end positions of the directrix
-and do not include moments about Z, but just forces in X and Y directions.
+and does not include moments about Z, but just forces in X and Y directions.
 */
 func (e Element) IsAxialMember() bool {
 	for _, ld := range e.Loads {
@@ -111,10 +118,10 @@ func (e Element) IsAxialMember() bool {
 /*
 StiffnessGlobalMat generates the local stiffness matrix for the element and
 applies the rotation defined by the elements' geometry reference frame.
+
+It returns the element's stiffness matrix in the global reference frame.
 */
-func (e Element) StiffnessGlobalMat(
-	startT, endT inkgeom.TParam,
-) mat.ReadOnlyMatrix {
+func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMatrix {
 	var (
 		l    = e.Geometry.LengthBetween(startT, endT)
 		c    = e.Geometry.RefFrame().Cos()
