@@ -111,6 +111,5 @@ func assignDof(str *Structure) {
 		)
 	}
 
-	println("DOF = ", dof)
 	str.DofsCount = dof
 }

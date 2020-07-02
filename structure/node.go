@@ -6,7 +6,9 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
 
-// Node is a point in the structure where one or more resistant elements meet.
+/*
+Node is a point in the structure where one or more resistant elements meet.
+*/
 type Node struct {
 	Id                 int
 	Position           inkgeom.Projectable
@@ -19,11 +21,7 @@ type Node struct {
 /*
 MakeNode creates a new node with the given id, position and external constraint.
 */
-func MakeNode(
-	id int,
-	position inkgeom.Projectable,
-	externalConstraint Constraint,
-) *Node {
+func MakeNode(id int, position inkgeom.Projectable, externalConstraint Constraint) *Node {
 	return &Node{id, position, externalConstraint, [3]int{0, 0, 0}}
 }
 
@@ -31,11 +29,7 @@ func MakeNode(
 MakeNodeAtPosition creates a new node with the given id, position coordinates and
 external constraint.
 */
-func MakeNodeAtPosition(
-	id int,
-	x, y float64,
-	externalConstraint Constraint,
-) *Node {
+func MakeNodeAtPosition(id int, x, y float64, externalConstraint Constraint) *Node {
 	return &Node{id, inkgeom.MakePoint(x, y), externalConstraint, [3]int{0, 0, 0}}
 }
 
