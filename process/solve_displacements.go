@@ -4,7 +4,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/lineq"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 	"github.com/angelsolaorbaiceta/inkmath/nums"
@@ -139,7 +139,7 @@ func addDispConstraints(
 func addTermsToLoadVector(vector *vec.Vector, element *preprocess.Element) {
 	var (
 		localActions [3]float64
-		globalForces inkgeom.Projectable
+		globalForces g2d.Projectable
 		dofs         [3]int
 		refFrame     = element.Geometry().RefFrame()
 	)

@@ -7,6 +7,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/nums"
 )
 
@@ -61,8 +62,8 @@ func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
 	loads := []load.Load{load.MakeConcentrated(load.FY, false, inkgeom.MinT, 100.0)}
 	element := makeElementWithLoads(loads)
 	slicedEl := sliceAxialElement(element)
-	expectedProjLoadX := inkgeom.MakeVector(0, 100).DotTimes(element.Geometry.DirectionVersor())
-	expectedProjLoadY := inkgeom.MakeVector(0, 100).DotTimes(element.Geometry.NormalVersor())
+	expectedProjLoadX := g2d.MakeVector(0, 100).DotTimes(element.Geometry.DirectionVersor())
+	expectedProjLoadY := g2d.MakeVector(0, 100).DotTimes(element.Geometry.NormalVersor())
 
 	if !nums.FuzzyEqual(slicedEl.Nodes[0].LocalFx(), expectedProjLoadX) {
 		t.Error("Node projected Fx value was not as expected")

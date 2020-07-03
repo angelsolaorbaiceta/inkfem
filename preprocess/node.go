@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 /*
@@ -13,7 +14,7 @@ numbering for the global system.
 */
 type Node struct {
 	T            inkgeom.TParam
-	Position     inkgeom.Projectable
+	Position     g2d.Projectable
 	localActions [3]float64
 	globalDof    [3]int
 }
@@ -26,7 +27,7 @@ loads {fx, fy, mz}.
 */
 func MakeNode(
 	t inkgeom.TParam,
-	position inkgeom.Projectable,
+	position g2d.Projectable,
 	fx, fy, mz float64,
 ) *Node {
 	return &Node{t, position, [3]float64{fx, fy, mz}, [3]int{0, 0, 0}}
@@ -36,7 +37,7 @@ func MakeNode(
 MakeUnloadedNode creates a new node with given T parameter value and position.
 It has no loads applied.
 */
-func MakeUnloadedNode(t inkgeom.TParam, position inkgeom.Projectable) *Node {
+func MakeUnloadedNode(t inkgeom.TParam, position g2d.Projectable) *Node {
 	return &Node{t, position, [3]float64{}, [3]int{0, 0, 0}}
 }
 

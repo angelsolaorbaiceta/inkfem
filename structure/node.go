@@ -3,7 +3,7 @@ package structure
 import (
 	"fmt"
 
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 /*
@@ -11,7 +11,7 @@ Node is a point in the structure where one or more resistant elements meet.
 */
 type Node struct {
 	Id                 int
-	Position           inkgeom.Projectable
+	Position           g2d.Projectable
 	ExternalConstraint Constraint
 	globalDof          [3]int
 }
@@ -21,7 +21,7 @@ type Node struct {
 /*
 MakeNode creates a new node with the given id, position and external constraint.
 */
-func MakeNode(id int, position inkgeom.Projectable, externalConstraint Constraint) *Node {
+func MakeNode(id int, position g2d.Projectable, externalConstraint Constraint) *Node {
 	return &Node{id, position, externalConstraint, [3]int{0, 0, 0}}
 }
 
@@ -30,7 +30,7 @@ MakeNodeAtPosition creates a new node with the given id, position coordinates an
 external constraint.
 */
 func MakeNodeAtPosition(id int, x, y float64, externalConstraint Constraint) *Node {
-	return &Node{id, inkgeom.MakePoint(x, y), externalConstraint, [3]int{0, 0, 0}}
+	return &Node{id, g2d.MakePoint(x, y), externalConstraint, [3]int{0, 0, 0}}
 }
 
 /*
@@ -38,7 +38,7 @@ MakeFreeNodeAtPosition creates a new node without external constraint, with the
 given id and position by coordinates.
 */
 func MakeFreeNodeAtPosition(id int, x, y float64) *Node {
-	return &Node{id, inkgeom.MakePoint(x, y), nilConstraint, [3]int{0, 0, 0}}
+	return &Node{id, g2d.MakePoint(x, y), nilConstraint, [3]int{0, 0, 0}}
 }
 
 /* <-- Properties --> */

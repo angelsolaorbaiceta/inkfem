@@ -3,6 +3,7 @@ package process
 import (
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
@@ -73,8 +74,8 @@ system of equations solution vector (the global node displacements).
 func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
 	var (
 		nodeDofs               [3]int
-		localDisplacementsProj inkgeom.Projectable
-		elementFrame           inkgeom.RefFrame
+		localDisplacementsProj g2d.Projectable
+		elementFrame           g2d.RefFrame
 	)
 
 	for j, node := range es.Element.Nodes {

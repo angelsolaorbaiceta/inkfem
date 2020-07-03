@@ -5,6 +5,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/nums"
 )
 
@@ -15,10 +16,10 @@ const (
 )
 
 var (
-	startPoint = inkgeom.MakePoint(0, 0)
+	startPoint = g2d.MakePoint(0, 0)
 	startNode  = MakeNode(startNodeID, startPoint, nilConstraint)
 
-	endPoint = inkgeom.MakePoint(100, 0)
+	endPoint = g2d.MakePoint(100, 0)
 	endNode  = MakeNode(endNodeID, endPoint, nilConstraint)
 
 	material = &Material{"material", 2, 3, 4, 5, 6, 7}

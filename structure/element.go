@@ -5,6 +5,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 )
 
@@ -18,7 +19,7 @@ TODO: choose the bending axis
 */
 type Element struct {
 	Id, StartNodeId, EndNodeId int
-	Geometry                   inkgeom.Segment
+	Geometry                   g2d.Segment
 	StartLink, EndLink         Constraint
 	material                   *Material
 	section                    *Section
@@ -43,7 +44,7 @@ func MakeElement(
 		Id:          id,
 		StartNodeId: startNode.Id,
 		EndNodeId:   endNode.Id,
-		Geometry:    inkgeom.MakeSegment(startNode.Position, endNode.Position),
+		Geometry:    g2d.MakeSegment(startNode.Position, endNode.Position),
 		StartLink:   startLink,
 		EndLink:     endLink,
 		material:    material,
@@ -59,21 +60,21 @@ func MakeElement(
 /*
 StartPoint returns the position of the start node of this element's geometry.
 */
-func (e Element) StartPoint() inkgeom.Projectable {
+func (e Element) StartPoint() g2d.Projectable {
 	return e.Geometry.Start
 }
 
 /*
 EndPoint returns the position of the end node of this element's geometry.
 */
-func (e Element) EndPoint() inkgeom.Projectable {
+func (e Element) EndPoint() g2d.Projectable {
 	return e.Geometry.End
 }
 
 /*
 PointAt returns the position of a middle point in this element's geometry.
 */
-func (e Element) PointAt(t inkgeom.TParam) inkgeom.Projectable {
+func (e Element) PointAt(t inkgeom.TParam) g2d.Projectable {
 	return e.Geometry.PointAt(t)
 }
 

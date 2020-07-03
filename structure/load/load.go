@@ -5,6 +5,7 @@ package load
 
 import (
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/nums"
 )
 
@@ -127,14 +128,14 @@ func (load Load) VectorValue() [3]float64 {
 ForcesVector returns a vector for a concentrated load with the components
 of {Fx, Fy}.
 +*/
-func (load Load) ForcesVector() inkgeom.Projectable {
+func (load Load) ForcesVector() g2d.Projectable {
 	switch load.Term {
 	case FX:
-		return inkgeom.MakeVector(load.Value(), 0.0)
+		return g2d.MakeVector(load.Value(), 0.0)
 	case FY:
-		return inkgeom.MakeVector(0.0, load.Value())
+		return g2d.MakeVector(0.0, load.Value())
 	default:
-		return inkgeom.MakeVector(0.0, 0.0)
+		return g2d.MakeVector(0.0, 0.0)
 	}
 }
 

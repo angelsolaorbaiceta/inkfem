@@ -6,6 +6,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 const (
@@ -65,9 +66,9 @@ and at the end end (eFx & eFy).
 */
 func netNodalLoadValues(
 	loads []load.Load,
-	localRefFrame inkgeom.RefFrame,
+	localRefFrame g2d.RefFrame,
 ) (sFx, sFy, eFx, eFy float64) {
-	var localForcesVector inkgeom.Projectable
+	var localForcesVector g2d.Projectable
 
 	for _, ld := range loads {
 		if ld.IsInLocalCoords {
@@ -166,7 +167,7 @@ func makeNodesWithConcentratedLoads(e *structure.Element, tPos []inkgeom.TParam)
 
 		for _, load := range e.Loads {
 			if load.IsConcentrated() && t.Equals(load.T()) {
-				var localLoadForces inkgeom.Projectable
+				var localLoadForces g2d.Projectable
 				if load.IsInLocalCoords {
 					localLoadForces = load.ForcesVector()
 				} else {
@@ -203,7 +204,7 @@ func applyDistributedLoadsToNodes(nodes []*Node, e *structure.Element) {
 
 			if !load.IsInLocalCoords {
 				localForces := elemRefFrame.ProjectVector(
-					inkgeom.MakeVector(avgLoadValVect[0], avgLoadValVect[1]),
+					g2d.MakeVector(avgLoadValVect[0], avgLoadValVect[1]),
 				)
 				avgLoadValVect[0] = localForces.X
 				avgLoadValVect[1] = localForces.Y

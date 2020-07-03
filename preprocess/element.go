@@ -3,6 +3,7 @@ package preprocess
 import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 )
 
@@ -45,7 +46,7 @@ func (e Element) NodesCount() int {
 /*
 Geometry returns the geometry of the original structural element.
 */
-func (e Element) Geometry() inkgeom.Segment {
+func (e Element) Geometry() g2d.Segment {
 	return e.originalElement.Geometry
 }
 

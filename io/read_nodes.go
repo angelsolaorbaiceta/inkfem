@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 // <id> -> <xCoord> <yCoord> {[dx dy rz]}
@@ -39,7 +39,7 @@ func readNodes(scanner *bufio.Scanner, count int) *map[int]*structure.Node {
 
 		nodes[id] = structure.MakeNode(
 			id,
-			inkgeom.MakePoint(x, y),
+			g2d.MakePoint(x, y),
 			constraintFromString(externalConstraint))
 	}
 
