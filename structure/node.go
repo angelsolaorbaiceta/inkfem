@@ -6,6 +6,8 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
+const unsetDOFNumber = -1
+
 /*
 Node is a point in the structure where one or more resistant elements meet.
 */
@@ -22,7 +24,12 @@ type Node struct {
 MakeNode creates a new node with the given id, position and external constraint.
 */
 func MakeNode(id int, position g2d.Projectable, externalConstraint Constraint) *Node {
-	return &Node{id, position, externalConstraint, [3]int{0, 0, 0}}
+	return &Node{
+		id,
+		position,
+		externalConstraint,
+		[3]int{unsetDOFNumber, unsetDOFNumber, unsetDOFNumber},
+	}
 }
 
 /*
@@ -30,7 +37,12 @@ MakeNodeAtPosition creates a new node with the given id, position coordinates an
 external constraint.
 */
 func MakeNodeAtPosition(id int, x, y float64, externalConstraint Constraint) *Node {
-	return &Node{id, g2d.MakePoint(x, y), externalConstraint, [3]int{0, 0, 0}}
+	return &Node{
+		id,
+		g2d.MakePoint(x, y),
+		externalConstraint,
+		[3]int{unsetDOFNumber, unsetDOFNumber, unsetDOFNumber},
+	}
 }
 
 /*
@@ -38,7 +50,12 @@ MakeFreeNodeAtPosition creates a new node without external constraint, with the
 given id and position by coordinates.
 */
 func MakeFreeNodeAtPosition(id int, x, y float64) *Node {
-	return &Node{id, g2d.MakePoint(x, y), NilConstraint, [3]int{0, 0, 0}}
+	return &Node{
+		id,
+		g2d.MakePoint(x, y),
+		NilConstraint,
+		[3]int{unsetDOFNumber, unsetDOFNumber, unsetDOFNumber},
+	}
 }
 
 /* <-- Properties --> */
@@ -62,7 +79,9 @@ HasDegreesOfFreedomNum returns true if the node has already been assigned
 degress of freedom.
 */
 func (n Node) HasDegreesOfFreedomNum() bool {
-	return n.globalDof[0] != 0 || n.globalDof[1] != 0 || n.globalDof[2] != 0
+	return n.globalDof[0] != unsetDOFNumber &&
+		n.globalDof[1] != unsetDOFNumber &&
+		n.globalDof[2] != unsetDOFNumber
 }
 
 /* <-- Methods --> */

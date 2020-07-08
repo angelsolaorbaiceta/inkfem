@@ -82,7 +82,7 @@ func (c Constraint) String() string {
 		buffer.WriteString("dy ")
 	}
 	if c.isRzConst {
-		buffer.WriteString("rz")
+		buffer.WriteString("rz ")
 	}
 
 	buffer.WriteString("}")
