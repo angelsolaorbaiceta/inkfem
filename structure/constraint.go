@@ -5,9 +5,14 @@ import (
 )
 
 var (
-	nilConstraint  = Constraint{false, false, false}
-	dispConstraint = Constraint{true, true, false}
-	fullConstraint = Constraint{true, true, true}
+	// NilConstraint is a constraint where all DOF are free.
+	NilConstraint = Constraint{false, false, false}
+
+	// DispConstraint is a constraint where the displacement DOFs are constrained.
+	DispConstraint = Constraint{true, true, false}
+
+	// FullConstraint is a constraint where all the DOFs are constrained.
+	FullConstraint = Constraint{true, true, true}
 )
 
 /*
@@ -26,41 +31,17 @@ constrained of freed.
 func MakeConstraint(isDxConstr, isDyConstr, isRzConst bool) Constraint {
 	switch {
 	case !isDxConstr && !isDyConstr && !isRzConst:
-		return nilConstraint
+		return NilConstraint
 
 	case isDxConstr && isDyConstr && !isRzConst:
-		return dispConstraint
+		return DispConstraint
 
 	case isDxConstr && isDyConstr && isRzConst:
-		return fullConstraint
+		return FullConstraint
 
 	default:
 		return Constraint{isDxConstr, isDyConstr, isRzConst}
 	}
-}
-
-/*
-MakeNilConstraint returns a constraint which imposes no conditions of the
-degrees of freedom.
-*/
-func MakeNilConstraint() Constraint {
-	return nilConstraint
-}
-
-/*
-MakeDispConstraint returns a constraint which imposes conditions on the
-displacement degrees of freedom, but rotations are left free.
-*/
-func MakeDispConstraint() Constraint {
-	return dispConstraint
-}
-
-/*
-MakeFullConstraint returns a constraint which imposes conditions on all
-degrees of freedom.
-*/
-func MakeFullConstraint() Constraint {
-	return fullConstraint
 }
 
 /* <-- Properties --> */

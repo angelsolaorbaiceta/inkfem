@@ -38,7 +38,7 @@ MakeFreeNodeAtPosition creates a new node without external constraint, with the
 given id and position by coordinates.
 */
 func MakeFreeNodeAtPosition(id int, x, y float64) *Node {
-	return &Node{id, g2d.MakePoint(x, y), nilConstraint, [3]int{0, 0, 0}}
+	return &Node{id, g2d.MakePoint(x, y), NilConstraint, [3]int{0, 0, 0}}
 }
 
 /* <-- Properties --> */
@@ -47,7 +47,7 @@ func MakeFreeNodeAtPosition(id int, x, y float64) *Node {
 IsExternallyConstrained returns true if this node is externally constrained.
 */
 func (n Node) IsExternallyConstrained() bool {
-	return n.ExternalConstraint != nilConstraint
+	return n.ExternalConstraint != NilConstraint
 }
 
 /*
