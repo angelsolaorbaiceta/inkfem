@@ -20,7 +20,6 @@ import (
 	"bufio"
 	"fmt"
 	"regexp"
-	"strconv"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
@@ -28,10 +27,10 @@ import (
 
 // <id> -> <xCoord> <yCoord> {[dx dy rz]}
 var nodeDefinitionRegex = regexp.MustCompile(
-	`(?P<id>\d+)(?:\s*->\s*)` +
-		`(?P<x>\d+\.*\d*)(?:\s+)` +
-		`(?P<y>\d+\.*\d*)(?:\s+)` +
-		`(?P<constraints>{.*})`)
+	`^(?P<id>\d+)\s*->\s*` +
+		`(?P<x>\d+\.?\d*)\s+` +
+		`(?P<y>\d+\.?\d*)\s+` +
+		`(?P<constraints>{.*})$`)
 
 func readNodes(scanner *bufio.Scanner, count int) *map[int]*structure.Node {
 	var (
@@ -54,9 +53,9 @@ func deserializeNode(definition string) *structure.Node {
 
 	groups := nodeDefinitionRegex.FindStringSubmatch(definition)
 
-	id, _ := strconv.Atoi(groups[1])
-	x, _ := strconv.ParseFloat(groups[2], 64)
-	y, _ := strconv.ParseFloat(groups[3], 64)
+	id := ensureParseInt(groups[1], "node")
+	x := ensureParseFloat(groups[2], "node")
+	y := ensureParseFloat(groups[3], "node")
 	externalConstraint := groups[4]
 
 	return structure.MakeNode(

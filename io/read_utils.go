@@ -18,6 +18,8 @@ package io
 
 import (
 	"bufio"
+	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -69,4 +71,34 @@ func constraintFromString(str string) structure.Constraint {
 	)
 
 	return structure.MakeConstraint(dxConst, dyConst, rzConst)
+}
+
+func ensureParseFloat(stringValue string, context string) float64 {
+	value, err := strconv.ParseFloat(stringValue, 64)
+	if err != nil {
+		panic(
+			fmt.Sprintf(
+				"Error reading %s: can't parse floating point number from %s",
+				context,
+				stringValue,
+			),
+		)
+	}
+
+	return value
+}
+
+func ensureParseInt(stringValue string, context string) int {
+	value, err := strconv.Atoi(stringValue)
+	if err != nil {
+		panic(
+			fmt.Sprintf(
+				"Error reading %s: can't parse integr number from %s",
+				context,
+				stringValue,
+			),
+		)
+	}
+
+	return value
 }
