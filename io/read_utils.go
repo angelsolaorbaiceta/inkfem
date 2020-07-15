@@ -21,16 +21,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-const (
-	commentDeclaration = "#"
-	dispX              = "dx"
-	dispY              = "dy"
-	rotZ               = "rz"
-)
+const commentDeclaration = "#"
 
 func lineIsComment(line string) bool {
 	return strings.HasPrefix(line, commentDeclaration)
@@ -61,16 +54,6 @@ func definitionLines(scanner *bufio.Scanner, count int) []string {
 	}
 
 	return lines
-}
-
-func constraintFromString(str string) structure.Constraint {
-	var (
-		dxConst = strings.Contains(str, dispX)
-		dyConst = strings.Contains(str, dispY)
-		rzConst = strings.Contains(str, rotZ)
-	)
-
-	return structure.MakeConstraint(dxConst, dyConst, rzConst)
 }
 
 func ensureParseFloat(stringValue string, context string) float64 {
