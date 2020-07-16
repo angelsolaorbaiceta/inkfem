@@ -40,3 +40,30 @@ func TestReadNode(t *testing.T) {
 		t.Errorf("Expected constraint of { dx dy rz }, got %v", got.ExternalConstraint)
 	}
 }
+
+func TestReadMaterial(t *testing.T) {
+	print(materialDefinitionRegex.String())
+	got := deserializeMaterial("'mat steel' -> 1.1 2.2 3.3 4.4 5.5 6.6")
+
+	if got.Name != "mat steel" {
+		t.Errorf("Expected name 'mat steel', got '%s'", got.Name)
+	}
+	if got.Density != 1.1 {
+		t.Errorf("Expected density of 1.1, got %f", got.Density)
+	}
+	if got.YoungMod != 2.2 {
+		t.Errorf("Expected YoungMod of 2.2, got %f", got.YoungMod)
+	}
+	if got.ShearMod != 3.3 {
+		t.Errorf("Expected ShearMod of 3.3, got %f", got.ShearMod)
+	}
+	if got.PoissonRatio != 4.4 {
+		t.Errorf("Expected PoissonRatio of 4.4, got %f", got.PoissonRatio)
+	}
+	if got.YieldStrength != 5.5 {
+		t.Errorf("Expected YieldStrength of 5.5, got %f", got.YieldStrength)
+	}
+	if got.UltimateStrength != 6.6 {
+		t.Errorf("Expected UltimateStrength of 6.6, got %f", got.UltimateStrength)
+	}
+}

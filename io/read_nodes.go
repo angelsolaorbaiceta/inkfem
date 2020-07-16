@@ -53,9 +53,9 @@ func deserializeNode(definition string) *structure.Node {
 
 	groups := nodeDefinitionRegex.FindStringSubmatch(definition)
 
-	id := ensureParseInt(groups[1], "node")
-	x := ensureParseFloat(groups[2], "node")
-	y := ensureParseFloat(groups[3], "node")
+	id := ensureParseInt(groups[1], "node id")
+	x := ensureParseFloat(groups[2], "node x position")
+	y := ensureParseFloat(groups[3], "node y position")
 	externalConstraint := groups[4]
 
 	return structure.MakeNode(

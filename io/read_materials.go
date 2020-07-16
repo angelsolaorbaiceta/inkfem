@@ -20,54 +20,55 @@ import (
 	"bufio"
 	"fmt"
 	"regexp"
-	"strconv"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-// <name> -> <density> <young> <shear> <poisson> <yield> <ultimate>
+// '<name>' -> <density> <young> <shear> <poisson> <yield> <ultimate>
 var materialDefinitionRegex = regexp.MustCompile(
-	`(?P<name>'\w+')(?:\s*->\s*)` +
-		`(?P<density>\d+\.*\d*)(?:\s+)` +
-		`(?P<young>\d+\.+\d+)(?:\s+)` +
-		`(?P<shear>\d+\.+\d+)(?:\s+)` +
-		`(?P<poisson>\d+\.+\d+)(?:\s+)` +
-		`(?P<yield>\d+\.+\d+)(?:\s+)` +
-		`(?P<ultimate>\d+\.+\d+)`)
+	"^" + nameGrpExpr + arrowExpr +
+		floatGroupAndSpaceExpr("density") +
+		floatGroupAndSpaceExpr("young") +
+		floatGroupAndSpaceExpr("shear") +
+		floatGroupAndSpaceExpr("poisson") +
+		floatGroupAndSpaceExpr("yield") +
+		floatGroupAndOptinalSpaceExpr("ultimate") + "$")
 
 func readMaterials(scanner *bufio.Scanner, count int) *map[string]*structure.Material {
 	var (
-		name                            string
-		density, youngMod, shearMod     float64
-		possonRatio                     float64
-		yieldStrength, ultimateStrength float64
-		materials                       = make(map[string]*structure.Material)
+		material  *structure.Material
+		materials = make(map[string]*structure.Material)
 	)
 
 	for _, line := range definitionLines(scanner, count) {
-		if !materialDefinitionRegex.MatchString(line) {
-			panic(fmt.Sprintf("Found material with wrong format: '%s'", line))
-		}
-
-		groups := materialDefinitionRegex.FindStringSubmatch(line)
-
-		name = groups[1]
-		density, _ = strconv.ParseFloat(groups[2], 64)
-		youngMod, _ = strconv.ParseFloat(groups[3], 64)
-		shearMod, _ = strconv.ParseFloat(groups[4], 64)
-		possonRatio, _ = strconv.ParseFloat(groups[5], 64)
-		yieldStrength, _ = strconv.ParseFloat(groups[6], 64)
-		ultimateStrength, _ = strconv.ParseFloat(groups[7], 64)
-
-		materials[name] = &structure.Material{
-			Name:             name,
-			Density:          density,
-			YoungMod:         youngMod,
-			ShearMod:         shearMod,
-			PoissonRatio:     possonRatio,
-			YieldStrength:    yieldStrength,
-			UltimateStrength: ultimateStrength}
+		material = deserializeMaterial(line)
+		materials[material.Name] = material
 	}
 
 	return &materials
+}
+
+func deserializeMaterial(definition string) *structure.Material {
+	if !materialDefinitionRegex.MatchString(definition) {
+		panic(fmt.Sprintf("Found material with wrong format: '%s'", definition))
+	}
+
+	groups := materialDefinitionRegex.FindStringSubmatch(definition)
+
+	name := groups[1]
+	density := ensureParseFloat(groups[2], "material density")
+	youngMod := ensureParseFloat(groups[3], "material Young modulus")
+	shearMod := ensureParseFloat(groups[4], "material shear modulus")
+	possonRatio := ensureParseFloat(groups[5], "material poisson ratio")
+	yieldStrength := ensureParseFloat(groups[6], "material yield strength")
+	ultimateStrength := ensureParseFloat(groups[7], "material ultimate strength")
+
+	return &structure.Material{
+		Name:             name,
+		Density:          density,
+		YoungMod:         youngMod,
+		ShearMod:         shearMod,
+		PoissonRatio:     possonRatio,
+		YieldStrength:    yieldStrength,
+		UltimateStrength: ultimateStrength}
 }
