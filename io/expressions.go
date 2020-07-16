@@ -20,6 +20,7 @@ import "fmt"
 
 const (
 	nameGrpExpr = `'(?P<name>[\w\-_ ]+)'`
+	idGrpExpr   = `(?P<id>\d+)`
 	arrowExpr   = `\s*->\s*`
 	floatExpr   = `\d+\.?\d*`
 )

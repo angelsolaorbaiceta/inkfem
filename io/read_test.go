@@ -42,7 +42,6 @@ func TestReadNode(t *testing.T) {
 }
 
 func TestReadMaterial(t *testing.T) {
-	print(materialDefinitionRegex.String())
 	got := deserializeMaterial("'mat steel' -> 1.1 2.2 3.3 4.4 5.5 6.6")
 
 	if got.Name != "mat steel" {

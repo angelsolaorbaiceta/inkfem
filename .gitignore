@@ -5,3 +5,6 @@ inkfem
 examples/*.inkfempre
 examples/*.inkfemsol
 examples/*.png
+
+# Ignore GoLand files
+.idea

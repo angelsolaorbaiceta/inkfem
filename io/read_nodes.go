@@ -27,9 +27,8 @@ import (
 
 // <id> -> <xCoord> <yCoord> {[dx dy rz]}
 var nodeDefinitionRegex = regexp.MustCompile(
-	`^(?P<id>\d+)\s*->\s*` +
-		`(?P<x>\d+\.?\d*)\s+` +
-		`(?P<y>\d+\.?\d*)\s+` +
+	"^" + idGrpExpr + arrowExpr +
+		floatGroupAndSpaceExpr("x") + floatGroupAndSpaceExpr("y") +
 		`(?P<constraints>{.*})$`)
 
 func readNodes(scanner *bufio.Scanner, count int) *map[int]*structure.Node {
