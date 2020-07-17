@@ -54,8 +54,10 @@ value tuples.
 func MakeDistributed(
 	term Term,
 	isInLocalCoords bool,
-	startT inkgeom.TParam /* -> */, startValue float64,
-	endT inkgeom.TParam /* -> */, endValue float64,
+	startT inkgeom.TParam,
+	startValue float64,
+	endT inkgeom.TParam,
+	endValue float64,
 ) Load {
 	return Load{term, isInLocalCoords, startT, endT, startValue, endValue}
 }
@@ -71,7 +73,8 @@ func MakeConcentrated(
 	term Term,
 	isInLocalCoords bool,
 	t inkgeom.TParam,
-	value float64) Load {
+	value float64,
+) Load {
 	return Load{term, isInLocalCoords, t, t, value, value}
 }
 
@@ -233,4 +236,16 @@ EndT returns the end T parameter value for the distributed load.
 */
 func (load Load) EndT() inkgeom.TParam {
 	return load.endT
+}
+
+/*
+Equals tests whether the two loads are equal or not.
+*/
+func (load Load) Equals(other Load) bool {
+	return load.Term == other.Term &&
+		load.IsInLocalCoords == other.IsInLocalCoords &&
+		load.startT.Equals(other.startT) &&
+		nums.FuzzyEqual(load.startValue, other.startValue) &&
+		load.endT.Equals(other.endT) &&
+		nums.FuzzyEqual(load.endValue, other.endValue)
 }
