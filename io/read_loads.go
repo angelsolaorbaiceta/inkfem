@@ -48,10 +48,10 @@ var (
 
 func readLoads(scanner *bufio.Scanner, count int) map[int][]load.Load {
 	lines := definitionLines(scanner, count)
-	return deserializeLoads(lines)
+	return deserializeLoadsByElementID(lines)
 }
 
-func deserializeLoads(lines []string) map[int][]load.Load {
+func deserializeLoadsByElementID(lines []string) map[int][]load.Load {
 	var (
 		elementNumber int
 		_load         load.Load

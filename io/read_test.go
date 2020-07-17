@@ -143,3 +143,28 @@ func TestReadConcentratedLoad(t *testing.T) {
 		t.Errorf("Expected load start value = -70.5, got %f", val)
 	}
 }
+
+func TestDeserializeLoads(t *testing.T) {
+	var (
+		lines []string = []string{
+			"fx ld 34 0.1 -50.2 0.9 -65.5",
+			"fy gc 34 0.1 -70.5",
+		}
+		loads = deserializeLoadsByElementID(lines)[34]
+
+		startT  = inkgeom.MakeTParam(0.1)
+		endT    = inkgeom.MakeTParam(0.9)
+		loadOne = load.MakeDistributed(load.FX, true, startT, -50.2, endT, -65.5)
+		loadTwo = load.MakeConcentrated(load.FY, false, startT, -70.5)
+	)
+
+	if numberOfLoads := len(loads); numberOfLoads != 2 {
+		t.Errorf("Expected 2 loads, got %d", numberOfLoads)
+	}
+	if got := loads[0]; !got.Equals(loadOne) {
+		t.Errorf("Expected load %v, but got %v", loadOne, got)
+	}
+	if got := loads[1]; !got.Equals(loadTwo) {
+		t.Errorf("Expected load %v, but got %v", loadTwo, got)
+	}
+}
