@@ -30,7 +30,7 @@ var (
 	// <term> <reference-type> <elementId> <tStart> <valueStart> <tEnd> <valueEnd>
 	distLoadDefinitionRegex = regexp.MustCompile(
 		"^" + loadTermExpr + distributedLoadRefExpr +
-			`(?P<element>\d+)\s+` +
+			loadElementID +
 			floatGroupAndSpaceExpr("t_start") +
 			floatGroupAndSpaceExpr("val_start") +
 			floatGroupAndSpaceExpr("t_end") +
@@ -39,30 +39,40 @@ var (
 
 	// <term> <reference> <elementId> <t> <value>
 	concLoadDefinitionRegex = regexp.MustCompile(
-		`(?P<term>[fm]{1}[xyz]{1})(?:\s+)` +
-			`(?P<ref>[lg]{1})(?:c{1})(?:\s+)` +
-			`(?P<element>\d+)(?:\s+)` +
-			`(?P<t>\d+\.*\d*)(?:\s+)` +
-			`(?P<val>-*\d+\.*\d*)`)
+		"^" + loadTermExpr + concentratedLoadRefExpr +
+			loadElementID +
+			floatGroupAndSpaceExpr("t") +
+			floatGroupAndOptinalSpaceExpr("val") + "$",
+	)
 )
 
 func readLoads(scanner *bufio.Scanner, count int) map[int][]load.Load {
+	lines := definitionLines(scanner, count)
+	return deserializeLoads(lines)
+}
+
+func deserializeLoads(lines []string) map[int][]load.Load {
 	var (
 		elementNumber int
 		_load         load.Load
 		loads         = make(map[int][]load.Load)
 	)
 
-	for _, line := range definitionLines(scanner, count) {
-		if !(distLoadDefinitionRegex.MatchString(line) || concLoadDefinitionRegex.MatchString(line)) {
+	for _, line := range lines {
+		var (
+			matchesDistributed  = distLoadDefinitionRegex.MatchString(line)
+			matchesConcentrated = concLoadDefinitionRegex.MatchString(line)
+		)
+
+		if !(matchesDistributed || matchesConcentrated) {
 			panic(fmt.Sprintf("Found load with wrong format: '%s'", line))
 		}
 
 		switch {
-		case distLoadDefinitionRegex.MatchString(line):
+		case matchesDistributed:
 			elementNumber, _load = deserializeDistributedLoad(line)
 
-		case concLoadDefinitionRegex.MatchString(line):
+		case matchesConcentrated:
 			elementNumber, _load = deserializeConcentratedLoad(line)
 
 		default:

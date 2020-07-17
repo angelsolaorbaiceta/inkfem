@@ -93,7 +93,7 @@ func TestReadSection(t *testing.T) {
 }
 
 func TestReadDistributedLoad(t *testing.T) {
-	barID, gotLoad := deserializeDistributedLoad("fx ld 34 0.1 50.2 0.9 65.5")
+	barID, gotLoad := deserializeDistributedLoad("fx ld 34 0.1 -50.2 0.9 -65.5")
 	var (
 		startT = inkgeom.MakeTParam(0.1)
 		endT   = inkgeom.MakeTParam(0.9)
@@ -112,13 +112,34 @@ func TestReadDistributedLoad(t *testing.T) {
 	if gotLoad.StartT() != startT {
 		t.Errorf("Expected load start t = 0.1, got %f", gotLoad.StartT())
 	}
-	if val := gotLoad.ValueAt(startT); val != 50.2 {
-		t.Errorf("Expected load start value = 50.2, got %f", val)
+	if val := gotLoad.ValueAt(startT); val != -50.2 {
+		t.Errorf("Expected load start value = -50.2, got %f", val)
 	}
 	if gotLoad.EndT() != endT {
 		t.Errorf("Expected load end t = 0.9, got %f", gotLoad.EndT())
 	}
-	if val := gotLoad.ValueAt(endT); val != 65.5 {
-		t.Errorf("Expected load end value = 65.5, got %f", val)
+	if val := gotLoad.ValueAt(endT); val != -65.5 {
+		t.Errorf("Expected load end value = -65.5, got %f", val)
+	}
+}
+
+func TestReadConcentratedLoad(t *testing.T) {
+	barID, gotLoad := deserializeConcentratedLoad("fy gc 45 0.5 -70.5")
+
+	if barID != 45 {
+		t.Errorf("Expected bar id 45, got %d", barID)
+	}
+
+	if gotLoad.Term != load.FY {
+		t.Errorf("Expected load term fy, got %s", gotLoad.Term)
+	}
+	if gotLoad.IsInLocalCoords {
+		t.Error("Expected load in global coords")
+	}
+	if gotLoad.T() != inkgeom.HalfT {
+		t.Errorf("Expected load t = 0.5, got %f", gotLoad.StartT())
+	}
+	if val := gotLoad.Value(); val != -70.5 {
+		t.Errorf("Expected load start value = -70.5, got %f", val)
 	}
 }

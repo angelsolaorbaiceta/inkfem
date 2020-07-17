@@ -19,11 +19,15 @@ package io
 import "fmt"
 
 const (
-	nameGrpExpr             = `'(?P<name>[\w\-_ ]+)'`
-	idGrpExpr               = `(?P<id>\d+)`
+	floatExpr     = `-?\d+\.?\d*`
+	validNameExpr = `[\w\-_ ]+`
+	validIDExpr   = `\d+`
+
+	nameGrpExpr             = `'(?P<name>` + validNameExpr + `)'`
+	idGrpExpr               = `(?P<id>` + validIDExpr + `)`
 	arrowExpr               = `\s*->\s*`
-	floatExpr               = `\d+\.?\d*`
 	loadTermExpr            = `(?P<term>[fm]{1}[xyz]{1})\s+`
+	loadElementID           = `(?P<element>` + validIDExpr + `)\s+`
 	distributedLoadRefExpr  = `(?P<ref>[lg]{1})(?:d{1})\s+`
 	concentratedLoadRefExpr = `(?P<ref>[lg]{1})(?:c{1})\s+`
 )
