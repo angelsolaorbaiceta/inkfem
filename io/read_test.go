@@ -20,6 +20,8 @@ import (
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
+	"github.com/angelsolaorbaiceta/inkfem/structure/load"
+	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
@@ -87,5 +89,36 @@ func TestReadSection(t *testing.T) {
 	}
 	if got.SWeak != 5.5 {
 		t.Errorf("Expected SWeak of 5.5, got %f", got.SWeak)
+	}
+}
+
+func TestReadDistributedLoad(t *testing.T) {
+	barID, gotLoad := deserializeDistributedLoad("fx ld 34 0.1 50.2 0.9 65.5")
+	var (
+		startT = inkgeom.MakeTParam(0.1)
+		endT   = inkgeom.MakeTParam(0.9)
+	)
+
+	if barID != 34 {
+		t.Errorf("Expected bar id 34, got %d", barID)
+	}
+
+	if gotLoad.Term != load.FX {
+		t.Errorf("Expected load term fx, got %s", gotLoad.Term)
+	}
+	if !gotLoad.IsInLocalCoords {
+		t.Error("Expected load in local coords")
+	}
+	if gotLoad.StartT() != startT {
+		t.Errorf("Expected load start t = 0.1, got %f", gotLoad.StartT())
+	}
+	if val := gotLoad.ValueAt(startT); val != 50.2 {
+		t.Errorf("Expected load start value = 50.2, got %f", val)
+	}
+	if gotLoad.EndT() != endT {
+		t.Errorf("Expected load end t = 0.9, got %f", gotLoad.EndT())
+	}
+	if val := gotLoad.ValueAt(endT); val != 65.5 {
+		t.Errorf("Expected load end value = 65.5, got %f", val)
 	}
 }

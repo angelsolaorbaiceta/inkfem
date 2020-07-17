@@ -60,14 +60,13 @@ func readLoads(scanner *bufio.Scanner, count int) map[int][]load.Load {
 
 		switch {
 		case distLoadDefinitionRegex.MatchString(line):
-			elementNumber, _load = distributedLoadFromString(line)
+			elementNumber, _load = deserializeDistributedLoad(line)
 
 		case concLoadDefinitionRegex.MatchString(line):
-			elementNumber, _load = concentratedLoadFromString(line)
+			elementNumber, _load = deserializeConcentratedLoad(line)
 
 		default:
-			// shouldn't happen
-			panic("Unknown type of load?")
+			panic(fmt.Sprintf("Unknown type of load: '%s'", line))
 		}
 
 		loads[elementNumber] = append(loads[elementNumber], _load)
@@ -76,18 +75,18 @@ func readLoads(scanner *bufio.Scanner, count int) map[int][]load.Load {
 	return loads
 }
 
-func distributedLoadFromString(line string) (int, load.Load) {
+func deserializeDistributedLoad(line string) (int, load.Load) {
 	groups := distLoadDefinitionRegex.FindStringSubmatch(line)
 
 	term := load.Term(groups[1])
 	load.EnsureValidTerm(term)
 
 	isInLocalCoords := groups[2] == "l"
-	elementNumber, _ := strconv.Atoi(groups[3])
-	tStart, _ := strconv.ParseFloat(groups[4], 64)
-	valStart, _ := strconv.ParseFloat(groups[5], 64)
-	tEnd, _ := strconv.ParseFloat(groups[6], 64)
-	valEnd, _ := strconv.ParseFloat(groups[7], 64)
+	elementNumber := ensureParseInt(groups[3], "distributed load element number")
+	tStart := ensureParseFloat(groups[4], "distributed load start T")
+	valStart := ensureParseFloat(groups[5], "distributed load start value")
+	tEnd := ensureParseFloat(groups[6], "distributed load end T")
+	valEnd := ensureParseFloat(groups[7], "distributed load end value")
 
 	return elementNumber,
 		load.MakeDistributed(
@@ -100,7 +99,7 @@ func distributedLoadFromString(line string) (int, load.Load) {
 		)
 }
 
-func concentratedLoadFromString(line string) (int, load.Load) {
+func deserializeConcentratedLoad(line string) (int, load.Load) {
 	groups := concLoadDefinitionRegex.FindStringSubmatch(line)
 
 	term := load.Term(groups[1])

@@ -163,7 +163,7 @@ func (load Load) ValueAt(t inkgeom.TParam) float64 {
 		panic("Can't get value at of a concentrated load at a given point")
 	}
 
-	if t.IsLessThan(load.StartT()) || t.IsGreaterThan(load.EndT()) {
+	if t.IsLessThan(load.startT) || t.IsGreaterThan(load.endT) {
 		return 0.0
 	}
 

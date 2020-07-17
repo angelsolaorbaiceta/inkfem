@@ -19,8 +19,9 @@ package io
 import (
 	"bufio"
 	"fmt"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"regexp"
+
+	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
 // <name> -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
