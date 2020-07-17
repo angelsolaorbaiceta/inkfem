@@ -30,15 +30,20 @@ var nodeDefinitionRegex = regexp.MustCompile(
 	"^" + idGrpExpr + arrowExpr +
 		floatGroupAndSpaceExpr("x") +
 		floatGroupAndSpaceExpr("y") +
-		`(?P<constraints>{[drxyz ]*})$`)
+		`(?P<constraints>{[drxyz ]*})\s*$`)
 
 func readNodes(scanner *bufio.Scanner, count int) *map[int]*structure.Node {
+	lines := definitionLines(scanner, count)
+	return deserializeNodesByID(lines)
+}
+
+func deserializeNodesByID(lines []string) *map[int]*structure.Node {
 	var (
 		node  *structure.Node
 		nodes = make(map[int]*structure.Node)
 	)
 
-	for _, line := range definitionLines(scanner, count) {
+	for _, line := range lines {
 		node = deserializeNode(line)
 		nodes[node.Id] = node
 	}

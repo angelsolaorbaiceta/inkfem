@@ -85,6 +85,15 @@ func (c Constraint) AllowsDispY() bool {
 	return !c.isDyConstr
 }
 
+/*
+Equals tests whether this constraint equals other.
+*/
+func (c Constraint) Equals(other Constraint) bool {
+	return c.isDxConstr == other.isDxConstr &&
+		c.isDyConstr == other.isDyConstr &&
+		c.isRzConst == other.isRzConst
+}
+
 /* <-- Stringer --> */
 
 func (c Constraint) String() string {

@@ -43,6 +43,34 @@ func TestReadNode(t *testing.T) {
 	}
 }
 
+func TestDeserializeNodes(t *testing.T) {
+	var (
+		lines []string = []string{
+			"1 -> 10.1 20.2 { dx dy rz }",
+			"2 -> 40.1 50.2 { dx dy }",
+			"3 -> 70.1 80.2 { }",
+		}
+		nodes = deserializeNodesByID(lines)
+
+		nodeOne   = structure.MakeNode(1, g2d.MakePoint(10.1, 20.2), structure.FullConstraint)
+		nodeTwo   = structure.MakeNode(2, g2d.MakePoint(40.1, 50.2), structure.DispConstraint)
+		nodeThree = structure.MakeNode(3, g2d.MakePoint(70.1, 80.2), structure.NilConstraint)
+	)
+
+	if size := len(*nodes); size != 3 {
+		t.Errorf("Expected 3 nodes, but got %d", size)
+	}
+	if got := (*nodes)[1]; !got.Equals(nodeOne) {
+		t.Errorf("Expected node %v, but got %v", nodeOne, got)
+	}
+	if got := (*nodes)[2]; !got.Equals(nodeTwo) {
+		t.Errorf("Expected node %v, but got %v", nodeTwo, got)
+	}
+	if got := (*nodes)[3]; !got.Equals(nodeThree) {
+		t.Errorf("Expected node %v, but got %v", nodeThree, got)
+	}
+}
+
 func TestReadMaterial(t *testing.T) {
 	got := deserializeMaterial("'mat steel' -> 1.1 2.2 3.3 4.4 5.5 6.6")
 

@@ -111,6 +111,14 @@ func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
 	n.globalDof[2] = rz
 }
 
+/*
+Equals tests whether this node and other are equal.
+*/
+func (n *Node) Equals(other *Node) bool {
+	return n.Position.Equals(other.Position) &&
+		n.ExternalConstraint.Equals(other.ExternalConstraint)
+}
+
 /* <-- Stringer --> */
 
 func (n Node) String() string {
