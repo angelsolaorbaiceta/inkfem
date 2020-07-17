@@ -19,10 +19,13 @@ package io
 import "fmt"
 
 const (
-	nameGrpExpr = `'(?P<name>[\w\-_ ]+)'`
-	idGrpExpr   = `(?P<id>\d+)`
-	arrowExpr   = `\s*->\s*`
-	floatExpr   = `\d+\.?\d*`
+	nameGrpExpr             = `'(?P<name>[\w\-_ ]+)'`
+	idGrpExpr               = `(?P<id>\d+)`
+	arrowExpr               = `\s*->\s*`
+	floatExpr               = `\d+\.?\d*`
+	loadTermExpr            = `(?P<term>[fm]{1}[xyz]{1})\s+`
+	distributedLoadRefExpr  = `(?P<ref>[lg]{1})(?:d{1})\s+`
+	concentratedLoadRefExpr = `(?P<ref>[lg]{1})(?:c{1})\s+`
 )
 
 func floatGroupAndSpaceExpr(groupName string) string {

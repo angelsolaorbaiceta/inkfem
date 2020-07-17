@@ -29,13 +29,13 @@ import (
 var (
 	// <term> <reference-type> <elementId> <tStart> <valueStart> <tEnd> <valueEnd>
 	distLoadDefinitionRegex = regexp.MustCompile(
-		`(?P<term>[fm]{1}[xyz]{1})(?:\s+)` +
-			`(?P<ref>[lg]{1})(?:d{1})(?:\s+)` +
-			`(?P<element>\d+)(?:\s+)` +
-			`(?P<t_start>\d+\.*\d*)(?:\s+)` +
-			`(?P<val_start>-*\d+\.*\d*)(?:\s+)` +
-			`(?P<t_end>\d+\.*\d*)(?:\s+)` +
-			`(?P<val_end>-*\d+\.*\d*)`)
+		"^" + loadTermExpr + distributedLoadRefExpr +
+			`(?P<element>\d+)\s+` +
+			floatGroupAndSpaceExpr("t_start") +
+			floatGroupAndSpaceExpr("val_start") +
+			floatGroupAndSpaceExpr("t_end") +
+			floatGroupAndOptinalSpaceExpr("val_end") + "$",
+	)
 
 	// <term> <reference> <elementId> <t> <value>
 	concLoadDefinitionRegex = regexp.MustCompile(
