@@ -43,7 +43,7 @@ func (a ByID) Less(i, j int) bool {
 	return a[i].GetID() < a[j].GetID()
 }
 
-// SortById sorts (in place) a slice of identifiable elements.
-func SortById(elements []Identifiable) {
+// SortByID sorts (in place) a slice of identifiable elements.
+func SortByID(elements []Identifiable) {
 	sort.Sort(ByID(elements))
 }
