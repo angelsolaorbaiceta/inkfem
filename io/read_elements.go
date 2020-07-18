@@ -20,7 +20,6 @@ import (
 	"bufio"
 	"fmt"
 	"regexp"
-	"strconv"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
@@ -52,6 +51,17 @@ func readElements(
 	sections *map[string]*structure.Section,
 	loads *map[int][]load.Load,
 ) *[]*structure.Element {
+	lines := definitionLines(scanner, count)
+	return deserializeElements(lines, nodes, materials, sections, loads)
+}
+
+func deserializeElements(
+	lines []string,
+	nodes *map[int]*structure.Node,
+	materials *map[string]*structure.Material,
+	sections *map[string]*structure.Section,
+	loads *map[int][]load.Load,
+) *[]*structure.Element {
 	var (
 		id, startNodeID, endNodeID int
 		startNode, endNode         *structure.Node
@@ -59,11 +69,11 @@ func readElements(
 		material                   *structure.Material
 		section                    *structure.Section
 		ok                         bool
-		elements                   = make([]*structure.Element, count)
+		elements                   = make([]*structure.Element, len(lines))
 		groupName                  string
 	)
 
-	for i, line := range definitionLines(scanner, count) {
+	for i, line := range lines {
 		if !elementDefinitionRegex.MatchString(line) {
 			panic(fmt.Sprintf("Found element with wrong format: '%s'", line))
 		}
@@ -71,14 +81,14 @@ func readElements(
 		groups := elementDefinitionRegex.FindStringSubmatch(line)
 
 		groupName = groups[startNodeIDIndex]
-		startNodeID, _ = strconv.Atoi(groupName)
+		startNodeID = ensureParseInt(groupName, "element start node id")
 		startNode, ok = (*nodes)[startNodeID]
 		if !ok {
 			panic(fmt.Sprintf("Element %d with unknown start node id: %d", id, startNodeID))
 		}
 
 		groupName = groups[endNodeIDIndex]
-		endNodeID, _ = strconv.Atoi(groupName)
+		endNodeID = ensureParseInt(groupName, "element end node id")
 		endNode, ok = (*nodes)[endNodeID]
 		if !ok {
 			panic(fmt.Sprintf("Element %d with unknown end node id: %d", id, endNodeID))
@@ -96,7 +106,7 @@ func readElements(
 			panic(fmt.Sprintf("Element %d: unknown section name: %s", id, groupName))
 		}
 
-		id, _ = strconv.Atoi(groups[idIndex])
+		id = ensureParseInt(groups[idIndex], "element id")
 		startLink = groups[startLinkIndex]
 		endLink = groups[endLinkIndex]
 
