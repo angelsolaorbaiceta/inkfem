@@ -19,6 +19,7 @@ package structure
 import (
 	"fmt"
 
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
@@ -34,7 +35,7 @@ An Element can have loads applied to it.
 TODO: choose the bending axis
 */
 type Element struct {
-	Id, StartNodeId, EndNodeId int
+	Id, StartNodeId, EndNodeId contracts.StrID
 	Geometry                   g2d.Segment
 	StartLink, EndLink         Constraint
 	material                   *Material
@@ -49,7 +50,7 @@ type Element struct {
 MakeElement creates a new element with all properties initialized.
 */
 func MakeElement(
-	id int,
+	id contracts.StrID,
 	startNode, endNode *Node,
 	startLink, endLink Constraint,
 	material *Material,
@@ -207,13 +208,22 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 /*
 Equals tests whether this element is equal to other.
 */
-func (e Element) Equals(other Element) bool {
+func (e *Element) Equals(other *Element) bool {
 	return e.StartNodeId == other.StartNodeId &&
 		e.EndNodeId == other.EndNodeId &&
 		e.StartLink.Equals(other.StartLink) &&
 		e.EndLink.Equals(other.EndLink) &&
 		e.material.Name == other.material.Name &&
 		e.section.Name == other.section.Name
+}
+
+/* <-- Identifiable --> */
+
+/*
+GetId returns the element's id.
+*/
+func (e Element) GetId() contracts.StrID {
+	return e.Id
 }
 
 /* <-- Stringer --> */

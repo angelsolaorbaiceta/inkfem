@@ -19,6 +19,7 @@ package io
 import (
 	"testing"
 
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
@@ -189,5 +190,51 @@ func TestDeserializeLoads(t *testing.T) {
 	}
 	if got := loads[1]; !got.Equals(loadTwo) {
 		t.Errorf("Expected load %v, but got %v", loadTwo, got)
+	}
+}
+
+func TestDeserializeElements(t *testing.T) {
+	var (
+		lines = []string{
+			"1 -> 1{ dx dy rz } 2{ dx dy } 'mat' 'sec'",
+			"2 -> 1{ dx dy } 3{ dx dy rz } 'mat' 'sec'",
+		}
+		nodes = map[contracts.StrID]*structure.Node{
+			1: structure.MakeFreeNodeAtPosition(1, 100.0, 200.0),
+			2: structure.MakeFreeNodeAtPosition(2, 300.0, 400.0),
+			3: structure.MakeFreeNodeAtPosition(3, 500.0, 600.0),
+		}
+		materials = map[string]*structure.Material{
+			"mat": structure.MakeMaterial("mat", 1.1, 2.2, 3.3, 4.4, 5.5, 6.6),
+		}
+		sections = map[string]*structure.Section{
+			"sec": structure.MakeSection("sec", 10.1, 20.2, 30.3, 40.4, 50.5),
+		}
+		loads = map[contracts.StrID][]load.Load{
+			1: {load.MakeConcentrated(load.FY, true, inkgeom.MinT, -50)},
+			2: {load.MakeConcentrated(load.MZ, true, inkgeom.MaxT, -30)},
+		}
+
+		elements = deserializeElements(lines, &nodes, &materials, &sections, &loads)
+
+		wantElOne = structure.MakeElement(
+			1, nodes[1], nodes[2],
+			structure.FullConstraint, structure.DispConstraint,
+			materials["mat"], sections["sec"],
+			loads[1],
+		)
+		wantElTwo = structure.MakeElement(
+			2, nodes[1], nodes[3],
+			structure.DispConstraint, structure.FullConstraint,
+			materials["mat"], sections["sec"],
+			loads[2],
+		)
+	)
+
+	if got := (*elements)[0]; !got.Equals(wantElOne) {
+		t.Errorf("Expected element %v, got %v", wantElOne, got)
+	}
+	if got := (*elements)[1]; !got.Equals(wantElTwo) {
+		t.Errorf("Expected element %v, got %v", wantElTwo, got)
 	}
 }

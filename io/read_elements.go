@@ -41,16 +41,16 @@ var elementDefinitionRegex = regexp.MustCompile(
 	`(?P<id>\d+)(?:\s*->\s*)` +
 		`(?P<start_node>\d+)(?:\s*)(?P<start_link>{.*})(?:\s+)` +
 		`(?P<end_node>\d+)(?:\s*)(?P<end_link>{.*})(?:\s+)` +
-		`(?P<material>'[A-Za-z0-9_ ]+')(?:\s+)` +
-		`(?P<section>'[A-Za-z0-9_ ]+')`)
+		`'(?P<material>[A-Za-z0-9_ ]+)'(?:\s+)` +
+		`'(?P<section>[A-Za-z0-9_ ]+)'`)
 
 func readElements(
 	scanner *bufio.Scanner,
 	count int,
-	nodes *map[int]*structure.Node,
+	nodes *map[contracts.StrID]*structure.Node,
 	materials *map[string]*structure.Material,
 	sections *map[string]*structure.Section,
-	loads *map[int][]load.Load,
+	loads *map[contracts.StrID][]load.Load,
 ) *[]*structure.Element {
 	lines := definitionLines(scanner, count)
 	return deserializeElements(lines, nodes, materials, sections, loads)
@@ -58,10 +58,10 @@ func readElements(
 
 func deserializeElements(
 	lines []string,
-	nodes *map[int]*structure.Node,
+	nodes *map[contracts.StrID]*structure.Node,
 	materials *map[string]*structure.Material,
 	sections *map[string]*structure.Section,
-	loads *map[int][]load.Load,
+	loads *map[contracts.StrID][]load.Load,
 ) *[]*structure.Element {
 	var (
 		element  *structure.Element
@@ -78,10 +78,10 @@ func deserializeElements(
 
 func deserializeElement(
 	definition string,
-	nodes *map[int]*structure.Node,
+	nodes *map[contracts.StrID]*structure.Node,
 	materials *map[string]*structure.Material,
 	sections *map[string]*structure.Section,
-	loads *map[int][]load.Load,
+	loads *map[contracts.StrID][]load.Load,
 ) *structure.Element {
 	components := readElementComponents(definition)
 	startNode, endNode := extractNodesForElement(components, nodes)
@@ -159,7 +159,9 @@ func extractMaterialForElement(
 	if !ok {
 		panic(
 			fmt.Sprintf(
-				"Element %d: unknown material name: %s", components.id, components.materialName,
+				"Element %d: couldn't find material with name '%s'",
+				components.id,
+				components.materialName,
 			),
 		)
 	}
@@ -175,7 +177,9 @@ func extractSectionForElement(
 	if !ok {
 		panic(
 			fmt.Sprintf(
-				"Element %d: unknown section name: %s", components.id, components.sectionName,
+				"Element %d: couldn't find section with name '%s'",
+				components.id,
+				components.sectionName,
 			),
 		)
 	}
