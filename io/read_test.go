@@ -116,6 +116,28 @@ func TestDeserializeSection(t *testing.T) {
 	}
 }
 
+func TestDeserializeSections(t *testing.T) {
+	var (
+		lines = []string{
+			"'IPE 100' -> 1.1 2.2 3.3 4.4 5.5",
+			"'IPE 200' -> 10.1 20.2 30.3 40.4 50.5",
+		}
+		sectionsByName = deserializeSectionsByName(lines)
+
+		secOneName = "IPE 100"
+		wantSecOne = structure.MakeSection(secOneName, 1.1, 2.2, 3.3, 4.4, 5.5)
+		secTwoName = "IPE 200"
+		wantSecTwo = structure.MakeSection(secTwoName, 10.1, 20.2, 30.3, 40.4, 50.5)
+	)
+
+	if got := (*sectionsByName)[secOneName]; !got.Equals(wantSecOne) {
+		t.Errorf("Expected section %v, got %v", wantSecOne, got)
+	}
+	if got := (*sectionsByName)[secTwoName]; !got.Equals(wantSecTwo) {
+		t.Errorf("Expected section %v, got %v", wantSecTwo, got)
+	}
+}
+
 func TestDeserializeDistributedLoad(t *testing.T) {
 	barID, gotLoad := deserializeDistributedLoad("fx ld 34 0.1 -50.2 0.9 -65.5")
 	var (
