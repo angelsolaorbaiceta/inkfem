@@ -80,25 +80,17 @@ func TestReadMaterial(t *testing.T) {
 }
 
 func TestReadSection(t *testing.T) {
-	got := deserializeSection("'IPE 100' -> 1.1 2.2 3.3 4.4 5.5")
+	var (
+		got      = deserializeSection("'IPE 100' -> 1.1 2.2 3.3 4.4 5.5")
+		wantName = "IPE 100"
+		want     = structure.MakeSection(wantName, 1.1, 2.2, 3.3, 4.4, 5.5)
+	)
 
-	if got.Name != "IPE 100" {
-		t.Errorf("Expected name 'IPE 100', got '%s'", got.Name)
+	if got.Name != wantName {
+		t.Errorf("Expected name '%s', got '%s'", wantName, got.Name)
 	}
-	if got.Area != 1.1 {
-		t.Errorf("Expected area of 1.1, got %f", got.Area)
-	}
-	if got.IStrong != 2.2 {
-		t.Errorf("Expected IStrong of 2.2, got %f", got.IStrong)
-	}
-	if got.IWeak != 3.3 {
-		t.Errorf("Expected IWeak of 3.3, got %f", got.IWeak)
-	}
-	if got.SStrong != 4.4 {
-		t.Errorf("Expected SStrong of 4.4, got %f", got.SStrong)
-	}
-	if got.SWeak != 5.5 {
-		t.Errorf("Expected SWeak of 5.5, got %f", got.SWeak)
+	if !got.Equals(want) {
+		t.Errorf("Expected section %v, got %v", want, got)
 	}
 }
 

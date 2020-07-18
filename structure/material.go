@@ -62,7 +62,7 @@ func MakeUnitMaterial() *Material {
 /* <-- Methods --> */
 
 /*
-Equals tests whether this and other material are equal.
+Equals tests whether this and other materials are equal.
 
 Materials are equal if all its numerical properties are equal. the name isn't considered
 for the equality check.
