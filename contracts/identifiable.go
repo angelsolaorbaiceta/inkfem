@@ -18,9 +18,14 @@ package contracts
 
 import "sort"
 
-// Identifiable is anything that can be referenced using an integer number.
+// StrID is the type used for structural data ids
+type StrID = int
+
+/*
+Identifiable is anything that can be referenced using an integer number.
+*/
 type Identifiable interface {
-	GetId() int
+	GetId() StrID
 }
 
 // ByID implements the sort.Interface for []Identifiable based in their id.

@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 )
@@ -120,4 +121,111 @@ func deserializeElements(
 	}
 
 	return &elements
+}
+
+func deserializeElement(
+	definition string,
+	nodes *map[int]*structure.Node,
+	materials *map[string]*structure.Material,
+	sections *map[string]*structure.Section,
+	loads *map[int][]load.Load,
+) *structure.Element {
+	components := readElementComponents(definition)
+	startNode, endNode := extractNodesForElement(components, nodes)
+	material := extractMaterialForElement(components, materials)
+	section := extractSectionForElement(components, sections)
+
+	return structure.MakeElement(
+		components.id,
+		startNode,
+		endNode,
+		components.startLink,
+		components.endLink,
+		material,
+		section,
+		(*loads)[components.id],
+	)
+}
+
+type elementComponents struct {
+	id, startNodeID, endNodeID contracts.StrID
+	materialName, sectionName  string
+	startLink, endLink         structure.Constraint
+}
+
+func readElementComponents(definition string) *elementComponents {
+	if !elementDefinitionRegex.MatchString(definition) {
+		panic(fmt.Sprintf("Found element with wrong format: '%s'", definition))
+	}
+
+	groups := elementDefinitionRegex.FindStringSubmatch(definition)
+
+	return &elementComponents{
+		id:           ensureParseInt(groups[idIndex], "element id"),
+		startNodeID:  ensureParseInt(groups[startNodeIDIndex], "element start node id"),
+		endNodeID:    ensureParseInt(groups[endNodeIDIndex], "element end node id"),
+		materialName: groups[materialNameIndex],
+		sectionName:  groups[sectionNameIndex],
+		startLink:    constraintFromString(groups[startLinkIndex]),
+		endLink:      constraintFromString(groups[endLinkIndex]),
+	}
+}
+
+func extractNodesForElement(
+	components *elementComponents,
+	nodes *map[int]*structure.Node,
+) (startNode, endNode *structure.Node) {
+	var ok bool
+
+	startNode, ok = (*nodes)[components.startNodeID]
+	if !ok {
+		panic(
+			fmt.Sprintf(
+				"Element %d with unknown start node id: %d", components.id, components.startNodeID,
+			),
+		)
+	}
+
+	endNode, ok = (*nodes)[components.endNodeID]
+	if !ok {
+		panic(
+			fmt.Sprintf(
+				"Element %d with unknown end node id: %d", components.id, components.endNodeID,
+			),
+		)
+	}
+
+	return
+}
+
+func extractMaterialForElement(
+	components *elementComponents,
+	materials *map[string]*structure.Material,
+) *structure.Material {
+	material, ok := (*materials)[components.materialName]
+	if !ok {
+		panic(
+			fmt.Sprintf(
+				"Element %d: unknown material name: %s", components.id, components.materialName,
+			),
+		)
+	}
+
+	return material
+}
+
+func extractSectionForElement(
+	components *elementComponents,
+	sections *map[string]*structure.Section,
+) *structure.Section {
+	section, ok := (*sections)[components.sectionName]
+	if !ok {
+		panic(
+			fmt.Sprintf(
+				"Element %d: unknown section name: %s", components.id, components.sectionName,
+			),
+		)
+	}
+
+	return section
 }
