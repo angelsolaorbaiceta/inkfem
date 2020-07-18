@@ -64,60 +64,13 @@ func deserializeElements(
 	loads *map[int][]load.Load,
 ) *[]*structure.Element {
 	var (
-		id, startNodeID, endNodeID int
-		startNode, endNode         *structure.Node
-		startLink, endLink         string
-		material                   *structure.Material
-		section                    *structure.Section
-		ok                         bool
-		elements                   = make([]*structure.Element, len(lines))
-		groupName                  string
+		element  *structure.Element
+		elements = make([]*structure.Element, len(lines))
 	)
 
 	for i, line := range lines {
-		if !elementDefinitionRegex.MatchString(line) {
-			panic(fmt.Sprintf("Found element with wrong format: '%s'", line))
-		}
-
-		groups := elementDefinitionRegex.FindStringSubmatch(line)
-
-		groupName = groups[startNodeIDIndex]
-		startNodeID = ensureParseInt(groupName, "element start node id")
-		startNode, ok = (*nodes)[startNodeID]
-		if !ok {
-			panic(fmt.Sprintf("Element %d with unknown start node id: %d", id, startNodeID))
-		}
-
-		groupName = groups[endNodeIDIndex]
-		endNodeID = ensureParseInt(groupName, "element end node id")
-		endNode, ok = (*nodes)[endNodeID]
-		if !ok {
-			panic(fmt.Sprintf("Element %d with unknown end node id: %d", id, endNodeID))
-		}
-
-		groupName = groups[materialNameIndex]
-		material, ok = (*materials)[groupName]
-		if !ok {
-			panic(fmt.Sprintf("Element %d: unknown material name: %s", id, groupName))
-		}
-
-		groupName = groups[sectionNameIndex]
-		section, ok = (*sections)[groupName]
-		if !ok {
-			panic(fmt.Sprintf("Element %d: unknown section name: %s", id, groupName))
-		}
-
-		id = ensureParseInt(groups[idIndex], "element id")
-		startLink = groups[startLinkIndex]
-		endLink = groups[endLinkIndex]
-
-		elements[i] = structure.MakeElement(
-			id, startNode, endNode,
-			constraintFromString(startLink),
-			constraintFromString(endLink),
-			material,
-			section,
-			(*loads)[id])
+		element = deserializeElement(line, nodes, materials, sections, loads)
+		elements[i] = element
 	}
 
 	return &elements
