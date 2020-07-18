@@ -220,9 +220,9 @@ func (e *Element) Equals(other *Element) bool {
 /* <-- Identifiable --> */
 
 /*
-GetId returns the element's id.
+GetID returns the element's id.
 */
-func (e Element) GetId() contracts.StrID {
+func (e Element) GetID() contracts.StrID {
 	return e.Id
 }
 

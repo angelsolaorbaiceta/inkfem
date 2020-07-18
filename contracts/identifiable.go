@@ -25,7 +25,7 @@ type StrID = int
 Identifiable is anything that can be referenced using an integer number.
 */
 type Identifiable interface {
-	GetId() StrID
+	GetID() StrID
 }
 
 // ByID implements the sort.Interface for []Identifiable based in their id.
@@ -40,7 +40,7 @@ func (a ByID) Swap(i, j int) {
 }
 
 func (a ByID) Less(i, j int) bool {
-	return a[i].GetId() < a[j].GetId()
+	return a[i].GetID() < a[j].GetID()
 }
 
 // SortById sorts (in place) a slice of identifiable elements.

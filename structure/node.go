@@ -19,6 +19,7 @@ package structure
 import (
 	"fmt"
 
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
@@ -28,7 +29,7 @@ const unsetDOFNumber = -1
 Node is a point in the structure where one or more resistant elements meet.
 */
 type Node struct {
-	Id                 int
+	Id                 contracts.StrID
 	Position           g2d.Projectable
 	ExternalConstraint Constraint
 	globalDof          [3]int
@@ -117,6 +118,15 @@ Equals tests whether this node and other are equal.
 func (n *Node) Equals(other *Node) bool {
 	return n.Position.Equals(other.Position) &&
 		n.ExternalConstraint.Equals(other.ExternalConstraint)
+}
+
+/* <-- Identifiable --> */
+
+/*
+GetID returns the node's id.
+*/
+func (n Node) GetID() contracts.StrID {
+	return n.Id
 }
 
 /* <-- Stringer --> */
