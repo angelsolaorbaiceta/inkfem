@@ -25,7 +25,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
-func TestReadNode(t *testing.T) {
+func TestDeserializeNode(t *testing.T) {
 	var (
 		got  = deserializeNode("1 -> 10.1 20.2 { dx dy rz }")
 		want = structure.MakeNode(1, g2d.MakePoint(10.1, 20.2), structure.FullConstraint)
@@ -64,7 +64,7 @@ func TestDeserializeNodes(t *testing.T) {
 	}
 }
 
-func TestReadMaterial(t *testing.T) {
+func TestDeserializeMaterial(t *testing.T) {
 	var (
 		got      = deserializeMaterial("'mat steel' -> 1.1 2.2 3.3 4.4 5.5 6.6")
 		wantName = "mat steel"
@@ -101,7 +101,7 @@ func TestDeserializeMaterials(t *testing.T) {
 	}
 }
 
-func TestReadSection(t *testing.T) {
+func TestDeserializeSection(t *testing.T) {
 	var (
 		got      = deserializeSection("'IPE 100' -> 1.1 2.2 3.3 4.4 5.5")
 		wantName = "IPE 100"
@@ -116,7 +116,7 @@ func TestReadSection(t *testing.T) {
 	}
 }
 
-func TestReadDistributedLoad(t *testing.T) {
+func TestDeserializeDistributedLoad(t *testing.T) {
 	barID, gotLoad := deserializeDistributedLoad("fx ld 34 0.1 -50.2 0.9 -65.5")
 	var (
 		startT = inkgeom.MakeTParam(0.1)
@@ -132,7 +132,7 @@ func TestReadDistributedLoad(t *testing.T) {
 	}
 }
 
-func TestReadConcentratedLoad(t *testing.T) {
+func TestDeserializeConcentratedLoad(t *testing.T) {
 	barID, gotLoad := deserializeConcentratedLoad("fy gc 45 0.5 -70.5")
 	want := load.MakeConcentrated(load.FY, false, inkgeom.HalfT, -70.5)
 
