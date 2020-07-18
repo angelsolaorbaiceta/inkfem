@@ -79,6 +79,28 @@ func TestReadMaterial(t *testing.T) {
 	}
 }
 
+func TestDeserializeMaterials(t *testing.T) {
+	var (
+		lines []string = []string{
+			"'mat one' -> 1.1 2.2 3.3 4.4 5.5 6.6",
+			"'mat two' -> 10.1 20.2 30.3 40.4 50.5 60.6",
+		}
+		materialsByName = deserializeMaterialsByName(lines)
+
+		matOneName = "mat one"
+		wantMatOne = structure.MakeMaterial(matOneName, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6)
+		matTwoName = "mat two"
+		wantMatTwo = structure.MakeMaterial(matTwoName, 10.1, 20.2, 30.3, 40.4, 50.5, 60.6)
+	)
+
+	if got := (*materialsByName)[matOneName]; !got.Equals(wantMatOne) {
+		t.Errorf("Want material %v, got %v", wantMatOne, got)
+	}
+	if got := (*materialsByName)[matTwoName]; !got.Equals(wantMatTwo) {
+		t.Errorf("Want material %v, got %v", wantMatTwo, got)
+	}
+}
+
 func TestReadSection(t *testing.T) {
 	var (
 		got      = deserializeSection("'IPE 100' -> 1.1 2.2 3.3 4.4 5.5")

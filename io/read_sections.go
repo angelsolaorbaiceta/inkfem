@@ -34,12 +34,17 @@ var sectionDefinitionRegex = regexp.MustCompile(
 		floatGroupAndOptinalSpaceExpr("sweak") + "$")
 
 func readSections(scanner *bufio.Scanner, count int) *map[string]*structure.Section {
+	lines := definitionLines(scanner, count)
+	return deserializeSectionsByName(lines)
+}
+
+func deserializeSectionsByName(lines []string) *map[string]*structure.Section {
 	var (
 		section  *structure.Section
 		sections = make(map[string]*structure.Section)
 	)
 
-	for _, line := range definitionLines(scanner, count) {
+	for _, line := range lines {
 		section = deserializeSection(line)
 		sections[section.Name] = section
 	}

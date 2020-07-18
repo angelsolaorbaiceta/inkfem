@@ -35,12 +35,17 @@ var materialDefinitionRegex = regexp.MustCompile(
 		floatGroupAndOptinalSpaceExpr("ultimate") + "$")
 
 func readMaterials(scanner *bufio.Scanner, count int) *map[string]*structure.Material {
+	lines := definitionLines(scanner, count)
+	return deserializeMaterialsByName(lines)
+}
+
+func deserializeMaterialsByName(lines []string) *map[string]*structure.Material {
 	var (
 		material  *structure.Material
 		materials = make(map[string]*structure.Material)
 	)
 
-	for _, line := range definitionLines(scanner, count) {
+	for _, line := range lines {
 		material = deserializeMaterial(line)
 		materials[material.Name] = material
 	}
