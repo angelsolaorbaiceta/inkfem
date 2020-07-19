@@ -5,7 +5,7 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 
 |elements| {{.ElementCount}}
 {{range .Elements}}
-{{.OriginalElementString}}
+{{.String}}
 
 __gxd__{{range .GlobalXDispl}}
 {{.String}}{{end}}

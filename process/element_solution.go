@@ -30,7 +30,7 @@ Displacements are stored in both local and global coordinates. Stresses are refe
 only to the local reference frame.
 */
 type ElementSolution struct {
-	Element *preprocess.Element
+	*preprocess.Element
 
 	GlobalXDispl []PointSolutionValue
 	GlobalYDispl []PointSolutionValue
@@ -43,13 +43,6 @@ type ElementSolution struct {
 	AxialStress   []PointSolutionValue
 	ShearStress   []PointSolutionValue
 	BendingMoment []PointSolutionValue
-}
-
-/*
-OriginalElementString returns the string definition for the original element.
-*/
-func (es *ElementSolution) OriginalElementString() string {
-	return es.Element.OriginalElementString()
 }
 
 /*

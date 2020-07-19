@@ -22,7 +22,7 @@ import (
 )
 
 /*
-Element after slicing original structural element
+Element after slicing original structural element.
 */
 type Element struct {
 	*structure.Element
@@ -48,14 +48,6 @@ NodesCount returns the number of nodes in the sliced element.
 */
 func (e Element) NodesCount() int {
 	return len(e.Nodes)
-}
-
-/*
-OriginalElementString returns the string representation of the original
-structural element.
-*/
-func (e Element) OriginalElementString() string {
-	return e.String()
 }
 
 /* <-- Methods --> */
