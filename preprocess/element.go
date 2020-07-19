@@ -58,10 +58,8 @@ in place (mutates the element).
 
 Each element has a stiffness matrix between two contiguous nodes, so
 in total that makes n - 1 matrices, where n is the number of nodes.
-
-TODO: remove the channel thingy from here?
 */
-func (e *Element) ComputeStiffnessMatrices(c chan<- Element) {
+func (e *Element) ComputeStiffnessMatrices() {
 	var trail, lead *Node
 
 	for i := 1; i < len(e.Nodes); i++ {
@@ -69,8 +67,6 @@ func (e *Element) ComputeStiffnessMatrices(c chan<- Element) {
 		lead = e.Nodes[i]
 		e.globalStiffMat[i-1] = e.StiffnessGlobalMat(trail.T, lead.T)
 	}
-
-	c <- *e
 }
 
 /*

@@ -69,22 +69,17 @@ global matrix. It also assembles the global loads vector from the sliced element
 func makeSystemOfEquations(
 	structure *preprocess.Structure,
 ) (mat.ReadOnlyMatrix, *vec.Vector) {
-	c := make(chan preprocess.Element)
-
-	for _, element := range structure.Elements {
-		go element.ComputeStiffnessMatrices(c)
-	}
-
 	var (
 		sysMatrix = mat.MakeSparse(structure.DofsCount, structure.DofsCount)
 		sysVector = vec.Make(structure.DofsCount)
 	)
 
-	for i := 0; i < len(structure.Elements); i++ {
-		element := <-c
-		addTermsToStiffnessMatrix(sysMatrix, &element)
-		addTermsToLoadVector(sysVector, &element)
+	for _, element := range structure.Elements {
+		element.ComputeStiffnessMatrices()
+		addTermsToStiffnessMatrix(sysMatrix, element)
+		addTermsToLoadVector(sysVector, element)
 	}
+
 	addDispConstraints(sysMatrix, sysVector, &structure.Nodes)
 
 	return sysMatrix, sysVector

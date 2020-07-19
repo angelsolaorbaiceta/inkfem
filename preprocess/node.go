@@ -63,24 +63,21 @@ func MakeUnloadedNode(t inkgeom.TParam, position g2d.Projectable) *Node {
 /* <-- Properties --> */
 
 /*
-LocalFx returns the magnitude of the local force in X. 0.0 if it has no loads
-applied.
+LocalFx returns the magnitude of the local force in X. 0.0 if it has no loads applied.
 */
 func (n Node) LocalFx() float64 {
 	return n.localActions[0]
 }
 
 /*
-LocalFy returns the magnitude of the local force in Y. 0.0 if it has no loads
-applied.
+LocalFy returns the magnitude of the local force in Y. 0.0 if it has no loads applied.
 */
 func (n Node) LocalFy() float64 {
 	return n.localActions[1]
 }
 
 /*
-LocalMz returns the magnitude of the local moment about Z. 0.0 if it has no
-loads applied.
+LocalMz returns the magnitude of the local moment about Z. 0.0 if it has no loads applied.
 */
 func (n Node) LocalMz() float64 {
 	return n.localActions[2]
@@ -94,8 +91,9 @@ func (n Node) LocalActions() [3]float64 {
 }
 
 /*
-SetDegreesOfFreedomNum adds degrees of freedom numbers to the node. These
-degrees of freedom numbers are also the position in the system of equations
+SetDegreesOfFreedomNum adds degrees of freedom numbers to the node.
+
+These degrees of freedom numbers are also the position in the system of equations
 for the corresponding stiffness terms.
 */
 func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
@@ -115,7 +113,7 @@ func (n Node) DegreesOfFreedomNum() [3]int {
 HasDegreesOfFreedomNum returns true if the node has already been assigned degress of
 freedom.
 
-If all DOFs are -1, it is assumed that this node hasn't been assigned DOFs.
+If any of the DOFs is -1, it's assumed that this node hasn't been assigned DOFs.
 */
 func (n Node) HasDegreesOfFreedomNum() bool {
 	return n.globalDof[0] != unsetDOF ||
