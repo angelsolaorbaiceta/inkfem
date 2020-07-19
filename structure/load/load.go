@@ -95,8 +95,7 @@ func (load Load) IsDistributed() bool {
 }
 
 /*
-IsNodal returns true if the load is concentrated and applied in extreme values
-of T.
+IsNodal returns true if the load is concentrated and applied in extreme values of T.
 */
 func (load Load) IsNodal() bool {
 	return load.IsConcentrated() && (load.T().IsMin() || load.T().IsMax())
@@ -157,6 +156,8 @@ func (load Load) ForcesVector() g2d.Projectable {
 		return g2d.MakeVector(0.0, 0.0)
 	}
 }
+
+/* <-- Methods --> */
 
 /*
 ValueAt returns the value of the distributed load at a given t Parameter value.
