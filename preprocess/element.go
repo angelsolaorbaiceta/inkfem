@@ -18,8 +18,6 @@ package preprocess
 
 import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom"
-	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 )
 
@@ -27,9 +25,9 @@ import (
 Element after slicing original structural element
 */
 type Element struct {
-	originalElement *structure.Element
-	Nodes           []*Node
-	globalStiffMat  []mat.ReadOnlyMatrix
+	*structure.Element
+	Nodes          []*Node
+	globalStiffMat []mat.ReadOnlyMatrix
 }
 
 /* <-- Construction --> */
@@ -46,13 +44,6 @@ func MakeElement(originalElement *structure.Element, nodes []*Node) *Element {
 /* <-- Properties --> */
 
 /*
-ID returns the id of the original structural element.
-*/
-func (e Element) ID() int {
-	return e.originalElement.Id
-}
-
-/*
 NodesCount returns the number of nodes in the sliced element.
 */
 func (e Element) NodesCount() int {
@@ -60,69 +51,11 @@ func (e Element) NodesCount() int {
 }
 
 /*
-Geometry returns the geometry of the original structural element.
-*/
-func (e Element) Geometry() g2d.Segment {
-	return e.originalElement.Geometry
-}
-
-/*
-StartNodeID returns the id of the start node in the original structural element.
-*/
-func (e Element) StartNodeID() int {
-	return e.originalElement.StartNodeId
-}
-
-/*
-EndNodeID returns the id of the end node in the original structural element.
-*/
-func (e Element) EndNodeID() int {
-	return e.originalElement.EndNodeId
-}
-
-/*
-StartLink returns the link of the original structural element with the
-start node.
-*/
-func (e Element) StartLink() structure.Constraint {
-	return e.originalElement.StartLink
-}
-
-/*
-EndLink returns the link of the original structural element with the end node.
-*/
-func (e Element) EndLink() structure.Constraint {
-	return e.originalElement.EndLink
-}
-
-/*
 OriginalElementString returns the string representation of the original
 structural element.
 */
 func (e Element) OriginalElementString() string {
-	return e.originalElement.String()
-}
-
-/*
-Material returns the material defined in the orifinal element.
-*/
-func (e Element) Material() *structure.Material {
-	return e.originalElement.Material()
-}
-
-/*
-Section returns the material defined in the orifinal element.
-*/
-func (e Element) Section() *structure.Section {
-	return e.originalElement.Section()
-}
-
-/*
-StiffnessGlobalMat generates the local stiffness matrix for the element and
-applies the rotation defined by the elements' geometry reference frame.
-*/
-func (e Element) StiffnessGlobalMat(startT, entT inkgeom.TParam) mat.ReadOnlyMatrix {
-	return e.originalElement.StiffnessGlobalMat(startT, entT)
+	return e.String()
 }
 
 /* <-- Methods --> */
@@ -173,13 +106,13 @@ func (a ByGeometryPos) Swap(i, j int) {
 }
 
 func (a ByGeometryPos) Less(i, j int) bool {
-	iStart := a[i].Geometry().Start
-	jStart := a[j].Geometry().Start
+	iStart := a[i].Geometry.Start
+	jStart := a[j].Geometry.Start
 	if pos := iStart.Compare(jStart); pos != 0 {
 		return pos < 0
 	}
 
-	iEnd := a[i].Geometry().End
-	jEnd := a[j].Geometry().End
+	iEnd := a[i].Geometry.End
+	jEnd := a[j].Geometry.End
 	return iEnd.Compare(jEnd) < 0
 }

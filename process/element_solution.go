@@ -112,7 +112,7 @@ func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
 		}
 
 		// local displacements
-		elementFrame = es.Element.Geometry().RefFrame()
+		elementFrame = es.Element.Geometry.RefFrame()
 		localDisplacementsProj = elementFrame.ProjectProjections(
 			es.GlobalXDispl[j].Value,
 			es.GlobalYDispl[j].Value,
@@ -151,7 +151,7 @@ func (es *ElementSolution) computeStresses() {
 
 	for i := 1; i < len(es.Element.Nodes); i++ {
 		trailNode, leadNode = es.Element.Nodes[i-1], es.Element.Nodes[i]
-		length = es.Element.Geometry().LengthBetween(trailNode.T, leadNode.T)
+		length = es.Element.Geometry.LengthBetween(trailNode.T, leadNode.T)
 		length2 = length * length
 		length3 = length2 * length
 		incX = es.LocalXDispl[i].Value - es.LocalXDispl[i-1].Value

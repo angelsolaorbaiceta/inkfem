@@ -157,7 +157,7 @@ func addTermsToLoadVector(vector *vec.Vector, element *preprocess.Element) {
 		localActions [3]float64
 		globalForces g2d.Projectable
 		dofs         [3]int
-		refFrame     = element.Geometry().RefFrame()
+		refFrame     = element.Geometry.RefFrame()
 	)
 
 	for _, node := range element.Nodes {

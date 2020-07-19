@@ -23,8 +23,11 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
+const unsetDOF = -1
+
 /*
-Node represents an intermediate point in a sliced element.
+A Node represents an intermediate point in a sliced element.
+
 This point has a T Parameter associated, loads applied and degrees of freedom
 numbering for the global system.
 */
@@ -46,7 +49,7 @@ func MakeNode(
 	position g2d.Projectable,
 	fx, fy, mz float64,
 ) *Node {
-	return &Node{t, position, [3]float64{fx, fy, mz}, [3]int{0, 0, 0}}
+	return &Node{t, position, [3]float64{fx, fy, mz}, [3]int{unsetDOF, unsetDOF, unsetDOF}}
 }
 
 /*
@@ -54,7 +57,7 @@ MakeUnloadedNode creates a new node with given T parameter value and position.
 It has no loads applied.
 */
 func MakeUnloadedNode(t inkgeom.TParam, position g2d.Projectable) *Node {
-	return &Node{t, position, [3]float64{}, [3]int{0, 0, 0}}
+	return &Node{t, position, [3]float64{}, [3]int{unsetDOF, unsetDOF, unsetDOF}}
 }
 
 /* <-- Properties --> */
@@ -109,13 +112,15 @@ func (n Node) DegreesOfFreedomNum() [3]int {
 }
 
 /*
-HasDegreesOfFreedomNum returns true if the node has already been assigned
-degress of freedom.
+HasDegreesOfFreedomNum returns true if the node has already been assigned degress of
+freedom.
 
-If all DOFs are 0, it is assumed that this node hasn't been assigned DOFs.
+If all DOFs are -1, it is assumed that this node hasn't been assigned DOFs.
 */
 func (n Node) HasDegreesOfFreedomNum() bool {
-	return n.globalDof[0] != 0 || n.globalDof[1] != 0 || n.globalDof[2] != 0
+	return n.globalDof[0] != unsetDOF ||
+		n.globalDof[1] != unsetDOF ||
+		n.globalDof[2] != unsetDOF
 }
 
 /* <-- Methods --> */

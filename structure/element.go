@@ -35,7 +35,7 @@ An Element can have loads applied to it.
 TODO: choose the bending axis
 */
 type Element struct {
-	Id, StartNodeId, EndNodeId contracts.StrID
+	Id, StartNodeID, EndNodeID contracts.StrID
 	Geometry                   g2d.Segment
 	StartLink, EndLink         Constraint
 	material                   *Material
@@ -59,8 +59,8 @@ func MakeElement(
 ) *Element {
 	return &Element{
 		Id:          id,
-		StartNodeId: startNode.Id,
-		EndNodeId:   endNode.Id,
+		StartNodeID: startNode.Id,
+		EndNodeID:   endNode.Id,
 		Geometry:    g2d.MakeSegment(startNode.Position, endNode.Position),
 		StartLink:   startLink,
 		EndLink:     endLink,
@@ -209,8 +209,8 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 Equals tests whether this element is equal to other.
 */
 func (e *Element) Equals(other *Element) bool {
-	return e.StartNodeId == other.StartNodeId &&
-		e.EndNodeId == other.EndNodeId &&
+	return e.StartNodeID == other.StartNodeID &&
+		e.EndNodeID == other.EndNodeID &&
 		e.StartLink.Equals(other.StartLink) &&
 		e.EndLink.Equals(other.EndLink) &&
 		e.material.Name == other.material.Name &&
@@ -232,8 +232,8 @@ func (e Element) String() string {
 	return fmt.Sprintf(
 		"%d -> %d%s %d%s %s %s",
 		e.Id,
-		e.StartNodeId, e.StartLink.String(),
-		e.EndNodeId, e.EndLink.String(),
+		e.StartNodeID, e.StartLink.String(),
+		e.EndNodeID, e.EndLink.String(),
 		e.material.Name, e.section.Name,
 	)
 }
