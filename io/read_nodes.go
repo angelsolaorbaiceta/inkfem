@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
@@ -32,15 +33,15 @@ var nodeDefinitionRegex = regexp.MustCompile(
 		floatGroupExpr("y") + spaceExpr +
 		constraintGroupExpr("constraints") + optionalSpaceExpr + "$")
 
-func readNodes(scanner *bufio.Scanner, count int) *map[int]*structure.Node {
+func readNodes(scanner *bufio.Scanner, count int) *map[contracts.StrID]*structure.Node {
 	lines := definitionLines(scanner, count)
 	return deserializeNodesByID(lines)
 }
 
-func deserializeNodesByID(lines []string) *map[int]*structure.Node {
+func deserializeNodesByID(lines []string) *map[contracts.StrID]*structure.Node {
 	var (
 		node  *structure.Node
-		nodes = make(map[int]*structure.Node)
+		nodes = make(map[contracts.StrID]*structure.Node)
 	)
 
 	for _, line := range lines {
@@ -58,7 +59,7 @@ func deserializeNode(definition string) *structure.Node {
 
 	groups := nodeDefinitionRegex.FindStringSubmatch(definition)
 
-	id := ensureParseInt(groups[1], "node id")
+	id := groups[1]
 	x := ensureParseFloat(groups[2], "node x position")
 	y := ensureParseFloat(groups[3], "node y position")
 	externalConstraint := groups[4]

@@ -21,7 +21,7 @@ import "fmt"
 const (
 	floatExpr         = `-?\d+\.?\d*`
 	validNameExpr     = `[\w\-_ ]+`
-	validIDExpr       = `\d+`
+	validIDExpr       = `[\w\-_]+`
 	constraintExpr    = `{[drxyz ]*}`
 	optionalSpaceExpr = `\s*`
 	spaceExpr         = `\s+`

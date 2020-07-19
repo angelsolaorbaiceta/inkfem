@@ -17,6 +17,7 @@ limitations under the License.
 package preprocess
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
@@ -26,7 +27,7 @@ The elements of a preprocessed structure are already sliced.
 */
 type Structure struct {
 	Metadata  structure.StrMetadata
-	Nodes     map[int]*structure.Node
+	Nodes     map[contracts.StrID]*structure.Node
 	Elements  []*Element
 	DofsCount int
 }

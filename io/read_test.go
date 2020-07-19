@@ -29,7 +29,7 @@ import (
 func TestDeserializeNode(t *testing.T) {
 	var (
 		got  = deserializeNode("1 -> 10.1 20.2 { dx dy rz }")
-		want = structure.MakeNode(1, g2d.MakePoint(10.1, 20.2), structure.FullConstraint)
+		want = structure.MakeNode("1", g2d.MakePoint(10.1, 20.2), structure.FullConstraint)
 	)
 
 	if !got.Equals(want) {
@@ -46,21 +46,21 @@ func TestDeserializeNodes(t *testing.T) {
 		}
 		nodes = deserializeNodesByID(lines)
 
-		nodeOne   = structure.MakeNode(1, g2d.MakePoint(10.1, 20.2), structure.FullConstraint)
-		nodeTwo   = structure.MakeNode(2, g2d.MakePoint(40.1, 50.2), structure.DispConstraint)
-		nodeThree = structure.MakeNode(3, g2d.MakePoint(70.1, 80.2), structure.NilConstraint)
+		nodeOne   = structure.MakeNode("1", g2d.MakePoint(10.1, 20.2), structure.FullConstraint)
+		nodeTwo   = structure.MakeNode("2", g2d.MakePoint(40.1, 50.2), structure.DispConstraint)
+		nodeThree = structure.MakeNode("3", g2d.MakePoint(70.1, 80.2), structure.NilConstraint)
 	)
 
 	if size := len(*nodes); size != 3 {
 		t.Errorf("Expected 3 nodes, but got %d", size)
 	}
-	if got := (*nodes)[1]; !got.Equals(nodeOne) {
+	if got := (*nodes)["1"]; !got.Equals(nodeOne) {
 		t.Errorf("Expected node %v, but got %v", nodeOne, got)
 	}
-	if got := (*nodes)[2]; !got.Equals(nodeTwo) {
+	if got := (*nodes)["2"]; !got.Equals(nodeTwo) {
 		t.Errorf("Expected node %v, but got %v", nodeTwo, got)
 	}
-	if got := (*nodes)[3]; !got.Equals(nodeThree) {
+	if got := (*nodes)["3"]; !got.Equals(nodeThree) {
 		t.Errorf("Expected node %v, but got %v", nodeThree, got)
 	}
 }
@@ -147,8 +147,8 @@ func TestDeserializeDistributedLoad(t *testing.T) {
 		want   = load.MakeDistributed(load.FX, true, startT, -50.2, endT, -65.5)
 	)
 
-	if barID != 34 {
-		t.Errorf("Expected bar id 34, got %d", barID)
+	if barID != "34" {
+		t.Errorf("Expected bar id 34, got %s", barID)
 	}
 	if !gotLoad.Equals(want) {
 		t.Errorf("Expected load %v, got %v", want, gotLoad)
@@ -159,8 +159,8 @@ func TestDeserializeConcentratedLoad(t *testing.T) {
 	barID, gotLoad := deserializeConcentratedLoad("fy gc 45 0.5 -70.5")
 	want := load.MakeConcentrated(load.FY, false, inkgeom.HalfT, -70.5)
 
-	if barID != 45 {
-		t.Errorf("Expected bar id 45, got %d", barID)
+	if barID != "45" {
+		t.Errorf("Expected bar id 45, got %s", barID)
 	}
 
 	if !gotLoad.Equals(want) {
@@ -174,7 +174,7 @@ func TestDeserializeLoads(t *testing.T) {
 			"fx ld 34 0.1 -50.2 0.9 -65.5",
 			"fy gc 34 0.1 -70.5",
 		}
-		loads = deserializeLoadsByElementID(lines)[34]
+		loads = deserializeLoadsByElementID(lines)["34"]
 
 		startT  = inkgeom.MakeTParam(0.1)
 		endT    = inkgeom.MakeTParam(0.9)
@@ -200,9 +200,9 @@ func TestDeserializeElements(t *testing.T) {
 			"2 -> 1{ dx dy } 3{ dx dy rz } 'mat' 'sec'",
 		}
 		nodes = map[contracts.StrID]*structure.Node{
-			1: structure.MakeFreeNodeAtPosition(1, 100.0, 200.0),
-			2: structure.MakeFreeNodeAtPosition(2, 300.0, 400.0),
-			3: structure.MakeFreeNodeAtPosition(3, 500.0, 600.0),
+			"1": structure.MakeFreeNodeAtPosition("1", 100.0, 200.0),
+			"2": structure.MakeFreeNodeAtPosition("2", 300.0, 400.0),
+			"3": structure.MakeFreeNodeAtPosition("3", 500.0, 600.0),
 		}
 		materials = map[string]*structure.Material{
 			"mat": structure.MakeMaterial("mat", 1.1, 2.2, 3.3, 4.4, 5.5, 6.6),
@@ -211,23 +211,23 @@ func TestDeserializeElements(t *testing.T) {
 			"sec": structure.MakeSection("sec", 10.1, 20.2, 30.3, 40.4, 50.5),
 		}
 		loads = map[contracts.StrID][]load.Load{
-			1: {load.MakeConcentrated(load.FY, true, inkgeom.MinT, -50)},
-			2: {load.MakeConcentrated(load.MZ, true, inkgeom.MaxT, -30)},
+			"1": {load.MakeConcentrated(load.FY, true, inkgeom.MinT, -50)},
+			"2": {load.MakeConcentrated(load.MZ, true, inkgeom.MaxT, -30)},
 		}
 
 		elements = deserializeElements(lines, &nodes, &materials, &sections, &loads)
 
 		wantElOne = structure.MakeElement(
-			1, nodes[1], nodes[2],
+			"1", nodes["1"], nodes["2"],
 			structure.FullConstraint, structure.DispConstraint,
 			materials["mat"], sections["sec"],
-			loads[1],
+			loads["1"],
 		)
 		wantElTwo = structure.MakeElement(
-			2, nodes[1], nodes[3],
+			"2", nodes["1"], nodes["3"],
 			structure.DispConstraint, structure.FullConstraint,
 			materials["mat"], sections["sec"],
-			loads[2],
+			loads["2"],
 		)
 	)
 

@@ -17,6 +17,7 @@ limitations under the License.
 package process
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -116,7 +117,7 @@ func addTermsToStiffnessMatrix(matrix mat.MutableMatrix, element *preprocess.Ele
 func addDispConstraints(
 	matrix mat.MutableMatrix,
 	vector *vec.Vector,
-	nodes *map[int]*structure.Node,
+	nodes *map[contracts.StrID]*structure.Node,
 ) {
 	var (
 		constraint structure.Constraint

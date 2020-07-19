@@ -24,6 +24,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 )
@@ -64,10 +65,10 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		sectionsDefined            = false
 		loadsDefined               = false
 		majorVersion, minorVersion int
-		nodes                      *map[int]*structure.Node
+		nodes                      *map[contracts.StrID]*structure.Node
 		materials                  *map[string]*structure.Material
 		sections                   *map[string]*structure.Section
-		loads                      map[int][]load.Load
+		loads                      map[contracts.StrID][]load.Load
 		elements                   *[]*structure.Element
 	)
 

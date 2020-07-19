@@ -26,9 +26,9 @@ import (
 )
 
 const (
-	elementID   = 11
-	startNodeID = 21
-	endNodeID   = 22
+	elementID   = "11"
+	startNodeID = "21"
+	endNodeID   = "22"
 )
 
 var (

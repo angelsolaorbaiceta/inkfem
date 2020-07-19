@@ -17,7 +17,7 @@ limitations under the License.
 package contracts
 
 // StrID is the type used for structural data ids
-type StrID = int
+type StrID = string
 
 /*
 Identifiable is anything that can be referenced using an integer number.

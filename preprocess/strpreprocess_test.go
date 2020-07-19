@@ -19,6 +19,7 @@ package preprocess
 import (
 	"testing"
 
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
@@ -73,22 +74,22 @@ func TestDofsCount(t *testing.T) {
 /* Utils */
 func makeStructure() *Structure {
 	var (
-		nA = structure.MakeFreeNodeAtPosition(1, 0, 0)
-		nB = structure.MakeFreeNodeAtPosition(2, 0, 100)
-		nC = structure.MakeFreeNodeAtPosition(3, 100, 0)
+		nA = structure.MakeFreeNodeAtPosition("1", 0, 0)
+		nB = structure.MakeFreeNodeAtPosition("2", 0, 100)
+		nC = structure.MakeFreeNodeAtPosition("3", 100, 0)
 
 		elemOrigA = structure.MakeElement(
-			1, nA, nB, structure.FullConstraint, structure.FullConstraint,
+			"1", nA, nB, structure.FullConstraint, structure.FullConstraint,
 			structure.MakeUnitMaterial(), structure.MakeUnitSection(), []load.Load{},
 		)
 		elemOrigB = structure.MakeElement(
-			2, nA, nC, structure.DispConstraint, structure.FullConstraint,
+			"2", nA, nC, structure.DispConstraint, structure.FullConstraint,
 			structure.MakeUnitMaterial(), structure.MakeUnitSection(), []load.Load{},
 		)
 	)
 
 	return &Structure{
-		Nodes: map[int]*structure.Node{nA.Id: nA, nB.Id: nB, nC.Id: nC},
+		Nodes: map[contracts.StrID]*structure.Node{nA.Id: nA, nB.Id: nB, nC.Id: nC},
 		Elements: []*Element{
 			MakeElement(elemOrigA, []*Node{
 				MakeUnloadedNode(inkgeom.MinT, nA.Position),

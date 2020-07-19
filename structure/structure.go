@@ -16,13 +16,15 @@ limitations under the License.
 
 package structure
 
+import "github.com/angelsolaorbaiceta/inkfem/contracts"
+
 /*
 Structure is a group of resistant elements joined together designed to withstand
 the application of external loads.
 */
 type Structure struct {
 	Metadata StrMetadata
-	Nodes    map[int]*Node
+	Nodes    map[contracts.StrID]*Node
 	Elements []*Element
 }
 

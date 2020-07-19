@@ -20,8 +20,8 @@ import (
 	"bufio"
 	"fmt"
 	"regexp"
-	"strconv"
 
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
@@ -46,16 +46,16 @@ var (
 	)
 )
 
-func readLoads(scanner *bufio.Scanner, count int) map[int][]load.Load {
+func readLoads(scanner *bufio.Scanner, count int) map[contracts.StrID][]load.Load {
 	lines := definitionLines(scanner, count)
 	return deserializeLoadsByElementID(lines)
 }
 
-func deserializeLoadsByElementID(lines []string) map[int][]load.Load {
+func deserializeLoadsByElementID(lines []string) map[contracts.StrID][]load.Load {
 	var (
-		elementNumber int
-		_load         load.Load
-		loads         = make(map[int][]load.Load)
+		elementID contracts.StrID
+		_load     load.Load
+		loads     = make(map[contracts.StrID][]load.Load)
 	)
 
 	for _, line := range lines {
@@ -70,35 +70,35 @@ func deserializeLoadsByElementID(lines []string) map[int][]load.Load {
 
 		switch {
 		case matchesDistributed:
-			elementNumber, _load = deserializeDistributedLoad(line)
+			elementID, _load = deserializeDistributedLoad(line)
 
 		case matchesConcentrated:
-			elementNumber, _load = deserializeConcentratedLoad(line)
+			elementID, _load = deserializeConcentratedLoad(line)
 
 		default:
 			panic(fmt.Sprintf("Unknown type of load: '%s'", line))
 		}
 
-		loads[elementNumber] = append(loads[elementNumber], _load)
+		loads[elementID] = append(loads[elementID], _load)
 	}
 
 	return loads
 }
 
-func deserializeDistributedLoad(line string) (int, load.Load) {
+func deserializeDistributedLoad(line string) (contracts.StrID, load.Load) {
 	groups := distLoadDefinitionRegex.FindStringSubmatch(line)
 
 	term := load.Term(groups[1])
 	load.EnsureValidTerm(term)
 
 	isInLocalCoords := groups[2] == "l"
-	elementNumber := ensureParseInt(groups[3], "distributed load element number")
+	elementID := groups[3]
 	tStart := ensureParseFloat(groups[4], "distributed load start T")
 	valStart := ensureParseFloat(groups[5], "distributed load start value")
 	tEnd := ensureParseFloat(groups[6], "distributed load end T")
 	valEnd := ensureParseFloat(groups[7], "distributed load end value")
 
-	return elementNumber,
+	return elementID,
 		load.MakeDistributed(
 			term,
 			isInLocalCoords,
@@ -109,16 +109,17 @@ func deserializeDistributedLoad(line string) (int, load.Load) {
 		)
 }
 
-func deserializeConcentratedLoad(line string) (int, load.Load) {
+func deserializeConcentratedLoad(line string) (contracts.StrID, load.Load) {
 	groups := concLoadDefinitionRegex.FindStringSubmatch(line)
 
 	term := load.Term(groups[1])
 	load.EnsureValidTerm(term)
 
 	isInLocalCoords := groups[2] == "l"
-	elementNumber, _ := strconv.Atoi(groups[3])
-	t, _ := strconv.ParseFloat(groups[4], 64)
-	val, _ := strconv.ParseFloat(groups[5], 64)
+	elementID := groups[3]
+	t := ensureParseFloat(groups[4], "concentrated load T")
+	val := ensureParseFloat(groups[5], "concentrated load value")
 
-	return elementNumber, load.MakeConcentrated(term, isInLocalCoords, inkgeom.MakeTParam(t), val)
+	return elementID,
+		load.MakeConcentrated(term, isInLocalCoords, inkgeom.MakeTParam(t), val)
 }

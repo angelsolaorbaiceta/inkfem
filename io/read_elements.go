@@ -116,9 +116,9 @@ func readElementComponents(definition string) *elementComponents {
 	groups := elementDefinitionRegex.FindStringSubmatch(definition)
 
 	return &elementComponents{
-		id:           ensureParseInt(groups[idIndex], "element id"),
-		startNodeID:  ensureParseInt(groups[startNodeIDIndex], "element start node id"),
-		endNodeID:    ensureParseInt(groups[endNodeIDIndex], "element end node id"),
+		id:           groups[idIndex],
+		startNodeID:  groups[startNodeIDIndex],
+		endNodeID:    groups[endNodeIDIndex],
 		materialName: groups[materialNameIndex],
 		sectionName:  groups[sectionNameIndex],
 		startLink:    constraintFromString(groups[startLinkIndex]),
@@ -128,7 +128,7 @@ func readElementComponents(definition string) *elementComponents {
 
 func extractNodesForElement(
 	components *elementComponents,
-	nodes *map[int]*structure.Node,
+	nodes *map[contracts.StrID]*structure.Node,
 ) (startNode, endNode *structure.Node) {
 	var ok bool
 
@@ -136,7 +136,7 @@ func extractNodesForElement(
 	if !ok {
 		panic(
 			fmt.Sprintf(
-				"Element %d with unknown start node id: %d", components.id, components.startNodeID,
+				"Element %s with unknown start node id: %s", components.id, components.startNodeID,
 			),
 		)
 	}
@@ -145,7 +145,7 @@ func extractNodesForElement(
 	if !ok {
 		panic(
 			fmt.Sprintf(
-				"Element %d with unknown end node id: %d", components.id, components.endNodeID,
+				"Element %s with unknown end node id: %s", components.id, components.endNodeID,
 			),
 		)
 	}
@@ -161,7 +161,7 @@ func extractMaterialForElement(
 	if !ok {
 		panic(
 			fmt.Sprintf(
-				"Element %d: couldn't find material with name '%s'",
+				"Element %s: couldn't find material with name '%s'",
 				components.id,
 				components.materialName,
 			),
@@ -179,7 +179,7 @@ func extractSectionForElement(
 	if !ok {
 		panic(
 			fmt.Sprintf(
-				"Element %d: couldn't find section with name '%s'",
+				"Element %s: couldn't find section with name '%s'",
 				components.id,
 				components.sectionName,
 			),

@@ -230,7 +230,7 @@ func (e Element) GetID() contracts.StrID {
 
 func (e Element) String() string {
 	return fmt.Sprintf(
-		"%d -> %d%s %d%s %s %s",
+		"%s -> %s %s %s %s %s %s",
 		e.Id,
 		e.StartNodeID, e.StartLink.String(),
 		e.EndNodeID, e.EndLink.String(),

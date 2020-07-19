@@ -141,7 +141,7 @@ func (n Node) GetID() contracts.StrID {
 
 func (n Node) String() string {
 	return fmt.Sprintf(
-		"%d -> %f %f %s | DOF: %v",
+		"%s -> %f %f %s | DOF: %v",
 		n.Id, n.Position.X, n.Position.Y,
 		n.ExternalConstraint.String(),
 		n.DegreesOfFreedomNum(),
