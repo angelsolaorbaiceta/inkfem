@@ -34,7 +34,7 @@ var (
 			floatGroupExpr("t_start") + spaceExpr +
 			floatGroupExpr("val_start") + spaceExpr +
 			floatGroupExpr("t_end") + spaceExpr +
-			floatGroupAndOptinalSpaceExpr("val_end") + "$",
+			floatGroupExpr("val_end") + optionalSpaceExpr + "$",
 	)
 
 	// <term> <reference> <elementId> <t> <value>
@@ -42,7 +42,7 @@ var (
 		"^" + loadTermExpr + concentratedLoadRefExpr +
 			loadElementID +
 			floatGroupExpr("t") + spaceExpr +
-			floatGroupAndOptinalSpaceExpr("val") + "$",
+			floatGroupExpr("val") + optionalSpaceExpr + "$",
 	)
 )
 

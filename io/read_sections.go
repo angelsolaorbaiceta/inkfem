@@ -31,7 +31,7 @@ var sectionDefinitionRegex = regexp.MustCompile(
 		floatGroupExpr("istrong") + spaceExpr +
 		floatGroupExpr("iweak") + spaceExpr +
 		floatGroupExpr("sstrong") + spaceExpr +
-		floatGroupAndOptinalSpaceExpr("sweak") + "$")
+		floatGroupExpr("sweak") + optionalSpaceExpr + "$")
 
 func readSections(scanner *bufio.Scanner, count int) *map[string]*structure.Section {
 	lines := definitionLines(scanner, count)

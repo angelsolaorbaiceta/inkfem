@@ -39,10 +39,6 @@ func floatGroupExpr(groupName string) string {
 	return fmt.Sprintf(`(?P<%s>%s)`, groupName, floatExpr)
 }
 
-func floatGroupAndOptinalSpaceExpr(groupName string) string {
-	return fmt.Sprintf(`(?P<%s>%s)\s*`, groupName, floatExpr)
-}
-
 func idGroupExpr(groupName string) string {
 	return fmt.Sprintf(`(?P<%s>%s)`, groupName, validIDExpr)
 }

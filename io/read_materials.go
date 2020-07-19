@@ -32,7 +32,7 @@ var materialDefinitionRegex = regexp.MustCompile(
 		floatGroupExpr("shear") + spaceExpr +
 		floatGroupExpr("poisson") + spaceExpr +
 		floatGroupExpr("yield") + spaceExpr +
-		floatGroupAndOptinalSpaceExpr("ultimate") + "$")
+		floatGroupExpr("ultimate") + optionalSpaceExpr + "$")
 
 func readMaterials(scanner *bufio.Scanner, count int) *map[string]*structure.Material {
 	lines := definitionLines(scanner, count)
