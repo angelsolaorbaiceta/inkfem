@@ -25,8 +25,6 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/nums"
 )
 
-// TODO: split in two different structs?
-
 /*
 Load is a distributed or concentrated load.
 
@@ -221,11 +219,14 @@ vector format.
 */
 func (load Load) AvgValueVectorBetween(startT, endT inkgeom.TParam) [3]float64 {
 	val := load.AvgValueBetween(startT, endT)
+
 	switch load.Term {
 	case FX:
 		return [3]float64{val, 0.0, 0.0}
+
 	case FY:
 		return [3]float64{0.0, val, 0.0}
+
 	default:
 		return [3]float64{0.0, 0.0, val}
 	}
