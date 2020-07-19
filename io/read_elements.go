@@ -38,11 +38,13 @@ const (
 
 // <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section>
 var elementDefinitionRegex = regexp.MustCompile(
-	`(?P<id>\d+)(?:\s*->\s*)` +
-		`(?P<start_node>\d+)(?:\s*)(?P<start_link>{.*})(?:\s+)` +
-		`(?P<end_node>\d+)(?:\s*)(?P<end_link>{.*})(?:\s+)` +
-		`'(?P<material>[A-Za-z0-9_ ]+)'(?:\s+)` +
-		`'(?P<section>[A-Za-z0-9_ ]+)'`)
+	"^" + idGrpExpr + arrowExpr +
+		idGroupExpr("start_node") + optionalSpaceExpr +
+		`(?P<start_link>` + constraintExpr + `)` + spaceExpr +
+		idGroupExpr("end_node") + optionalSpaceExpr +
+		`(?P<end_link>` + constraintExpr + `)` + spaceExpr +
+		nameGroupExpr("material") + spaceExpr +
+		nameGroupExpr("section") + optionalSpaceExpr + "$")
 
 func readElements(
 	scanner *bufio.Scanner,

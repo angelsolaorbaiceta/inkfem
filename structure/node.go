@@ -40,7 +40,11 @@ type Node struct {
 /*
 MakeNode creates a new node with the given id, position and external constraint.
 */
-func MakeNode(id int, position g2d.Projectable, externalConstraint Constraint) *Node {
+func MakeNode(
+	id contracts.StrID,
+	position g2d.Projectable,
+	externalConstraint Constraint,
+) *Node {
 	return &Node{
 		id,
 		position,
@@ -53,7 +57,11 @@ func MakeNode(id int, position g2d.Projectable, externalConstraint Constraint) *
 MakeNodeAtPosition creates a new node with the given id, position coordinates and
 external constraint.
 */
-func MakeNodeAtPosition(id int, x, y float64, externalConstraint Constraint) *Node {
+func MakeNodeAtPosition(
+	id contracts.StrID,
+	x, y float64,
+	externalConstraint Constraint,
+) *Node {
 	return &Node{
 		id,
 		g2d.MakePoint(x, y),
@@ -66,7 +74,7 @@ func MakeNodeAtPosition(id int, x, y float64, externalConstraint Constraint) *No
 MakeFreeNodeAtPosition creates a new node without external constraint, with the
 given id and position by coordinates.
 */
-func MakeFreeNodeAtPosition(id int, x, y float64) *Node {
+func MakeFreeNodeAtPosition(id contracts.StrID, x, y float64) *Node {
 	return &Node{
 		id,
 		g2d.MakePoint(x, y),

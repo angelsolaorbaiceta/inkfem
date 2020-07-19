@@ -19,9 +19,12 @@ package io
 import "fmt"
 
 const (
-	floatExpr     = `-?\d+\.?\d*`
-	validNameExpr = `[\w\-_ ]+`
-	validIDExpr   = `\d+`
+	floatExpr         = `-?\d+\.?\d*`
+	validNameExpr     = `[\w\-_ ]+`
+	validIDExpr       = `\d+`
+	constraintExpr    = `{[drxyz ]*}`
+	optionalSpaceExpr = `\s*`
+	spaceExpr         = `\s+`
 
 	nameGrpExpr             = `'(?P<name>` + validNameExpr + `)'`
 	idGrpExpr               = `(?P<id>` + validIDExpr + `)`
@@ -38,4 +41,12 @@ func floatGroupAndSpaceExpr(groupName string) string {
 
 func floatGroupAndOptinalSpaceExpr(groupName string) string {
 	return fmt.Sprintf(`(?P<%s>%s)\s*`, groupName, floatExpr)
+}
+
+func idGroupExpr(groupName string) string {
+	return fmt.Sprintf(`(?P<%s>%s)`, groupName, validIDExpr)
+}
+
+func nameGroupExpr(groupName string) string {
+	return fmt.Sprintf(`'(?P<%s>%s)'`, groupName, validNameExpr)
 }
