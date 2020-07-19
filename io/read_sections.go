@@ -27,10 +27,10 @@ import (
 // <name> -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
 var sectionDefinitionRegex = regexp.MustCompile(
 	"^" + nameGrpExpr + arrowExpr +
-		floatGroupAndSpaceExpr("area") +
-		floatGroupAndSpaceExpr("istrong") +
-		floatGroupAndSpaceExpr("iweak") +
-		floatGroupAndSpaceExpr("sstrong") +
+		floatGroupExpr("area") + spaceExpr +
+		floatGroupExpr("istrong") + spaceExpr +
+		floatGroupExpr("iweak") + spaceExpr +
+		floatGroupExpr("sstrong") + spaceExpr +
 		floatGroupAndOptinalSpaceExpr("sweak") + "$")
 
 func readSections(scanner *bufio.Scanner, count int) *map[string]*structure.Section {

@@ -27,11 +27,11 @@ import (
 // '<name>' -> <density> <young> <shear> <poisson> <yield> <ultimate>
 var materialDefinitionRegex = regexp.MustCompile(
 	"^" + nameGrpExpr + arrowExpr +
-		floatGroupAndSpaceExpr("density") +
-		floatGroupAndSpaceExpr("young") +
-		floatGroupAndSpaceExpr("shear") +
-		floatGroupAndSpaceExpr("poisson") +
-		floatGroupAndSpaceExpr("yield") +
+		floatGroupExpr("density") + spaceExpr +
+		floatGroupExpr("young") + spaceExpr +
+		floatGroupExpr("shear") + spaceExpr +
+		floatGroupExpr("poisson") + spaceExpr +
+		floatGroupExpr("yield") + spaceExpr +
 		floatGroupAndOptinalSpaceExpr("ultimate") + "$")
 
 func readMaterials(scanner *bufio.Scanner, count int) *map[string]*structure.Material {

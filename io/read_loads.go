@@ -31,9 +31,9 @@ var (
 	distLoadDefinitionRegex = regexp.MustCompile(
 		"^" + loadTermExpr + distributedLoadRefExpr +
 			loadElementID +
-			floatGroupAndSpaceExpr("t_start") +
-			floatGroupAndSpaceExpr("val_start") +
-			floatGroupAndSpaceExpr("t_end") +
+			floatGroupExpr("t_start") + spaceExpr +
+			floatGroupExpr("val_start") + spaceExpr +
+			floatGroupExpr("t_end") + spaceExpr +
 			floatGroupAndOptinalSpaceExpr("val_end") + "$",
 	)
 
@@ -41,7 +41,7 @@ var (
 	concLoadDefinitionRegex = regexp.MustCompile(
 		"^" + loadTermExpr + concentratedLoadRefExpr +
 			loadElementID +
-			floatGroupAndSpaceExpr("t") +
+			floatGroupExpr("t") + spaceExpr +
 			floatGroupAndOptinalSpaceExpr("val") + "$",
 	)
 )

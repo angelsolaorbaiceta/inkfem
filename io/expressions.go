@@ -35,8 +35,8 @@ const (
 	concentratedLoadRefExpr = `(?P<ref>[lg]{1})(?:c{1})\s+`
 )
 
-func floatGroupAndSpaceExpr(groupName string) string {
-	return fmt.Sprintf(`(?P<%s>%s)\s+`, groupName, floatExpr)
+func floatGroupExpr(groupName string) string {
+	return fmt.Sprintf(`(?P<%s>%s)`, groupName, floatExpr)
 }
 
 func floatGroupAndOptinalSpaceExpr(groupName string) string {
