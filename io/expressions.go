@@ -46,3 +46,7 @@ func idGroupExpr(groupName string) string {
 func nameGroupExpr(groupName string) string {
 	return fmt.Sprintf(`'(?P<%s>%s)'`, groupName, validNameExpr)
 }
+
+func constraintGroupExpr(groupName string) string {
+	return fmt.Sprintf(`(?P<%s>%s)`, groupName, constraintExpr)
+}

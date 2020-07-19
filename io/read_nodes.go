@@ -30,7 +30,7 @@ var nodeDefinitionRegex = regexp.MustCompile(
 	"^" + idGrpExpr + arrowExpr +
 		floatGroupExpr("x") + spaceExpr +
 		floatGroupExpr("y") + spaceExpr +
-		`(?P<constraints>` + constraintExpr + `)` + optionalSpaceExpr + "$")
+		constraintGroupExpr("constraints") + optionalSpaceExpr + "$")
 
 func readNodes(scanner *bufio.Scanner, count int) *map[int]*structure.Node {
 	lines := definitionLines(scanner, count)

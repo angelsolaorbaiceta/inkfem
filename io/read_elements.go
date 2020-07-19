@@ -40,9 +40,9 @@ const (
 var elementDefinitionRegex = regexp.MustCompile(
 	"^" + idGrpExpr + arrowExpr +
 		idGroupExpr("start_node") + optionalSpaceExpr +
-		`(?P<start_link>` + constraintExpr + `)` + spaceExpr +
+		constraintGroupExpr("start_link") + spaceExpr +
 		idGroupExpr("end_node") + optionalSpaceExpr +
-		`(?P<end_link>` + constraintExpr + `)` + spaceExpr +
+		constraintGroupExpr("end_link") + spaceExpr +
 		nameGroupExpr("material") + spaceExpr +
 		nameGroupExpr("section") + optionalSpaceExpr + "$")
 
