@@ -25,9 +25,14 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/nums"
 )
 
+// TODO: split in two different structs?
+
 /*
-Load represents a distributed or concentrated load definition. A load is
-expressed as:
+Load is a distributed or concentrated load.
+
+Distributed loads are linear: the start and end values are interpolated linearly.
+
+A load is expressed as:
 	- a term of application, which in 2D can be: Force in X, Force in Y or
 	Moment about Z
 	- a projection frame, which can be local to the element to which load is
@@ -41,7 +46,7 @@ type Load struct {
 	startValue, endValue float64
 }
 
-/* Creation */
+/* <-- Creation --> */
 
 /*
 MakeDistributed creates a distributed load for the given term (FX, FY, MZ) which
@@ -114,8 +119,7 @@ func (load Load) T() inkgeom.TParam {
 }
 
 /*
-Value returns the value for a concentrated load. Panics if the load is
-distributed.
+Value returns the value for a concentrated load. Panics if the load is distributed.
 */
 func (load Load) Value() float64 {
 	if load.IsDistributed() {
@@ -126,8 +130,7 @@ func (load Load) Value() float64 {
 }
 
 /*
-VectorValue returns a vector for a concentrated load with the components of
-the load.
+VectorValue returns a vector for a concentrated load with the components of the load.
 */
 func (load Load) VectorValue() [3]float64 {
 	switch load.Term {
@@ -143,9 +146,8 @@ func (load Load) VectorValue() [3]float64 {
 }
 
 /*
-ForcesVector returns a vector for a concentrated load with the components
-of {Fx, Fy}.
-+*/
+ForcesVector returns a vector for a concentrated load with the components of {Fx, Fy}.
+*/
 func (load Load) ForcesVector() g2d.Projectable {
 	switch load.Term {
 	case FX:
@@ -181,32 +183,36 @@ func (load Load) ValueAt(t inkgeom.TParam) float64 {
 }
 
 /*
-AvgValueBetween returns the average load value inside the given range for
-the distributed load.
+AvgValueBetween returns the average load value inside the given range for the
+distributed load.
 */
 func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
-	ok, maxStartT, minEndT := nums.RangesOverlap(
+	hasOverlap, maxStartT, minEndT := nums.RangesOverlap(
 		load.startT.Value(),
 		load.endT.Value(),
 		startT.Value(),
 		endT.Value(),
 	)
 
-	if !ok {
+	if !hasOverlap {
 		return 0.0
 	}
 
-	startVal := load.ValueAt(inkgeom.MakeTParam(maxStartT))
-	endVal := load.ValueAt(inkgeom.MakeTParam(minEndT))
-	applicationLength := minEndT - maxStartT
-	rangeLength := startT.DistanceTo(endT)
+	var (
+		startVal          = load.ValueAt(inkgeom.MakeTParam(maxStartT))
+		endVal            = load.ValueAt(inkgeom.MakeTParam(minEndT))
+		applicationLength = minEndT - maxStartT
+		rangeLength       = startT.DistanceTo(endT)
+		rangesRatio       = applicationLength / rangeLength
+	)
 
 	// one of both ends has a zero value load -> No need to average values
-	if nums.IsCloseToZero(startVal * endVal) {
-		return (startVal + endVal) * applicationLength / rangeLength
+	if nums.IsCloseToZero(startVal) || nums.IsCloseToZero(endVal) {
+		return (startVal + endVal) * rangesRatio
 	}
 
-	return applicationLength * 0.5 * (startVal + endVal) / rangeLength
+	avgLoadValue := 0.5 * (startVal + endVal)
+	return rangesRatio * avgLoadValue
 }
 
 /*

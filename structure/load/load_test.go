@@ -66,44 +66,39 @@ func TestLoadIsNodal(t *testing.T) {
 }
 
 /* <-- Avg Value --> */
-func TestAvgValueAllCoveredByLoad(t *testing.T) {
+
+func TestAverageLoadValue(t *testing.T) {
 	var (
-		l     = MakeDistributed(FY, true, inkgeom.MinT, 50.0, inkgeom.MaxT, 50.0)
-		value = l.AvgValueBetween(inkgeom.MakeTParam(0.2), inkgeom.MakeTParam(0.7))
+		startT   = inkgeom.MakeTParam(0.2)
+		endT     = inkgeom.MakeTParam(0.5)
+		distLoad = MakeDistributed(FY, true, startT, 50.0, endT, 100.0)
 	)
 
-	if !nums.FuzzyEqual(value, 50.0) {
-		t.Errorf("Average value not as expected: got %f, expected: %f", value, 50.0)
-	}
-}
+	t.Run("range completely covered by the load", func(t *testing.T) {
+		value := distLoad.AvgValueBetween(startT, endT)
 
-func TestAvgValueNoneCoveredByLoad(t *testing.T) {
-	var (
-		startT = inkgeom.MakeTParam(0.2)
-		endT   = inkgeom.MakeTParam(0.3)
-		l      = MakeDistributed(FY, true, startT, 50.0, endT, 50.0)
-		value  = l.AvgValueBetween(inkgeom.MakeTParam(0.4), inkgeom.MakeTParam(0.7))
-	)
+		if !nums.FuzzyEqual(value, 75.0) {
+			t.Errorf("Expected load average of 75.0, got %f", value)
+		}
+	})
 
-	if !nums.FuzzyEqual(value, 0.0) {
-		t.Errorf("Average value not as expected: got %f, expected: %f", value, 0.0)
-	}
-}
+	t.Run("range not covered by the load", func(t *testing.T) {
+		value := distLoad.AvgValueBetween(inkgeom.MakeTParam(0.6), inkgeom.MakeTParam(0.7))
 
-func TestAvgValuePartiallyCoveredByLoad(t *testing.T) {
-	var (
-		startT = inkgeom.MakeTParam(0.2)
-		endT   = inkgeom.MakeTParam(0.5)
-		l      = MakeDistributed(FY, true, startT, 100.0, endT, 100.0)
-	)
+		if !nums.FuzzyEqual(value, 0.0) {
+			t.Errorf("Expected load average of 0.0, got %f", value)
+		}
+	})
 
-	value := l.AvgValueBetween(startT, inkgeom.MakeTParam(0.8))
-	if !nums.FuzzyEqual(value, 50.0) {
-		t.Errorf("Average value not as expected: got %f, expected: %f", value, 50.0)
-	}
+	t.Run("range partially covered by the load", func(t *testing.T) {
+		value := distLoad.AvgValueBetween(inkgeom.MinT, endT)
+		if !nums.FuzzyEqual(value, 45.0) {
+			t.Errorf("Average value expected 45.0, got %f", value)
+		}
 
-	value = l.AvgValueBetween(inkgeom.MakeTParam(0.1), inkgeom.MakeTParam(0.7))
-	if !nums.FuzzyEqual(value, 50.0) {
-		t.Errorf("Average value not as expected: got %f, expected: %f", value, 50.0)
-	}
+		value = distLoad.AvgValueBetween(startT, inkgeom.MaxT)
+		if !nums.FuzzyEqual(value, 28.125) {
+			t.Errorf("Average value expected 45.0, got %f", value)
+		}
+	})
 }
