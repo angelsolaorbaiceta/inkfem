@@ -16,8 +16,6 @@ limitations under the License.
 
 package contracts
 
-import "sort"
-
 // StrID is the type used for structural data ids
 type StrID = int
 
@@ -26,24 +24,4 @@ Identifiable is anything that can be referenced using an integer number.
 */
 type Identifiable interface {
 	GetID() StrID
-}
-
-// ByID implements the sort.Interface for []Identifiable based in their id.
-type ByID []Identifiable
-
-func (a ByID) Len() int {
-	return len(a)
-}
-
-func (a ByID) Swap(i, j int) {
-	a[i], a[j] = a[j], a[i]
-}
-
-func (a ByID) Less(i, j int) bool {
-	return a[i].GetID() < a[j].GetID()
-}
-
-// SortByID sorts (in place) a slice of identifiable elements.
-func SortByID(elements []Identifiable) {
-	sort.Sort(ByID(elements))
 }
