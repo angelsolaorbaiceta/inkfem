@@ -33,7 +33,7 @@ func Solve(structure *preprocess.Structure, options SolveOptions) *Solution {
 
 	var (
 		elementSolution  *ElementSolution
-		elementSolutions = make([]*ElementSolution, len(structure.Elements))
+		elementSolutions = make([]*ElementSolution, structure.ElementsCount())
 	)
 
 	log.StartComputeStresses()
