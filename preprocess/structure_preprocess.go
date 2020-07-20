@@ -36,7 +36,7 @@ func DoStructure(s *structure.Structure) *Structure {
 		go DoElement(element, channel)
 	}
 
-	for i := 0; i < len(s.Elements); i++ {
+	for i := 0; i < s.ElementsCount(); i++ {
 		slicedElements = append(slicedElements, <-channel)
 	}
 

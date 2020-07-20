@@ -24,7 +24,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-// <name> -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
+// '<name>' -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
 var sectionDefinitionRegex = regexp.MustCompile(
 	"^" + nameGrpExpr + arrowExpr +
 		floatGroupExpr("area") + spaceExpr +

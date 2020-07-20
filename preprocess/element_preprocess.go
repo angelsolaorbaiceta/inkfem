@@ -48,30 +48,31 @@ func DoElement(e *structure.Element, c chan<- *Element) {
 
 /*
 An axial element is an element which:
-    - is pinned in both ends and
-		- if it has loads, they are concentrated and applied to the ends of the
-		element, and never include a moment about Z
 
-Axial elements can be sliced using only it's end nodes. Axial elements
-deformation only happens in their axial direction: tension or compression.
+- is pinned in both ends and
+- if it has loads, they are concentrated and applied to the ends of the element, and
+never include a moment about Z
+
+Axial elements can be sliced using only it's end nodes. Axial elements deformation only
+happens in their axial direction: tension or compression.
 */
-func sliceAxialElement(e *structure.Element) *Element {
-	if e.HasLoadsApplied() {
-		sFx, sFy, eFx, eFy := netNodalLoadValues(e.Loads, e.Geometry.RefFrame())
+func sliceAxialElement(element *structure.Element) *Element {
+	if element.HasLoadsApplied() {
+		sFx, sFy, eFx, eFy := netNodalLoadValues(element.Loads, element.Geometry.RefFrame())
 
 		return MakeElement(
-			e,
+			element,
 			[]*Node{
-				MakeNode(inkgeom.MinT, e.StartPoint(), sFx, sFy, 0.0),
-				MakeNode(inkgeom.MaxT, e.EndPoint(), eFx, eFy, 0.0),
+				MakeNode(inkgeom.MinT, element.StartPoint(), sFx, sFy, 0.0),
+				MakeNode(inkgeom.MaxT, element.EndPoint(), eFx, eFy, 0.0),
 			})
 	}
 
 	return MakeElement(
-		e,
+		element,
 		[]*Node{
-			MakeUnloadedNode(inkgeom.MinT, e.StartPoint()),
-			MakeUnloadedNode(inkgeom.MaxT, e.EndPoint()),
+			MakeUnloadedNode(inkgeom.MinT, element.StartPoint()),
+			MakeUnloadedNode(inkgeom.MaxT, element.EndPoint()),
 		})
 }
 
@@ -243,11 +244,11 @@ func applyDistributedLoadsToNodes(nodes []*Node, e *structure.Element) {
 /* <-- Sliced : Unloaded --> */
 
 /*
-Non axial elements which have no loads applied are sliced just by subdividint their
-geometry a given number of times, so that the slices have the same length.
+Non axial elements which have no loads applied are sliced just by subdividing their
+geometry into a given number of slices, so that the slices have the same length.
 */
-func sliceUnloadedElement(e *structure.Element, times int) *Element {
-	tPos := inkgeom.SubTParamCompleteRangeTimes(times)
+func sliceUnloadedElement(e *structure.Element, slices int) *Element {
+	tPos := inkgeom.SubTParamCompleteRangeTimes(slices)
 	nodes := make([]*Node, len(tPos))
 
 	for i := 0; i < len(tPos); i++ {

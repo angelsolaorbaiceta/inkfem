@@ -27,89 +27,106 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/nums"
 )
 
-/* Axial Member */
-func TestSliceAxialMemberNodePositions(t *testing.T) {
-	element := makeElementWithLoads(make([]load.Load, 0))
-	slicedEl := sliceAxialElement(element)
+/* <-- Axial Member --> */
 
-	if len(slicedEl.Nodes) != 2 {
+func TestSliceAxialMemberNodePositions(t *testing.T) {
+	var (
+		element  = makeElementWithLoads([]load.Load{})
+		slicedEl = sliceAxialElement(element)
+	)
+
+	if slicedEl.NodesCount() != 2 {
 		t.Error("Expected element to have two nodes")
 	}
 
-	if !slicedEl.Nodes[0].Position.Equals(element.StartPoint()) {
-		t.Error("First node's position was not as expected")
+	if pos := slicedEl.Nodes[0].Position; !pos.Equals(element.StartPoint()) {
+		t.Errorf("Wrong node position. Want %v, got %v", element.StartPoint(), pos)
 	}
-	if !slicedEl.Nodes[1].Position.Equals(element.EndPoint()) {
-		t.Error("Last node's position was not as expected")
-	}
-}
-
-func TestSliceAxialMemberStartNodeLoads(t *testing.T) {
-	loads := []load.Load{
-		load.MakeConcentrated(load.FX, true, inkgeom.MinT, 50.0),
-		load.MakeConcentrated(load.FY, true, inkgeom.MinT, 75.0)}
-	element := makeElementWithLoads(loads)
-	slicedEl := sliceAxialElement(element)
-
-	if slicedEl.Nodes[0].LocalFx() != 50.0 {
-		t.Error("Node Fx value not as expected")
-	}
-	if slicedEl.Nodes[0].LocalFy() != 75.0 {
-		t.Error("Node Fy value not as expected")
+	if pos := slicedEl.Nodes[1].Position; !pos.Equals(element.EndPoint()) {
+		t.Errorf("Wrong node position. Want %v, got %v", element.EndPoint(), pos)
 	}
 }
 
-func TestSliceAxialMemberEndNodeLoads(t *testing.T) {
-	loads := []load.Load{
-		load.MakeConcentrated(load.FX, true, inkgeom.MaxT, 50.0),
-		load.MakeConcentrated(load.FY, true, inkgeom.MaxT, 75.0)}
-	element := makeElementWithLoads(loads)
-	slicedEl := sliceAxialElement(element)
+func TestSliceAxialMemberNodeLoads(t *testing.T) {
+	var (
+		loads = []load.Load{
+			load.MakeConcentrated(load.FX, true, inkgeom.MinT, 50.0),
+			load.MakeConcentrated(load.FY, true, inkgeom.MinT, 75.0),
+			load.MakeConcentrated(load.FX, true, inkgeom.MaxT, 100.0),
+			load.MakeConcentrated(load.FY, true, inkgeom.MaxT, 200.0),
+		}
+		element  = makeElementWithLoads(loads)
+		slicedEl = sliceAxialElement(element)
+	)
 
-	if slicedEl.Nodes[1].LocalFx() != 50.0 {
-		t.Error("Node Fx value not as expected")
-	}
-	if slicedEl.Nodes[1].LocalFy() != 75.0 {
-		t.Error("Node Fy value not as expected")
-	}
+	t.Run("Start node loads", func(t *testing.T) {
+		if slicedEl.Nodes[0].LocalFx() != 50.0 {
+			t.Error("Node Fx value not as expected")
+		}
+		if slicedEl.Nodes[0].LocalFy() != 75.0 {
+			t.Error("Node Fy value not as expected")
+		}
+	})
+
+	t.Run("End node loads", func(t *testing.T) {
+		if slicedEl.Nodes[1].LocalFx() != 100.0 {
+			t.Error("Node Fx value not as expected")
+		}
+		if slicedEl.Nodes[1].LocalFy() != 200.0 {
+			t.Error("Node Fy value not as expected")
+		}
+	})
 }
 
 func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
-	loads := []load.Load{load.MakeConcentrated(load.FY, false, inkgeom.MinT, 100.0)}
-	element := makeElementWithLoads(loads)
-	slicedEl := sliceAxialElement(element)
-	expectedProjLoadX := g2d.MakeVector(0, 100).DotTimes(element.Geometry.DirectionVersor())
-	expectedProjLoadY := g2d.MakeVector(0, 100).DotTimes(element.Geometry.NormalVersor())
+	var (
+		loads = []load.Load{
+			load.MakeConcentrated(load.FY, false, inkgeom.MinT, 100.0),
+		}
+		element           = makeElementWithLoads(loads)
+		slicedEl          = sliceAxialElement(element)
+		expectedProjLoadX = g2d.MakeVector(0, 100).DotTimes(element.Geometry.DirectionVersor())
+		expectedProjLoadY = g2d.MakeVector(0, 100).DotTimes(element.Geometry.NormalVersor())
+	)
 
-	if !nums.FuzzyEqual(slicedEl.Nodes[0].LocalFx(), expectedProjLoadX) {
+	if fx := slicedEl.Nodes[0].LocalFx(); !nums.FuzzyEqual(fx, expectedProjLoadX) {
 		t.Error("Node projected Fx value was not as expected")
 	}
-	if !nums.FuzzyEqual(slicedEl.Nodes[0].LocalFy(), expectedProjLoadY) {
+	if fy := slicedEl.Nodes[0].LocalFy(); !nums.FuzzyEqual(fy, expectedProjLoadY) {
 		t.Error("Node projected Fy value was not as expected")
 	}
 }
 
-/* Non Axial Member : Unloaded */
-func TestSliceNonAxialUnloadedMemberNodePositions(t *testing.T) {
-	element := makeElementWithLoads(make([]load.Load, 0))
-	slicedEl := sliceUnloadedElement(element, 2)
+/* <-- Non Axial Member : Unloaded --> */
 
-	if len(slicedEl.Nodes) != 3 {
+func TestSliceNonAxialUnloadedMemberNodePositions(t *testing.T) {
+	var (
+		element  = makeElementWithLoads([]load.Load{})
+		slicedEl = sliceUnloadedElement(element, 2)
+	)
+
+	if slicedEl.NodesCount() != 3 {
 		t.Error("Expected element to have three nodes")
 	}
 
-	if !slicedEl.Nodes[0].Position.Equals(element.StartPoint()) {
+	var (
+		wantStartPoint = element.StartPoint()
+		wantMidPoint   = element.PointAt(inkgeom.HalfT)
+		wantEndPoint   = element.EndPoint()
+	)
+	if pos := slicedEl.Nodes[0].Position; !pos.Equals(wantStartPoint) {
 		t.Error("First node's position was not as expected")
 	}
-	if !slicedEl.Nodes[1].Position.Equals(element.PointAt(inkgeom.MakeTParam(0.5))) {
+	if pos := slicedEl.Nodes[1].Position; !pos.Equals(wantMidPoint) {
 		t.Error("Middle node's position was not as expected")
 	}
-	if !slicedEl.Nodes[2].Position.Equals(element.EndPoint()) {
+	if pos := slicedEl.Nodes[2].Position; !pos.Equals(wantEndPoint) {
 		t.Error("Last node's position was not as expected")
 	}
 }
 
-/* Non Axial Member : Loaded -> slicing */
+/* <-- Non Axial Member : Loaded -> slicing --> */
+
 func TestDistributedLoadInEntireLengthAddsNoPositions(t *testing.T) {
 	loads := []load.Load{load.MakeDistributed(load.FY, true, inkgeom.MinT, 45.0, inkgeom.MaxT, 55.0)}
 	tPos := sliceLoadedElementPositions(loads, 2)
@@ -158,7 +175,8 @@ func TestMultipleLoadsNotAddingPositionTwice(t *testing.T) {
 	}
 }
 
-/* Non Axial Member : Loaded -> loads */
+/* <-- Non Axial Member : Loaded -> loads --> */
+
 func TestDistributedLocalLoadDistribution(t *testing.T) {
 	element := structure.MakeElement(
 		"1",
