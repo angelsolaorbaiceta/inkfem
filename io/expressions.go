@@ -31,8 +31,8 @@ const (
 	arrowExpr               = `\s*->\s*`
 	loadTermExpr            = `(?P<term>[fm]{1}[xyz]{1})\s+`
 	loadElementID           = `(?P<element>` + validIDExpr + `)\s+`
-	distributedLoadRefExpr  = `(?P<ref>[lg]{1})(?:d{1})\s+`
-	concentratedLoadRefExpr = `(?P<ref>[lg]{1})(?:c{1})\s+`
+	distributedLoadRefExpr  = `(?P<ref>[lg]{1})d\s+`
+	concentratedLoadRefExpr = `(?P<ref>[lg]{1})c\s+`
 )
 
 func floatGroupExpr(groupName string) string {
