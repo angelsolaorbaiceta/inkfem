@@ -103,11 +103,10 @@ func addTermsToStiffnessMatrix(matrix mat.MutableMatrix, element *preprocess.Ele
 			leadNodeDofs[0], leadNodeDofs[1], leadNodeDofs[2],
 		}
 
-		// TODO: this i is dangerous: shadows earlier def of i
-		for i := 0; i < stiffMat.Rows(); i++ {
-			for j := 0; j < stiffMat.Cols(); j++ {
-				if stiffVal = stiffMat.Value(i, j); !nums.IsCloseToZero(stiffVal) {
-					matrix.AddToValue(dofs[i], dofs[j], stiffVal)
+		for row := 0; row < stiffMat.Rows(); row++ {
+			for col := 0; col < stiffMat.Cols(); col++ {
+				if stiffVal = stiffMat.Value(row, col); !nums.IsCloseToZero(stiffVal) {
+					matrix.AddToValue(dofs[row], dofs[col], stiffVal)
 				}
 			}
 		}
