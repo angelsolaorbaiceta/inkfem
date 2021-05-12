@@ -31,3 +31,29 @@ The code is split into four main packages:
 - [preprocess](./preprocess/README.md): implements the preprocessing or slicing of the structure
 - [process](./process/README.md): implements the processing of a sliced/preprocessed structure
 - [io](./io/README.md): reading from `.inkfem` files and writing to `.inkfempre`and `.inkfemsol` files
+
+## Build & Test
+
+To build the application:
+
+```bash
+$ go build inkfem.go
+```
+
+To build without debug symbols:
+
+```bash
+$ go build -ldflags "-s -w" inkfem.go
+```
+
+This script is already packaged inside the `build.sh` script, so you can simply:
+
+```bash
+$ bash ./build.sh
+```
+
+To test all the packages:
+
+```bash
+$ go test ./...
+```
