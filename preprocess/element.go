@@ -53,28 +53,16 @@ func (e Element) NodesCount() int {
 /* <-- Methods --> */
 
 /*
-ComputeStiffnessMatrices sets the global stiffness matrices for this element
-in place (mutates the element).
-
-Each element has a stiffness matrix between two contiguous nodes, so
-in total that makes n - 1 matrices, where n is the number of nodes.
-*/
-func (e *Element) ComputeStiffnessMatrices() {
-	var trail, lead *Node
-
-	for i := 1; i < len(e.Nodes); i++ {
-		trail = e.Nodes[i-1]
-		lead = e.Nodes[i]
-		e.globalStiffMat[i-1] = e.StiffnessGlobalMat(trail.T, lead.T)
-	}
-}
-
-/*
 GlobalStiffMatrixAt returns the global stiffness matrix at position i, that is, between
 nodes i and i + 1.
 */
 func (e Element) GlobalStiffMatrixAt(i int) mat.ReadOnlyMatrix {
-	return e.globalStiffMat[i]
+	var (
+		trail = e.Nodes[i]
+		lead  = e.Nodes[i+1]
+	)
+
+	return e.StiffnessGlobalMat(trail.T, lead.T)
 }
 
 /* <-- sort.Interface --> */

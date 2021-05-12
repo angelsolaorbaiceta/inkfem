@@ -76,7 +76,6 @@ func makeSystemOfEquations(
 	)
 
 	for _, element := range structure.Elements {
-		element.ComputeStiffnessMatrices()
 		addTermsToStiffnessMatrix(sysMatrix, element)
 		addTermsToLoadVector(sysVector, element)
 	}
@@ -113,6 +112,25 @@ func addTermsToStiffnessMatrix(matrix mat.MutableMatrix, element *preprocess.Ele
 	}
 }
 
+func addTermsToLoadVector(vector *vec.Vector, element *preprocess.Element) {
+	var (
+		localActions [3]float64
+		globalForces g2d.Projectable
+		dofs         [3]int
+		refFrame     = element.Geometry.RefFrame()
+	)
+
+	for _, node := range element.Nodes {
+		localActions = node.LocalActions()
+		globalForces = refFrame.ProjectionsToGlobal(localActions[0], localActions[1])
+		dofs = node.DegreesOfFreedomNum()
+
+		vector.SetValue(dofs[0], globalForces.X)
+		vector.SetValue(dofs[1], globalForces.Y)
+		vector.SetValue(dofs[2], localActions[2])
+	}
+}
+
 func addDispConstraints(
 	matrix mat.MutableMatrix,
 	vector *vec.Vector,
@@ -144,24 +162,5 @@ func addDispConstraints(
 				addConstraintAtDof(dofs[2])
 			}
 		}
-	}
-}
-
-func addTermsToLoadVector(vector *vec.Vector, element *preprocess.Element) {
-	var (
-		localActions [3]float64
-		globalForces g2d.Projectable
-		dofs         [3]int
-		refFrame     = element.Geometry.RefFrame()
-	)
-
-	for _, node := range element.Nodes {
-		localActions = node.LocalActions()
-		globalForces = refFrame.ProjectionsToGlobal(localActions[0], localActions[1])
-		dofs = node.DegreesOfFreedomNum()
-
-		vector.SetValue(dofs[0], globalForces.X)
-		vector.SetValue(dofs[1], globalForces.Y)
-		vector.SetValue(dofs[2], localActions[2])
 	}
 }
