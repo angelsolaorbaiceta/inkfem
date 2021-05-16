@@ -26,8 +26,8 @@ import (
 )
 
 const (
-	loadedElementSlices   = 10
-	unloadedElementSlices = 7
+	elementWithLoadsSlices    = 10
+	elementWithoutLoadsSlices = 7
 )
 
 /*
@@ -38,9 +38,9 @@ func DoElement(e *structure.Element, c chan<- *Element) {
 	if e.IsAxialMember() {
 		c <- sliceAxialElement(e)
 	} else if e.HasLoadsApplied() {
-		c <- sliceLoadedElement(e, loadedElementSlices)
+		c <- sliceLoadedElement(e)
 	} else {
-		c <- sliceUnloadedElement(e, unloadedElementSlices)
+		c <- sliceElementWithoutLoads(e)
 	}
 }
 
@@ -118,8 +118,8 @@ discontinuity, so a node must be added.
 The positions where distributed loads start and end also introduce discontinuities, so we
 also include nodes in those positions.
 */
-func sliceLoadedElement(element *structure.Element, times int) *Element {
-	tPos := sliceLoadedElementPositions(element.Loads, times)
+func sliceLoadedElement(element *structure.Element) *Element {
+	tPos := sliceLoadedElementPositions(element.Loads)
 	nodes := makeNodesWithConcentratedLoads(element, tPos)
 	applyDistributedLoadsToNodes(nodes, element)
 
@@ -132,9 +132,9 @@ Computes all the t values where to slice an element with loads applied.
 It starts by slicing the element a given number of times, and then adds all the load start
 and end t values, removing any possible duplications.
 */
-func sliceLoadedElementPositions(loads []load.Load, times int) []inkgeom.TParam {
+func sliceLoadedElementPositions(loads []load.Load) []inkgeom.TParam {
 	tPos := append(
-		inkgeom.SubTParamCompleteRangeTimes(times),
+		inkgeom.SubTParamCompleteRangeTimes(elementWithLoadsSlices),
 		tValsForLoadApplications(loads)...,
 	)
 
@@ -175,14 +175,14 @@ func tValsForLoadApplications(loads []load.Load) []inkgeom.TParam {
 Creates all the nodes for the given t positions and applies the concentrated loads
 on them.
 */
-func makeNodesWithConcentratedLoads(e *structure.Element, tPos []inkgeom.TParam) []*Node {
+func makeNodesWithConcentratedLoads(element *structure.Element, tPos []inkgeom.TParam) []*Node {
 	nodes := make([]*Node, len(tPos))
-	elemRefFrame := e.Geometry.RefFrame()
+	elemRefFrame := element.Geometry.RefFrame()
 
 	for i, t := range tPos {
-		node := MakeUnloadedNode(t, e.Geometry.PointAt(t))
+		node := MakeUnloadedNode(t, element.Geometry.PointAt(t))
 
-		for _, load := range e.Loads {
+		for _, load := range element.Loads {
 			if load.IsConcentrated() && t.Equals(load.T()) {
 				var localLoadForces g2d.Projectable
 				if load.IsInLocalCoords {
@@ -203,52 +203,14 @@ func makeNodesWithConcentratedLoads(e *structure.Element, tPos []inkgeom.TParam)
 	return nodes
 }
 
-func applyDistributedLoadsToNodes(nodes []*Node, element *structure.Element) {
-	var (
-		trailNode, leadNode *Node
-		length, halfLength  float64
-		avgLoadValVect      [3]float64
-		elemRefFrame        = element.Geometry.RefFrame()
-	)
-
-	for i, j := 0, 1; j < len(nodes); i, j = i+1, j+1 {
-		trailNode, leadNode = nodes[i], nodes[j]
-		length = element.Geometry.LengthBetween(trailNode.T, leadNode.T)
-		halfLength = 0.5 * length
-
-		for _, load := range element.Loads {
-			avgLoadValVect = load.AvgValueVectorBetween(trailNode.T, leadNode.T)
-
-			if !load.IsInLocalCoords {
-				localForces := elemRefFrame.ProjectVector(
-					g2d.MakeVector(avgLoadValVect[0], avgLoadValVect[1]),
-				)
-				avgLoadValVect[0] = localForces.X
-				avgLoadValVect[1] = localForces.Y
-			}
-
-			trailNode.AddLoad([3]float64{
-				avgLoadValVect[0] * halfLength,
-				avgLoadValVect[1] * halfLength,
-				(avgLoadValVect[2] * halfLength) + (avgLoadValVect[1] * length * length / 12.0),
-			})
-			leadNode.AddLoad([3]float64{
-				avgLoadValVect[0] * halfLength,
-				avgLoadValVect[1] * halfLength,
-				(avgLoadValVect[2] * halfLength) - (avgLoadValVect[1] * length * length / 12.0),
-			})
-		}
-	}
-}
-
 /* <-- Sliced : Unloaded --> */
 
 /*
 Non axial elements which have no loads applied are sliced just by subdividing their
 geometry into a given number of slices, so that the slices have the same length.
 */
-func sliceUnloadedElement(e *structure.Element, slices int) *Element {
-	tPos := inkgeom.SubTParamCompleteRangeTimes(slices)
+func sliceElementWithoutLoads(e *structure.Element) *Element {
+	tPos := inkgeom.SubTParamCompleteRangeTimes(elementWithoutLoadsSlices)
 	nodes := make([]*Node, len(tPos))
 
 	for i := 0; i < len(tPos); i++ {
