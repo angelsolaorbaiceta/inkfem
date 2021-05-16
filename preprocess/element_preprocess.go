@@ -118,12 +118,12 @@ discontinuity, so a node must be added.
 The positions where distributed loads start and end also introduce discontinuities, so we
 also include nodes in those positions.
 */
-func sliceLoadedElement(e *structure.Element, times int) *Element {
-	tPos := sliceLoadedElementPositions(e.Loads, times)
-	nodes := makeNodesWithConcentratedLoads(e, tPos)
-	applyDistributedLoadsToNodes(nodes, e)
+func sliceLoadedElement(element *structure.Element, times int) *Element {
+	tPos := sliceLoadedElementPositions(element.Loads, times)
+	nodes := makeNodesWithConcentratedLoads(element, tPos)
+	applyDistributedLoadsToNodes(nodes, element)
 
-	return MakeElement(e, nodes)
+	return MakeElement(element, nodes)
 }
 
 /*
@@ -203,20 +203,20 @@ func makeNodesWithConcentratedLoads(e *structure.Element, tPos []inkgeom.TParam)
 	return nodes
 }
 
-func applyDistributedLoadsToNodes(nodes []*Node, e *structure.Element) {
+func applyDistributedLoadsToNodes(nodes []*Node, element *structure.Element) {
 	var (
 		trailNode, leadNode *Node
 		length, halfLength  float64
 		avgLoadValVect      [3]float64
-		elemRefFrame        = e.Geometry.RefFrame()
+		elemRefFrame        = element.Geometry.RefFrame()
 	)
 
 	for i, j := 0, 1; j < len(nodes); i, j = i+1, j+1 {
 		trailNode, leadNode = nodes[i], nodes[j]
-		length = e.Geometry.LengthBetween(trailNode.T, leadNode.T)
+		length = element.Geometry.LengthBetween(trailNode.T, leadNode.T)
 		halfLength = 0.5 * length
 
-		for _, load := range e.Loads {
+		for _, load := range element.Loads {
 			avgLoadValVect = load.AvgValueVectorBetween(trailNode.T, leadNode.T)
 
 			if !load.IsInLocalCoords {
