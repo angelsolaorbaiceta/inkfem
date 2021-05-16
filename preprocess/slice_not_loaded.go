@@ -18,23 +18,20 @@ package preprocess
 
 import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-)
-
-const (
-	elementWithLoadsSlices    = 10
-	elementWithoutLoadsSlices = 7
+	"github.com/angelsolaorbaiceta/inkgeom"
 )
 
 /*
-DoElement preprocesses the given structural element subdividing it as corresponds.
-The result is sent through a channel.
+Non axial elements which have no loads applied are sliced just by subdividing their
+geometry into a given number of slices, so that the slices have the same length.
 */
-func DoElement(e *structure.Element, c chan<- *Element) {
-	if e.IsAxialMember() {
-		c <- sliceAxialElement(e)
-	} else if e.HasLoadsApplied() {
-		c <- sliceLoadedElement(e, elementWithLoadsSlices)
-	} else {
-		c <- sliceElementWithoutLoads(e, elementWithoutLoadsSlices)
+func sliceElementWithoutLoads(e *structure.Element, slices int) *Element {
+	tPos := inkgeom.SubTParamCompleteRangeTimes(slices)
+	nodes := make([]*Node, len(tPos))
+
+	for i := 0; i < len(tPos); i++ {
+		nodes[i] = MakeUnloadedNode(tPos[i], e.PointAt(tPos[i]))
 	}
+
+	return MakeElement(e, nodes)
 }
