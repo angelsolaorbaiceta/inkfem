@@ -18,7 +18,6 @@ package process
 
 import (
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
@@ -60,9 +59,9 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 		LocalYDispl:  make([]PointSolutionValue, nOfNodes),
 		LocalZRot:    make([]PointSolutionValue, nOfNodes),
 
-		AxialStress:   make([]PointSolutionValue, 2*nOfNodes-2),
+		AxialStress:   make([]PointSolutionValue, nOfNodes-1),
 		ShearStress:   make([]PointSolutionValue, nOfNodes-1),
-		BendingMoment: make([]PointSolutionValue, 3*nOfNodes-3),
+		BendingMoment: make([]PointSolutionValue, 2*nOfNodes-2),
 	}
 }
 
@@ -136,12 +135,13 @@ displacements.
 */
 func (es *ElementSolution) computeStresses() {
 	var (
-		trailNode, leadNode                    *preprocess.Node
-		youngMod                               = es.Element.Material().YoungMod
-		iStrong                                = es.Element.Section().IStrong
-		nIndex, mIndex                         = 0, 0
-		incX, trailDy, leadDy, trailRz, leadRz float64
-		length, length2, length3               float64
+		trailNode, leadNode                               *preprocess.Node
+		youngMod                                          = es.Element.Material().YoungMod
+		iStrong                                           = es.Element.Section().IStrong
+		ei                                                = youngMod * iStrong
+		mIndex                                            = 0
+		trailDx, leadDx, trailDy, leadDy, trailRz, leadRz float64
+		length, length2, length3, eil, eil2, eil3         float64
 	)
 
 	for i := 1; i < len(es.Element.Nodes); i++ {
@@ -149,49 +149,48 @@ func (es *ElementSolution) computeStresses() {
 		length = es.Element.Geometry.LengthBetween(trailNode.T, leadNode.T)
 		length2 = length * length
 		length3 = length2 * length
+		eil = ei / length
+		eil2 = ei / length2
+		eil3 = ei / length3
+		trailDx = es.LocalXDispl[i-1].Value
+		leadDx = es.LocalXDispl[i].Value
 		trailDy = es.LocalYDispl[i-1].Value
 		leadDy = es.LocalYDispl[i].Value
 		trailRz = es.LocalZRot[i-1].Value
 		leadRz = es.LocalZRot[i].Value
 
 		/* <-- Axial --> */
-		incX = es.LocalXDispl[i].Value - es.LocalXDispl[i-1].Value
-		axialStressValue := incX * youngMod / length
-		es.AxialStress[nIndex] = PointSolutionValue{
+		axialStressValue := (leadDx - trailDx) * youngMod / length
+		es.AxialStress[i-1] = PointSolutionValue{
 			trailNode.T,
-			axialStressValue - trailNode.LocalFx(),
+			axialStressValue,
 		}
-		es.AxialStress[nIndex+1] = PointSolutionValue{
-			leadNode.T,
-			axialStressValue + leadNode.LocalFx(),
-		}
-		nIndex += 2
 
 		/* Shear */
 		var (
-			shearDispTerm = 12.0 * youngMod * iStrong * (trailDy - leadDy) / length3
-			shearRotTerm  = 6.0 * youngMod * iStrong * (trailRz + leadRz) / length2
+			shearDispTerm = 12.0 * eil3 * (trailDy - leadDy)
+			shearRotTerm  = 6.0 * eil2 * (trailRz + leadRz)
 			v             = shearDispTerm + shearRotTerm
 		)
 		es.ShearStress[i-1] = PointSolutionValue{trailNode.T, v}
 
 		/* Bending */
-		eil2 := youngMod * iStrong / length2
+		var (
+			bendStartDispTerm = 6.0 * eil2 * (leadDy - trailDy)
+			bendStartRotTerm  = 2.0 * eil * (leadRz + 2.0*trailRz)
+			bendEndDispTerm   = 6.0 * eil2 * (trailDy - leadDy)
+			bendEndRotTerm    = 2.0 * eil * (trailRz + 2.0*leadRz)
+		)
 		es.BendingMoment[mIndex] =
 			PointSolutionValue{
 				trailNode.T,
-				eil2*(-6.0*trailDy+2.0*length*trailRz-6.0*leadDy+4.0*length*leadRz) + trailNode.LocalMz(),
+				bendStartDispTerm - bendStartRotTerm,
 			}
 		es.BendingMoment[mIndex+1] =
 			PointSolutionValue{
-				inkgeom.AverageT(trailNode.T, leadNode.T),
-				(youngMod * iStrong / length) * (leadRz - trailRz),
-			}
-		es.BendingMoment[mIndex+2] =
-			PointSolutionValue{
 				leadNode.T,
-				eil2*(-6.0*trailDy+4.0*length*trailRz+6.0*leadDy-2.0*length*leadRz) + leadNode.LocalMz(),
+				bendEndDispTerm + bendEndRotTerm,
 			}
-		mIndex += 3
+		mIndex += 2
 	}
 }

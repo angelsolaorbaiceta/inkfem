@@ -135,6 +135,23 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("Bending moment", func(t *testing.T) {
+		var expectedBending = func(tParam inkgeom.TParam) float64 {
+			return l.Value() * 100.0 * (inkgeom.MaxT.Value() - tParam.Value())
+		}
+
+		for _, bending := range solutionElement.BendingMoment {
+			var (
+				got  = bending.Value
+				want = expectedBending(bending.T)
+			)
+
+			if !inkgeom.FloatsEqualEps(got, want, displError) {
+				t.Errorf("Expected a bending moment of %f, but got %f at t = %f", want, got, bending.T)
+			}
+		}
+	})
 }
 
 func makeBeamStructure(loads []load.Load) *structure.Structure {
