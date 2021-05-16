@@ -102,7 +102,7 @@ func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
 func TestSliceNonAxialUnloadedMemberNodePositions(t *testing.T) {
 	var (
 		element  = makeElementWithLoads([]load.Load{})
-		slicedEl = sliceUnloadedElement(element, 2)
+		slicedEl = sliceElementWithoutLoads(element, 2)
 	)
 
 	if slicedEl.NodesCount() != 3 {
