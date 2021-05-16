@@ -52,15 +52,16 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 	nOfNodes := len(element.Nodes)
 
 	return &ElementSolution{
-		Element:       element,
-		GlobalXDispl:  make([]PointSolutionValue, nOfNodes),
-		GlobalYDispl:  make([]PointSolutionValue, nOfNodes),
-		GlobalZRot:    make([]PointSolutionValue, nOfNodes),
-		LocalXDispl:   make([]PointSolutionValue, nOfNodes),
-		LocalYDispl:   make([]PointSolutionValue, nOfNodes),
-		LocalZRot:     make([]PointSolutionValue, nOfNodes),
+		Element:      element,
+		GlobalXDispl: make([]PointSolutionValue, nOfNodes),
+		GlobalYDispl: make([]PointSolutionValue, nOfNodes),
+		GlobalZRot:   make([]PointSolutionValue, nOfNodes),
+		LocalXDispl:  make([]PointSolutionValue, nOfNodes),
+		LocalYDispl:  make([]PointSolutionValue, nOfNodes),
+		LocalZRot:    make([]PointSolutionValue, nOfNodes),
+
 		AxialStress:   make([]PointSolutionValue, 2*nOfNodes-2),
-		ShearStress:   make([]PointSolutionValue, 2*nOfNodes-2),
+		ShearStress:   make([]PointSolutionValue, nOfNodes-1),
 		BendingMoment: make([]PointSolutionValue, 3*nOfNodes-3),
 	}
 }
@@ -110,6 +111,7 @@ func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
 			es.GlobalXDispl[j].Value,
 			es.GlobalYDispl[j].Value,
 		)
+
 		es.LocalXDispl[j] = PointSolutionValue{
 			node.T,
 			localDisplacementsProj.X,
@@ -137,7 +139,7 @@ func (es *ElementSolution) computeStresses() {
 		trailNode, leadNode                    *preprocess.Node
 		youngMod                               = es.Element.Material().YoungMod
 		iStrong                                = es.Element.Section().IStrong
-		nIndex, vIndex, mIndex                 = 0, 0, 0
+		nIndex, mIndex                         = 0, 0
 		incX, trailDy, leadDy, trailRz, leadRz float64
 		length, length2, length3               float64
 	)
@@ -147,29 +149,31 @@ func (es *ElementSolution) computeStresses() {
 		length = es.Element.Geometry.LengthBetween(trailNode.T, leadNode.T)
 		length2 = length * length
 		length3 = length2 * length
-		incX = es.LocalXDispl[i].Value - es.LocalXDispl[i-1].Value
 		trailDy = es.LocalYDispl[i-1].Value
 		leadDy = es.LocalYDispl[i].Value
 		trailRz = es.LocalZRot[i-1].Value
 		leadRz = es.LocalZRot[i].Value
 
-		/* Axial */
-		n := incX * youngMod / length
+		/* <-- Axial --> */
+		incX = es.LocalXDispl[i].Value - es.LocalXDispl[i-1].Value
+		axialStressValue := incX * youngMod / length
 		es.AxialStress[nIndex] = PointSolutionValue{
 			trailNode.T,
-			n - trailNode.LocalFx(),
+			axialStressValue - trailNode.LocalFx(),
 		}
 		es.AxialStress[nIndex+1] = PointSolutionValue{
 			leadNode.T,
-			n + leadNode.LocalFx(),
+			axialStressValue + leadNode.LocalFx(),
 		}
 		nIndex += 2
 
 		/* Shear */
-		v := (6.0 * youngMod * iStrong / length3) * ((2.0 * (trailDy - leadDy)) + (length * (leadRz - trailRz)))
-		es.ShearStress[vIndex] = PointSolutionValue{trailNode.T, v - trailNode.LocalFy()}
-		es.ShearStress[vIndex+1] = PointSolutionValue{leadNode.T, v + leadNode.LocalFy()}
-		vIndex += 2
+		var (
+			shearDispTerm = 12.0 * youngMod * iStrong * (trailDy - leadDy) / length3
+			shearRotTerm  = 6.0 * youngMod * iStrong * (trailRz + leadRz) / length2
+			v             = shearDispTerm + shearRotTerm
+		)
+		es.ShearStress[i-1] = PointSolutionValue{trailNode.T, v}
 
 		/* Bending */
 		eil2 := youngMod * iStrong / length2
