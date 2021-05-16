@@ -46,27 +46,36 @@ var (
 		SWeak: 9,
 	}
 	displError = 1E-5
-	solveOptions = process.SolveOptions{false, "", true, displError}
 )
 
 func TestCantileverBeamWithConcentratedLoadAtEnd(t *testing.T) {
 	var (
 		l = load.MakeConcentrated(load.FY, true, inkgeom.MaxT, -2000)
 		str = makeBeamStructure([]load.Load{l})
-		pre = preprocess.DoStructure(str)
-		sol = process.Solve(pre, solveOptions)
+		sol = solveStructure(str)
 		solutionElement = sol.Elements[0]
+		maxYDispl = -200.0 / 1908.0 // PL^3 / 3EI 
 	)
 
 	t.Run("global Y displacements", func(t *testing.T) {
 		nOfValues := len(solutionElement.GlobalYDispl)
-		maxDispl := -200.0 / 1908.0
 
 		if got := solutionElement.GlobalYDispl[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
 			t.Error("expected no Y displacement in the constrained end")
 		}
-		if got := solutionElement.GlobalYDispl[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxDispl, displError) {
-			t.Errorf("expected max displacement of %f, but got %f", maxDispl, got)
+		if got := solutionElement.GlobalYDispl[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxYDispl, displError) {
+			t.Errorf("expected max displacement of %f, but got %f", maxYDispl, got)
+		}
+	})
+
+	t.Run("local Y displacements", func(t *testing.T) {
+		nOfValues := len(solutionElement.GlobalYDispl)
+
+		if got := solutionElement.LocalYDispl[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
+			t.Error("expected no Y displacement in the constrained end")
+		}
+		if got := solutionElement.LocalYDispl[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxYDispl, displError) {
+			t.Errorf("expected max displacement of %f, but got %f", maxYDispl, got)
 		}
 	})
 }
@@ -95,4 +104,10 @@ func makeBeamStructure(loads []load.Load) *structure.Structure {
 		},
 		[]*structure.Element{beam},
 	}
+}
+
+func solveStructure(str *structure.Structure) *process.Solution {
+	solveOptions := process.SolveOptions{false, "", true, displError}
+	pre := preprocess.DoStructure(str)
+	return process.Solve(pre, solveOptions)
 }

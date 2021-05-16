@@ -77,7 +77,7 @@ func (es *ElementSolution) SolveUsingDisplacements(globalDisp *vec.Vector) {
 }
 
 /*
-setDisplacements sets the gloal and local displacements given the structure's
+setDisplacements sets the global and local displacements given the structure's
 system of equations solution vector (the global node displacements).
 */
 func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
@@ -116,7 +116,7 @@ func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
 		}
 		es.LocalYDispl[j] = PointSolutionValue{
 			node.T,
-			localDisplacementsProj.X,
+			localDisplacementsProj.Y,
 		}
 		es.LocalZRot[j] = PointSolutionValue{
 			node.T,
