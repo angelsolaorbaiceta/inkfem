@@ -134,10 +134,13 @@ func (load Load) VectorValue() [3]float64 {
 	switch load.Term {
 	case FX:
 		return [3]float64{load.Value(), 0.0, 0.0}
+
 	case FY:
 		return [3]float64{0.0, load.Value(), 0.0}
+
 	case MZ:
 		return [3]float64{0.0, 0.0, load.Value()}
+
 	default:
 		panic("Unknown load term: " + load.Term)
 	}
@@ -150,8 +153,10 @@ func (load Load) ForcesVector() g2d.Projectable {
 	switch load.Term {
 	case FX:
 		return g2d.MakeVector(load.Value(), 0.0)
+
 	case FY:
 		return g2d.MakeVector(0.0, load.Value())
+
 	default:
 		return g2d.MakeVector(0.0, 0.0)
 	}
@@ -181,56 +186,97 @@ func (load Load) ValueAt(t inkgeom.TParam) float64 {
 }
 
 /*
+VectorValueAt returns the the distributed load vector at a given position.
+*/
+func (load Load) VectorValueAt(t inkgeom.TParam) [3]float64 {
+	value := load.ValueAt(t)
+
+	switch load.Term {
+	case FX:
+		return [3]float64{value, 0.0, 0.0}
+
+	case FY:
+		return [3]float64{0.0, value, 0.0}
+
+	case MZ:
+		return [3]float64{0.0, 0.0, value}
+
+	default:
+		panic("Unknown load term")
+	}
+}
+
+/*
+ProjectedVectorValueAt returns the distributed load vector at a given position projected
+in a reference frame.
+*/
+func (load Load) ProjectedVectorValueAt(t inkgeom.TParam, refFrame g2d.RefFrame) [3]float64 {
+	var(
+		vectorValue = load.VectorValueAt(t)
+		projectedVector = refFrame.ProjectVector(g2d.MakeVector(vectorValue[0], vectorValue[1]))
+	)
+
+	vectorValue[0] = projectedVector.X
+	vectorValue[1] = projectedVector.Y
+
+	return vectorValue
+}
+
+/*
 AvgValueBetween returns the average load value inside the given range for the
 distributed load.
+
+DEPRECATED: do not use this average value
 */
-func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
-	hasOverlap, maxStartT, minEndT := nums.RangesOverlap(
-		load.startT.Value(),
-		load.endT.Value(),
-		startT.Value(),
-		endT.Value(),
-	)
+// func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
+// 	hasOverlap, maxStartT, minEndT := nums.RangesOverlap(
+// 		load.startT.Value(),
+// 		load.endT.Value(),
+// 		startT.Value(),
+// 		endT.Value(),
+// 	)
 
-	if !hasOverlap {
-		return 0.0
-	}
+// 	if !hasOverlap {
+// 		return 0.0
+// 	}
 
-	var (
-		startVal          = load.ValueAt(inkgeom.MakeTParam(maxStartT))
-		endVal            = load.ValueAt(inkgeom.MakeTParam(minEndT))
-		applicationLength = minEndT - maxStartT
-		rangeLength       = startT.DistanceTo(endT)
-		rangesRatio       = applicationLength / rangeLength
-	)
+// 	var (
+// 		startVal          = load.ValueAt(inkgeom.MakeTParam(maxStartT))
+// 		endVal            = load.ValueAt(inkgeom.MakeTParam(minEndT))
+// 		applicationLength = minEndT - maxStartT
+// 		rangeLength       = startT.DistanceTo(endT)
+// 		rangesRatio       = applicationLength / rangeLength
+// 	)
 
-	// one of both ends has a zero value load -> No need to average values
-	if nums.IsCloseToZero(startVal) || nums.IsCloseToZero(endVal) {
-		return (startVal + endVal) * rangesRatio
-	}
+// 	// one of both ends has a zero value load -> No need to average values
+// 	if nums.IsCloseToZero(startVal) || nums.IsCloseToZero(endVal) {
+// 		return (startVal + endVal) * rangesRatio
+// 	}
 
-	avgLoadValue := 0.5 * (startVal + endVal)
-	return rangesRatio * avgLoadValue
-}
+// 	avgLoadValue := 0.5 * (startVal + endVal)
+// 	return rangesRatio * avgLoadValue
+// }
 
 /*
 AvgValueVectorBetween returns the average load value inside the given range in
 vector format.
+
+DEPRECATED: do not use this average value
 */
-func (load Load) AvgValueVectorBetween(startT, endT inkgeom.TParam) [3]float64 {
-	val := load.AvgValueBetween(startT, endT)
+// func (load Load) AvgValueVectorBetween(startT, endT inkgeom.TParam) [3]float64 {
+// 	val := load.AvgValueBetween(startT, endT)
 
-	switch load.Term {
-	case FX:
-		return [3]float64{val, 0.0, 0.0}
+// 	switch load.Term {
+// 	case FX:
+// 		return [3]float64{val, 0.0, 0.0}
 
-	case FY:
-		return [3]float64{0.0, val, 0.0}
+// 	case FY:
+// 		return [3]float64{0.0, val, 0.0}
 
-	default:
-		return [3]float64{0.0, 0.0, val}
-	}
-}
+// 	default:
+// 		return [3]float64{0.0, 0.0, val}
+// 	}
+// }
 
 /*
 StartT returns the start T parameter value for distributed loads.

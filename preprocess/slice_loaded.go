@@ -35,8 +35,11 @@ The positions where distributed loads start and end also introduce discontinuiti
 also include nodes in those positions.
 */
 func sliceLoadedElement(element *structure.Element, slices int) *Element {
-	tPos := sliceLoadedElementPositions(element.Loads, slices)
-	nodes := makeNodesWithConcentratedLoads(element, tPos)
+	var (
+		tPos  = sliceLoadedElementPositions(element.Loads, slices)
+		nodes = makeNodesWithConcentratedLoads(element, tPos)
+	)
+
 	applyDistributedLoadsToNodes(nodes, element)
 
 	return MakeElement(element, nodes)
@@ -120,40 +123,71 @@ func makeNodesWithConcentratedLoads(element *structure.Element, tPos []inkgeom.T
 	return nodes
 }
 
+/*
+Applies all the distributed loads in the element to the passed in nodes.
+*/
 func applyDistributedLoadsToNodes(nodes []*Node, element *structure.Element) {
-	var (
-		trailNode, leadNode *Node
-		length, halfLength  float64
-		avgLoadValVect      [3]float64
-		elemRefFrame        = element.Geometry.RefFrame()
-	)
+	var trailNode, leadNode *Node
 
 	for i, j := 0, 1; j < len(nodes); i, j = i+1, j+1 {
 		trailNode, leadNode = nodes[i], nodes[j]
-		length = element.Geometry.LengthBetween(trailNode.T, leadNode.T)
-		halfLength = 0.5 * length
 
 		for _, load := range element.Loads {
-			avgLoadValVect = load.AvgValueVectorBetween(trailNode.T, leadNode.T)
-
-			if !load.IsInLocalCoords {
-				localForces := elemRefFrame.ProjectVector(
-					g2d.MakeVector(avgLoadValVect[0], avgLoadValVect[1]),
-				)
-				avgLoadValVect[0] = localForces.X
-				avgLoadValVect[1] = localForces.Y
+			if load.IsDistributed() {
+				applyDistributedLoadToNodes(load, trailNode, leadNode)
 			}
-
-			trailNode.AddLoad([3]float64{
-				avgLoadValVect[0] * halfLength,
-				avgLoadValVect[1] * halfLength,
-				(avgLoadValVect[2] * halfLength) + (avgLoadValVect[1] * length * length / 12.0),
-			})
-			leadNode.AddLoad([3]float64{
-				avgLoadValVect[0] * halfLength,
-				avgLoadValVect[1] * halfLength,
-				(avgLoadValVect[2] * halfLength) - (avgLoadValVect[1] * length * length / 12.0),
-			})
 		}
+	}
+}
+
+func applyDistributedLoadToNodes(load load.Load, trailNode, leadNode *Node) {
+	var (
+		startLoad, endLoad = loadVectorValuesInLocalCoords(load, trailNode, leadNode)
+		length             = trailNode.DistanceTo(leadNode)
+		halfLength         = 0.5 * length
+		length2            = length * length
+		length3            = length2 * length
+		loadValueSlopes    = computeLoadValueSlopes(startLoad, endLoad, length)
+	)
+
+	var (
+		trailFy       = (startLoad[1] * halfLength) + (3.0 * length2 * loadValueSlopes[1] / 20.0)
+		trailFyMoment = (startLoad[1] * length2 / 12.0) + (length3 * loadValueSlopes[1] / 30.0)
+	)
+	trailNode.AddLoad([3]float64{
+		startLoad[0] * halfLength,
+		trailFy,
+		(startLoad[2] * halfLength) + trailFyMoment,
+	})
+
+	var (
+		leadFy       = (startLoad[1] * halfLength) + (7.0 * length2 * loadValueSlopes[1] / 20.0)
+		leadFyMoment = -(startLoad[1] * length2 / 12.0) - (length3 * loadValueSlopes[1] / 20.0)
+	)
+	leadNode.AddLoad([3]float64{
+		startLoad[0] * halfLength,
+		leadFy,
+		(startLoad[2] * halfLength) + leadFyMoment,
+	})
+}
+
+func loadVectorValuesInLocalCoords(load load.Load, trailNode, leadNode *Node) (startLoad, endLoad [3]float64) {
+	if load.IsInLocalCoords {
+		startLoad = load.VectorValueAt(trailNode.T)
+		endLoad = load.VectorValueAt(leadNode.T)
+	} else {
+		elementReferenceFrame := g2d.MakeRefFrameWithIVersor(g2d.MakeVectorFromTo(trailNode.Position, leadNode.Position))
+		startLoad = load.ProjectedVectorValueAt(trailNode.T, elementReferenceFrame)
+		endLoad = load.ProjectedVectorValueAt(leadNode.T, elementReferenceFrame)
+	}
+
+	return
+}
+
+func computeLoadValueSlopes(startLoad, endLoad [3]float64, length float64) [3]float64 {
+	return [3]float64{
+		(endLoad[0] - startLoad[0]) / length,
+		(endLoad[1] - startLoad[1]) / length,
+		(endLoad[2] - startLoad[2]) / length,
 	}
 }

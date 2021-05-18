@@ -124,7 +124,16 @@ func (n Node) HasDegreesOfFreedomNum() bool {
 /* <-- Methods --> */
 
 /*
+DistanceTo computes the distance between this an other node.
+*/
+func (n *Node) DistanceTo(other *Node) float64 {
+	return n.Position.DistanceTo(other.Position)
+}
+
+/*
 AddLoad adds the given load to the node applied load.
+
+TODO: rename to AddLocalLoad
 */
 func (n *Node) AddLoad(localComponents [3]float64) {
 	n.localActions[0] += localComponents[0]
