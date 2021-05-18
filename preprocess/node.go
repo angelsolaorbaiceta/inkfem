@@ -78,29 +78,37 @@ func MakeUnloadedNode(t inkgeom.TParam, position g2d.Projectable) *Node {
 /* <-- Properties --> */
 
 /*
-NetLocalFx returns the magnitude of the local force in X. 0.0 if it has no loads applied.
+NetLocalFx returns the magnitude of the local force in X.
 */
 func (n Node) NetLocalFx() float64 {
 	return n.externalLocalLoad[0] + n.leftLocalLoad[0] + n.rightLocalLoad[0]
 }
 
 /*
-NetLocalFy returns the magnitude of the local force in Y. 0.0 if it has no loads applied.
+NetLocalFy returns the magnitude of the net local force in Y.
 */
 func (n Node) NetLocalFy() float64 {
 	return n.externalLocalLoad[1] + n.LocalLeftFy() + n.LocalRightFy()
 }
 
+/*
+LocalLeftFy returns the magnitude of the local force in Y coming from the finite element
+to the left of the node.
+*/
 func (n Node) LocalLeftFy() float64 {
 	return n.leftLocalLoad[1]
 }
 
+/*
+LocalRightFy returns the magnitude of the local force in Y coming from the finite element
+to the right of the node.
+*/
 func (n Node) LocalRightFy() float64 {
 	return n.rightLocalLoad[1]
 }
 
 /*
-NetLocalMz returns the magnitude of the local moment about Z. 0.0 if it has no loads applied.
+NetLocalMz returns the magnitude of the local moment about Z.
 */
 func (n Node) NetLocalMz() float64 {
 	return n.externalLocalLoad[2] + n.leftLocalLoad[2] + n.rightLocalLoad[2]
