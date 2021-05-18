@@ -211,8 +211,8 @@ ProjectedVectorValueAt returns the distributed load vector at a given position p
 in a reference frame.
 */
 func (load Load) ProjectedVectorValueAt(t inkgeom.TParam, refFrame g2d.RefFrame) [3]float64 {
-	var(
-		vectorValue = load.VectorValueAt(t)
+	var (
+		vectorValue     = load.VectorValueAt(t)
 		projectedVector = refFrame.ProjectVector(g2d.MakeVector(vectorValue[0], vectorValue[1]))
 	)
 

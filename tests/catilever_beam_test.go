@@ -161,7 +161,7 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 		sol             = solveStructure(str)
 		solutionElement = sol.Elements[0]
 		maxYDispl       = -200.0 / 1908.0 // WL⁴ / 30EI
-		maxZRot         = -20.0 / 15264.0    // WL³ / 24EI
+		maxZRot         = -20.0 / 15264.0 // WL³ / 24EI
 	)
 
 	t.Run("global X displacements", func(t *testing.T) {
