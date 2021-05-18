@@ -149,19 +149,19 @@ func addDispConstraints(
 
 func addTermsToLoadVector(vector *vec.Vector, element *preprocess.Element) {
 	var (
-		localActions [3]float64
+		localLoad    [3]float64
 		globalForces g2d.Projectable
 		dofs         [3]int
 		refFrame     = element.Geometry.RefFrame()
 	)
 
 	for _, node := range element.Nodes {
-		localActions = node.LocalActions()
-		globalForces = refFrame.ProjectionsToGlobal(localActions[0], localActions[1])
+		localLoad = node.NetLocalLoadVector()
+		globalForces = refFrame.ProjectionsToGlobal(localLoad[0], localLoad[1])
 		dofs = node.DegreesOfFreedomNum()
 
 		vector.SetValue(dofs[0], globalForces.X)
 		vector.SetValue(dofs[1], globalForces.Y)
-		vector.SetValue(dofs[2], localActions[2])
+		vector.SetValue(dofs[2], localLoad[2])
 	}
 }

@@ -111,8 +111,10 @@ func makeNodesWithConcentratedLoads(element *structure.Element, tPos []inkgeom.T
 					localLoadForces = elemRefFrame.ProjectVector(load.ForcesVector())
 				}
 
-				node.AddLoad(
-					[3]float64{localLoadForces.X, localLoadForces.Y, load.VectorValue()[2]},
+				node.AddLocalExternalLoad(
+					localLoadForces.X,
+					localLoadForces.Y,
+					load.VectorValue()[2],
 				)
 			}
 		}
@@ -160,21 +162,21 @@ func applyDistributedLoadToNodes(load load.Load, trailNode, leadNode *Node) {
 		trailFy       = (startLoad[1] * halfLength) + (3.0 * length2 * loadValueSlopes[1] / 20.0)
 		trailFyMoment = (startLoad[1] * length2 / 12.0) + (length3 * loadValueSlopes[1] / 30.0)
 	)
-	trailNode.AddLoad([3]float64{
-		startLoad[0] * halfLength,
+	trailNode.AddLocalLeftLoad(
+		startLoad[0]*halfLength,
 		trailFy,
-		(startLoad[2] * halfLength) + trailFyMoment,
-	})
+		(startLoad[2]*halfLength)+trailFyMoment,
+	)
 
 	var (
 		leadFy       = (startLoad[1] * halfLength) + (7.0 * length2 * loadValueSlopes[1] / 20.0)
 		leadFyMoment = -(startLoad[1] * length2 / 12.0) - (length3 * loadValueSlopes[1] / 20.0)
 	)
-	leadNode.AddLoad([3]float64{
-		startLoad[0] * halfLength,
+	leadNode.AddLocalRightLoad(
+		startLoad[0]*halfLength,
 		leadFy,
-		(startLoad[2] * halfLength) + leadFyMoment,
-	})
+		(startLoad[2]*halfLength)+leadFyMoment,
+	)
 }
 
 func loadVectorValuesInLocalCoords(load load.Load, trailNode, leadNode *Node) (startLoad, endLoad [3]float64) {

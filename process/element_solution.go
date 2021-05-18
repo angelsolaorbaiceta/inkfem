@@ -173,8 +173,8 @@ func (es *ElementSolution) computeStresses() {
 			shearRotTerm  = 6.0 * eil2 * (trailRz + leadRz)
 			v             = shearDispTerm + shearRotTerm
 		)
-		es.ShearStress[j] = PointSolutionValue{trailNode.T, v - trailNode.LocalFy()}
-		es.ShearStress[j+1] = PointSolutionValue{leadNode.T, v - leadNode.LocalFy()}
+		es.ShearStress[j] = PointSolutionValue{trailNode.T, v - trailNode.LocalLeftFy()}
+		es.ShearStress[j+1] = PointSolutionValue{leadNode.T, v + leadNode.LocalRightFy()}
 
 		/* Bending */
 		var (
