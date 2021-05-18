@@ -45,6 +45,7 @@ var (
 		SStrong: 53,
 		SWeak:   9,
 	}
+	length     = 100.0
 	displError = 1e-5
 )
 
@@ -138,7 +139,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 
 	t.Run("Bending moment", func(t *testing.T) {
 		var expectedBending = func(tParam inkgeom.TParam) float64 {
-			return l.Value() * 100.0 * (inkgeom.MaxT.Value() - tParam.Value())
+			return l.Value() * length * (inkgeom.MaxT.Value() - tParam.Value())
 		}
 
 		for _, bending := range solutionElement.BendingMoment {
@@ -233,22 +234,25 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	})
 
 	t.Run("Shear stress", func(t *testing.T) {
-		// var expectedShear = func(tParam inkgeom.TParam) float64 {
-		// 	qStart := -l.ValueAt(inkgeom.MinT)
-		// 	qT := -0.5 * (l.ValueAt(tParam) + l.ValueAt(inkgeom.MinT))
-		// 	return 50.0 * qStart - qT * 100.0 * tParam.Value()
-		// }
+		var expectedShear = func(tParam inkgeom.TParam) float64 {
+			var (
+				qStart = l.ValueAt(inkgeom.MinT)
+				x      = length * tParam.Value()
+			)
 
-		// for _, shear := range solutionElement.ShearStress {
-		// 	var (
-		// 		got  = shear.Value
-		// 		want = expectedShear(shear.T)
-		// 	)
+			return qStart * (-0.5*length + x - 0.5*x*x/length)
+		}
 
-		// 	if !inkgeom.FloatsEqualEps(got, want, displError) {
-		// 		t.Errorf("Expected a shear stress of %f, but got %f at t = %f", want, got, shear.T)
-		// 	}
-		// }
+		for _, shear := range solutionElement.ShearStress {
+			var (
+				got  = shear.Value
+				want = expectedShear(shear.T)
+			)
+
+			if !inkgeom.FloatsEqualEps(got, want, displError) {
+				t.Errorf("Expected a shear stress of %f, but got %f at t = %f", want, got, shear.T)
+			}
+		}
 	})
 
 	t.Run("Bending moment", func(t *testing.T) {
@@ -259,7 +263,7 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 func makeBeamStructure(loads []load.Load) *structure.Structure {
 	var (
 		nodeOne = structure.MakeNode("fixed-node", g2d.MakePoint(0, 0), structure.FullConstraint)
-		nodeTwo = structure.MakeNode("free-node", g2d.MakePoint(100, 0), structure.NilConstraint)
+		nodeTwo = structure.MakeNode("free-node", g2d.MakePoint(length, 0), structure.NilConstraint)
 		beam    = structure.MakeElement(
 			"beam",
 			nodeOne,

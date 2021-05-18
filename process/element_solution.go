@@ -60,7 +60,7 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 		LocalZRot:    make([]PointSolutionValue, nOfNodes),
 
 		AxialStress:   make([]PointSolutionValue, nOfNodes-1),
-		ShearStress:   make([]PointSolutionValue, nOfNodes-1),
+		ShearStress:   make([]PointSolutionValue, 2*nOfNodes-2),
 		BendingMoment: make([]PointSolutionValue, 2*nOfNodes-2),
 	}
 }
@@ -139,12 +139,13 @@ func (es *ElementSolution) computeStresses() {
 		youngMod                                          = es.Element.Material().YoungMod
 		iStrong                                           = es.Element.Section().IStrong
 		ei                                                = youngMod * iStrong
-		mIndex                                            = 0
 		trailDx, leadDx, trailDy, leadDy, trailRz, leadRz float64
 		length, length2, length3, eil, eil2, eil3         float64
+		j                                                 int
 	)
 
 	for i := 1; i < len(es.Element.Nodes); i++ {
+		j = 2 * (i - 1)
 		trailNode, leadNode = es.Element.Nodes[i-1], es.Element.Nodes[i]
 		length = es.Element.Geometry.LengthBetween(trailNode.T, leadNode.T)
 		length2 = length * length
@@ -172,7 +173,8 @@ func (es *ElementSolution) computeStresses() {
 			shearRotTerm  = 6.0 * eil2 * (trailRz + leadRz)
 			v             = shearDispTerm + shearRotTerm
 		)
-		es.ShearStress[i-1] = PointSolutionValue{trailNode.T, v}
+		es.ShearStress[j] = PointSolutionValue{trailNode.T, v - trailNode.LocalFy()}
+		es.ShearStress[j+1] = PointSolutionValue{leadNode.T, v - leadNode.LocalFy()}
 
 		/* Bending */
 		var (
@@ -181,16 +183,15 @@ func (es *ElementSolution) computeStresses() {
 			bendEndDispTerm   = 6.0 * eil2 * (trailDy - leadDy)
 			bendEndRotTerm    = 2.0 * eil * (trailRz + 2.0*leadRz)
 		)
-		es.BendingMoment[mIndex] =
+		es.BendingMoment[j] =
 			PointSolutionValue{
 				trailNode.T,
 				bendStartDispTerm - bendStartRotTerm,
 			}
-		es.BendingMoment[mIndex+1] =
+		es.BendingMoment[j+1] =
 			PointSolutionValue{
 				leadNode.T,
 				bendEndDispTerm + bendEndRotTerm,
 			}
-		mIndex += 2
 	}
 }
