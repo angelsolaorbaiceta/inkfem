@@ -140,6 +140,12 @@ func applyDistributedLoadsToNodes(nodes []*Node, element *structure.Element) {
 	}
 }
 
+/*
+Applies a distribute load to the trailing and leading nodes in a finite element.
+
+TODO: distribute Fx loads
+TODO: distribute Mz loads
+*/
 func applyDistributedLoadToNodes(load load.Load, trailNode, leadNode *Node) {
 	var (
 		startLoad, endLoad = loadVectorValuesInLocalCoords(load, trailNode, leadNode)

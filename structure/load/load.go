@@ -223,62 +223,6 @@ func (load Load) ProjectedVectorValueAt(t inkgeom.TParam, refFrame g2d.RefFrame)
 }
 
 /*
-AvgValueBetween returns the average load value inside the given range for the
-distributed load.
-
-DEPRECATED: do not use this average value
-*/
-// func (load Load) AvgValueBetween(startT, endT inkgeom.TParam) float64 {
-// 	hasOverlap, maxStartT, minEndT := nums.RangesOverlap(
-// 		load.startT.Value(),
-// 		load.endT.Value(),
-// 		startT.Value(),
-// 		endT.Value(),
-// 	)
-
-// 	if !hasOverlap {
-// 		return 0.0
-// 	}
-
-// 	var (
-// 		startVal          = load.ValueAt(inkgeom.MakeTParam(maxStartT))
-// 		endVal            = load.ValueAt(inkgeom.MakeTParam(minEndT))
-// 		applicationLength = minEndT - maxStartT
-// 		rangeLength       = startT.DistanceTo(endT)
-// 		rangesRatio       = applicationLength / rangeLength
-// 	)
-
-// 	// one of both ends has a zero value load -> No need to average values
-// 	if nums.IsCloseToZero(startVal) || nums.IsCloseToZero(endVal) {
-// 		return (startVal + endVal) * rangesRatio
-// 	}
-
-// 	avgLoadValue := 0.5 * (startVal + endVal)
-// 	return rangesRatio * avgLoadValue
-// }
-
-/*
-AvgValueVectorBetween returns the average load value inside the given range in
-vector format.
-
-DEPRECATED: do not use this average value
-*/
-// func (load Load) AvgValueVectorBetween(startT, endT inkgeom.TParam) [3]float64 {
-// 	val := load.AvgValueBetween(startT, endT)
-
-// 	switch load.Term {
-// 	case FX:
-// 		return [3]float64{val, 0.0, 0.0}
-
-// 	case FY:
-// 		return [3]float64{0.0, val, 0.0}
-
-// 	default:
-// 		return [3]float64{0.0, 0.0, val}
-// 	}
-// }
-
-/*
 StartT returns the start T parameter value for distributed loads.
 */
 func (load Load) StartT() inkgeom.TParam {
