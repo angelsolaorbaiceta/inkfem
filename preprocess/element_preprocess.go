@@ -22,7 +22,7 @@ import (
 
 const (
 	elementWithLoadsSlices    = 10
-	elementWithoutLoadsSlices = 7
+	elementWithoutLoadsSlices = 6
 )
 
 /*

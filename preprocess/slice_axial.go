@@ -34,8 +34,12 @@ Axial elements can be sliced using only it's end nodes. Axial elements deformati
 happens in their axial direction: tension or compression.
 */
 func sliceAxialElement(element *structure.Element) *Element {
+	if !element.IsAxialMember() {
+		panic("Expected an axial element")
+	}
+
 	if element.HasLoadsApplied() {
-		sFx, sFy, eFx, eFy := netNodalLoadValues(element.Loads, element.Geometry.RefFrame())
+		sFx, sFy, eFx, eFy := netNodalLoadValues(element.ConcentratedLoads, element.Geometry.RefFrame())
 
 		return MakeElement(
 			element,
@@ -59,7 +63,7 @@ element), computes the net, locally projected loads at the start end (sFx & sFy)
 and at the end end (eFx & eFy).
 */
 func netNodalLoadValues(
-	loads []load.Load,
+	loads []*load.ConcentratedLoad,
 	localRefFrame g2d.RefFrame,
 ) (sFx, sFy, eFx, eFy float64) {
 	var localForcesVector g2d.Projectable
@@ -71,10 +75,10 @@ func netNodalLoadValues(
 			localForcesVector = localRefFrame.ProjectVector(ld.ForcesVector())
 		}
 
-		if ld.T().IsMin() {
+		if ld.T.IsMin() {
 			sFx += localForcesVector.X
 			sFy += localForcesVector.Y
-		} else if ld.T().IsMax() {
+		} else if ld.T.IsMax() {
 			eFx += localForcesVector.X
 			eFy += localForcesVector.Y
 		}
