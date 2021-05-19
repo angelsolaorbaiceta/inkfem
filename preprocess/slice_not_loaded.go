@@ -25,13 +25,19 @@ import (
 Non axial elements which have no loads applied are sliced just by subdividing their
 geometry into a given number of slices, so that the slices have the same length.
 */
-func sliceElementWithoutLoads(e *structure.Element, slices int) *Element {
-	tPos := inkgeom.SubTParamCompleteRangeTimes(slices)
-	nodes := make([]*Node, len(tPos))
-
-	for i := 0; i < len(tPos); i++ {
-		nodes[i] = MakeUnloadedNode(tPos[i], e.PointAt(tPos[i]))
+func sliceElementWithoutLoads(element *structure.Element, slices int) *Element {
+	if element.HasLoadsApplied() {
+		panic("Expected an element without external loads")
 	}
 
-	return MakeElement(e, nodes)
+	var (
+		tPos = inkgeom.SubTParamCompleteRangeTimes(slices)
+		nodes = make([]*Node, len(tPos))
+	)
+
+	for i := 0; i < len(tPos); i++ {
+		nodes[i] = MakeUnloadedNode(tPos[i], element.PointAt(tPos[i]))
+	}
+
+	return MakeElement(element, nodes)
 }
