@@ -60,19 +60,19 @@ func TestSliceAxialMemberNodeLoads(t *testing.T) {
 	)
 
 	t.Run("Start node loads", func(t *testing.T) {
-		if slicedEl.Nodes[0].LocalFx() != 50.0 {
+		if slicedEl.Nodes[0].NetLocalFx() != 50.0 {
 			t.Error("Node Fx value not as expected")
 		}
-		if slicedEl.Nodes[0].LocalFy() != 75.0 {
+		if slicedEl.Nodes[0].NetLocalFy() != 75.0 {
 			t.Error("Node Fy value not as expected")
 		}
 	})
 
 	t.Run("End node loads", func(t *testing.T) {
-		if slicedEl.Nodes[1].LocalFx() != 100.0 {
+		if slicedEl.Nodes[1].NetLocalFx() != 100.0 {
 			t.Error("Node Fx value not as expected")
 		}
-		if slicedEl.Nodes[1].LocalFy() != 200.0 {
+		if slicedEl.Nodes[1].NetLocalFy() != 200.0 {
 			t.Error("Node Fy value not as expected")
 		}
 	})
@@ -89,10 +89,10 @@ func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
 		expectedProjLoadY = g2d.MakeVector(0, 100).DotTimes(element.Geometry.NormalVersor())
 	)
 
-	if fx := slicedEl.Nodes[0].LocalFx(); !nums.FuzzyEqual(fx, expectedProjLoadX) {
+	if fx := slicedEl.Nodes[0].NetLocalFx(); !nums.FuzzyEqual(fx, expectedProjLoadX) {
 		t.Error("Node projected Fx value was not as expected")
 	}
-	if fy := slicedEl.Nodes[0].LocalFy(); !nums.FuzzyEqual(fy, expectedProjLoadY) {
+	if fy := slicedEl.Nodes[0].NetLocalFy(); !nums.FuzzyEqual(fy, expectedProjLoadY) {
 		t.Error("Node projected Fy value was not as expected")
 	}
 }
@@ -191,35 +191,35 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 	slicedEl := sliceLoadedElement(element, 2)
 
 	// First Node
-	if fx := slicedEl.Nodes[0].LocalFx(); fx != 0.0 {
+	if fx := slicedEl.Nodes[0].NetLocalFx(); fx != 0.0 {
 		t.Errorf("First node Fx expected to be 0.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[0].LocalFy(); fy != 5.0 {
+	if fy := slicedEl.Nodes[0].NetLocalFy(); fy != 5.0 {
 		t.Errorf("First node Fy expected to be 5.0, but was %f", fy)
 	}
-	if mz := slicedEl.Nodes[0].LocalMz(); !nums.FuzzyEqual(mz, 5.0/3.0) {
+	if mz := slicedEl.Nodes[0].NetLocalMz(); !nums.FuzzyEqual(mz, 5.0/3.0) {
 		t.Errorf("First node Mz expected to be %f, but was %f", 5.0/3.0, mz)
 	}
 
 	// Second Node
-	if fx := slicedEl.Nodes[1].LocalFx(); fx != 0.0 {
+	if fx := slicedEl.Nodes[1].NetLocalFx(); fx != 0.0 {
 		t.Errorf("Second node Fx expected to be 0.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[1].LocalFy(); fy != 10.0 {
+	if fy := slicedEl.Nodes[1].NetLocalFy(); fy != 10.0 {
 		t.Errorf("Second node Fy expected to be 10.0, but was %f", fy)
 	}
-	if mz := slicedEl.Nodes[1].LocalMz(); mz != 0.0 {
+	if mz := slicedEl.Nodes[1].NetLocalMz(); mz != 0.0 {
 		t.Errorf("Second node Mz expected to be 0.0, but was %f", mz)
 	}
 
 	// Third Node
-	if fx := slicedEl.Nodes[2].LocalFx(); fx != 0.0 {
+	if fx := slicedEl.Nodes[2].NetLocalFx(); fx != 0.0 {
 		t.Errorf("Third node Fx expected to be 0.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[2].LocalFy(); fy != 5.0 {
+	if fy := slicedEl.Nodes[2].NetLocalFy(); fy != 5.0 {
 		t.Errorf("Third node Fy expected to be 5.0, but was %f", fy)
 	}
-	if mz := slicedEl.Nodes[2].LocalMz(); !nums.FuzzyEqual(mz, -5.0/3.0) {
+	if mz := slicedEl.Nodes[2].NetLocalMz(); !nums.FuzzyEqual(mz, -5.0/3.0) {
 		t.Errorf("Third node Mz expected to be %f, but was %f", -5.0/3.0, mz)
 	}
 }
@@ -238,35 +238,35 @@ func TestDistributedGlobalLoadDistribution(t *testing.T) {
 	slicedEl := sliceLoadedElement(element, 2)
 
 	// First Node
-	if fx := slicedEl.Nodes[0].LocalFx(); !nums.FuzzyEqual(fx, 5.0) {
+	if fx := slicedEl.Nodes[0].NetLocalFx(); !nums.FuzzyEqual(fx, 5.0) {
 		t.Errorf("First node Fx expected to be 5.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[0].LocalFy(); !nums.FuzzyEqual(fy, 5.0) {
+	if fy := slicedEl.Nodes[0].NetLocalFy(); !nums.FuzzyEqual(fy, 5.0) {
 		t.Errorf("First node Fy expected to be 5.0, but was %f", fy)
 	}
-	if mz, expected := slicedEl.Nodes[0].LocalMz(), 10.0/math.Sqrt(18.0); !nums.FuzzyEqual(mz, expected) {
+	if mz, expected := slicedEl.Nodes[0].NetLocalMz(), 10.0/math.Sqrt(18.0); !nums.FuzzyEqual(mz, expected) {
 		t.Errorf("First node Mz expected to be %f, but was %f", expected, mz)
 	}
 
 	// Second Node
-	if fx := slicedEl.Nodes[1].LocalFx(); !nums.FuzzyEqual(fx, 10.0) {
+	if fx := slicedEl.Nodes[1].NetLocalFx(); !nums.FuzzyEqual(fx, 10.0) {
 		t.Errorf("Second node Fx expected to be 10.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[1].LocalFy(); !nums.FuzzyEqual(fy, 10.0) {
+	if fy := slicedEl.Nodes[1].NetLocalFy(); !nums.FuzzyEqual(fy, 10.0) {
 		t.Errorf("Second node Fy expected to be 10.0, but was %f", fy)
 	}
-	if mz := slicedEl.Nodes[1].LocalMz(); mz != 0.0 {
+	if mz := slicedEl.Nodes[1].NetLocalMz(); mz != 0.0 {
 		t.Errorf("Second node Mz expected to be 0.0, but was %f", mz)
 	}
 
 	// Third Node
-	if fx := slicedEl.Nodes[2].LocalFx(); !nums.FuzzyEqual(fx, 5.0) {
+	if fx := slicedEl.Nodes[2].NetLocalFx(); !nums.FuzzyEqual(fx, 5.0) {
 		t.Errorf("Third node Fx expected to be 5.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[2].LocalFy(); !nums.FuzzyEqual(fy, 5.0) {
+	if fy := slicedEl.Nodes[2].NetLocalFy(); !nums.FuzzyEqual(fy, 5.0) {
 		t.Errorf("Third node Fy expected to be 5.0, but was %f", fy)
 	}
-	if mz, expected := slicedEl.Nodes[2].LocalMz(), -10.0/math.Sqrt(18.0); !nums.FuzzyEqual(mz, expected) {
+	if mz, expected := slicedEl.Nodes[2].NetLocalMz(), -10.0/math.Sqrt(18.0); !nums.FuzzyEqual(mz, expected) {
 		t.Errorf("Third node Mz expected to be %f, but was %f", expected, mz)
 	}
 }
@@ -288,13 +288,13 @@ func TestConcentratedLocalLoadDistribution(t *testing.T) {
 	)
 	slicedEl := sliceLoadedElement(element, 2)
 
-	if fx := slicedEl.Nodes[1].LocalFx(); fx != 3.0 {
+	if fx := slicedEl.Nodes[1].NetLocalFx(); fx != 3.0 {
 		t.Errorf("First node Fx expected to be 3.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[1].LocalFy(); fy != 5.0 {
+	if fy := slicedEl.Nodes[1].NetLocalFy(); fy != 5.0 {
 		t.Errorf("First node Fy expected to be 5.0, but was %f", fy)
 	}
-	if mz := slicedEl.Nodes[1].LocalMz(); mz != 7.0 {
+	if mz := slicedEl.Nodes[1].NetLocalMz(); mz != 7.0 {
 		t.Errorf("First node Mz expected to be 7.0, but was %f", mz)
 	}
 }
@@ -314,13 +314,13 @@ func TestConcentratedGlobalLoadDistribution(t *testing.T) {
 	)
 	slicedEl := sliceLoadedElement(element, 2)
 
-	if fx := slicedEl.Nodes[1].LocalFx(); !nums.FuzzyEqual(fx, 5.0/math.Sqrt2) {
+	if fx := slicedEl.Nodes[1].NetLocalFx(); !nums.FuzzyEqual(fx, 5.0/math.Sqrt2) {
 		t.Errorf("First node Fx expected to be %f, but was %f", 5.0/math.Sqrt2, fx)
 	}
-	if fy := slicedEl.Nodes[1].LocalFy(); !nums.FuzzyEqual(fy, 5.0/math.Sqrt2) {
+	if fy := slicedEl.Nodes[1].NetLocalFy(); !nums.FuzzyEqual(fy, 5.0/math.Sqrt2) {
 		t.Errorf("First node Fy expected to be %f, but was %f", 5.0/math.Sqrt2, fy)
 	}
-	if mz := slicedEl.Nodes[1].LocalMz(); mz != 0.0 {
+	if mz := slicedEl.Nodes[1].NetLocalMz(); mz != 0.0 {
 		t.Errorf("First node Mz expected to be 0.0, but was %f", mz)
 	}
 }
