@@ -24,6 +24,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
+	"math"
 	"testing"
 )
 
@@ -256,7 +257,26 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	})
 
 	t.Run("Bending moment", func(t *testing.T) {
-		// TODO
+		var expectedBending = func(tParam inkgeom.TParam) float64 {
+			var (
+				qStart = l.ValueAt(inkgeom.MinT)
+				mStart = qStart * math.Pow(length, 2) / 6.0
+				x      = length * tParam.Value()
+			)
+
+			return mStart + 0.5*qStart*(-length*x+math.Pow(x, 2)-math.Pow(x, 3)/(3.0*length))
+		}
+
+		for _, bending := range solutionElement.BendingMoment {
+			var (
+				got  = bending.Value
+				want = expectedBending(bending.T)
+			)
+
+			if !inkgeom.FloatsEqualEps(got, want, displError) {
+				t.Errorf("Expected a bending moment of %f, but got %f at t = %f", want, got, bending.T)
+			}
+		}
 	})
 }
 

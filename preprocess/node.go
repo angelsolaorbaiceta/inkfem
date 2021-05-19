@@ -23,7 +23,12 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
-const unsetDOF = -1
+const (
+	unsetDOF = -1
+	fxIndex  = 0
+	fyIndex  = 1
+	mzIndex  = 2
+)
 
 /*
 A Node represents an intermediate point in a sliced element.
@@ -81,14 +86,14 @@ func MakeUnloadedNode(t inkgeom.TParam, position g2d.Projectable) *Node {
 NetLocalFx returns the magnitude of the local force in X.
 */
 func (n Node) NetLocalFx() float64 {
-	return n.externalLocalLoad[0] + n.leftLocalLoad[0] + n.rightLocalLoad[0]
+	return n.externalLocalLoad[fxIndex] + n.leftLocalLoad[fxIndex] + n.rightLocalLoad[fxIndex]
 }
 
 /*
 NetLocalFy returns the magnitude of the net local force in Y.
 */
 func (n Node) NetLocalFy() float64 {
-	return n.externalLocalLoad[1] + n.LocalLeftFy() + n.LocalRightFy()
+	return n.externalLocalLoad[fyIndex] + n.LocalLeftFy() + n.LocalRightFy()
 }
 
 /*
@@ -96,7 +101,7 @@ LocalLeftFy returns the magnitude of the local force in Y coming from the finite
 to the left of the node.
 */
 func (n Node) LocalLeftFy() float64 {
-	return n.leftLocalLoad[1]
+	return n.leftLocalLoad[fyIndex]
 }
 
 /*
@@ -104,14 +109,30 @@ LocalRightFy returns the magnitude of the local force in Y coming from the finit
 to the right of the node.
 */
 func (n Node) LocalRightFy() float64 {
-	return n.rightLocalLoad[1]
+	return n.rightLocalLoad[fyIndex]
 }
 
 /*
 NetLocalMz returns the magnitude of the local moment about Z.
 */
 func (n Node) NetLocalMz() float64 {
-	return n.externalLocalLoad[2] + n.leftLocalLoad[2] + n.rightLocalLoad[2]
+	return n.externalLocalLoad[mzIndex] + n.LocalLeftMz() + n.LocalRightMz()
+}
+
+/*
+LocalLeftMz returns the magnitude of the local moment around Z coming from the finite element
+to the left of the node.
+*/
+func (n Node) LocalLeftMz() float64 {
+	return n.leftLocalLoad[mzIndex]
+}
+
+/*
+LocalRightMz returns the magnitude of the local moment around Z coming from the finite element
+to the right of the node.
+*/
+func (n Node) LocalRightMz() float64 {
+	return n.rightLocalLoad[mzIndex]
 }
 
 /*
@@ -170,9 +191,9 @@ AddLocalExternalLoad adds the given load values to the load applied from the
 left finite element.
 */
 func (n *Node) AddLocalExternalLoad(fx, fy, mz float64) {
-	n.externalLocalLoad[0] += fx
-	n.externalLocalLoad[1] += fy
-	n.externalLocalLoad[2] += mz
+	n.externalLocalLoad[fxIndex] += fx
+	n.externalLocalLoad[fyIndex] += fy
+	n.externalLocalLoad[mzIndex] += mz
 }
 
 /*
@@ -180,9 +201,9 @@ AddLocalLeftLoad adds the given load values to the load applied from the
 left finite element.
 */
 func (n *Node) AddLocalLeftLoad(fx, fy, mz float64) {
-	n.leftLocalLoad[0] += fx
-	n.leftLocalLoad[1] += fy
-	n.leftLocalLoad[2] += mz
+	n.leftLocalLoad[fxIndex] += fx
+	n.leftLocalLoad[fyIndex] += fy
+	n.leftLocalLoad[mzIndex] += mz
 }
 
 /*
@@ -190,9 +211,9 @@ AddLocalRightLoad adds the given load values to the load applied from the
 right finite element.
 */
 func (n *Node) AddLocalRightLoad(fx, fy, mz float64) {
-	n.rightLocalLoad[0] += fx
-	n.rightLocalLoad[1] += fy
-	n.rightLocalLoad[2] += mz
+	n.rightLocalLoad[fxIndex] += fx
+	n.rightLocalLoad[fyIndex] += fy
+	n.rightLocalLoad[mzIndex] += mz
 }
 
 /* <-- Stringer --> */

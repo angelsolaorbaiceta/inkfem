@@ -186,12 +186,12 @@ func (es *ElementSolution) computeStresses() {
 		es.BendingMoment[j] =
 			PointSolutionValue{
 				trailNode.T,
-				bendStartDispTerm - bendStartRotTerm,
+				bendStartDispTerm - bendStartRotTerm + trailNode.LocalLeftMz(),
 			}
 		es.BendingMoment[j+1] =
 			PointSolutionValue{
 				leadNode.T,
-				bendEndDispTerm + bendEndRotTerm,
+				bendEndDispTerm + bendEndRotTerm - leadNode.LocalRightMz(),
 			}
 	}
 }
