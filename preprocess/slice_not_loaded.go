@@ -31,7 +31,7 @@ func sliceElementWithoutLoads(element *structure.Element, slices int) *Element {
 	}
 
 	var (
-		tPos = inkgeom.SubTParamCompleteRangeTimes(slices)
+		tPos  = inkgeom.SubTParamCompleteRangeTimes(slices)
 		nodes = make([]*Node, len(tPos))
 	)
 

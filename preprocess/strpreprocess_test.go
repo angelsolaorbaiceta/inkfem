@@ -21,7 +21,6 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
@@ -78,13 +77,13 @@ func makeStructure() *Structure {
 		nB = structure.MakeFreeNodeAtPosition("2", 0, 100)
 		nC = structure.MakeFreeNodeAtPosition("3", 100, 0)
 
-		elemOrigA = structure.MakeElement(
+		elemOrigA = structure.MakeElementWithoutLoads(
 			"1", nA, nB, structure.FullConstraint, structure.FullConstraint,
-			structure.MakeUnitMaterial(), structure.MakeUnitSection(), []load.Load{},
+			structure.MakeUnitMaterial(), structure.MakeUnitSection(),
 		)
-		elemOrigB = structure.MakeElement(
+		elemOrigB = structure.MakeElementWithoutLoads(
 			"2", nA, nC, structure.DispConstraint, structure.FullConstraint,
-			structure.MakeUnitMaterial(), structure.MakeUnitSection(), []load.Load{},
+			structure.MakeUnitMaterial(), structure.MakeUnitSection(),
 		)
 	)
 
