@@ -57,7 +57,7 @@ It starts by slicing the element a given number of times, and then adds all the 
 and end t values, removing any possible duplications.
 */
 func sliceLoadedElementPositions(
-	concentratedLoads []*load.ConcentratedLoad, 
+	concentratedLoads []*load.ConcentratedLoad,
 	distributedLoads []*load.DistributedLoad,
 	slices int,
 ) []inkgeom.TParam {
@@ -126,7 +126,7 @@ into the element's local reference frame.
 */
 func makeNodesWithConcentratedLoads(element *structure.Element, tPos []inkgeom.TParam) []*Node {
 	var (
-		nodes = make([]*Node, len(tPos))
+		nodes        = make([]*Node, len(tPos))
 		elemRefFrame = element.Geometry.RefFrame()
 	)
 

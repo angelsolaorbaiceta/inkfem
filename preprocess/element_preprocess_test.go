@@ -31,7 +31,7 @@ import (
 
 func TestSliceAxialMemberNodePositions(t *testing.T) {
 	var (
-		element  = makeElementWithLoads([]load.Load{})
+		element  = makeElementWithoutLoads()
 		slicedEl = sliceAxialElement(element)
 	)
 
@@ -49,7 +49,7 @@ func TestSliceAxialMemberNodePositions(t *testing.T) {
 
 func TestSliceAxialMemberNodeLoads(t *testing.T) {
 	var (
-		loads = []load.Load{
+		loads = []*load.ConcentratedLoad{
 			load.MakeConcentrated(load.FX, true, inkgeom.MinT, 50.0),
 			load.MakeConcentrated(load.FY, true, inkgeom.MinT, 75.0),
 			load.MakeConcentrated(load.FX, true, inkgeom.MaxT, 100.0),
@@ -80,7 +80,7 @@ func TestSliceAxialMemberNodeLoads(t *testing.T) {
 
 func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
 	var (
-		loads = []load.Load{
+		loads = []*load.ConcentratedLoad{
 			load.MakeConcentrated(load.FY, false, inkgeom.MinT, 100.0),
 		}
 		element           = makeElementWithLoads(loads)
@@ -101,7 +101,7 @@ func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
 
 func TestSliceNonAxialUnloadedMemberNodePositions(t *testing.T) {
 	var (
-		element  = makeElementWithLoads([]load.Load{})
+		element  = makeElementWithoutLoads()
 		slicedEl = sliceElementWithoutLoads(element, 2)
 	)
 
@@ -128,8 +128,10 @@ func TestSliceNonAxialUnloadedMemberNodePositions(t *testing.T) {
 /* <-- Non Axial Member : Loaded -> slicing --> */
 
 func TestDistributedLoadInEntireLengthAddsNoPositions(t *testing.T) {
-	loads := []load.Load{load.MakeDistributed(load.FY, true, inkgeom.MinT, 45.0, inkgeom.MaxT, 55.0)}
-	tPos := sliceLoadedElementPositions(loads, 2)
+	loads := []*load.DistributedLoad{
+		load.MakeDistributed(load.FY, true, inkgeom.MinT, 45.0, inkgeom.MaxT, 55.0),
+	}
+	tPos := sliceLoadedElementPositions([]*load.ConcentratedLoad{}, loads, 2)
 
 	if posCount := len(tPos); posCount != 3 {
 		t.Errorf("Expected 3 positions, got %d", posCount)
@@ -137,8 +139,10 @@ func TestDistributedLoadInEntireLengthAddsNoPositions(t *testing.T) {
 }
 
 func TestConcentratedLoadAddsPosition(t *testing.T) {
-	loads := []load.Load{load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0)}
-	tPos := sliceLoadedElementPositions(loads, 2)
+	loads := []*load.ConcentratedLoad{
+		load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0),
+	}
+	tPos := sliceLoadedElementPositions(loads, []*load.DistributedLoad{}, 2)
 
 	if posCount := len(tPos); posCount != 4 {
 		t.Errorf("Expected 4 positions, got %d", posCount)
@@ -149,8 +153,10 @@ func TestConcentratedLoadAddsPosition(t *testing.T) {
 }
 
 func TestDistributedLoadAddsTwoPositions(t *testing.T) {
-	loads := []load.Load{load.MakeDistributed(load.FY, true, inkgeom.MakeTParam(0.25), 45.0, inkgeom.MakeTParam(0.75), 55.0)}
-	tPos := sliceLoadedElementPositions(loads, 2)
+	loads := []*load.DistributedLoad{
+		load.MakeDistributed(load.FY, true, inkgeom.MakeTParam(0.25), 45.0, inkgeom.MakeTParam(0.75), 55.0),
+	}
+	tPos := sliceLoadedElementPositions([]*load.ConcentratedLoad{}, loads, 2)
 
 	if posCount := len(tPos); posCount != 5 {
 		t.Errorf("Expected 5 positions, got %d", posCount)
@@ -164,11 +170,15 @@ func TestDistributedLoadAddsTwoPositions(t *testing.T) {
 }
 
 func TestMultipleLoadsNotAddingPositionTwice(t *testing.T) {
-	loads := []load.Load{
-		load.MakeDistributed(load.FY, true, inkgeom.MakeTParam(0.25), 45.0, inkgeom.MakeTParam(0.75), 55.0),
-		load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0),
-	}
-	tPos := sliceLoadedElementPositions(loads, 2)
+	var (
+		concentratedLoads = []*load.ConcentratedLoad{
+			load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0),
+		}
+		distributedLoads = []*load.DistributedLoad{
+			load.MakeDistributed(load.FY, true, inkgeom.MakeTParam(0.25), 45.0, inkgeom.MakeTParam(0.75), 55.0),
+		}
+		tPos = sliceLoadedElementPositions(concentratedLoads, distributedLoads, 2)
+	)
 
 	if posCount := len(tPos); posCount != 5 {
 		t.Errorf("Expected 5 positions, got %d", posCount)
@@ -186,7 +196,10 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 		structure.DispConstraint,
 		structure.MakeUnitMaterial(),
 		structure.MakeUnitSection(),
-		[]load.Load{load.MakeDistributed(load.FY, true, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0)},
+		[]*load.ConcentratedLoad{},
+		[]*load.DistributedLoad{
+			load.MakeDistributed(load.FY, true, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0),
+		},
 	)
 	slicedEl := sliceLoadedElement(element, 2)
 
@@ -233,7 +246,10 @@ func TestDistributedGlobalLoadDistribution(t *testing.T) {
 		structure.DispConstraint,
 		structure.MakeUnitMaterial(),
 		structure.MakeUnitSection(),
-		[]load.Load{load.MakeDistributed(load.FY, false, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0)},
+		[]*load.ConcentratedLoad{},
+		[]*load.DistributedLoad{
+			load.MakeDistributed(load.FY, false, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0),
+		},
 	)
 	slicedEl := sliceLoadedElement(element, 2)
 
@@ -280,11 +296,12 @@ func TestConcentratedLocalLoadDistribution(t *testing.T) {
 		structure.DispConstraint,
 		structure.MakeUnitMaterial(),
 		structure.MakeUnitSection(),
-		[]load.Load{
+		[]*load.ConcentratedLoad{
 			load.MakeConcentrated(load.FX, true, inkgeom.MakeTParam(0.25), 3.0),
 			load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.25), 5.0),
 			load.MakeConcentrated(load.MZ, true, inkgeom.MakeTParam(0.25), 7.0),
 		},
+		[]*load.DistributedLoad{},
 	)
 	slicedEl := sliceLoadedElement(element, 2)
 
@@ -308,9 +325,10 @@ func TestConcentratedGlobalLoadDistribution(t *testing.T) {
 		structure.DispConstraint,
 		structure.MakeUnitMaterial(),
 		structure.MakeUnitSection(),
-		[]load.Load{
+		[]*load.ConcentratedLoad{
 			load.MakeConcentrated(load.FY, false, inkgeom.MakeTParam(0.25), 5.0),
 		},
+		[]*load.DistributedLoad{},
 	)
 	slicedEl := sliceLoadedElement(element, 2)
 
@@ -325,8 +343,9 @@ func TestConcentratedGlobalLoadDistribution(t *testing.T) {
 	}
 }
 
-/* Utils */
-func makeElementWithLoads(loads []load.Load) *structure.Element {
+/* <-- Utils --> */
+
+func makeElementWithLoads(loads []*load.ConcentratedLoad) *structure.Element {
 	return structure.MakeElement(
 		"1",
 		structure.MakeFreeNodeAtPosition("1", 1.0, 2.0),
@@ -335,5 +354,21 @@ func makeElementWithLoads(loads []load.Load) *structure.Element {
 		structure.DispConstraint,
 		structure.MakeUnitMaterial(),
 		structure.MakeUnitSection(),
-		loads)
+		loads,
+		[]*load.DistributedLoad{},
+	)
+}
+
+func makeElementWithoutLoads() *structure.Element {
+	return structure.MakeElement(
+		"1",
+		structure.MakeFreeNodeAtPosition("1", 1.0, 2.0),
+		structure.MakeFreeNodeAtPosition("2", 3.0, 4.0),
+		structure.DispConstraint,
+		structure.DispConstraint,
+		structure.MakeUnitMaterial(),
+		structure.MakeUnitSection(),
+		[]*load.ConcentratedLoad{},
+		[]*load.DistributedLoad{},
+	)
 }
