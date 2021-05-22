@@ -106,10 +106,10 @@ func (load *DistributedLoad) AsVectorAt(t inkgeom.TParam) [3]float64 {
 }
 
 /*
-ProjectedVectorValueAt returns the distributed load vector at a given position projected
+ProjectedVectorAt returns the distributed load vector at a given position projected
 in a reference frame.
 */
-func (load *DistributedLoad) ProjectedVectorValueAt(t inkgeom.TParam, refFrame g2d.RefFrame) [3]float64 {
+func (load *DistributedLoad) ProjectedVectorAt(t inkgeom.TParam, refFrame g2d.RefFrame) [3]float64 {
 	var (
 		vectorValue     = load.AsVectorAt(t)
 		projectedVector = refFrame.ProjectVector(g2d.MakeVector(vectorValue[0], vectorValue[1]))

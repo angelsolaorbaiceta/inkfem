@@ -25,6 +25,11 @@ import (
 )
 
 /*
+Minimum distance between two consecutive t values in the slices.
+*/
+const minDistBetweenTSlices = 1e-3
+
+/*
 Elemets with loads applied are firts sliced a given number of times, and then, all t
 parameters derived from the positions of the applied loads are included.
 
@@ -36,11 +41,11 @@ also include nodes in those positions.
 */
 func sliceLoadedElement(element *structure.Element, slices int) *Element {
 	var (
-		tPos  = sliceLoadedElementPositions(element.Loads, slices)
+		tPos  = sliceLoadedElementPositions(element.ConcentratedLoads, element.DistributedLoads, slices)
 		nodes = makeNodesWithConcentratedLoads(element, tPos)
 	)
 
-	applyDistributedLoadsToNodes(nodes, element)
+	applyDistributedLoadsToNodes(nodes, element.DistributedLoads)
 
 	return MakeElement(element, nodes)
 }
@@ -51,18 +56,24 @@ Computes all the t values where to slice an element with loads applied.
 It starts by slicing the element a given number of times, and then adds all the load start
 and end t values, removing any possible duplications.
 */
-func sliceLoadedElementPositions(loads []load.Load, slices int) []inkgeom.TParam {
-	tPos := append(
-		inkgeom.SubTParamCompleteRangeTimes(slices),
-		tValsForLoadApplications(loads)...,
-	)
+func sliceLoadedElementPositions(
+	concentratedLoads []*load.ConcentratedLoad, 
+	distributedLoads []*load.DistributedLoad,
+	slices int,
+) []inkgeom.TParam {
+	tPos := inkgeom.SubTParamCompleteRangeTimes(slices)
+	tPos = append(tPos, slicePositionsForConcentratedLoads(concentratedLoads)...)
+	tPos = append(tPos, slicePositionsForDistributedLoads(distributedLoads)...)
 
 	sort.Sort(inkgeom.ByTParamValue(tPos))
 
 	var correctedTPos []inkgeom.TParam
 	correctedTPos = append(correctedTPos, tPos[0])
+
+	// FIXME: this might remove positions where a cocentrated load is applied, then,
+	// the load will never be applied by the makeNodesWithConcentratedLoads function.
 	for i := 1; i < len(tPos); i++ {
-		if tPos[i-1].DistanceTo(tPos[i]) > 1e-3 {
+		if tPos[i-1].DistanceTo(tPos[i]) > minDistBetweenTSlices {
 			correctedTPos = append(correctedTPos, tPos[i])
 		}
 	}
@@ -70,20 +81,36 @@ func sliceLoadedElementPositions(loads []load.Load, slices int) []inkgeom.TParam
 	return correctedTPos
 }
 
-func tValsForLoadApplications(loads []load.Load) []inkgeom.TParam {
+/*
+Collects all the concentrated loads t parameter value, provided the value
+is not extreme, that is, `t != tMin` and `t != tMax`.
+*/
+func slicePositionsForConcentratedLoads(loads []*load.ConcentratedLoad) []inkgeom.TParam {
 	var tVals []inkgeom.TParam
 
-	for _, ld := range loads {
-		if ld.IsConcentrated() && !ld.T().IsExtreme() {
-			tVals = append(tVals, ld.T())
-		} else if ld.IsDistributed() {
-			if !ld.StartT().IsExtreme() {
-				tVals = append(tVals, ld.StartT())
-			}
+	for _, l := range loads {
+		if !l.T.IsExtreme() {
+			tVals = append(tVals, l.T)
+		}
+	}
 
-			if !ld.EndT().IsExtreme() {
-				tVals = append(tVals, ld.EndT())
-			}
+	return tVals
+}
+
+/*
+Collects all the distibutd loads start and end position t values, provided these
+values are not extreme, that is, `t != tMin` and `t != tMax`.
+*/
+func slicePositionsForDistributedLoads(loads []*load.DistributedLoad) []inkgeom.TParam {
+	var tVals []inkgeom.TParam
+
+	for _, l := range loads {
+		if !l.StartT.IsExtreme() {
+			tVals = append(tVals, l.StartT)
+		}
+
+		if !l.EndT.IsExtreme() {
+			tVals = append(tVals, l.EndT)
 		}
 	}
 
@@ -92,29 +119,34 @@ func tValsForLoadApplications(loads []load.Load) []inkgeom.TParam {
 
 /*
 Creates all the nodes for the given t positions and applies the concentrated loads
-on them.
+on those t positions where one is defined.
+
+If the load is in global coordinates, its vector representation is projected
+into the element's local reference frame.
 */
 func makeNodesWithConcentratedLoads(element *structure.Element, tPos []inkgeom.TParam) []*Node {
-	nodes := make([]*Node, len(tPos))
-	elemRefFrame := element.Geometry.RefFrame()
+	var (
+		nodes = make([]*Node, len(tPos))
+		elemRefFrame = element.Geometry.RefFrame()
+	)
 
 	for i, t := range tPos {
 		node := MakeUnloadedNode(t, element.Geometry.PointAt(t))
 
-		for _, load := range element.Loads {
-			if load.IsConcentrated() && t.Equals(load.T()) {
-				var localLoadForces g2d.Projectable
+		for _, load := range element.ConcentratedLoads {
+			if t.Equals(load.T) {
+				var localForces [3]float64
 
 				if load.IsInLocalCoords {
-					localLoadForces = load.ForcesVector()
+					localForces = load.AsVector()
 				} else {
-					localLoadForces = elemRefFrame.ProjectVector(load.ForcesVector())
+					localForces = load.ProjectedVectorValue(elemRefFrame)
 				}
 
 				node.AddLocalExternalLoad(
-					localLoadForces.X,
-					localLoadForces.Y,
-					load.VectorValue()[2],
+					localForces[0],
+					localForces[1],
+					localForces[2],
 				)
 			}
 		}
@@ -125,19 +157,14 @@ func makeNodesWithConcentratedLoads(element *structure.Element, tPos []inkgeom.T
 	return nodes
 }
 
-/*
-Applies all the distributed loads in the element to the passed in nodes.
-*/
-func applyDistributedLoadsToNodes(nodes []*Node, element *structure.Element) {
+func applyDistributedLoadsToNodes(nodes []*Node, loads []*load.DistributedLoad) {
 	var trailNode, leadNode *Node
 
 	for i, j := 0, 1; j < len(nodes); i, j = i+1, j+1 {
 		trailNode, leadNode = nodes[i], nodes[j]
 
-		for _, load := range element.Loads {
-			if load.IsDistributed() {
-				applyDistributedLoadToNodes(load, trailNode, leadNode)
-			}
+		for _, load := range loads {
+			applyDistributedLoadToNodes(load, trailNode, leadNode)
 		}
 	}
 }
@@ -148,9 +175,9 @@ Applies a distribute load to the trailing and leading nodes in a finite element.
 TODO: distribute Fx loads
 TODO: distribute Mz loads
 */
-func applyDistributedLoadToNodes(load load.Load, trailNode, leadNode *Node) {
+func applyDistributedLoadToNodes(load *load.DistributedLoad, trailNode, leadNode *Node) {
 	var (
-		startLoad, endLoad = loadVectorValuesInLocalCoords(load, trailNode, leadNode)
+		startLoad, endLoad = forceVectorInLocalCoords(load, trailNode, leadNode)
 		length             = trailNode.DistanceTo(leadNode)
 		halfLength         = 0.5 * length
 		length2            = length * length
@@ -179,14 +206,14 @@ func applyDistributedLoadToNodes(load load.Load, trailNode, leadNode *Node) {
 	)
 }
 
-func loadVectorValuesInLocalCoords(load load.Load, trailNode, leadNode *Node) (startLoad, endLoad [3]float64) {
+func forceVectorInLocalCoords(load *load.DistributedLoad, trailNode, leadNode *Node) (startLoad, endLoad [3]float64) {
 	if load.IsInLocalCoords {
-		startLoad = load.VectorValueAt(trailNode.T)
-		endLoad = load.VectorValueAt(leadNode.T)
+		startLoad = load.AsVectorAt(trailNode.T)
+		endLoad = load.AsVectorAt(leadNode.T)
 	} else {
 		elementReferenceFrame := g2d.MakeRefFrameWithIVersor(g2d.MakeVectorFromTo(trailNode.Position, leadNode.Position))
-		startLoad = load.ProjectedVectorValueAt(trailNode.T, elementReferenceFrame)
-		endLoad = load.ProjectedVectorValueAt(leadNode.T, elementReferenceFrame)
+		startLoad = load.ProjectedVectorAt(trailNode.T, elementReferenceFrame)
+		endLoad = load.ProjectedVectorAt(leadNode.T, elementReferenceFrame)
 	}
 
 	return

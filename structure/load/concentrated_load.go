@@ -62,38 +62,46 @@ func (load *ConcentratedLoad) IsNodal() bool {
 AsVector returns a vector with the components of the load.
 */
 func (load *ConcentratedLoad) AsVector() [3]float64 {
-	switch load.Term {
-	case FX:
-		return [3]float64{load.Value, 0.0, 0.0}
-
-	case FY:
-		return [3]float64{0.0, load.Value, 0.0}
-
-	case MZ:
-		return [3]float64{0.0, 0.0, load.Value}
-
-	default:
-		panic("Unknown load term: " + load.Term)
-	}
+	return [3]float64{load.LocalFx(), load.LocalFy(), load.LocalMz()}
 }
 
 /*
 ForcesVector returns a vector for a concentrated load with the components of {Fx, Fy}.
 */
 func (load *ConcentratedLoad) ForcesVector() g2d.Projectable {
-	switch load.Term {
-	case FX:
-		return g2d.MakeVector(load.Value, 0.0)
+	return g2d.MakeVector(load.LocalFx(), load.LocalFy())
+}
 
-	case FY:
-		return g2d.MakeVector(0.0, load.Value)
-
-	case MZ:
-		return g2d.MakeVector(0.0, 0.0)
-
-	default:
-		panic("Unknown load term: " + load.Term)
+func (load *ConcentratedLoad) LocalFx() float64 {
+	if load.Term == FX {
+		return load.Value
 	}
+
+	return 0.0
+}
+
+func (load *ConcentratedLoad) LocalFy() float64 {
+	if load.Term == FY {
+		return load.Value
+	}
+
+	return 0.0
+}
+
+func (load *ConcentratedLoad) LocalMz() float64 {
+	if load.Term == MZ {
+		return load.Value
+	}
+
+	return 0.0
+}
+
+/*
+ProjectedVectorValue returns the concentrated load vector projected in a reference frame.
+*/
+func (load *ConcentratedLoad) ProjectedVectorValue(refFrame g2d.RefFrame) [3]float64 {
+	projectedVector := refFrame.ProjectVector(load.ForcesVector())
+	return [3]float64{projectedVector.X, projectedVector.Y, load.LocalMz()}
 }
 
 /*
