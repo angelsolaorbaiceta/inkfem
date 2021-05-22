@@ -29,6 +29,8 @@ import (
 )
 
 var (
+	noDistLoads = []*load.DistributedLoad{}
+	noConcLoads = []*load.ConcentratedLoad{}
 	material = &structure.Material{
 		Name:             "steel",
 		Density:          0,
@@ -53,7 +55,7 @@ var (
 func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	var (
 		l               = load.MakeConcentrated(load.FY, true, inkgeom.MaxT, -2000)
-		str             = makeBeamStructure([]load.Load{l})
+		str             = makeBeamStructure([]*load.ConcentratedLoad{l}, noDistLoads)
 		sol             = solveStructure(str)
 		solutionElement = sol.Elements[0]
 		maxYDispl       = -200.0 / 1908.0 // PL³ / 3EI
@@ -129,7 +131,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	})
 
 	t.Run("Shear stress", func(t *testing.T) {
-		expectedShear := -l.Value()
+		expectedShear := -l.Value
 
 		for _, shear := range solutionElement.ShearStress {
 			if !inkgeom.FloatsEqualEps(shear.Value, expectedShear, displError) {
@@ -140,7 +142,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 
 	t.Run("Bending moment", func(t *testing.T) {
 		var expectedBending = func(tParam inkgeom.TParam) float64 {
-			return l.Value() * length * (inkgeom.MaxT.Value() - tParam.Value())
+			return l.Value * length * (inkgeom.MaxT.Value() - tParam.Value())
 		}
 
 		for _, bending := range solutionElement.BendingMoment {
@@ -159,7 +161,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	var (
 		l               = load.MakeDistributed(load.FY, true, inkgeom.MinT, -200.0, inkgeom.MaxT, 0.0)
-		str             = makeBeamStructure([]load.Load{l})
+		str             = makeBeamStructure(noConcLoads, []*load.DistributedLoad{l})
 		sol             = solveStructure(str)
 		solutionElement = sol.Elements[0]
 		maxYDispl       = -200.0 / 1908.0 // WL⁴ / 30EI
@@ -280,7 +282,10 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	})
 }
 
-func makeBeamStructure(loads []load.Load) *structure.Structure {
+func makeBeamStructure(
+	concentratedLoads []*load.ConcentratedLoad, 
+	distributedLoads []*load.DistributedLoad,
+) *structure.Structure {
 	var (
 		nodeOne = structure.MakeNode("fixed-node", g2d.MakePoint(0, 0), structure.FullConstraint)
 		nodeTwo = structure.MakeNode("free-node", g2d.MakePoint(length, 0), structure.NilConstraint)
@@ -292,7 +297,8 @@ func makeBeamStructure(loads []load.Load) *structure.Structure {
 			structure.FullConstraint,
 			material,
 			section,
-			loads,
+			concentratedLoads,
+			distributedLoads,
 		)
 	)
 
