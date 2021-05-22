@@ -59,8 +59,8 @@ func deserializeLoadsByElementID(lines []string) (ConcLoadsById, DistLoadsById) 
 		elementID        contracts.StrID
 		concentratedLoad *load.ConcentratedLoad
 		distributedLoad  *load.DistributedLoad
-		concentrated = make(ConcLoadsById)
-		distributed = make(DistLoadsById)
+		concentrated     = make(ConcLoadsById)
+		distributed      = make(DistLoadsById)
 	)
 
 	for _, line := range lines {

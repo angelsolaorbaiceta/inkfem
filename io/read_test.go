@@ -174,7 +174,9 @@ func TestDeserializeLoads(t *testing.T) {
 			"fx ld 34 0.1 -50.2 0.9 -65.5",
 			"fy gc 34 0.1 -70.5",
 		}
-		loads = deserializeLoadsByElementID(lines)["34"]
+		allConcentrated, allDistributed = deserializeLoadsByElementID(lines)
+		concentrated                    = allConcentrated["34"]
+		distributed                     = allDistributed["34"]
 
 		startT  = inkgeom.MakeTParam(0.1)
 		endT    = inkgeom.MakeTParam(0.9)
@@ -182,14 +184,18 @@ func TestDeserializeLoads(t *testing.T) {
 		loadTwo = load.MakeConcentrated(load.FY, false, startT, -70.5)
 	)
 
-	if numberOfLoads := len(loads); numberOfLoads != 2 {
-		t.Errorf("Expected 2 loads, got %d", numberOfLoads)
+	if numberOfConcentratedLoads := len(concentrated); numberOfConcentratedLoads != 1 {
+		t.Errorf("Expected 2 concentrated loads, got %d", numberOfConcentratedLoads)
 	}
-	if got := loads[0]; !got.Equals(loadOne) {
-		t.Errorf("Expected load %v, but got %v", loadOne, got)
+	if numberOfDistributedLoads := len(distributed); numberOfDistributedLoads != 1 {
+		t.Errorf("Expected 2 distributed loads, got %d", numberOfDistributedLoads)
 	}
-	if got := loads[1]; !got.Equals(loadTwo) {
-		t.Errorf("Expected load %v, but got %v", loadTwo, got)
+
+	if got := distributed[0]; !got.Equals(loadOne) {
+		t.Errorf("Expected distributed load %v, but got %v", loadOne, got)
+	}
+	if got := concentrated[1]; !got.Equals(loadTwo) {
+		t.Errorf("Expected concentrated load %v, but got %v", loadTwo, got)
 	}
 }
 
@@ -210,24 +216,27 @@ func TestDeserializeElements(t *testing.T) {
 		sections = map[string]*structure.Section{
 			"sec": structure.MakeSection("sec", 10.1, 20.2, 30.3, 40.4, 50.5),
 		}
-		loads = map[contracts.StrID][]load.Load{
+		concentratedLoads = ConcLoadsById{
 			"1": {load.MakeConcentrated(load.FY, true, inkgeom.MinT, -50)},
 			"2": {load.MakeConcentrated(load.MZ, true, inkgeom.MaxT, -30)},
 		}
+		distributedLoads = DistLoadsById{}
 
-		elements = deserializeElements(lines, &nodes, &materials, &sections, &loads)
+		elements = deserializeElements(lines, &nodes, &materials, &sections, &concentratedLoads, &distributedLoads)
 
 		wantElOne = structure.MakeElement(
 			"1", nodes["1"], nodes["2"],
 			structure.FullConstraint, structure.DispConstraint,
 			materials["mat"], sections["sec"],
-			loads["1"],
+			concentratedLoads["1"],
+			distributedLoads["1"],
 		)
 		wantElTwo = structure.MakeElement(
 			"2", nodes["1"], nodes["3"],
 			structure.DispConstraint, structure.FullConstraint,
 			materials["mat"], sections["sec"],
-			loads["2"],
+			concentratedLoads["2"],
+			distributedLoads["2"],
 		)
 	)
 

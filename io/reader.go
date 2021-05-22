@@ -123,12 +123,12 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 
 				elementsCount, _ := strconv.Atoi(elementsHeaderRegex.FindStringSubmatch(line)[1])
 				elements = readElements(
-					scanner, 
-					elementsCount, 
-					nodes, 
-					materials, 
-					sections, 
-					&concentratedLoads, 
+					scanner,
+					elementsCount,
+					nodes,
+					materials,
+					sections,
+					&concentratedLoads,
 					&distributedLoads,
 				)
 			}
