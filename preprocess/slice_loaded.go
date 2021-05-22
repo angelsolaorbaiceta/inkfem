@@ -88,9 +88,9 @@ is not extreme, that is, `t != tMin` and `t != tMax`.
 func slicePositionsForConcentratedLoads(loads []*load.ConcentratedLoad) []inkgeom.TParam {
 	var tVals []inkgeom.TParam
 
-	for _, l := range loads {
-		if !l.T.IsExtreme() {
-			tVals = append(tVals, l.T)
+	for _, load := range loads {
+		if !load.T.IsExtreme() {
+			tVals = append(tVals, load.T)
 		}
 	}
 
@@ -104,13 +104,13 @@ values are not extreme, that is, `t != tMin` and `t != tMax`.
 func slicePositionsForDistributedLoads(loads []*load.DistributedLoad) []inkgeom.TParam {
 	var tVals []inkgeom.TParam
 
-	for _, l := range loads {
-		if !l.StartT.IsExtreme() {
-			tVals = append(tVals, l.StartT)
+	for _, load := range loads {
+		if !load.StartT.IsExtreme() {
+			tVals = append(tVals, load.StartT)
 		}
 
-		if !l.EndT.IsExtreme() {
-			tVals = append(tVals, l.EndT)
+		if !load.EndT.IsExtreme() {
+			tVals = append(tVals, load.EndT)
 		}
 	}
 
