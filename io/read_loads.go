@@ -46,16 +46,19 @@ var (
 	)
 )
 
-func readLoads(scanner *bufio.Scanner, count int) map[contracts.StrID][]load.Load {
+type ConcLoadsById = map[contracts.StrID][]*load.ConcentratedLoad
+type DistLoadsById = map[contracts.StrID][]*load.DistributedLoad
+
+func readLoads(scanner *bufio.Scanner, count int) (ConcLoadsById, DistLoadsById) {
 	lines := definitionLines(scanner, count)
 	return deserializeLoadsByElementID(lines)
 }
 
-func deserializeLoadsByElementID(lines []string) map[contracts.StrID][]load.Load {
+func deserializeLoadsByElementID(lines []string) (concentrated ConcLoadsById, distributed DistLoadsById) {
 	var (
-		elementID contracts.StrID
-		_load     load.Load
-		loads     = make(map[contracts.StrID][]load.Load)
+		elementID       contracts.StrID
+		concentratedLoad *load.ConcentratedLoad
+		distributedLoad *load.DistributedLoad
 	)
 
 	for _, line := range lines {
@@ -68,24 +71,19 @@ func deserializeLoadsByElementID(lines []string) map[contracts.StrID][]load.Load
 			panic(fmt.Sprintf("Found load with wrong format: '%s'", line))
 		}
 
-		switch {
-		case matchesDistributed:
-			elementID, _load = deserializeDistributedLoad(line)
-
-		case matchesConcentrated:
-			elementID, _load = deserializeConcentratedLoad(line)
-
-		default:
-			panic(fmt.Sprintf("Unknown type of load: '%s'", line))
+		if matchesDistributed {
+			elementID, distributedLoad = deserializeDistributedLoad(line)
+			distributed[elementID] = append(distributed[elementID], distributedLoad)
+		} else if matchesConcentrated {
+			elementID, concentratedLoad = deserializeConcentratedLoad(line)
+			concentrated[elementID] = append(concentrated[elementID], concentratedLoad)
 		}
-
-		loads[elementID] = append(loads[elementID], _load)
 	}
 
-	return loads
+	return
 }
 
-func deserializeDistributedLoad(line string) (contracts.StrID, load.Load) {
+func deserializeDistributedLoad(line string) (contracts.StrID, *load.DistributedLoad) {
 	groups := distLoadDefinitionRegex.FindStringSubmatch(line)
 
 	term := load.Term(groups[1])
@@ -109,7 +107,7 @@ func deserializeDistributedLoad(line string) (contracts.StrID, load.Load) {
 		)
 }
 
-func deserializeConcentratedLoad(line string) (contracts.StrID, load.Load) {
+func deserializeConcentratedLoad(line string) (contracts.StrID, *load.ConcentratedLoad) {
 	groups := concLoadDefinitionRegex.FindStringSubmatch(line)
 
 	term := load.Term(groups[1])
@@ -120,6 +118,5 @@ func deserializeConcentratedLoad(line string) (contracts.StrID, load.Load) {
 	t := ensureParseFloat(groups[4], "concentrated load T")
 	val := ensureParseFloat(groups[5], "concentrated load value")
 
-	return elementID,
-		load.MakeConcentrated(term, isInLocalCoords, inkgeom.MakeTParam(t), val)
+	return elementID, load.MakeConcentrated(term, isInLocalCoords, inkgeom.MakeTParam(t), val)
 }
