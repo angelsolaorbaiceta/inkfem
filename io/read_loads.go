@@ -54,11 +54,13 @@ func readLoads(scanner *bufio.Scanner, count int) (ConcLoadsById, DistLoadsById)
 	return deserializeLoadsByElementID(lines)
 }
 
-func deserializeLoadsByElementID(lines []string) (concentrated ConcLoadsById, distributed DistLoadsById) {
+func deserializeLoadsByElementID(lines []string) (ConcLoadsById, DistLoadsById) {
 	var (
-		elementID       contracts.StrID
+		elementID        contracts.StrID
 		concentratedLoad *load.ConcentratedLoad
-		distributedLoad *load.DistributedLoad
+		distributedLoad  *load.DistributedLoad
+		concentrated = make(ConcLoadsById)
+		distributed = make(DistLoadsById)
 	)
 
 	for _, line := range lines {
@@ -80,7 +82,7 @@ func deserializeLoadsByElementID(lines []string) (concentrated ConcLoadsById, di
 		}
 	}
 
-	return
+	return concentrated, distributed
 }
 
 func deserializeDistributedLoad(line string) (contracts.StrID, *load.DistributedLoad) {
