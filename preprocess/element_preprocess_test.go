@@ -27,6 +27,8 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/nums"
 )
 
+// TODO: separate into shorter and more focused test files
+
 /* <-- Axial Member --> */
 
 func TestSliceAxialMemberNodePositions(t *testing.T) {
