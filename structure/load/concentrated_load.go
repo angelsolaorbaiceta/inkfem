@@ -1,20 +1,4 @@
 /*
-Copyright 2020 Angel Sola Orbaiceta
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-		http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-/*
 Package load contains definition of loads applied to structural members.
 */
 package load
@@ -25,9 +9,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/nums"
 )
 
-/*
-A ConcentratedLoad is a load applied in a specific point.
-*/
+// A ConcentratedLoad is a load applied in a specific point.
 type ConcentratedLoad struct {
 	Term            Term
 	IsInLocalCoords bool
@@ -36,9 +18,8 @@ type ConcentratedLoad struct {
 }
 
 /*
-MakeConcentrated creates a concentrated load for the given term (FX, FY or MZ)
-which may be defined locally to the element it will be applied to or referenced
-in global coordinates.
+MakeConcentrated creates a concentrated load for the given term (FX, FY or MZ) which may be defined
+locally to the element it will be applied to or referenced in global coordinates.
 
 Concentrated loads are defined by a position - value tuple.
 */
@@ -53,21 +34,19 @@ func MakeConcentrated(
 
 /*
 IsNodal returns true if the load is applied in extreme values of T.
+
+When `true`, this means that the load applied to an element is acting on one of its end nodes.
 */
 func (load *ConcentratedLoad) IsNodal() bool {
 	return load.T.IsMin() || load.T.IsMax()
 }
 
-/*
-AsVector returns a vector with the components of the load.
-*/
+// AsVector returns a vector with the components of the load.
 func (load *ConcentratedLoad) AsVector() [3]float64 {
 	return [3]float64{load.LocalFx(), load.LocalFy(), load.LocalMz()}
 }
 
-/*
-ForcesVector returns a vector for a concentrated load with the components of {Fx, Fy}.
-*/
+// ForcesVector returns a vector for a concentrated load with the components of {Fx, Fy}.
 func (load *ConcentratedLoad) ForcesVector() g2d.Projectable {
 	return g2d.MakeVector(load.LocalFx(), load.LocalFy())
 }
@@ -96,17 +75,13 @@ func (load *ConcentratedLoad) LocalMz() float64 {
 	return 0.0
 }
 
-/*
-ProjectedVectorValue returns the concentrated load vector projected in a reference frame.
-*/
+// ProjectedVectorValue returns the concentrated load vector projected in a reference frame.
 func (load *ConcentratedLoad) ProjectedVectorValue(refFrame g2d.RefFrame) [3]float64 {
 	projectedVector := refFrame.ProjectVector(load.ForcesVector())
 	return [3]float64{projectedVector.X, projectedVector.Y, load.LocalMz()}
 }
 
-/*
-Equals tests whether the two loads are equal or not.
-*/
+// Equals tests whether the two loads are equal or not.
 func (load *ConcentratedLoad) Equals(other *ConcentratedLoad) bool {
 	return load.Term == other.Term &&
 		load.IsInLocalCoords == other.IsInLocalCoords &&

@@ -1,19 +1,3 @@
-/*
-Copyright 2020 Angel Sola Orbaiceta
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-		http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package process
 
 import (
@@ -25,8 +9,8 @@ import (
 /*
 ElementSolution is the displacements and stresses for a given preprocessed element.
 
-Displacements are stored in both local and global coordinates. Stresses are referred
-only to the local reference frame.
+Displacements are stored in both local and global coordinates. Stresses are referred only to the
+local reference frame.
 */
 type ElementSolution struct {
 	*preprocess.Element
@@ -44,9 +28,7 @@ type ElementSolution struct {
 	BendingMoment []PointSolutionValue
 }
 
-/*
-MakeElementSolution creates an empty solution for the given element.
-*/
+// MakeElementSolution creates an empty solution for the given element.
 func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 	nOfNodes := len(element.Nodes)
 
@@ -66,10 +48,9 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 }
 
 /*
-SolveUsingDisplacements sets the element's global and local displacements
-given the structure's system of equations solution vector (the global node
-displacements) and computes the stresses in each of the slices of the
-preprocessed element.
+SolveUsingDisplacements sets the element's global and local displacements given the structure's
+system of equations solution vector (the global node displacements) and computes the stresses in
+each of the slices of the preprocessed element.
 */
 func (es *ElementSolution) SolveUsingDisplacements(globalDisp *vec.Vector) {
 	es.setDisplacements(globalDisp)
@@ -77,8 +58,8 @@ func (es *ElementSolution) SolveUsingDisplacements(globalDisp *vec.Vector) {
 }
 
 /*
-setDisplacements sets the global and local displacements given the structure's
-system of equations solution vector (the global node displacements).
+setDisplacements sets the global and local displacements given the structure's system of equations
+solution vector (the global node displacements).
 */
 func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
 	var (
@@ -127,11 +108,10 @@ func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
 }
 
 /*
-computeStresses use the displacements to compute the stress in each of the
-slices of the preprocessed structure.
+computeStresses use the displacements to compute the stress in each of the slices of the
+preprocessed structure.
 
-This method should be called after SetDisplacements, as it depends on the
-displacements.
+This method should be called after SetDisplacements, as it depends on the displacements.
 */
 func (es *ElementSolution) computeStresses() {
 	var (

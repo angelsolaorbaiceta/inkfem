@@ -1,19 +1,3 @@
-/*
-Copyright 2020 Angel Sola Orbaiceta
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-		http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package structure
 
 import (
@@ -27,8 +11,8 @@ import (
 )
 
 /*
-An Element represents s resistant element defined between two structural nodes,
-a section and a material.
+An Element represents s resistant element defined between two structural nodes, a section and
+a material.
 
 An Element can have loads applied to it.
 
@@ -45,11 +29,7 @@ type Element struct {
 	_ea, _ei                   float64
 }
 
-/* <-- Construction --> */
-
-/*
-MakeElement creates a new element with all properties initialized.
-*/
+// MakeElement creates a new element with all properties initialized.
 func MakeElement(
 	id contracts.StrID,
 	startNode, endNode *Node,
@@ -75,9 +55,7 @@ func MakeElement(
 	}
 }
 
-/*
-MakeElementWithoutLoads creates a new element with no external loads.
-*/
+// MakeElementWithoutLoads creates a new element with no external loads.
 func MakeElementWithoutLoads(
 	id contracts.StrID,
 	startNode, endNode *Node,
@@ -95,59 +73,43 @@ func MakeElementWithoutLoads(
 	)
 }
 
-/* <-- Properties --> */
-
-/*
-StartPoint returns the position of the start node of this element's geometry.
-*/
+// StartPoint returns the position of the start node of this element's geometry.
 func (e Element) StartPoint() g2d.Projectable {
 	return e.Geometry.Start
 }
 
-/*
-EndPoint returns the position of the end node of this element's geometry.
-*/
+// EndPoint returns the position of the end node of this element's geometry.
 func (e Element) EndPoint() g2d.Projectable {
 	return e.Geometry.End
 }
 
-/*
-PointAt returns the position of a middle point in this element's geometry.
-*/
+// PointAt returns the position of a middle point in this element's geometry.
 func (e Element) PointAt(t inkgeom.TParam) g2d.Projectable {
 	return e.Geometry.PointAt(t)
 }
 
-/*
-Material returns the material for the element.
-*/
+// Material returns the material for the element.
 func (e Element) Material() *Material {
 	return e.material
 }
 
-/*
-Section returns the section for the element.
-*/
+// Section returns the section for the element.
 func (e Element) Section() *Section {
 	return e.section
 }
 
-/*
-HasLoadsApplied returns true if any load of any type is applied to the element.
-*/
+// HasLoadsApplied returns true if any load of any type is applied to the element.
 func (e Element) HasLoadsApplied() bool {
 	return len(e.ConcentratedLoads) > 0 || len(e.DistributedLoads) > 0
 }
 
-/* <-- Methods --> */
-
 /*
-IsAxialMember returns true if this element is pinned in both ends and, in case
-of having loads applied, they are always in the end positions of the directrix
-and does not include moments about Z, but just forces in X and Y directions.
+IsAxialMember returns true if this element is pinned in both ends and, in case of having loads
+applied, they are always in the end positions of the directrix and does not include moments about Z,
+but just forces in X and Y directions.
 
-FIXME: is axial member a good name? a distributed Fx load would mean this is
-not an axiam member, which seems weird...
+FIXME: is axial member a good name? a distributed Fx load would mean this is not an axiam member,
+which seems weird...
 */
 func (e Element) IsAxialMember() bool {
 	if len(e.DistributedLoads) > 0 {
@@ -164,8 +126,8 @@ func (e Element) IsAxialMember() bool {
 }
 
 /*
-StiffnessGlobalMat generates the local stiffness matrix for the element and
-applies the rotation defined by the elements' geometry reference frame.
+StiffnessGlobalMat generates the local stiffness matrix for the element and applies the rotation
+defined by the elements' geometry reference frame.
 
 It returns the element's stiffness matrix in the global reference frame.
 */
@@ -235,9 +197,7 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 	return k
 }
 
-/*
-Equals tests whether this element is equal to other.
-*/
+// Equals tests whether this element is equal to other.
 func (e *Element) Equals(other *Element) bool {
 	return e.StartNodeID == other.StartNodeID &&
 		e.EndNodeID == other.EndNodeID &&
@@ -249,9 +209,7 @@ func (e *Element) Equals(other *Element) bool {
 
 /* <-- Identifiable --> */
 
-/*
-GetID returns the element's id.
-*/
+// GetID returns the element's id.
 func (e Element) GetID() contracts.StrID {
 	return e.Id
 }

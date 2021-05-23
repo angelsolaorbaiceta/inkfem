@@ -1,19 +1,3 @@
-/*
-Copyright 2020 Angel Sola Orbaiceta
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-		http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package preprocess
 
 import (
@@ -33,14 +17,14 @@ const (
 /*
 A Node represents an intermediate point in a sliced element.
 
-This point has a T Parameter associated, loads applied and degrees of freedom
-numbering for the global system.
+This point has a T Parameter associated, loads applied and degrees of freedom numbering for
+the global system.
 
-The `leftLocalLoad` is the equivalent load, in local coordinates, from the finite
-element located to the left of the node.
+The `leftLocalLoad` is the equivalent load, in local coordinates, from the finite element located
+to the left of the node.
 
-The `rightLocalLoad` is the equivalent load, in local coordinates, from the finite
-element located to the right of the node.
+The `rightLocalLoad` is the equivalent load, in local coordinates, from the finite element located
+to the right of the node.
 */
 type Node struct {
 	T                 inkgeom.TParam
@@ -51,11 +35,9 @@ type Node struct {
 	dofs              [3]int
 }
 
-/* <-- Construction --> */
-
 /*
-MakeNode creates a new node with given T parameter value, position and local
-external loads {fx, fy, mz}.
+MakeNode creates a new node with given T parameter value, position and local external
+loads {fx, fy, mz}.
 */
 func MakeNode(
 	t inkgeom.TParam,
@@ -72,26 +54,17 @@ func MakeNode(
 	}
 }
 
-/*
-MakeUnloadedNode creates a new node with given T parameter value, position,
-and no loads applied.
-*/
+// MakeUnloadedNode creates a new node with given T parameter value, position, and no loads applied.
 func MakeUnloadedNode(t inkgeom.TParam, position g2d.Projectable) *Node {
 	return &Node{t, position, [3]float64{}, [3]float64{}, [3]float64{}, [3]int{unsetDOF, unsetDOF, unsetDOF}}
 }
 
-/* <-- Properties --> */
-
-/*
-NetLocalFx returns the magnitude of the local force in X.
-*/
+// NetLocalFx returns the magnitude of the local force in X.
 func (n Node) NetLocalFx() float64 {
 	return n.externalLocalLoad[fxIndex] + n.leftLocalLoad[fxIndex] + n.rightLocalLoad[fxIndex]
 }
 
-/*
-NetLocalFy returns the magnitude of the net local force in Y.
-*/
+// NetLocalFy returns the magnitude of the net local force in Y.
 func (n Node) NetLocalFy() float64 {
 	return n.externalLocalLoad[fyIndex] + n.LocalLeftFy() + n.LocalRightFy()
 }
@@ -112,9 +85,7 @@ func (n Node) LocalRightFy() float64 {
 	return n.rightLocalLoad[fyIndex]
 }
 
-/*
-NetLocalMz returns the magnitude of the local moment about Z.
-*/
+// NetLocalMz returns the magnitude of the local moment about Z.
 func (n Node) NetLocalMz() float64 {
 	return n.externalLocalLoad[mzIndex] + n.LocalLeftMz() + n.LocalRightMz()
 }
@@ -135,9 +106,7 @@ func (n Node) LocalRightMz() float64 {
 	return n.rightLocalLoad[mzIndex]
 }
 
-/*
-NetLocalLoadVector returns the array of net local load values {Fx, Fy, Mz}.
-*/
+// NetLocalLoadVector returns the array of net local load values {Fx, Fy, Mz}.
 func (n Node) NetLocalLoadVector() [3]float64 {
 	return [3]float64{
 		n.NetLocalFx(),
@@ -149,8 +118,8 @@ func (n Node) NetLocalLoadVector() [3]float64 {
 /*
 SetDegreesOfFreedomNum adds degrees of freedom numbers to the node.
 
-These degrees of freedom numbers are also the position in the system of equations
-for the corresponding stiffness terms.
+These degrees of freedom numbers are also the position in the system of equations for the
+corresponding stiffness terms.
 */
 func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
 	n.dofs[0] = dx
@@ -158,16 +127,13 @@ func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
 	n.dofs[2] = rz
 }
 
-/*
-DegreesOfFreedomNum returns the degrees of freedom numbers assigned to the node.
-*/
+// DegreesOfFreedomNum returns the degrees of freedom numbers assigned to the node.
 func (n Node) DegreesOfFreedomNum() [3]int {
 	return n.dofs
 }
 
 /*
-HasDegreesOfFreedomNum returns true if the node has already been assigned degress of
-freedom.
+HasDegreesOfFreedomNum returns true if the node has already been assigned degress of freedom.
 
 If any of the DOFs is -1, it's assumed that this node hasn't been assigned DOFs.
 */
@@ -177,39 +143,26 @@ func (n Node) HasDegreesOfFreedomNum() bool {
 		n.dofs[2] != unsetDOF
 }
 
-/* <-- Methods --> */
-
-/*
-DistanceTo computes the distance between this an other node.
-*/
+// DistanceTo computes the distance between this an other node.
 func (n *Node) DistanceTo(other *Node) float64 {
 	return n.Position.DistanceTo(other.Position)
 }
 
-/*
-AddLocalExternalLoad adds the given load values to the load applied from the
-left finite element.
-*/
+// AddLocalExternalLoad adds the given load values to the load applied from the left finite element.
 func (n *Node) AddLocalExternalLoad(fx, fy, mz float64) {
 	n.externalLocalLoad[fxIndex] += fx
 	n.externalLocalLoad[fyIndex] += fy
 	n.externalLocalLoad[mzIndex] += mz
 }
 
-/*
-AddLocalLeftLoad adds the given load values to the load applied from the
-left finite element.
-*/
+// AddLocalLeftLoad adds the given load values to the load applied from the left finite element.
 func (n *Node) AddLocalLeftLoad(fx, fy, mz float64) {
 	n.leftLocalLoad[fxIndex] += fx
 	n.leftLocalLoad[fyIndex] += fy
 	n.leftLocalLoad[mzIndex] += mz
 }
 
-/*
-AddLocalRightLoad adds the given load values to the load applied from the
-right finite element.
-*/
+// AddLocalRightLoad adds the given load values to the load applied from the right finite element.
 func (n *Node) AddLocalRightLoad(fx, fy, mz float64) {
 	n.rightLocalLoad[fxIndex] += fx
 	n.rightLocalLoad[fyIndex] += fy

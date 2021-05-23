@@ -1,22 +1,3 @@
-/*
-Copyright 2020 Angel Sola Orbaiceta
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-		http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-/*
-Package load contains definition of loads applied to structural members.
-*/
 package load
 
 import (
@@ -44,15 +25,11 @@ type DistributedLoad struct {
 	StartValue, EndValue float64
 }
 
-/* <-- Creation --> */
-
 /*
-MakeDistributed creates a distributed load for the given term (FX, FY, MZ) which
-may be defined locally to the element it will be applied to or referenced in
-global coordinates.
+MakeDistributed creates a distributed load for the given term (FX, FY, MZ) which may be defined
+locally to the element it will be applied to or referenced in global coordinates.
 
-Distributed loads are defined by a start position - value and an end position -
-value tuples.
+Distributed loads are defined by a start position - value and an end position - value tuples.
 */
 func MakeDistributed(
 	term Term,
@@ -65,11 +42,7 @@ func MakeDistributed(
 	return &DistributedLoad{term, isInLocalCoords, startT, endT, startValue, endValue}
 }
 
-/* <-- Methods --> */
-
-/*
-ValueAt returns the value of the load at a given t Parameter value.
-*/
+// ValueAt returns the value of the load at a given t Parameter value.
 func (load *DistributedLoad) ValueAt(t inkgeom.TParam) float64 {
 	if t.IsLessThan(load.StartT) || t.IsGreaterThan(load.EndT) {
 		return 0.0
@@ -84,9 +57,7 @@ func (load *DistributedLoad) ValueAt(t inkgeom.TParam) float64 {
 	)
 }
 
-/*
-AsVectorAt returns the the distributed load vector at a given position.
-*/
+// AsVectorAt returns the the distributed load vector at a given position.
 func (load *DistributedLoad) AsVectorAt(t inkgeom.TParam) [3]float64 {
 	value := load.ValueAt(t)
 
@@ -106,8 +77,8 @@ func (load *DistributedLoad) AsVectorAt(t inkgeom.TParam) [3]float64 {
 }
 
 /*
-ProjectedVectorAt returns the distributed load vector at a given position projected
-in a reference frame.
+ProjectedVectorAt returns the distributed load vector at a given position projected in a
+reference frame.
 */
 func (load *DistributedLoad) ProjectedVectorAt(t inkgeom.TParam, refFrame g2d.RefFrame) [3]float64 {
 	var (
@@ -121,9 +92,7 @@ func (load *DistributedLoad) ProjectedVectorAt(t inkgeom.TParam, refFrame g2d.Re
 	return vectorValue
 }
 
-/*
-Equals tests whether the two loads are equal or not.
-*/
+// Equals tests whether the two loads are equal or not.
 func (load *DistributedLoad) Equals(other *DistributedLoad) bool {
 	return load.Term == other.Term &&
 		load.IsInLocalCoords == other.IsInLocalCoords &&
