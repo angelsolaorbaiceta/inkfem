@@ -1,0 +1,17 @@
+inkfem v1.0
+
+|nodes| 2
+1 -> 0.0 0.0 {dx dy rz}
+2 -> 200.0 0.0 {}
+
+|materials| 1
+'steel' -> 1.0 20000000 1.0 1.0 1.0 1.0
+
+|sections| 1
+'ipe_120' -> 14 318 28 53 9
+
+|loads| 1
+fy lc 1 0.5 -4000 
+
+|elements| 1
+1 -> 1{dx dy rz} 2{dx dy rz} 'steel' 'ipe_120'
