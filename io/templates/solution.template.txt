@@ -1,8 +1,5 @@
 inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 
---->
-<---
-
 |elements| {{.ElementCount}}
 {{range .Elements}}
 {{.String}}
