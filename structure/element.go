@@ -40,7 +40,8 @@ type Element struct {
 	StartLink, EndLink         Constraint
 	material                   *Material
 	section                    *Section
-	Loads                      []load.Load
+	ConcentratedLoads          []*load.ConcentratedLoad
+	DistributedLoads           []*load.DistributedLoad
 	_ea, _ei                   float64
 }
 
@@ -55,21 +56,43 @@ func MakeElement(
 	startLink, endLink Constraint,
 	material *Material,
 	section *Section,
-	loads []load.Load,
+	concentratedLoads []*load.ConcentratedLoad,
+	distributedLoads []*load.DistributedLoad,
 ) *Element {
 	return &Element{
-		Id:          id,
-		StartNodeID: startNode.Id,
-		EndNodeID:   endNode.Id,
-		Geometry:    g2d.MakeSegment(startNode.Position, endNode.Position),
-		StartLink:   startLink,
-		EndLink:     endLink,
-		material:    material,
-		section:     section,
-		Loads:       loads,
-		_ea:         material.YoungMod * section.Area,
-		_ei:         material.YoungMod * section.IStrong,
+		Id:                id,
+		StartNodeID:       startNode.Id,
+		EndNodeID:         endNode.Id,
+		Geometry:          g2d.MakeSegment(startNode.Position, endNode.Position),
+		StartLink:         startLink,
+		EndLink:           endLink,
+		material:          material,
+		section:           section,
+		ConcentratedLoads: concentratedLoads,
+		DistributedLoads:  distributedLoads,
+		_ea:               material.YoungMod * section.Area,
+		_ei:               material.YoungMod * section.IStrong,
 	}
+}
+
+/*
+MakeElementWithoutLoads creates a new element with no external loads.
+*/
+func MakeElementWithoutLoads(
+	id contracts.StrID,
+	startNode, endNode *Node,
+	startLink, endLink Constraint,
+	material *Material,
+	section *Section,
+) *Element {
+	return MakeElement(
+		id,
+		startNode, endNode,
+		startLink, endLink,
+		material, section,
+		[]*load.ConcentratedLoad{},
+		[]*load.DistributedLoad{},
+	)
 }
 
 /* <-- Properties --> */
@@ -113,7 +136,7 @@ func (e Element) Section() *Section {
 HasLoadsApplied returns true if any load of any type is applied to the element.
 */
 func (e Element) HasLoadsApplied() bool {
-	return len(e.Loads) > 0
+	return len(e.ConcentratedLoads) > 0 || len(e.DistributedLoads) > 0
 }
 
 /* <-- Methods --> */
@@ -122,9 +145,16 @@ func (e Element) HasLoadsApplied() bool {
 IsAxialMember returns true if this element is pinned in both ends and, in case
 of having loads applied, they are always in the end positions of the directrix
 and does not include moments about Z, but just forces in X and Y directions.
+
+FIXME: is axial member a good name? a distributed Fx load would mean this is
+not an axiam member, which seems weird...
 */
 func (e Element) IsAxialMember() bool {
-	for _, ld := range e.Loads {
+	if len(e.DistributedLoads) > 0 {
+		return false
+	}
+
+	for _, ld := range e.ConcentratedLoads {
 		if !ld.IsNodal() || ld.Term == load.MZ {
 			return false
 		}

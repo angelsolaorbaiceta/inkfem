@@ -22,31 +22,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
 
-func TestLoadIsConcentrated(t *testing.T) {
-	load := MakeConcentrated(FX, true, inkgeom.MinT, 45.0)
-
-	if !load.IsConcentrated() {
-		t.Error("Expected 'concentrated' load")
-	}
-}
-
-func TestLoadIsDistributed(t *testing.T) {
-	load := MakeDistributed(FX, true, inkgeom.MinT, 45.0, inkgeom.MaxT, 67.0)
-
-	if !load.IsDistributed() {
-		t.Error("Expected 'distributed' load")
-	}
-}
-
 func TestLoadIsNodal(t *testing.T) {
-	t.Run("distributed load isn't nodal", func(t *testing.T) {
-		load := MakeDistributed(FX, false, inkgeom.MinT, 10, inkgeom.MaxT, 20)
-
-		if load.IsNodal() {
-			t.Error("Expected distributed load to not be nodal")
-		}
-	})
-
 	t.Run("concentrated in the start position is nodal", func(t *testing.T) {
 		load := MakeConcentrated(FX, true, inkgeom.MinT, 45.0)
 

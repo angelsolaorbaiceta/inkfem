@@ -22,19 +22,19 @@ import (
 
 const (
 	elementWithLoadsSlices    = 10
-	elementWithoutLoadsSlices = 7
+	elementWithoutLoadsSlices = 6
 )
 
 /*
 DoElement preprocesses the given structural element subdividing it as corresponds.
 The result is sent through a channel.
 */
-func DoElement(e *structure.Element, c chan<- *Element) {
-	if e.IsAxialMember() {
-		c <- sliceAxialElement(e)
-	} else if e.HasLoadsApplied() {
-		c <- sliceLoadedElement(e, elementWithLoadsSlices)
+func DoElement(element *structure.Element, c chan<- *Element) {
+	if element.IsAxialMember() {
+		c <- sliceAxialElement(element)
+	} else if element.HasLoadsApplied() {
+		c <- sliceLoadedElement(element, elementWithLoadsSlices)
 	} else {
-		c <- sliceElementWithoutLoads(e, elementWithoutLoadsSlices)
+		c <- sliceElementWithoutLoads(element, elementWithoutLoadsSlices)
 	}
 }

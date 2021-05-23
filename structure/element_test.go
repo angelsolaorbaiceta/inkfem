@@ -61,7 +61,7 @@ func TestElementEndPoint(t *testing.T) {
 func TestElementHasLoadsApplied(t *testing.T) {
 	t.Run("has loads applied", func(t *testing.T) {
 		l := load.MakeConcentrated(load.FX, true, inkgeom.MinT, 10)
-		element := makeLoadedElement(l)
+		element := makeConcLoadedElement(l)
 
 		if !element.HasLoadsApplied() {
 			t.Error("Element has loads applied")
@@ -100,7 +100,7 @@ func TestElementIsAxial(t *testing.T) {
 
 	t.Run("isn't axial if has at least a distributed load", func(t *testing.T) {
 		l := load.MakeDistributed(load.FX, true, inkgeom.MinT, 20, inkgeom.MaxT, 40)
-		element := makeLoadedElement(l)
+		element := makeDistLoadedElement(l)
 		element.StartLink = DispConstraint
 		element.EndLink = DispConstraint
 
@@ -111,7 +111,7 @@ func TestElementIsAxial(t *testing.T) {
 
 	t.Run("isn't axial if has at least a concentrated non-nodal load", func(t *testing.T) {
 		l := load.MakeConcentrated(load.MZ, true, inkgeom.HalfT, 10)
-		element := makeLoadedElement(l)
+		element := makeConcLoadedElement(l)
 		element.StartLink = DispConstraint
 		element.EndLink = DispConstraint
 
@@ -122,7 +122,7 @@ func TestElementIsAxial(t *testing.T) {
 
 	t.Run("isn't axial if has at least a nodal MZ load", func(t *testing.T) {
 		l := load.MakeConcentrated(load.MZ, true, inkgeom.MinT, 10)
-		element := makeLoadedElement(l)
+		element := makeConcLoadedElement(l)
 		element.StartLink = DispConstraint
 		element.EndLink = DispConstraint
 
@@ -133,7 +133,7 @@ func TestElementIsAxial(t *testing.T) {
 
 	t.Run("is axial if pinned and all loads are nodal and not MZ", func(t *testing.T) {
 		l := load.MakeConcentrated(load.FY, true, inkgeom.MinT, 10)
-		element := makeLoadedElement(l)
+		element := makeConcLoadedElement(l)
 		element.StartLink = DispConstraint
 		element.EndLink = DispConstraint
 
@@ -256,21 +256,32 @@ func TestHorizontalElementGlobalStiffnessMatrix(t *testing.T) {
 }
 
 func makeElement() *Element {
-	return MakeElement(
+	return MakeElementWithoutLoads(
 		elementID,
 		startNode, endNode,
 		FullConstraint, FullConstraint,
 		material, section,
-		[]load.Load{},
 	)
 }
 
-func makeLoadedElement(l load.Load) *Element {
+func makeConcLoadedElement(l *load.ConcentratedLoad) *Element {
 	return MakeElement(
 		elementID,
 		startNode, endNode,
 		FullConstraint, FullConstraint,
 		material, section,
-		[]load.Load{l},
+		[]*load.ConcentratedLoad{l},
+		[]*load.DistributedLoad{},
+	)
+}
+
+func makeDistLoadedElement(l *load.DistributedLoad) *Element {
+	return MakeElement(
+		elementID,
+		startNode, endNode,
+		FullConstraint, FullConstraint,
+		material, section,
+		[]*load.ConcentratedLoad{},
+		[]*load.DistributedLoad{l},
 	)
 }

@@ -23,7 +23,6 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 )
 
 const (
@@ -52,10 +51,11 @@ func readElements(
 	nodes *map[contracts.StrID]*structure.Node,
 	materials *map[string]*structure.Material,
 	sections *map[string]*structure.Section,
-	loads *map[contracts.StrID][]load.Load,
+	concentratedLoads *ConcLoadsById,
+	distributedLoads *DistLoadsById,
 ) *[]*structure.Element {
 	lines := definitionLines(scanner, count)
-	return deserializeElements(lines, nodes, materials, sections, loads)
+	return deserializeElements(lines, nodes, materials, sections, concentratedLoads, distributedLoads)
 }
 
 func deserializeElements(
@@ -63,7 +63,8 @@ func deserializeElements(
 	nodes *map[contracts.StrID]*structure.Node,
 	materials *map[string]*structure.Material,
 	sections *map[string]*structure.Section,
-	loads *map[contracts.StrID][]load.Load,
+	concentratedLoads *ConcLoadsById,
+	distributedLoads *DistLoadsById,
 ) *[]*structure.Element {
 	var (
 		element  *structure.Element
@@ -71,7 +72,7 @@ func deserializeElements(
 	)
 
 	for i, line := range lines {
-		element = deserializeElement(line, nodes, materials, sections, loads)
+		element = deserializeElement(line, nodes, materials, sections, concentratedLoads, distributedLoads)
 		elements[i] = element
 	}
 
@@ -83,7 +84,8 @@ func deserializeElement(
 	nodes *map[contracts.StrID]*structure.Node,
 	materials *map[string]*structure.Material,
 	sections *map[string]*structure.Section,
-	loads *map[contracts.StrID][]load.Load,
+	concentratedLoads *ConcLoadsById,
+	distributedLoads *DistLoadsById,
 ) *structure.Element {
 	components := readElementComponents(definition)
 	startNode, endNode := extractNodesForElement(components, nodes)
@@ -98,7 +100,8 @@ func deserializeElement(
 		components.endLink,
 		material,
 		section,
-		(*loads)[components.id],
+		(*concentratedLoads)[components.id],
+		(*distributedLoads)[components.id],
 	)
 }
 

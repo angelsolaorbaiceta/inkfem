@@ -26,7 +26,6 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 )
 
 var (
@@ -68,7 +67,8 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		nodes                      *map[contracts.StrID]*structure.Node
 		materials                  *map[string]*structure.Material
 		sections                   *map[string]*structure.Section
-		loads                      map[contracts.StrID][]load.Load
+		concentratedLoads          ConcLoadsById
+		distributedLoads           DistLoadsById
 		elements                   *[]*structure.Element
 	)
 
@@ -108,7 +108,7 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		case loadsHeaderRegex.MatchString(line):
 			{
 				loadsCount, _ := strconv.Atoi(loadsHeaderRegex.FindStringSubmatch(line)[1])
-				loads = readLoads(scanner, loadsCount)
+				concentratedLoads, distributedLoads = readLoads(scanner, loadsCount)
 				loadsDefined = true
 			}
 
@@ -122,7 +122,15 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 				}
 
 				elementsCount, _ := strconv.Atoi(elementsHeaderRegex.FindStringSubmatch(line)[1])
-				elements = readElements(scanner, elementsCount, nodes, materials, sections, &loads)
+				elements = readElements(
+					scanner,
+					elementsCount,
+					nodes,
+					materials,
+					sections,
+					&concentratedLoads,
+					&distributedLoads,
+				)
 			}
 		}
 	}
@@ -139,7 +147,6 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		Elements: *elements}
 }
 
-/* <-- READ : Version Numbers --> */
 func parseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {
 	if foundMatch := versionRegex.MatchString(firstLine); !foundMatch {
 		panic(
