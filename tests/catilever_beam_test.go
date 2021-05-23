@@ -1,45 +1,16 @@
 package tests
 
 import (
-	"github.com/angelsolaorbaiceta/inkfem/contracts"
-	"github.com/angelsolaorbaiceta/inkfem/preprocess"
-	"github.com/angelsolaorbaiceta/inkfem/process"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
-	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"math"
 	"testing"
-)
-
-var (
-	noDistLoads = []*load.DistributedLoad{}
-	noConcLoads = []*load.ConcentratedLoad{}
-	material    = &structure.Material{
-		Name:             "steel",
-		Density:          0,
-		YoungMod:         20e6,
-		ShearMod:         0,
-		PoissonRatio:     1,
-		YieldStrength:    0,
-		UltimateStrength: 0,
-	}
-	section = &structure.Section{
-		Name:    "IPE 120",
-		Area:    14,
-		IStrong: 318,
-		IWeak:   28,
-		SStrong: 53,
-		SWeak:   9,
-	}
-	length     = 100.0
-	displError = 1e-5
 )
 
 func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	var (
 		l               = load.MakeConcentrated(load.FY, true, inkgeom.MaxT, -2000)
-		str             = makeBeamStructure([]*load.ConcentratedLoad{l}, noDistLoads)
+		str             = makeCantileverBeamStructure([]*load.ConcentratedLoad{l}, noDistLoads)
 		sol             = solveStructure(str)
 		solutionElement = sol.Elements[0]
 		maxYDispl       = -200.0 / 1908.0 // PL³ / 3EI
@@ -145,7 +116,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	var (
 		l               = load.MakeDistributed(load.FY, true, inkgeom.MinT, -200.0, inkgeom.MaxT, 0.0)
-		str             = makeBeamStructure(noConcLoads, []*load.DistributedLoad{l})
+		str             = makeCantileverBeamStructure(noConcLoads, []*load.DistributedLoad{l})
 		sol             = solveStructure(str)
 		solutionElement = sol.Elements[0]
 		maxYDispl       = -200.0 / 1908.0 // WL⁴ / 30EI
@@ -264,40 +235,4 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 			}
 		}
 	})
-}
-
-func makeBeamStructure(
-	concentratedLoads []*load.ConcentratedLoad,
-	distributedLoads []*load.DistributedLoad,
-) *structure.Structure {
-	var (
-		nodeOne = structure.MakeNode("fixed-node", g2d.MakePoint(0, 0), structure.FullConstraint)
-		nodeTwo = structure.MakeNode("free-node", g2d.MakePoint(length, 0), structure.NilConstraint)
-		beam    = structure.MakeElement(
-			"beam",
-			nodeOne,
-			nodeTwo,
-			structure.FullConstraint,
-			structure.FullConstraint,
-			material,
-			section,
-			concentratedLoads,
-			distributedLoads,
-		)
-	)
-
-	return &structure.Structure{
-		structure.StrMetadata{1, 0},
-		map[contracts.StrID]*structure.Node{
-			nodeOne.Id: nodeOne,
-			nodeTwo.Id: nodeTwo,
-		},
-		[]*structure.Element{beam},
-	}
-}
-
-func solveStructure(str *structure.Structure) *process.Solution {
-	solveOptions := process.SolveOptions{false, "", true, displError}
-	pre := preprocess.DoStructure(str)
-	return process.Solve(pre, solveOptions)
 }
