@@ -194,7 +194,7 @@ func TestDeserializeLoads(t *testing.T) {
 	if got := distributed[0]; !got.Equals(loadOne) {
 		t.Errorf("Expected distributed load %v, but got %v", loadOne, got)
 	}
-	if got := concentrated[1]; !got.Equals(loadTwo) {
+	if got := concentrated[0]; !got.Equals(loadTwo) {
 		t.Errorf("Expected concentrated load %v, but got %v", loadTwo, got)
 	}
 }
