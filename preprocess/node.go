@@ -155,14 +155,20 @@ func (n *Node) AddLocalExternalLoad(fx, fy, mz float64) {
 	n.externalLocalLoad[mzIndex] += mz
 }
 
-// AddLocalLeftLoad adds the given load values to the load applied from the left finite element.
+/*
+AddLocalLeftLoad adds the given load values to the load applied from the finite element where this
+node is to the left of it (where this node is the element's trailing node).
+*/
 func (n *Node) AddLocalLeftLoad(fx, fy, mz float64) {
 	n.leftLocalLoad[fxIndex] += fx
 	n.leftLocalLoad[fyIndex] += fy
 	n.leftLocalLoad[mzIndex] += mz
 }
 
-// AddLocalRightLoad adds the given load values to the load applied from the right finite element.
+/*
+AddLocalRightLoad adds the given load values to the load applied from the finite element where this
+node is to the right of it (where this node is the element's leading node).
+*/
 func (n *Node) AddLocalRightLoad(fx, fy, mz float64) {
 	n.rightLocalLoad[fxIndex] += fx
 	n.rightLocalLoad[fyIndex] += fy

@@ -147,7 +147,7 @@ func (es *ElementSolution) computeStresses() {
 		es.AxialStress[j] = PointSolutionValue{trailNode.T, axial}
 		es.AxialStress[j+1] = PointSolutionValue{leadNode.T, axial}
 
-		/* Shear */
+		/* <-- Shear --> */
 		var (
 			shearDispTerm = 12.0 * eil3 * (trailDy - leadDy)
 			shearRotTerm  = 6.0 * eil2 * (trailRz + leadRz)
@@ -158,7 +158,7 @@ func (es *ElementSolution) computeStresses() {
 		es.ShearStress[j] = PointSolutionValue{trailNode.T, trailShear}
 		es.ShearStress[j+1] = PointSolutionValue{leadNode.T, leadShear}
 
-		/* Bending */
+		/* <-- Bending --> */
 		var (
 			bendStartDispTerm = 6.0 * eil2 * (leadDy - trailDy)
 			bendStartRotTerm  = 2.0 * eil * (leadRz + 2.0*trailRz)

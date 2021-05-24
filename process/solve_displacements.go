@@ -18,10 +18,7 @@ Computes the structure's global displacements given the preprocessed structure.
 The process involves generating the structure's system of equations and solving it using the
 Preconditioned Conjugate Gradiend numerical procedure.
 */
-func computeGlobalDisplacements(
-	structure *preprocess.Structure,
-	options SolveOptions,
-) *vec.Vector {
+func computeGlobalDisplacements(structure *preprocess.Structure, options SolveOptions) *vec.Vector {
 	log.StartAssembleSysEqs()
 	sysMatrix, sysVector := makeSystemOfEquations(structure)
 	log.EndAssembleSysEqs(sysVector.Length())
@@ -51,9 +48,7 @@ Generates the system of equations matrix and vector from the preprocessed struct
 It computes each of the sliced element's stiffness matrices and assembles them into one
 global matrix. It also assembles the global loads vector from the sliced element nodes.
 */
-func makeSystemOfEquations(
-	structure *preprocess.Structure,
-) (mat.ReadOnlyMatrix, *vec.Vector) {
+func makeSystemOfEquations(structure *preprocess.Structure) (mat.ReadOnlyMatrix, *vec.Vector) {
 	var (
 		sysMatrix = mat.MakeSparse(structure.DofsCount, structure.DofsCount)
 		sysVector = vec.Make(structure.DofsCount)
@@ -131,7 +126,7 @@ func addDispConstraints(
 	}
 }
 
-func addTermsToLoadVector(vector *vec.Vector, element *preprocess.Element) {
+func addTermsToLoadVector(sysVector *vec.Vector, element *preprocess.Element) {
 	var (
 		localLoad    [3]float64
 		globalForces g2d.Projectable
@@ -144,8 +139,8 @@ func addTermsToLoadVector(vector *vec.Vector, element *preprocess.Element) {
 		globalForces = refFrame.ProjectionsToGlobal(localLoad[0], localLoad[1])
 		dofs = node.DegreesOfFreedomNum()
 
-		vector.SetValue(dofs[0], globalForces.X)
-		vector.SetValue(dofs[1], globalForces.Y)
-		vector.SetValue(dofs[2], localLoad[2])
+		sysVector.SetValue(dofs[0], globalForces.X)
+		sysVector.SetValue(dofs[1], globalForces.Y)
+		sysVector.SetValue(dofs[2], localLoad[2])
 	}
 }
