@@ -41,7 +41,7 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 		LocalYDispl:  make([]PointSolutionValue, nOfNodes),
 		LocalZRot:    make([]PointSolutionValue, nOfNodes),
 
-		AxialStress:   make([]PointSolutionValue, nOfNodes-1),
+		AxialStress:   make([]PointSolutionValue, 2*nOfNodes-2),
 		ShearStress:   make([]PointSolutionValue, 2*nOfNodes-2),
 		BendingMoment: make([]PointSolutionValue, 2*nOfNodes-2),
 	}
@@ -141,20 +141,22 @@ func (es *ElementSolution) computeStresses() {
 		leadRz = es.LocalZRot[i].Value
 
 		/* <-- Axial --> */
-		axialStressValue := (leadDx - trailDx) * youngMod / length
-		es.AxialStress[i-1] = PointSolutionValue{
-			trailNode.T,
-			axialStressValue,
-		}
+		var (
+			axial = (leadDx - trailDx) * youngMod / length
+		)
+		es.AxialStress[j] = PointSolutionValue{trailNode.T, axial}
+		es.AxialStress[j+1] = PointSolutionValue{leadNode.T, axial}
 
 		/* Shear */
 		var (
 			shearDispTerm = 12.0 * eil3 * (trailDy - leadDy)
 			shearRotTerm  = 6.0 * eil2 * (trailRz + leadRz)
-			v             = shearDispTerm + shearRotTerm
+			shear         = shearDispTerm + shearRotTerm
+			trailShear    = shear - trailNode.LocalLeftFy()
+			leadShear     = shear + leadNode.LocalRightFy()
 		)
-		es.ShearStress[j] = PointSolutionValue{trailNode.T, v - trailNode.LocalLeftFy()}
-		es.ShearStress[j+1] = PointSolutionValue{leadNode.T, v + leadNode.LocalRightFy()}
+		es.ShearStress[j] = PointSolutionValue{trailNode.T, trailShear}
+		es.ShearStress[j+1] = PointSolutionValue{leadNode.T, leadShear}
 
 		/* Bending */
 		var (
@@ -162,16 +164,10 @@ func (es *ElementSolution) computeStresses() {
 			bendStartRotTerm  = 2.0 * eil * (leadRz + 2.0*trailRz)
 			bendEndDispTerm   = 6.0 * eil2 * (trailDy - leadDy)
 			bendEndRotTerm    = 2.0 * eil * (trailRz + 2.0*leadRz)
+			trailBending      = bendStartDispTerm - bendStartRotTerm + trailNode.LocalLeftMz()
+			leadBending       = bendEndDispTerm + bendEndRotTerm - leadNode.LocalRightMz()
 		)
-		es.BendingMoment[j] =
-			PointSolutionValue{
-				trailNode.T,
-				bendStartDispTerm - bendStartRotTerm + trailNode.LocalLeftMz(),
-			}
-		es.BendingMoment[j+1] =
-			PointSolutionValue{
-				leadNode.T,
-				bendEndDispTerm + bendEndRotTerm - leadNode.LocalRightMz(),
-			}
+		es.BendingMoment[j] = PointSolutionValue{trailNode.T, trailBending}
+		es.BendingMoment[j+1] = PointSolutionValue{leadNode.T, leadBending}
 	}
 }
