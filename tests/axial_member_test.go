@@ -48,6 +48,32 @@ func TestAxialMemberWithConcentratedLoad(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("Axial stress", func(t *testing.T) {
+		expectedAxial := l.Value / section.Area
+		
+		for _, axial := range solutionElement.AxialStress {
+			if !inkgeom.FloatsEqualEps(axial.Value, expectedAxial, displError) {
+				t.Errorf("Expected axial stress of %f, but got %f at t = %f", expectedAxial, axial.Value, axial.T)
+			}
+		}
+	})
+
+	t.Run("Shear stress", func(t *testing.T) {
+		for _, shear := range solutionElement.ShearStress {
+			if !inkgeom.FloatsEqualEps(shear.Value, 0.0, displError) {
+				t.Errorf("Expected no shear stress but got %f at t = %f", shear.Value, shear.T)
+			}
+		}
+	})
+
+	t.Run("Bending moment", func(t *testing.T) {
+		for _, bending := range solutionElement.BendingMoment {
+			if !inkgeom.FloatsEqualEps(bending.Value, 0.0, displError) {
+				t.Errorf("Expected no bending moment but got %f at t = %f", bending.Value, bending.T)
+			}
+		}
+	})
 }
 
 func TestAxialMemberWithDistributedLoad(t *testing.T) {
@@ -63,11 +89,13 @@ func TestAxialMemberWithDistributedLoad(t *testing.T) {
 			var (
 				ea     = material.YoungMod * section.Area
 				x      = tParam.Value() * length
+				x2     = math.Pow(x, 2)
+				x3     = math.Pow(x, 3)
 				load_a = l.ValueAt(inkgeom.MinT)
 				load_b = -load_a / length
 			)
 
-			return (load_a*x + 0.5*load_b*math.Pow(x, 2)) / ea
+			return (load_a*x2/2.0 + load_b*x3/3.0) / ea
 		}
 
 		for _, disp := range solutionElement.LocalXDispl {
