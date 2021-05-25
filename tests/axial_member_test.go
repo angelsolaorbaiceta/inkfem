@@ -90,12 +90,11 @@ func TestAxialMemberWithDistributedLoad(t *testing.T) {
 				ea     = material.YoungMod * section.Area
 				x      = tParam.Value() * length
 				x2     = math.Pow(x, 2)
-				x3     = math.Pow(x, 3)
 				load_a = l.ValueAt(inkgeom.MinT)
 				load_b = -load_a / length
 			)
 
-			return (load_a*x2/2.0 + load_b*x3/3.0) / ea
+			return (load_a*x + load_b*x2/2.0) / ea
 		}
 
 		for _, disp := range solutionElement.LocalXDispl {
