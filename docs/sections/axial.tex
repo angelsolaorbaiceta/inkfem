@@ -1,4 +1,5 @@
 \section{Axial Elements}
+\label{sec:axial}
 
 An \emph{axial element} is a linear resistant element whose deformation happens in the direction or its directrix only.
 The linear elements used by \emph{InkFEM} are a combination of axial and beam elements (see Section~\ref{sec:beams}).
@@ -22,8 +23,8 @@ where:
 
 \begin{equation}
   \begin{split}
-    N_1(x) = 1 - \frac{x}{L} \\
-    N_2(x) = \frac{x}{L} \\
+    N_1(x) & = 1 - \frac{x}{L} \\
+    N_2(x) & = \frac{x}{L} \\
   \end{split}
 \end{equation}
 
@@ -63,3 +64,8 @@ Therefore, a linear axial load $q_x(x)$ can be distributed over the two nodes in
     F_x^2 = \frac{a L}{2} + \frac{b L^2}{3} \\
   \end{split}
 \end{equation}
+
+
+\subsection{Axial Stress}
+
+Each element's axial stress...

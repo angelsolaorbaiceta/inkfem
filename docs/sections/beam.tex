@@ -1,3 +1,107 @@
 \section{Beam Elements}
 \label{sec:beams}
 
+From the mechanics of materials beam theory, the shear stress $V$ in a beam is related to the vertical distributed load $f_y(x)$ as shown by Equation~\ref{eq:shear_vertical_load}:
+
+\begin{equation}
+  \label{eq:shear_vertical_load}
+  \frac{dV}{dx} = f_y(x)
+\end{equation}
+
+Let $v(x)$ be the vertical displacement of the beam's centroidal axis.
+Then, the bending moment $M(x)$ can be expressed in terms of this displacement (Equation~\ref{eq:beam_bending_moment}):
+
+\begin{equation}
+  \label{eq:beam_bending_moment}
+  M(x) = E I \frac{d^2v(x)}{dx^2}
+\end{equation}
+
+The relationship between the shear stress $V(x)$ and the bending moment $M(x)$ is given by Equation~\ref{eq:shear_bending_relation}:
+
+\begin{equation}
+  \label{eq:shear_bending_relation}
+  V(x) = \frac{dM(x)}{dx} = \frac{d}{dx} \left( E I \frac{d^2v(x)}{dx^2} \right)
+\end{equation}
+
+And hence, the beam's governing differential equation, provided $EI$ is constant, is given by Equation~\ref{eq:beam_governing_eq}:
+
+\begin{equation}
+  \label{eq:beam_governing_eq}
+  E I \frac{d^4v(x)}{dx^4} = f_y(x)
+\end{equation}
+
+
+\subsection{Energy Formulation}
+
+Energy...
+
+
+\subsection{Displacement Field And Interpolation Functions}
+
+The vector $\left\{ q^e \right\}$ contains the beam finite element start and end nodes vertical displacements and rotations:
+
+\[
+  \left\{ q^e \right\} =
+  \begin{Bmatrix}
+    v_1 \\
+    \theta_1 \\
+    v_2 \\
+    \theta_2 \\
+  \end{Bmatrix} =
+  \begin{Bmatrix}
+    v_1 \\
+    \left( \frac{dv}{dx} \right)_1 \\
+    v_2 \\
+    \left( \frac{dv}{dx} \right)_2 \\
+  \end{Bmatrix}
+\]
+
+Let $v(x)$ be the vertical displacements field in the beam finite element of length $L$.
+We can assume a cubic displacement field inside the element, as described by Equation~\ref{eq:beam_disp_field}:
+
+\begin{equation}
+  \label{eq:beam_disp_field}
+  v(x) = N_1 v_1 + N_2 \theta_1 + N_3 v_2 + N_4 \theta_2
+\end{equation}
+
+where:
+
+\begin{equation}
+  \begin{split}
+    N_1(x) & = \frac{1}{L^3} \left( 2x^3 -3x^2L + L^3 \right) \\
+    N_2(x) & = \frac{1}{L^2} \left( x^3 - 2x^2L + xL^2 \right) \\
+    N_3(x) & = \frac{1}{L^3} \left( -2x^3 - 3x^2L \right) \\
+    N_4(x) & = \frac{1}{L^2} \left( x^3 - x^2L \right) \\
+  \end{split}
+\end{equation}
+
+These N interpolation functions fulfill the following conditions:
+
+\[
+  \begin{aligned}
+    N_1(0) & = 1    &    N_1'(0) & = 0    &    N_1(L) & = 0    &    N_1'(L) & = 0 \\
+    N_2(0) & = 0    &    N_2'(0) & = 1    &    N_2(L) & = 0    &    N_2'(L) & = 0 \\
+    N_3(0) & = 0    &    N_3'(0) & = 0    &    N_3(L) & = 1    &    N_3'(L) & = 0 \\
+    N_4(0) & = 0    &    N_4'(0) & = 0    &    N_4(L) & = 0    &    N_4'(L) & = 1 \\
+  \end{aligned}
+\]
+
+The displacement field can be rewritten as:
+
+\[
+  v(x) = \left[ N \right] \left\{ q^e \right\} =
+  \begin{bmatrix}
+    N_1 & N_2 & N_3 & N_4 \\
+  \end{bmatrix}
+  \begin{Bmatrix}
+    v_1 \\
+    \theta_1 \\
+    v_2 \\
+    \theta_2 \\
+  \end{Bmatrix}
+\]
+
+
+\subsection{Distributed Loads}
+
+loads...
