@@ -64,18 +64,10 @@ func (n Node) NetLocalFx() float64 {
 	return n.externalLocalLoad[fxIndex] + n.leftLocalLoad[fxIndex] + n.rightLocalLoad[fxIndex]
 }
 
-/*
-LocalLeftFx returns the magnitude of the local force in X coming from the finite element
-to the left of the node.
-*/
 func (n Node) LocalLeftFx() float64 {
 	return n.leftLocalLoad[fxIndex]
 }
 
-/*
-LocalRightFx returns the magnitude of the local force in X coming from the finite element
-to the right of the node.
-*/
 func (n Node) LocalRightFx() float64 {
 	return n.rightLocalLoad[fxIndex]
 }
@@ -85,18 +77,10 @@ func (n Node) NetLocalFy() float64 {
 	return n.externalLocalLoad[fyIndex] + n.LocalLeftFy() + n.LocalRightFy()
 }
 
-/*
-LocalLeftFy returns the magnitude of the local force in Y coming from the finite element
-to the left of the node.
-*/
 func (n Node) LocalLeftFy() float64 {
 	return n.leftLocalLoad[fyIndex]
 }
 
-/*
-LocalRightFy returns the magnitude of the local force in Y coming from the finite element
-to the right of the node.
-*/
 func (n Node) LocalRightFy() float64 {
 	return n.rightLocalLoad[fyIndex]
 }
@@ -106,18 +90,10 @@ func (n Node) NetLocalMz() float64 {
 	return n.externalLocalLoad[mzIndex] + n.LocalLeftMz() + n.LocalRightMz()
 }
 
-/*
-LocalLeftMz returns the magnitude of the local moment around Z coming from the finite element
-to the left of the node.
-*/
 func (n Node) LocalLeftMz() float64 {
 	return n.leftLocalLoad[mzIndex]
 }
 
-/*
-LocalRightMz returns the magnitude of the local moment around Z coming from the finite element
-to the right of the node.
-*/
 func (n Node) LocalRightMz() float64 {
 	return n.rightLocalLoad[mzIndex]
 }
