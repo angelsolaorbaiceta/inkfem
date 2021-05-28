@@ -64,6 +64,22 @@ func (n Node) NetLocalFx() float64 {
 	return n.externalLocalLoad[fxIndex] + n.leftLocalLoad[fxIndex] + n.rightLocalLoad[fxIndex]
 }
 
+/*
+LocalLeftFx returns the magnitude of the local force in X coming from the finite element
+to the left of the node.
+*/
+func (n Node) LocalLeftFx() float64 {
+	return n.leftLocalLoad[fxIndex]
+}
+
+/*
+LocalRightFx returns the magnitude of the local force in X coming from the finite element
+to the right of the node.
+*/
+func (n Node) LocalRightFx() float64 {
+	return n.rightLocalLoad[fxIndex]
+}
+
 // NetLocalFy returns the magnitude of the net local force in Y.
 func (n Node) NetLocalFy() float64 {
 	return n.externalLocalLoad[fyIndex] + n.LocalLeftFy() + n.LocalRightFy()
@@ -175,15 +191,20 @@ func (n *Node) AddLocalRightLoad(fx, fy, mz float64) {
 	n.rightLocalLoad[mzIndex] += mz
 }
 
-/* <-- Stringer --> */
-
 func (n Node) String() string {
-	loads := fmt.Sprintf("{%f %f %f}", n.NetLocalFx(), n.NetLocalFy(), n.NetLocalMz())
+	var (
+		leftLoads  = fmt.Sprintf("{%f %f %f}", n.LocalLeftFx(), n.LocalLeftFy(), n.LocalLeftMz())
+		rightLoads = fmt.Sprintf("{%f %f %f}", n.LocalRightFx(), n.LocalRightFy(), n.LocalRightMz())
+		loads      = fmt.Sprintf("{%f %f %f}", n.NetLocalFx(), n.NetLocalFy(), n.NetLocalMz())
+	)
+
 	return fmt.Sprintf(
-		"%f: %f %f | %s | DOF: %v",
+		"%f : %f %f \n\t left  : %s \n\t right : %s \n\t net   : %s \n\t dof   : %v",
 		n.T.Value(),
 		n.Position.X,
 		n.Position.Y,
+		leftLoads,
+		rightLoads,
 		loads,
 		n.DegreesOfFreedomNum(),
 	)

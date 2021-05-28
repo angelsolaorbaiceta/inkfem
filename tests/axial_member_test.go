@@ -51,7 +51,7 @@ func TestAxialMemberWithConcentratedLoad(t *testing.T) {
 
 	t.Run("Axial stress", func(t *testing.T) {
 		expectedAxial := l.Value / section.Area
-		
+
 		for _, axial := range solutionElement.AxialStress {
 			if !inkgeom.FloatsEqualEps(axial.Value, expectedAxial, displError) {
 				t.Errorf("Expected axial stress of %f, but got %f at t = %f", expectedAxial, axial.Value, axial.T)

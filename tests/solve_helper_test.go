@@ -34,7 +34,12 @@ var (
 )
 
 func solveStructure(str *structure.Structure) *process.Solution {
-	solveOptions := process.SolveOptions{false, "", true, displError}
+	solveOptions := process.SolveOptions{
+		SaveSysMatrixImage:    false,
+		OutputPath:            "",
+		SafeChecks:            true,
+		MaxDisplacementsError: displError,
+	}
 	pre := preprocess.DoStructure(str)
 	return process.Solve(pre, solveOptions)
 }
@@ -60,12 +65,12 @@ func makeCantileverBeamStructure(
 	)
 
 	return &structure.Structure{
-		structure.StrMetadata{1, 0},
-		map[contracts.StrID]*structure.Node{
+		Metadata: structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
+		Nodes: map[contracts.StrID]*structure.Node{
 			nodeOne.Id: nodeOne,
 			nodeTwo.Id: nodeTwo,
 		},
-		[]*structure.Element{beam},
+		Elements: []*structure.Element{beam},
 	}
 }
 
@@ -90,11 +95,11 @@ func makeAxialElementStructure(
 	)
 
 	return &structure.Structure{
-		structure.StrMetadata{1, 0},
-		map[contracts.StrID]*structure.Node{
+		Metadata: structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
+		Nodes: map[contracts.StrID]*structure.Node{
 			nodeOne.Id: nodeOne,
 			nodeTwo.Id: nodeTwo,
 		},
-		[]*structure.Element{axialElement},
+		Elements: []*structure.Element{axialElement},
 	}
 }
