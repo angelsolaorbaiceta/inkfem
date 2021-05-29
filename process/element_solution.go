@@ -142,10 +142,12 @@ func (es *ElementSolution) computeStresses() {
 
 		/* <-- Axial --> */
 		var (
-			axial = (leadDx - trailDx) * youngMod / length
+			axial      = (leadDx - trailDx) * youngMod / length
+			trailAxial = axial + (trailNode.LocalLeftFx() / es.Section().Area)
+			leadAxial  = axial - (leadNode.LocalRightFx() / es.Section().Area)
 		)
-		es.AxialStress[j] = PointSolutionValue{trailNode.T, axial}
-		es.AxialStress[j+1] = PointSolutionValue{leadNode.T, axial}
+		es.AxialStress[j] = PointSolutionValue{trailNode.T, trailAxial}
+		es.AxialStress[j+1] = PointSolutionValue{leadNode.T, leadAxial}
 
 		/* <-- Shear --> */
 		var (
