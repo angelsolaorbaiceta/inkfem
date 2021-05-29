@@ -85,24 +85,29 @@ func TestAxialMemberWithConstantDistributedLoad(t *testing.T) {
 		solutionElement = sol.Elements[0]
 	)
 
-	// t.Run("X displacements", func(t *testing.T) {
-	// 	var expectedXDispl = func(tParam inkgeom.TParam) float64 {
-	// 		var (
-	// 			ea     = material.YoungMod * section.Area
-	// 			x      = tParam.Value() * length
-	// 			x2     = math.Pow(x, 2)
-	// 			load_a = l.ValueAt(inkgeom.MinT)
-	// 		)
+	t.Run("X displacements", func(t *testing.T) {
+		var (
+			ea                   = material.YoungMod * section.Area
+			load_a               = l.ValueAt(inkgeom.MinT)
+			normalReactionForce  = l.ValueAt(inkgeom.MinT) * length
+			normalReactionStress = normalReactionForce / section.Area
+		)
 
-	// 		return (load_a * x2 / 2.0) / ea
-	// 	}
+		var expectedXDispl = func(tParam inkgeom.TParam) float64 {
+			var (
+				x  = tParam.Value() * length
+				x2 = math.Pow(x, 2)
+			)
 
-	// 	for _, disp := range solutionElement.LocalXDispl {
-	// 		if want := expectedXDispl(disp.T); !inkgeom.FloatsEqualEps(disp.Value, want, displError) {
-	// 			t.Errorf("Expected X displacement of %f, but got %f at %f", want, disp.Value, disp.T)
-	// 		}
-	// 	}
-	// })
+			return (normalReactionStress * x / material.YoungMod) - (load_a*x2/2.0)/ea
+		}
+
+		for _, disp := range solutionElement.LocalXDispl {
+			if want := expectedXDispl(disp.T); !inkgeom.FloatsEqualEps(disp.Value, want, displError) {
+				t.Errorf("Expected X displacement of %f, but got %f at %f", want, disp.Value, disp.T)
+			}
+		}
+	})
 
 	t.Run("Y displacements", func(t *testing.T) {
 		for _, disp := range solutionElement.LocalYDispl {
