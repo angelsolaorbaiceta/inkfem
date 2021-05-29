@@ -26,7 +26,6 @@ type Element struct {
 	section                    *Section
 	ConcentratedLoads          []*load.ConcentratedLoad
 	DistributedLoads           []*load.DistributedLoad
-	_ea, _ei                   float64
 }
 
 // MakeElement creates a new element with all properties initialized.
@@ -50,8 +49,6 @@ func MakeElement(
 		section:           section,
 		ConcentratedLoads: concentratedLoads,
 		DistributedLoads:  distributedLoads,
-		_ea:               material.YoungMod * section.Area,
-		_ei:               material.YoungMod * section.IStrong,
 	}
 }
 
@@ -136,13 +133,15 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 		l    = e.Geometry.LengthBetween(startT, endT)
 		c    = e.Geometry.RefFrame().Cos()
 		s    = e.Geometry.RefFrame().Sin()
+		ea   = e.material.YoungMod * e.section.Area
+		ei   = e.material.YoungMod * e.section.IStrong
 		c2   = c * c
 		s2   = s * s
 		cs   = c * s
-		eal  = e._ea / l
-		eil3 = 12.0 * e._ei / (l * l * l)
-		eil2 = 6.0 * e._ei / (l * l)
-		eil  = e._ei / l
+		eal  = ea / l
+		eil3 = 12.0 * ei / (l * l * l)
+		eil2 = 6.0 * ei / (l * l)
+		eil  = ei / l
 		k    = mat.MakeSquareDense(6)
 	)
 
@@ -207,9 +206,7 @@ func (e *Element) Equals(other *Element) bool {
 		e.section.Name == other.section.Name
 }
 
-/* <-- Identifiable --> */
-
-// GetID returns the element's id.
+// GetID returns the element's id. Implements Identifiable interface.
 func (e Element) GetID() contracts.StrID {
 	return e.Id
 }
