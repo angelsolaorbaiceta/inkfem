@@ -17,13 +17,13 @@ func TestAxialMemberWithConcentratedLoad(t *testing.T) {
 	)
 
 	t.Run("X displacements", func(t *testing.T) {
-		var expectedXDispl = func(tParam inkgeom.TParam) float64 {
-			var (
-				ea = material.YoungMod * section.Area
-				x  = tParam.Value() * length
-				f  = l.Value
-			)
+		var (
+			ea = material.YoungMod * section.Area
+			f  = l.Value
+		)
 
+		var expectedXDispl = func(tParam inkgeom.TParam) float64 {
+			x := tParam.Value() * length
 			return f * x / ea
 		}
 
@@ -121,14 +121,14 @@ func TestAxialMemberWithConstantDistributedLoad(t *testing.T) {
 	})
 
 	t.Run("Axial stress", func(t *testing.T) {
-		var expectedAxial = func(tParam inkgeom.TParam) float64 {
-			var (
-				x                    = tParam.Value() * length
-				normalReactionForce  = l.ValueAt(inkgeom.MinT) * length
-				normalReactionStress = normalReactionForce / section.Area
-				loadStress           = l.ValueAt(inkgeom.MinT) / section.Area
-			)
+		var (
+			normalReactionForce  = l.ValueAt(inkgeom.MinT) * length
+			normalReactionStress = normalReactionForce / section.Area
+			loadStress           = l.ValueAt(inkgeom.MinT) / section.Area
+		)
 
+		var expectedAxial = func(tParam inkgeom.TParam) float64 {
+			x := tParam.Value() * length
 			return normalReactionStress - loadStress*x
 		}
 
