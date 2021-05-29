@@ -69,3 +69,65 @@ Therefore, a linear axial load $q_x(x)$ can be distributed over the two nodes in
 \subsection{Axial Stress}
 
 Each element's axial stress...
+
+\subsection{Example}
+
+This example is implemented as an integration test in the \emph{axial\_member\_test.go} to ensure the correct working of the FEM procedure.
+
+Consider an axial member with one of its ends fixed and an axial distributed load that goes from 400 $\frac{\text{N}}{\text{cm}}$ in the fixed end to 0 $\frac{\text{N}}{\text{cm}}$ in the free end.
+The bar has a length of 100 cm, a cross section area of 14 $\text{cm}^2$ and is made of a material whose Young modulus is $20 \times 10^6 \frac{\text{N}}{\text{cm}^2}$.
+This axial bar is depicted in Figure~\ref{fig:axial_bar_distributed}.
+
+\begin{figure}[h]
+  \label{fig:axial_bar_distributed}
+  \includegraphics[width=\linewidth]{sections/img/axial_bar_distributed.pdf}
+  \caption{Axial bar subject to a distributed load}
+\end{figure}
+
+The load can be formulated as:
+
+\[
+  q_x(x) = a + bx = 400 - 4x
+\]
+
+From mechanics of materials, we know that in an axial member, the normal stress $\sigma$ is:
+
+\[
+  \sigma = E \epsilon  
+\]
+where $E$ is the material's Young modulus and $\epsilon$ is the strain.
+Given the displacement field $u(x)$ inside the bar subject to external loads, the strain can be expressed as:
+
+\[
+  \epsilon = \frac{du}{dx}  
+\]
+and therefore:
+
+\[
+  \sigma = E \frac{du}{dx}
+\]
+
+At the same time, we know that the equilibrium of a differential slice in the bar yields the following relation:
+
+\[
+  \frac{\partial \sigma}{\partial x} = - \frac{q_x(x)}{A}  
+\]
+
+We can obtain the analytical value for the stress function of the position x integrating:
+
+\[
+  \sigma(x) = - \int \frac{q_x(x)}{A} \,dx 
+  = - \int \left( \frac{a + bx}{A} \right) \,dx 
+  = \sigma_r - \frac{1}{A} \left( ax + \frac{b x^2}{2} \right)
+\]
+
+Where $\sigma_r$ is the normal stress in the fixed end, which can be obtained computing the reaction force first:
+
+\[
+  N_r = \frac{400 \frac{\text{N}}{\text{cm}} \times 100 \text{cm}}{2} = 20,000 \text{N}
+\]
+And then dividing the reaction force $N_r$ by the bar's cross section area A:
+
+\[
+  \sigma_r = \frac{20,000 \text{N}}{14 \text{cm}^2} = 1428.57 \frac{\text{N}}{\text{cm}^2}
+\]

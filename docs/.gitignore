@@ -3,3 +3,4 @@
 *.blg
 *.log
 *.synctex.gz
+*_temp.tex
