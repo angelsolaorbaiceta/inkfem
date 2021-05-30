@@ -163,19 +163,20 @@ Figure~\ref{fig:beam_finite_element_load_distribution} depicts this distibution 
 
 \subsection{Shear Force}
 
-Given the expression for the shear force function of the displacement field $v(x)$:
+Given the expression for the shear force $V(x)$ function of the displacement field $v(x)$:
 
 \begin{equation}
   V(x) = \frac{d}{dx} \left( EI \frac{d^2v}{dx^2} \right)
 \end{equation}
 and knowing that $v(x)$ is:
 
-\[
+\begin{equation}
+  \label{eq:vertical_disp_field}
   v(x) = 
   \left[ \frac{2}{L^3} \left( v_1 - v_2 \right) + \frac{1}{L^2} \left( \theta_1 + \theta_2 \right) \right] x^3
   + \left[ \frac{-3}{L^2} \left( v_1 - v_2 \right) - \frac{1}{L} \left( 2 \theta_1 + \theta_2 \right) \right] x^2
   + \theta_1 x + v_2
-\]
+\end{equation}
 The shear force inside the element $V_e$ is then:
 
 \[
@@ -191,6 +192,33 @@ Given the shear force inside the element, $V_e$, we can compute the values for t
   \end{split}  
 \]
 
+
 \subsection{Bending Moment}
 
-Bla bla bla...
+Given the expression for the bending moment $M(x)$ function of the displacement field $v(x)$:
+
+\begin{equation}
+  M(x) = EI \frac{d^2v}{dx^2}
+\end{equation}
+and the vertical displacement field expression in Formula~\ref{eq:vertical_disp_field}, the bending moment can be computed as follows:
+
+\[
+  M(x)  = EI \left( \frac{12x - 6L}{L^3} v_1 + \frac{6x - 4L}{L^2} \theta_1 + \frac{-12x + 6L}{L^3} v_2 + \frac{6x - 2L}{L^2} \theta_2 \right)
+\]
+Evaluating this equation for $x = 0$ and $x = L$, we obtain:
+
+\[
+  \begin{split}
+    M(0) = \frac{6EI}{L^2} (v_2 - v_1) - \frac{2EI}{L} (\theta_2 + 2 \theta_1) \\
+    M(L) = \frac{6EI}{L^2} (v_1 - v_2) + \frac{2EI}{L} (\theta_1 + 2 \theta_2) \\
+  \end{split}  
+\]
+
+And finally, accounting for the external bending moments in the nodes, we can compute the bending moment values for the nodes of the finete element as follows:
+
+\[
+  \begin{split}
+    M_e^1 = M(0) + M_z^0 \\
+    M_e^2 = M(L) - M_z^1 \\
+  \end{split}  
+\]
