@@ -104,4 +104,59 @@ The displacement field can be rewritten as:
 
 \subsection{Distributed Loads}
 
-loads...
+Considering the distributed load formulation as in Equation~\ref{eq:distributed_linear_load}, but in the y direction $q_y(x)$, the work done by the load is:
+
+\[
+  W_{q_y} = \int_0^L q_y(x) \vec{v}(x) dx
+\]
+which yields a result of:
+
+\[
+  W_{q_y} = 
+  \begin{bmatrix}    
+    \frac{aL}{2} + \frac{3 L^2 b}{20} & \frac{aL^2}{12} + \frac{bL^3}{30} & \frac{aL}{2} + \frac{7bL^2}{20} & -\frac{aL^2}{12} - \frac{bL^3}{20} \\
+  \end{bmatrix}
+  \begin{Bmatrix}
+    v_1 \\
+    \theta_1 \\
+    v_2 \\
+    \theta_2 \\
+  \end{Bmatrix}
+\]
+
+Therefore, a linear load $q_y(x)$ can be distributed over the two nodes in the finite element adding the forces and moments:
+
+\begin{equation}
+  \begin{split}
+    F_y^1 = & \frac{aL}{2} + \frac{3 L^2 b}{20} \\
+    M_z^1 = & \frac{aL^2}{12} + \frac{bL^3}{30} \\
+    F_y^2 = & \frac{aL}{2} + \frac{7bL^2}{20} \\
+    M_z^2 = & -\frac{aL^2}{12} - \frac{bL^3}{20} \\
+  \end{split}
+\end{equation}
+
+Figure~\ref{fig:beam_finite_element_load_distribution} depicts this distibution of a linear shear load inside a finite element of length L.
+
+\begin{figure}[h]
+  \label{fig:beam_finite_element_load_distribution}
+  \centering
+  \begin{tikzpicture}
+    \draw[gray, thick] (1,0) rectangle (6,1);
+    \draw[green!40!gray, thick] (1,1) -- (1,1.5) -- (6,2) -- (6,1);
+    \filldraw[green!40!gray] (1,1.25) node[anchor=west] {$q_y = a + bx$};
+   
+    \draw[ultra thick, ->] (0.75,0) -- (0.75, 1);
+    \filldraw[black] (0.5, -0.5) node[anchor=west] {$\frac{aL}{2} + \frac{3 L^2 b}{20}$};  
+    
+    \draw[ultra thick, ->] (0.5,0) arc (-90:-270:0.5);
+    \filldraw[black] (0, 0.5) node[anchor=east] {$\frac{aL^2}{12} + \frac{bL^3}{30}$};  
+    
+    \draw[ultra thick, ->] (6.25,0) -- (6.25, 1);
+    \filldraw[black] (6.5,-0.5) node[anchor=east] {$\frac{aL}{2} + \frac{7bL^2}{20}$};  
+    
+    \draw[ultra thick, ->] (6.5,0) arc (-90:90:0.5);
+    \filldraw[black] (7,0.5) node[anchor=west] {$-\frac{aL^2}{12} - \frac{bL^3}{20}$};  
+  \end{tikzpicture}
+  \caption{Distribution of a distributed shear load}
+\end{figure}
+

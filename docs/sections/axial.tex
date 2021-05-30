@@ -34,13 +34,14 @@ where:
 We consider distributed axial loads that vary linearly with respect to the X direction:
 
 \begin{equation}
+  \label{eq:distributed_linear_load}
   q_x(x) = a + bx
 \end{equation}
 
 The work done by these forces can be obtained by the following integration:
 
 \[
-  W_{q_x} = \int_{0}^{L} q_x \vec{u}(x) dx = \int_{0}^{L} (a + bx) \left[ \left( 1 - \frac{x}{L} \right) u_1 + \left( \frac{x}{L} \right) u_2 \right] dx
+  W_{q_x} = \int_{0}^{L} q_x(x) \vec{u}(x) dx = \int_{0}^{L} (a + bx) \left[ \left( 1 - \frac{x}{L} \right) u_1 + \left( \frac{x}{L} \right) u_2 \right] dx
 \]
 
 Which yields a result of:
