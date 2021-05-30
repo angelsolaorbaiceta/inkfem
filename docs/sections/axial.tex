@@ -169,3 +169,23 @@ And then dividing the reaction force $N_r$ by the bar's cross section area A:
 \[
   \sigma_r = \frac{20,000 \text{N}}{14 \text{cm}^2} = 1428.57 \frac{\text{N}}{\text{cm}^2}
 \]
+
+
+\subsubsection{The Axial Displacements}
+
+Given the stress-strain equation, to compute the displacement in the x direction:
+
+\[
+  du = \frac{\sigma}{E} dx  
+\]
+Integrating:
+
+\[
+  u(x) = \cancel{u_r} + \frac{1}{E} \int \sigma(x) dx = \frac{1}{E} \int \left[ \sigma_r - \frac{1}{A} \left( ax + \frac{b x^2}{2} \right) \right] dx
+\]
+where $u_r$ is the displacement in the fixed end, which we know must equal zero.
+This integration yields:
+
+\[
+  u(x) = \frac{\sigma_r x}{E} - \frac{1}{EA} \left( \frac{a x^2}{2} + \frac{b x^3}{6} \right)  
+\]
