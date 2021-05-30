@@ -65,6 +65,23 @@ Therefore, a linear axial load $q_x(x)$ can be distributed over the two nodes in
   \end{split}
 \end{equation}
 
+Figure~\ref{fig:axial_finite_element_load_distribution} depicts this distibution of a linear axial load inside a finite element of length L.
+
+\begin{figure}[h]
+  \label{fig:axial_finite_element_load_distribution}
+  \centering
+  \begin{tikzpicture}
+    \draw[gray, thick] (1,0) rectangle (6,1);
+    \draw[green!40!gray, thick] (1,1) -- (1,1.5) -- (6,2) -- (6,1);
+    \filldraw[green!40!gray] (1,1.25) node[anchor=west] {$q_x = a + bx$};
+    \draw[ultra thick, ->] (0,0.5) -- (1, 0.5);
+    \draw[ultra thick, ->] (6,0.5) -- (7.25, 0.5);
+    \filldraw[black] (0,0.5) node[anchor=east] {$\frac{aL}{2} + \frac{b L^2}{6}$};  
+    \filldraw[black] (7.25,0.5) node[anchor=west] {$\frac{aL}{2} + \frac{b L^2}{3}$};  
+  \end{tikzpicture}
+  \caption{Distribution of a distributed axial load}
+\end{figure}
+
 
 \subsection{Axial Stress}
 
@@ -84,12 +101,9 @@ This axial bar is depicted in Figure~\ref{fig:axial_bar_distributed}.
   \caption{Axial bar subject to a distributed load}
 \end{figure}
 
-The load can be formulated as:
+\subsubsection{The Axial Stress}
 
-\[
-  q_x(x) = a + bx = 400 - 4x
-\]
-
+Let's start by finding the expression in terms of the position x of the axial stress inside the bar.
 From mechanics of materials, we know that in an axial member, the normal stress $\sigma$ is:
 
 \[
@@ -111,6 +125,11 @@ At the same time, we know that the equilibrium of a differential slice in the ba
 
 \[
   \frac{\partial \sigma}{\partial x} = - \frac{q_x(x)}{A}  
+\]
+The distributed load can be formulated as:
+
+\[
+  q_x(x) = a + bx = 400 - 4x
 \]
 
 We can obtain the analytical value for the stress function of the position x integrating:
