@@ -160,3 +160,37 @@ Figure~\ref{fig:beam_finite_element_load_distribution} depicts this distibution 
   \caption{Distribution of a distributed shear load}
 \end{figure}
 
+
+\subsection{Shear Force}
+
+Given the expression for the shear force function of the displacement field $v(x)$:
+
+\begin{equation}
+  V(x) = \frac{d}{dx} \left( EI \frac{d^2v}{dx^2} \right)
+\end{equation}
+and knowing that $v(x)$ is:
+
+\[
+  v(x) = 
+  \left[ \frac{2}{L^3} \left( v_1 - v_2 \right) + \frac{1}{L^2} \left( \theta_1 + \theta_2 \right) \right] x^3
+  + \left[ \frac{-3}{L^2} \left( v_1 - v_2 \right) - \frac{1}{L} \left( 2 \theta_1 + \theta_2 \right) \right] x^2
+  + \theta_1 x + v_2
+\]
+The shear force inside the element $V_e$ is then:
+
+\[
+  V_e = \frac{12EI}{L^3} \left( v_1 - v_2 \right) + \frac{6EI}{L^2} \left( \theta_1 + \theta_2 \right)
+\]
+
+Given the shear force inside the element, $V_e$, we can compute the values for the shear force in the element nodes:
+
+\[
+  \begin{split}
+    V_e^1 = V_e - F_y^1 \\
+    V_e^2 = V_e + F_y^2 \\
+  \end{split}  
+\]
+
+\subsection{Bending Moment}
+
+Bla bla bla...
