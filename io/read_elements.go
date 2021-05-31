@@ -92,7 +92,7 @@ func deserializeElement(
 type elementComponents struct {
 	id, startNodeID, endNodeID contracts.StrID
 	materialName, sectionName  string
-	startLink, endLink         structure.Constraint
+	startLink, endLink         *structure.Constraint
 }
 
 func readElementComponents(definition string) *elementComponents {

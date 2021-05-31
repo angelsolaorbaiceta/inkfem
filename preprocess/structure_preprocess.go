@@ -41,7 +41,7 @@ func assignDof(str *Structure) {
 
 	var (
 		startNode, endNode *structure.Node
-		startLink, endLink structure.Constraint
+		startLink, endLink *structure.Constraint
 		nodesCount         int
 		dof                = 0
 	)
@@ -55,7 +55,7 @@ func assignDof(str *Structure) {
 	}
 
 	endNodesDof := func(
-		link structure.Constraint,
+		link *structure.Constraint,
 		node *structure.Node,
 	) (dxDof, dyDof, rzDof int) {
 		if link.AllowsDispX() {

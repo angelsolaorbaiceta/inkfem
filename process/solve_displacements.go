@@ -98,7 +98,7 @@ func addDispConstraints(
 	nodes *map[contracts.StrID]*structure.Node,
 ) {
 	var (
-		constraint structure.Constraint
+		constraint *structure.Constraint
 		dofs       [3]int
 	)
 

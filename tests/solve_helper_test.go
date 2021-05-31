@@ -49,14 +49,14 @@ func makeCantileverBeamStructure(
 	distributedLoads []*load.DistributedLoad,
 ) *structure.Structure {
 	var (
-		nodeOne = structure.MakeNode("fixed-node", g2d.MakePoint(0, 0), structure.FullConstraint)
-		nodeTwo = structure.MakeNode("free-node", g2d.MakePoint(length, 0), structure.NilConstraint)
+		nodeOne = structure.MakeNode("fixed-node", g2d.MakePoint(0, 0), &structure.FullConstraint)
+		nodeTwo = structure.MakeNode("free-node", g2d.MakePoint(length, 0), &structure.NilConstraint)
 		beam    = structure.MakeElement(
 			"beam",
 			nodeOne,
 			nodeTwo,
-			structure.FullConstraint,
-			structure.FullConstraint,
+			&structure.FullConstraint,
+			&structure.FullConstraint,
 			material,
 			section,
 			concentratedLoads,
@@ -79,14 +79,14 @@ func makeAxialElementStructure(
 	distributedLoads []*load.DistributedLoad,
 ) *structure.Structure {
 	var (
-		nodeOne      = structure.MakeNode("fixed-node", g2d.MakePoint(0, 0), structure.FullConstraint)
-		nodeTwo      = structure.MakeNode("free-node", g2d.MakePoint(length, 0), structure.NilConstraint)
+		nodeOne      = structure.MakeNode("fixed-node", g2d.MakePoint(0, 0), &structure.FullConstraint)
+		nodeTwo      = structure.MakeNode("free-node", g2d.MakePoint(length, 0), &structure.NilConstraint)
 		axialElement = structure.MakeElement(
 			"axial-element",
 			nodeOne,
 			nodeTwo,
-			structure.FullConstraint,
-			structure.FullConstraint,
+			&structure.FullConstraint,
+			&structure.FullConstraint,
 			material,
 			section,
 			concentratedLoads,

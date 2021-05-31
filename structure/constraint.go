@@ -13,25 +13,30 @@ var (
 	FullConstraint = Constraint{true, true, true}
 )
 
-// A Constraint represents a condition on displacements and rotations.
+/*
+ A Constraint represents a condition on displacements and rotations.
+
+ Constraints are immutable, and therefore can be shared amont the elements that use them.
+ Use the `MakeConstraint` factory function to get an existing instance of a constraint.
+*/
 type Constraint struct {
 	isDxConstr, isDyConstr, isRzConst bool
 }
 
 // MakeConstraint creates a new constraint with the given degrees of freedom constrained of free.
-func MakeConstraint(isDxConstr, isDyConstr, isRzConst bool) Constraint {
+func MakeConstraint(isDxConstr, isDyConstr, isRzConst bool) *Constraint {
 	switch {
 	case !isDxConstr && !isDyConstr && !isRzConst:
-		return NilConstraint
+		return &NilConstraint
 
 	case isDxConstr && isDyConstr && !isRzConst:
-		return DispConstraint
+		return &DispConstraint
 
 	case isDxConstr && isDyConstr && isRzConst:
-		return FullConstraint
+		return &FullConstraint
 
 	default:
-		return Constraint{isDxConstr, isDyConstr, isRzConst}
+		return &Constraint{isDxConstr, isDyConstr, isRzConst}
 	}
 }
 
@@ -51,7 +56,7 @@ func (c Constraint) AllowsDispY() bool {
 }
 
 // Equals tests whether this constraint equals other.
-func (c Constraint) Equals(other Constraint) bool {
+func (c *Constraint) Equals(other *Constraint) bool {
 	return c.isDxConstr == other.isDxConstr &&
 		c.isDyConstr == other.isDyConstr &&
 		c.isRzConst == other.isRzConst

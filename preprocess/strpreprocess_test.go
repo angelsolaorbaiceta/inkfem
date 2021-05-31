@@ -62,11 +62,11 @@ func makeStructure() *Structure {
 		nC = structure.MakeFreeNodeAtPosition("3", 100, 0)
 
 		elemOrigA = structure.MakeElementWithoutLoads(
-			"1", nA, nB, structure.FullConstraint, structure.FullConstraint,
+			"1", nA, nB, &structure.FullConstraint, &structure.FullConstraint,
 			structure.MakeUnitMaterial(), structure.MakeUnitSection(),
 		)
 		elemOrigB = structure.MakeElementWithoutLoads(
-			"2", nA, nC, structure.DispConstraint, structure.FullConstraint,
+			"2", nA, nC, &structure.DispConstraint, &structure.FullConstraint,
 			structure.MakeUnitMaterial(), structure.MakeUnitSection(),
 		)
 	)

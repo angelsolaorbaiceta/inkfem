@@ -13,7 +13,7 @@ const unsetDOFNumber = -1
 type Node struct {
 	Id                 contracts.StrID
 	Position           g2d.Projectable
-	ExternalConstraint Constraint
+	ExternalConstraint *Constraint
 	globalDof          [3]int
 }
 
@@ -21,7 +21,7 @@ type Node struct {
 func MakeNode(
 	id contracts.StrID,
 	position g2d.Projectable,
-	externalConstraint Constraint,
+	externalConstraint *Constraint,
 ) *Node {
 	return &Node{
 		id,
@@ -31,14 +31,11 @@ func MakeNode(
 	}
 }
 
-/*
-MakeNodeAtPosition creates a new node with the given id, position coordinates and
-external constraint.
-*/
+// MakeNodeAtPosition creates a new node with the given id, position coordinates and external constraint.
 func MakeNodeAtPosition(
 	id contracts.StrID,
 	x, y float64,
-	externalConstraint Constraint,
+	externalConstraint *Constraint,
 ) *Node {
 	return &Node{
 		id,
@@ -56,14 +53,14 @@ func MakeFreeNodeAtPosition(id contracts.StrID, x, y float64) *Node {
 	return &Node{
 		id,
 		g2d.MakePoint(x, y),
-		NilConstraint,
+		&NilConstraint,
 		[3]int{unsetDOFNumber, unsetDOFNumber, unsetDOFNumber},
 	}
 }
 
 // IsExternallyConstrained returns true if this node is externally constrained.
 func (n Node) IsExternallyConstrained() bool {
-	return n.ExternalConstraint != NilConstraint
+	return n.ExternalConstraint != &NilConstraint
 }
 
 // DegreesOfFreedomNum returns the degrees of freedom numbers assigned to the node.

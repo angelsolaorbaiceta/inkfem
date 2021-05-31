@@ -12,7 +12,7 @@ const (
 	rotZ  = "rz"
 )
 
-func constraintFromString(str string) structure.Constraint {
+func constraintFromString(str string) *structure.Constraint {
 	var (
 		dxConst = strings.Contains(str, dispX)
 		dyConst = strings.Contains(str, dispY)

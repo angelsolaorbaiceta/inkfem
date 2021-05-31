@@ -13,7 +13,7 @@ import (
 func TestDeserializeNode(t *testing.T) {
 	var (
 		got  = deserializeNode("1 -> 10.1 20.2 { dx dy rz }")
-		want = structure.MakeNode("1", g2d.MakePoint(10.1, 20.2), structure.FullConstraint)
+		want = structure.MakeNode("1", g2d.MakePoint(10.1, 20.2), &structure.FullConstraint)
 	)
 
 	if !got.Equals(want) {
@@ -30,9 +30,9 @@ func TestDeserializeNodes(t *testing.T) {
 		}
 		nodes = deserializeNodesByID(lines)
 
-		nodeOne   = structure.MakeNode("1", g2d.MakePoint(10.1, 20.2), structure.FullConstraint)
-		nodeTwo   = structure.MakeNode("2", g2d.MakePoint(40.1, 50.2), structure.DispConstraint)
-		nodeThree = structure.MakeNode("3", g2d.MakePoint(70.1, 80.2), structure.NilConstraint)
+		nodeOne   = structure.MakeNode("1", g2d.MakePoint(10.1, 20.2), &structure.FullConstraint)
+		nodeTwo   = structure.MakeNode("2", g2d.MakePoint(40.1, 50.2), &structure.DispConstraint)
+		nodeThree = structure.MakeNode("3", g2d.MakePoint(70.1, 80.2), &structure.NilConstraint)
 	)
 
 	if size := len(*nodes); size != 3 {
@@ -210,14 +210,14 @@ func TestDeserializeElements(t *testing.T) {
 
 		wantElOne = structure.MakeElement(
 			"1", nodes["1"], nodes["2"],
-			structure.FullConstraint, structure.DispConstraint,
+			&structure.FullConstraint, &structure.DispConstraint,
 			materials["mat"], sections["sec"],
 			concentratedLoads["1"],
 			distributedLoads["1"],
 		)
 		wantElTwo = structure.MakeElement(
 			"2", nodes["1"], nodes["3"],
-			structure.DispConstraint, structure.FullConstraint,
+			&structure.DispConstraint, &structure.FullConstraint,
 			materials["mat"], sections["sec"],
 			concentratedLoads["2"],
 			distributedLoads["2"],

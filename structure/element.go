@@ -11,17 +11,18 @@ import (
 )
 
 /*
-An Element represents s resistant element defined between two structural nodes, a section and
+An Element represents a resistant element defined between two structural nodes, a section and
 a material.
 
-An Element can have loads applied to it.
+An Element can have distributed and concentrated loads applied to it.
 
 TODO: choose the bending axis
+TODO: buckling analysis
 */
 type Element struct {
 	Id, StartNodeID, EndNodeID contracts.StrID
 	Geometry                   g2d.Segment
-	StartLink, EndLink         Constraint
+	StartLink, EndLink         *Constraint
 	material                   *Material
 	section                    *Section
 	ConcentratedLoads          []*load.ConcentratedLoad
@@ -32,7 +33,7 @@ type Element struct {
 func MakeElement(
 	id contracts.StrID,
 	startNode, endNode *Node,
-	startLink, endLink Constraint,
+	startLink, endLink *Constraint,
 	material *Material,
 	section *Section,
 	concentratedLoads []*load.ConcentratedLoad,
@@ -56,7 +57,7 @@ func MakeElement(
 func MakeElementWithoutLoads(
 	id contracts.StrID,
 	startNode, endNode *Node,
-	startLink, endLink Constraint,
+	startLink, endLink *Constraint,
 	material *Material,
 	section *Section,
 ) *Element {
