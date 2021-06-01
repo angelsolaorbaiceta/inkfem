@@ -29,7 +29,7 @@ This will generate an additional file with the `.inkfempre` extension containing
 To build the binary, execute the `build.sh` script:
 
 ```bash
-$ bash build.sh
+$ ./build.sh
 ```
 
 This will produce the `inkfem` binary in the project's root directory.
@@ -40,7 +40,7 @@ This will produce the `inkfem` binary in the project's root directory.
 To run all the tests, execute the `test.sh` script:
 
 ```bash
-$ bash test.sh
+$ ./test.sh
 ```
 
 You can also run the tests inside a particular package like so:
