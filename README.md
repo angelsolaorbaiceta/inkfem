@@ -23,6 +23,33 @@ $ inkfem -i path/to/structure.inkfem -p
 
 This will generate an additional file with the `.inkfempre` extension containing the information about how the structure has been sliced into finite elements.
 
+
+## Build
+
+To build the binary, execute the `build.sh` script:
+
+```bash
+$ bash build.sh
+```
+
+This will produce the `inkfem` binary in the project's root directory.
+
+
+## Build
+
+To run all the tests, execute the `test.sh` script:
+
+```bash
+$ bash test.sh
+```
+
+You can also run the tests inside a particular package like so:
+
+```bash
+$ go test ./process
+```
+
+
 ## Code Structure
 
 The code is split into four main packages:

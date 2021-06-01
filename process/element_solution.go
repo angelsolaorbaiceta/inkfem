@@ -24,7 +24,7 @@ type ElementSolution struct {
 	LocalZRot   []PointSolutionValue
 
 	AxialStress   []PointSolutionValue
-	ShearStress   []PointSolutionValue
+	StressForce   []PointSolutionValue
 	BendingMoment []PointSolutionValue
 }
 
@@ -42,7 +42,7 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 		LocalZRot:    make([]PointSolutionValue, nOfNodes),
 
 		AxialStress:   make([]PointSolutionValue, 2*nOfNodes-2),
-		ShearStress:   make([]PointSolutionValue, 2*nOfNodes-2),
+		StressForce:   make([]PointSolutionValue, 2*nOfNodes-2),
 		BendingMoment: make([]PointSolutionValue, 2*nOfNodes-2),
 	}
 }
@@ -118,6 +118,7 @@ func (es *ElementSolution) computeStresses() {
 		trailNode, leadNode                               *preprocess.Node
 		youngMod                                          = es.Element.Material().YoungMod
 		iStrong                                           = es.Element.Section().IStrong
+		section                                           = es.Section().Area
 		ei                                                = youngMod * iStrong
 		trailDx, leadDx, trailDy, leadDy, trailRz, leadRz float64
 		length, length2, length3, eil, eil2, eil3         float64
@@ -143,8 +144,8 @@ func (es *ElementSolution) computeStresses() {
 		/* <-- Axial --> */
 		var (
 			axial      = (leadDx - trailDx) * youngMod / length
-			trailAxial = axial + (trailNode.LocalLeftFx() / es.Section().Area)
-			leadAxial  = axial - (leadNode.LocalRightFx() / es.Section().Area)
+			trailAxial = axial + (trailNode.LocalLeftFx() / section)
+			leadAxial  = axial - (leadNode.LocalRightFx() / section)
 		)
 		es.AxialStress[j] = PointSolutionValue{trailNode.T, trailAxial}
 		es.AxialStress[j+1] = PointSolutionValue{leadNode.T, leadAxial}
@@ -157,8 +158,8 @@ func (es *ElementSolution) computeStresses() {
 			trailShear    = shear - trailNode.LocalLeftFy()
 			leadShear     = shear + leadNode.LocalRightFy()
 		)
-		es.ShearStress[j] = PointSolutionValue{trailNode.T, trailShear}
-		es.ShearStress[j+1] = PointSolutionValue{leadNode.T, leadShear}
+		es.StressForce[j] = PointSolutionValue{trailNode.T, trailShear}
+		es.StressForce[j+1] = PointSolutionValue{leadNode.T, leadShear}
 
 		/* <-- Bending --> */
 		var (

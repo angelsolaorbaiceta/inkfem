@@ -1,10 +1,11 @@
 package tests
 
 import (
-	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"math"
 	"testing"
+
+	"github.com/angelsolaorbaiceta/inkfem/structure/load"
+	"github.com/angelsolaorbaiceta/inkgeom"
 )
 
 func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
@@ -88,7 +89,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	t.Run("Shear stress", func(t *testing.T) {
 		expectedShear := -l.Value
 
-		for _, shear := range solutionElement.ShearStress {
+		for _, shear := range solutionElement.StressForce {
 			if !inkgeom.FloatsEqualEps(shear.Value, expectedShear, displError) {
 				t.Errorf("Expected a shear stress of %f, but got %f at t = %f", expectedShear, shear.Value, shear.T)
 			}
@@ -201,7 +202,7 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 			return qStart * (-0.5*length + x - 0.5*x*x/length)
 		}
 
-		for _, shear := range solutionElement.ShearStress {
+		for _, shear := range solutionElement.StressForce {
 			var (
 				got  = shear.Value
 				want = expectedShear(shear.T)
