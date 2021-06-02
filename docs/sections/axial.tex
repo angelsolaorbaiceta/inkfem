@@ -4,19 +4,57 @@
 An \emph{axial element} is a linear resistant element whose deformation happens in the direction or its directrix only.
 The linear elements used by \emph{InkFEM} are a combination of axial and beam elements (see Section~\ref{sec:beams}).
 
+From mechanics of materials, we know that in an axial member, the normal stress $\sigma_x$ is:
+
+\begin{equation}
+  \sigma_x = E \epsilon_x
+\end{equation}
+
+where $E$ is the material's Young modulus and $\epsilon_x$ is the strain.
+Given the displacement field $u(x)$ inside the bar subject to external loads, the strain can be expressed as:
+
+\begin{equation}
+  \epsilon_x = \frac{du}{dx}  
+\end{equation}
+and therefore:
+
+\[
+  \sigma_x = E \frac{du}{dx}
+\]
+
+The equilibrium of a differential slice in the bar yields the following relation:
+
+\begin{equation}
+  \frac{\partial \sigma_x}{\partial x} = - \frac{q_x(x)}{A}  
+\end{equation}
+
 
 \subsection{Energy Formulation}
 
-The total energy of an axial element\dots
+The total potential energy in an axial element is:
+
+\begin{equation}
+  \Pi = \frac{1}{2} \int_L \sigma_x \epsilon_x A dx 
+  - \int_L u(x) f_v(x) A dx 
+  - \int_L u(x) q_x(x) dx 
+  - \sum_i u_i P_i
+\end{equation}
+where:
+
+\begin{itemize}
+  \item $f_v(x)$: force by unit of volume in the x direction
+  \item $q_x(x)$: force by unit of area in the x direction
+  \item $P_i$: punctual force in point i
+\end{itemize}
 
 \subsection{Displacement Field And Interpolation Functions}
 
-Let $\vec{u}(x)$ be the displacements field in the axial finite element of length $L$.
+Let $u(x)$ be the displacements field in the axial finite element of length $L$.
 $u_1$ is the displacement of the element's node 1 in the X direction, and $u_2$ the displacement of node 2 in the X direction.
 The displacements field can be chosen to vary linearly inside the finite element, so it can be interpolated from the values of $u_1$ and $u_2$ like so:
 
 \begin{equation}
-  \vec{u}(x) = N_1 u_1 + N_2 u_2
+  u(x) = N_1 u_1 + N_2 u_2
 \end{equation}
 
 where:
@@ -122,28 +160,6 @@ This axial bar is depicted in Figure~\ref{fig:axial_bar_distributed}.
 \subsubsection{The Axial Stress}
 
 Let's start by finding the expression in terms of the position x of the axial stress inside the bar.
-From mechanics of materials, we know that in an axial member, the normal stress $\sigma$ is:
-
-\[
-  \sigma = E \epsilon  
-\]
-where $E$ is the material's Young modulus and $\epsilon$ is the strain.
-Given the displacement field $u(x)$ inside the bar subject to external loads, the strain can be expressed as:
-
-\[
-  \epsilon = \frac{du}{dx}  
-\]
-and therefore:
-
-\[
-  \sigma = E \frac{du}{dx}
-\]
-
-At the same time, we know that the equilibrium of a differential slice in the bar yields the following relation:
-
-\[
-  \frac{\partial \sigma}{\partial x} = - \frac{q_x(x)}{A}  
-\]
 The distributed load can be formulated as:
 
 \[
