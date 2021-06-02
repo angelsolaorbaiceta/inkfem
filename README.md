@@ -35,7 +35,7 @@ $ ./build.sh
 This will produce the `inkfem` binary in the project's root directory.
 
 
-## Build
+## Test
 
 To run all the tests, execute the `test.sh` script:
 
