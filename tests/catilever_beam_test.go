@@ -86,12 +86,12 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 		}
 	})
 
-	t.Run("Shear stress", func(t *testing.T) {
+	t.Run("Shear force", func(t *testing.T) {
 		expectedShear := -l.Value
 
-		for _, shear := range solutionElement.StressForce {
+		for _, shear := range solutionElement.ShearForce {
 			if !inkgeom.FloatsEqualEps(shear.Value, expectedShear, displError) {
-				t.Errorf("Expected a shear stress of %f, but got %f at t = %f", expectedShear, shear.Value, shear.T)
+				t.Errorf("Expected a Shear force of %f, but got %f at t = %f", expectedShear, shear.Value, shear.T)
 			}
 		}
 	})
@@ -192,7 +192,7 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 		}
 	})
 
-	t.Run("Shear stress", func(t *testing.T) {
+	t.Run("Shear force", func(t *testing.T) {
 		var expectedShear = func(tParam inkgeom.TParam) float64 {
 			var (
 				qStart = l.ValueAt(inkgeom.MinT)
@@ -202,14 +202,14 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 			return qStart * (-0.5*length + x - 0.5*x*x/length)
 		}
 
-		for _, shear := range solutionElement.StressForce {
+		for _, shear := range solutionElement.ShearForce {
 			var (
 				got  = shear.Value
 				want = expectedShear(shear.T)
 			)
 
 			if !inkgeom.FloatsEqualEps(got, want, displError) {
-				t.Errorf("Expected a shear stress of %f, but got %f at t = %f", want, got, shear.T)
+				t.Errorf("Expected a Shear force of %f, but got %f at t = %f", want, got, shear.T)
 			}
 		}
 	})

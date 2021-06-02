@@ -60,10 +60,10 @@ func TestAxialMemberWithConcentratedLoad(t *testing.T) {
 		}
 	})
 
-	t.Run("Shear stress", func(t *testing.T) {
-		for _, shear := range solutionElement.StressForce {
+	t.Run("Shear force", func(t *testing.T) {
+		for _, shear := range solutionElement.ShearForce {
 			if !inkgeom.FloatsEqualEps(shear.Value, 0.0, displError) {
-				t.Errorf("Expected no shear stress but got %f at t = %f", shear.Value, shear.T)
+				t.Errorf("Expected no Shear force but got %f at t = %f", shear.Value, shear.T)
 			}
 		}
 	})
@@ -144,10 +144,10 @@ func TestAxialMemberWithConstantDistributedLoad(t *testing.T) {
 		}
 	})
 
-	t.Run("Shear stress", func(t *testing.T) {
-		for _, shear := range solutionElement.StressForce {
+	t.Run("Shear force", func(t *testing.T) {
+		for _, shear := range solutionElement.ShearForce {
 			if !inkgeom.FloatsEqualEps(shear.Value, 0.0, displError) {
-				t.Errorf("Expected no shear stress but got %f at t = %f", shear.Value, shear.T)
+				t.Errorf("Expected no Shear force but got %f at t = %f", shear.Value, shear.T)
 			}
 		}
 	})
@@ -225,10 +225,10 @@ func TestAxialMemberWithDistributedLoad(t *testing.T) {
 		}
 	})
 
-	t.Run("Shear stress", func(t *testing.T) {
-		for _, shear := range solutionElement.StressForce {
+	t.Run("Shear force", func(t *testing.T) {
+		for _, shear := range solutionElement.ShearForce {
 			if !inkgeom.FloatsEqualEps(shear.Value, 0.0, displError) {
-				t.Errorf("Expected no shear stress but got %f at t = %f", shear.Value, shear.T)
+				t.Errorf("Expected no Shear force but got %f at t = %f", shear.Value, shear.T)
 			}
 		}
 	})

@@ -11,7 +11,7 @@ inkfem v1.0
 'ipe_120' -> 14 318 28 53 9
 
 |loads| 1
-fx ld 1 0.0 400.0 1.0 0.0 
+fy ld 1 0.0 -200.0 1.0 0.0
 
 |elements| 1
 1 -> 1{dx dy rz} 2{dx dy rz} 'steel' 'ipe_120'

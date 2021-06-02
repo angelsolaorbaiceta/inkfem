@@ -25,7 +25,7 @@ __lrz__{{range .LocalZRot}}
 __axial__{{range .AxialStress}}
 {{.String}}{{end}}
 
-__shear__{{range .ShearStress}}
+__shear__{{range .ShearForce}}
 {{.String}}{{end}}
 
 __bend__{{range .BendingMoment}}

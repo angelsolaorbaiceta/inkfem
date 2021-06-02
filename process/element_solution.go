@@ -24,7 +24,7 @@ type ElementSolution struct {
 	LocalZRot   []PointSolutionValue
 
 	AxialStress   []PointSolutionValue
-	StressForce   []PointSolutionValue
+	ShearForce    []PointSolutionValue
 	BendingMoment []PointSolutionValue
 }
 
@@ -42,7 +42,7 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 		LocalZRot:    make([]PointSolutionValue, nOfNodes),
 
 		AxialStress:   make([]PointSolutionValue, 2*nOfNodes-2),
-		StressForce:   make([]PointSolutionValue, 2*nOfNodes-2),
+		ShearForce:    make([]PointSolutionValue, 2*nOfNodes-2),
 		BendingMoment: make([]PointSolutionValue, 2*nOfNodes-2),
 	}
 }
@@ -158,8 +158,8 @@ func (es *ElementSolution) computeStresses() {
 			trailShear    = shear - trailNode.LocalLeftFy()
 			leadShear     = shear + leadNode.LocalRightFy()
 		)
-		es.StressForce[j] = PointSolutionValue{trailNode.T, trailShear}
-		es.StressForce[j+1] = PointSolutionValue{leadNode.T, leadShear}
+		es.ShearForce[j] = PointSolutionValue{trailNode.T, trailShear}
+		es.ShearForce[j+1] = PointSolutionValue{leadNode.T, leadShear}
 
 		/* <-- Bending --> */
 		var (
