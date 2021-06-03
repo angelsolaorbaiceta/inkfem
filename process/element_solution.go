@@ -23,9 +23,10 @@ type ElementSolution struct {
 	LocalYDispl []PointSolutionValue
 	LocalZRot   []PointSolutionValue
 
-	AxialStress   []PointSolutionValue
-	ShearForce    []PointSolutionValue
-	BendingMoment []PointSolutionValue
+	AxialStress              []PointSolutionValue
+	ShearForce               []PointSolutionValue
+	BendingMoment            []PointSolutionValue
+	BendingMomentAxialStress []PointSolutionValue
 }
 
 // MakeElementSolution creates an empty solution for the given element.
@@ -41,9 +42,10 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 		LocalYDispl:  make([]PointSolutionValue, nOfNodes),
 		LocalZRot:    make([]PointSolutionValue, nOfNodes),
 
-		AxialStress:   make([]PointSolutionValue, 2*nOfNodes-2),
-		ShearForce:    make([]PointSolutionValue, 2*nOfNodes-2),
-		BendingMoment: make([]PointSolutionValue, 2*nOfNodes-2),
+		AxialStress:              make([]PointSolutionValue, 2*nOfNodes-2),
+		ShearForce:               make([]PointSolutionValue, 2*nOfNodes-2),
+		BendingMoment:            make([]PointSolutionValue, 2*nOfNodes-2),
+		BendingMomentAxialStress: make([]PointSolutionValue, 2*nOfNodes-2),
 	}
 }
 
@@ -118,6 +120,7 @@ func (es *ElementSolution) computeStresses() {
 		trailNode, leadNode                               *preprocess.Node
 		youngMod                                          = es.Element.Material().YoungMod
 		iStrong                                           = es.Element.Section().IStrong
+		sStrong                                           = es.Element.Section().SStrong
 		section                                           = es.Section().Area
 		ei                                                = youngMod * iStrong
 		trailDx, leadDx, trailDy, leadDy, trailRz, leadRz float64
@@ -171,6 +174,9 @@ func (es *ElementSolution) computeStresses() {
 			leadBending       = bendEndDispTerm + bendEndRotTerm - leadNode.LocalRightMz()
 		)
 		es.BendingMoment[j] = PointSolutionValue{trailNode.T, trailBending}
+		es.BendingMomentAxialStress[j] = PointSolutionValue{trailNode.T, trailBending / sStrong}
+
 		es.BendingMoment[j+1] = PointSolutionValue{leadNode.T, leadBending}
+		es.BendingMomentAxialStress[j+1] = PointSolutionValue{leadNode.T, leadBending / sStrong}
 	}
 }
