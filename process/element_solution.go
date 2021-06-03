@@ -23,10 +23,10 @@ type ElementSolution struct {
 	LocalYDispl []PointSolutionValue
 	LocalZRot   []PointSolutionValue
 
-	AxialStress              []PointSolutionValue
-	ShearForce               []PointSolutionValue
-	BendingMoment            []PointSolutionValue
-	BendingMomentAxialStress []PointSolutionValue
+	AxialStress                      []PointSolutionValue
+	ShearForce                       []PointSolutionValue
+	BendingMoment                    []PointSolutionValue
+	BendingMomentTopFiberAxialStress []PointSolutionValue
 }
 
 // MakeElementSolution creates an empty solution for the given element.
@@ -34,18 +34,20 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 	nOfNodes := len(element.Nodes)
 
 	return &ElementSolution{
-		Element:      element,
+		Element: element,
+
 		GlobalXDispl: make([]PointSolutionValue, nOfNodes),
 		GlobalYDispl: make([]PointSolutionValue, nOfNodes),
 		GlobalZRot:   make([]PointSolutionValue, nOfNodes),
-		LocalXDispl:  make([]PointSolutionValue, nOfNodes),
-		LocalYDispl:  make([]PointSolutionValue, nOfNodes),
-		LocalZRot:    make([]PointSolutionValue, nOfNodes),
 
-		AxialStress:              make([]PointSolutionValue, 2*nOfNodes-2),
-		ShearForce:               make([]PointSolutionValue, 2*nOfNodes-2),
-		BendingMoment:            make([]PointSolutionValue, 2*nOfNodes-2),
-		BendingMomentAxialStress: make([]PointSolutionValue, 2*nOfNodes-2),
+		LocalXDispl: make([]PointSolutionValue, nOfNodes),
+		LocalYDispl: make([]PointSolutionValue, nOfNodes),
+		LocalZRot:   make([]PointSolutionValue, nOfNodes),
+
+		AxialStress:                      make([]PointSolutionValue, 2*nOfNodes-2),
+		ShearForce:                       make([]PointSolutionValue, 2*nOfNodes-2),
+		BendingMoment:                    make([]PointSolutionValue, 2*nOfNodes-2),
+		BendingMomentTopFiberAxialStress: make([]PointSolutionValue, 2*nOfNodes-2),
 	}
 }
 
@@ -174,9 +176,9 @@ func (es *ElementSolution) computeStresses() {
 			leadBending       = bendEndDispTerm + bendEndRotTerm - leadNode.LocalRightMz()
 		)
 		es.BendingMoment[j] = PointSolutionValue{trailNode.T, trailBending}
-		es.BendingMomentAxialStress[j] = PointSolutionValue{trailNode.T, trailBending / sStrong}
+		es.BendingMomentTopFiberAxialStress[j] = PointSolutionValue{trailNode.T, trailBending / sStrong}
 
 		es.BendingMoment[j+1] = PointSolutionValue{leadNode.T, leadBending}
-		es.BendingMomentAxialStress[j+1] = PointSolutionValue{leadNode.T, leadBending / sStrong}
+		es.BendingMomentTopFiberAxialStress[j+1] = PointSolutionValue{leadNode.T, leadBending / sStrong}
 	}
 }

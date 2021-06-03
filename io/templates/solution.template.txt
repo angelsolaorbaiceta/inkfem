@@ -31,6 +31,6 @@ __shear__{{range .ShearForce}}
 __bend__{{range .BendingMoment}}
 {{.String}}{{end}}
 
-__bend_axial_stress__{{range .BendingMomentAxialStress}}
+__bend_axial_stress__{{range .BendingMomentTopFiberAxialStress}}
 {{.String}}{{end}}
 {{end}}
