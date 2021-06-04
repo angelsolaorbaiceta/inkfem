@@ -6,6 +6,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 func TestAxialMemberWithConcentratedLoad(t *testing.T) {
@@ -73,6 +74,14 @@ func TestAxialMemberWithConcentratedLoad(t *testing.T) {
 			if !inkgeom.FloatsEqualEps(bending.Value, 0.0, displError) {
 				t.Errorf("Expected no bending moment but got %f at t = %f", bending.Value, bending.T)
 			}
+		}
+	})
+
+	t.Run("Reaction forces", func(t *testing.T) {
+		want := g2d.MakeVector(-l.Value, 0.0)
+
+		if got := sol.ReactionForceInNode("fixed-node"); !got.Equals(want) {
+			t.Errorf("Expected reaction force %v, but got %v", want, got)
 		}
 	})
 }

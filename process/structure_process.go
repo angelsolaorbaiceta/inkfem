@@ -27,5 +27,9 @@ func Solve(structure *preprocess.Structure, options SolveOptions) *Solution {
 	}
 	log.EndComputeStresses()
 
-	return &Solution{Metadata: &structure.Metadata, Elements: elementSolutions}
+	return &Solution{
+		Metadata: &structure.Metadata,
+		Nodes:    structure.Nodes,
+		Elements: elementSolutions,
+	}
 }
