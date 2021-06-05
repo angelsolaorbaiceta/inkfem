@@ -197,8 +197,9 @@ GlobalStartTorsor returns the forces and moment torsor {fx, fy, mz} at the start
 in global coordinates.
 
 Sign convention:
-	- In the start node, a tensile stress (positive) yields a negative force vector.
-	- In the start node, a positive bending moment yields a negative moment vector.
+	- In the start node, a tensile stress (positive) yields a negative force value.
+	- In the start node, a positive shear force yields a positive force value.
+	- In the start node, a positive bending moment yields a negative moment value.
 */
 func (es *ElementSolution) GlobalStartTorsor() *math.Torsor {
 	// TODO: project in local coords
