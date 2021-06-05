@@ -44,9 +44,9 @@ func (solution *Solution) ReactionInNode(nodeId contracts.StrID) *math.Torsor {
 
 	for _, element := range solution.Elements {
 		if element.StartNodeID == nodeId {
-			reaction = reaction.Minus(element.GlobalStartTorsor())
+			reaction = reaction.Plus(element.GlobalStartTorsor())
 		} else if element.EndNodeID == nodeId {
-			reaction = reaction.Minus(element.GlobalEndTorsor())
+			reaction = reaction.Plus(element.GlobalEndTorsor())
 		}
 	}
 

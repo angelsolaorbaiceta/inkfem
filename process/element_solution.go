@@ -195,13 +195,17 @@ func (es *ElementSolution) computeStresses() {
 /*
 GlobalStartTorsor returns the forces and moment torsor {fx, fy, mz} at the start node
 in global coordinates.
+
+Sign convention:
+	- In the start node, a tensile stress (positive) yields a negative force vector.
+	- In the start node, a positive bending moment yields a negative moment vector.
 */
 func (es *ElementSolution) GlobalStartTorsor() *math.Torsor {
 	// TODO: project in local coords
 	return math.MakeTorsor(
-		es.AxialStress[0].Value*es.Section().Area,
-		0.0, // FIXME
-		0.0, // FIXME
+		-es.AxialStress[0].Value*es.Section().Area,
+		es.ShearForce[0].Value,
+		-es.BendingMoment[0].Value,
 	)
 }
 
@@ -210,10 +214,12 @@ GlobalEndTorsor returns the forces and moment torsor {fx, fy, mz} at the end nod
 in global coordinates.
 */
 func (es *ElementSolution) GlobalEndTorsor() *math.Torsor {
+	index := es.nOfSolutionValues - 1
+
 	// TODO: project in local coords
 	return math.MakeTorsor(
-		es.AxialStress[es.nOfSolutionValues-1].Value*es.Section().Area,
-		0.0, // FIXME
-		0.0, // FIXME
+		es.AxialStress[index].Value*es.Section().Area,
+		es.ShearForce[index].Value,
+		es.BendingMoment[index].Value,
 	)
 }
