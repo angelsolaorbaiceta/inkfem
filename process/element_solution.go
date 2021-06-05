@@ -1,6 +1,7 @@
 package process
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
@@ -14,6 +15,8 @@ referred only to the local reference frame.
 */
 type ElementSolution struct {
 	*preprocess.Element
+
+	nOfSolutionValues int
 
 	GlobalXDispl []PointSolutionValue
 	GlobalYDispl []PointSolutionValue
@@ -37,10 +40,15 @@ system of equations solution vector (the global node displacements) and computes
 shear force and bending moment in each of the slices of the preprocessed element.
 */
 func MakeElementSolution(element *preprocess.Element, globalDisp *vec.Vector) *ElementSolution {
-	nOfNodes := len(element.Nodes)
+	var (
+		nOfNodes          = len(element.Nodes)
+		nOfSolutionValues = 2*nOfNodes - 2
+	)
 
 	solution := &ElementSolution{
 		Element: element,
+
+		nOfSolutionValues: nOfSolutionValues,
 
 		GlobalXDispl: make([]PointSolutionValue, nOfNodes),
 		GlobalYDispl: make([]PointSolutionValue, nOfNodes),
@@ -50,10 +58,10 @@ func MakeElementSolution(element *preprocess.Element, globalDisp *vec.Vector) *E
 		LocalYDispl: make([]PointSolutionValue, nOfNodes),
 		LocalZRot:   make([]PointSolutionValue, nOfNodes),
 
-		AxialStress:                      make([]PointSolutionValue, 2*nOfNodes-2),
-		ShearForce:                       make([]PointSolutionValue, 2*nOfNodes-2),
-		BendingMoment:                    make([]PointSolutionValue, 2*nOfNodes-2),
-		BendingMomentTopFiberAxialStress: make([]PointSolutionValue, 2*nOfNodes-2),
+		AxialStress:                      make([]PointSolutionValue, nOfSolutionValues),
+		ShearForce:                       make([]PointSolutionValue, nOfSolutionValues),
+		BendingMoment:                    make([]PointSolutionValue, nOfSolutionValues),
+		BendingMomentTopFiberAxialStress: make([]PointSolutionValue, nOfSolutionValues),
 	}
 
 	solution.setDisplacements(globalDisp)
@@ -182,4 +190,30 @@ func (es *ElementSolution) computeStresses() {
 		es.BendingMoment[j+1] = PointSolutionValue{leadNode.T, leadBending}
 		es.BendingMomentTopFiberAxialStress[j+1] = PointSolutionValue{leadNode.T, leadBending / sStrong}
 	}
+}
+
+/*
+GlobalStartTorsor returns the forces and moment torsor {fx, fy, mz} at the start node
+in global coordinates.
+*/
+func (es *ElementSolution) GlobalStartTorsor() *math.Torsor {
+	// TODO: project in local coords
+	return math.MakeTorsor(
+		es.AxialStress[0].Value*es.Section().Area,
+		0.0, // FIXME
+		0.0, // FIXME
+	)
+}
+
+/*
+GlobalEndTorsor returns the forces and moment torsor {fx, fy, mz} at the end node
+in global coordinates.
+*/
+func (es *ElementSolution) GlobalEndTorsor() *math.Torsor {
+	// TODO: project in local coords
+	return math.MakeTorsor(
+		es.AxialStress[es.nOfSolutionValues-1].Value*es.Section().Area,
+		0.0, // FIXME
+		0.0, // FIXME
+	)
 }

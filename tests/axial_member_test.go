@@ -4,9 +4,9 @@ import (
 	"math"
 	"testing"
 
+	strmath "github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
-	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 func TestAxialMemberWithConcentratedLoad(t *testing.T) {
@@ -77,11 +77,11 @@ func TestAxialMemberWithConcentratedLoad(t *testing.T) {
 		}
 	})
 
-	t.Run("Reaction forces", func(t *testing.T) {
-		want := g2d.MakeVector(-l.Value, 0.0)
+	t.Run("Reaction Torsor", func(t *testing.T) {
+		want := strmath.MakeTorsor(-l.Value, 0.0, 0.0)
 
-		if got := sol.ReactionForceInNode("fixed-node"); !got.Equals(want) {
-			t.Errorf("Expected reaction force %v, but got %v", want, got)
+		if got := sol.ReactionInNode("fixed-node"); !got.Equals(want) {
+			t.Errorf("Expected reaction torsor %v, but got %v", want, got)
 		}
 	})
 }

@@ -1,9 +1,11 @@
 package process
 
 import (
+	"fmt"
+
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 // Solution is the group of all element solutions with the structure metadata.
@@ -22,10 +24,31 @@ func (solution *Solution) ElementCount() int {
 }
 
 /*
-ReactionForceInNode computes the reaction force in the node with the passed in ID.
+ReactionInNode computes the reaction torsor {fx, fy, mz} in the node with the passed in ID
+in global coordinates.
 
-If the node isn't externally constrained, the reaction force will always be the zero vector.
+If the node isn't externally constrained, the reaction will always be a nil torsor {0, 0, 0}.
+If the structure contains no node with the given ID, it'll panic.
 */
-func (solution *Solution) ReactionForceInNode(nodeId contracts.StrID) g2d.Projectable {
-	return g2d.MakeVector(-4000, 0)
+func (solution *Solution) ReactionInNode(nodeId contracts.StrID) *math.Torsor {
+	node, hasNode := solution.Nodes[nodeId]
+	if !hasNode {
+		panic(fmt.Sprintf("Structure doesn't contain a node with id: '%v'", nodeId))
+	}
+
+	reaction := math.MakeNilTorsor()
+
+	if !node.IsExternallyConstrained() {
+		return reaction
+	}
+
+	for _, element := range solution.Elements {
+		if element.StartNodeID == nodeId {
+			reaction = reaction.Minus(element.GlobalStartTorsor())
+		} else if element.EndNodeID == nodeId {
+			reaction = reaction.Minus(element.GlobalEndTorsor())
+		}
+	}
+
+	return reaction
 }
