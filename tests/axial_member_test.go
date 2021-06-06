@@ -80,7 +80,7 @@ func TestAxialMemberWithConcentratedLoad(t *testing.T) {
 	t.Run("Reaction Torsor", func(t *testing.T) {
 		want := strmath.MakeTorsor(-l.Value, 0.0, 0.0)
 
-		if got := sol.ReactionInNode("fixed-node"); !got.Equals(want) {
+		if got := sol.NodeReactions()["fixed-node"]; !got.Equals(want) {
 			t.Errorf("Expected reaction torsor %v, but got %v", want, got)
 		}
 	})

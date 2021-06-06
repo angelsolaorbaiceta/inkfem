@@ -117,7 +117,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	t.Run("Reaction Torsor", func(t *testing.T) {
 		var (
 			want = strmath.MakeTorsor(0.0, -l.Value, -l.Value*length)
-			got  = sol.ReactionInNode("fixed-node")
+			got  = sol.NodeReactions()["fixed-node"]
 		)
 
 		if !inkgeom.FloatsEqualEps(got.Fx(), want.Fx(), displError) {

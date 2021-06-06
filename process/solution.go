@@ -23,6 +23,19 @@ func (solution *Solution) ElementCount() int {
 	return len(solution.Elements)
 }
 
+// NodeReactions returns the map of externally constrained nodes with their reaction.
+func (solution *Solution) NodeReactions() map[contracts.StrID]*math.Torsor {
+	nodeReactions := make(map[contracts.StrID]*math.Torsor)
+
+	for _, node := range solution.Nodes {
+		if node.IsExternallyConstrained() {
+			nodeReactions[node.GetID()] = solution.reactionInNode(node.GetID())
+		}
+	}
+
+	return nodeReactions
+}
+
 /*
 ReactionInNode computes the reaction torsor {fx, fy, mz} in the node with the passed in ID
 in global coordinates.
@@ -30,7 +43,7 @@ in global coordinates.
 If the node isn't externally constrained, the reaction will always be a nil torsor {0, 0, 0}.
 If the structure contains no node with the given ID, it'll panic.
 */
-func (solution *Solution) ReactionInNode(nodeId contracts.StrID) *math.Torsor {
+func (solution *Solution) reactionInNode(nodeId contracts.StrID) *math.Torsor {
 	node, hasNode := solution.Nodes[nodeId]
 	if !hasNode {
 		panic(fmt.Sprintf("Structure doesn't contain a node with id: '%v'", nodeId))
