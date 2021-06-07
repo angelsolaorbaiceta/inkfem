@@ -1,36 +1,30 @@
 inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 
+|reactions|
+{{range $nodeId, $reaction := .NodeReactions}}
+{{$nodeId}} -> {{$reaction.String}}{{end}}
+
 |elements| {{.ElementCount}}
 {{range .Elements}}
 {{.String}}
-
 __gxd__{{range .GlobalXDispl}}
 {{.String}}{{end}}
-
 __gyd__{{range .GlobalYDispl}}
 {{.String}}{{end}}
-
 __grz__{{range .GlobalZRot}}
 {{.String}}{{end}}
-
 __lxd__{{range .LocalXDispl}}
 {{.String}}{{end}}
-
 __lyd__{{range .LocalYDispl}}
 {{.String}}{{end}}
-
 __lrz__{{range .LocalZRot}}
 {{.String}}{{end}}
-
 __axial__{{range .AxialStress}}
 {{.String}}{{end}}
-
 __shear__{{range .ShearForce}}
 {{.String}}{{end}}
-
 __bend__{{range .BendingMoment}}
 {{.String}}{{end}}
-
 __bend_axial_stress__{{range .BendingMomentTopFiberAxialStress}}
 {{.String}}{{end}}
 {{end}}

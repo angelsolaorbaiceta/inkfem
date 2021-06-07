@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	strmath "github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
@@ -110,6 +111,23 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 			if !inkgeom.FloatsEqualEps(got, want, displError) {
 				t.Errorf("Expected a bending moment of %f, but got %f at t = %f", want, got, bending.T)
 			}
+		}
+	})
+
+	t.Run("Reaction Torsor", func(t *testing.T) {
+		var (
+			want = strmath.MakeTorsor(0.0, -l.Value, -l.Value*length)
+			got  = sol.NodeReactions()["fixed-node"]
+		)
+
+		if !inkgeom.FloatsEqualEps(got.Fx(), want.Fx(), displError) {
+			t.Errorf("Expected Fx reaction %f, but got %f", want.Fx(), got.Fx())
+		}
+		if !inkgeom.FloatsEqualEps(got.Fy(), want.Fy(), displError) {
+			t.Errorf("Expected Fy reaction %f, but got %f", want.Fy(), got.Fy())
+		}
+		if !inkgeom.FloatsEqualEps(got.Mz(), want.Mz(), displError) {
+			t.Errorf("Expected Mz reaction %f, but got %f", want.Mz(), got.Mz())
 		}
 	})
 }

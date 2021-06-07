@@ -1,6 +1,7 @@
 package process
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
@@ -9,11 +10,13 @@ import (
 /*
 ElementSolution is the displacements and stresses for a given preprocessed element.
 
-Displacements are stored in both local and global coordinates. Stresses are referred only to the
-local reference frame.
+Displacements are stored in both local and global coordinates. Stresses, forces and moments are
+referred only to the local reference frame.
 */
 type ElementSolution struct {
 	*preprocess.Element
+
+	nOfSolutionValues int
 
 	GlobalXDispl []PointSolutionValue
 	GlobalYDispl []PointSolutionValue
@@ -29,12 +32,23 @@ type ElementSolution struct {
 	BendingMomentTopFiberAxialStress []PointSolutionValue
 }
 
-// MakeElementSolution creates an empty solution for the given element.
-func MakeElementSolution(element *preprocess.Element) *ElementSolution {
-	nOfNodes := len(element.Nodes)
+/*
+MakeElementSolution creates a solution element with all solution values for the preprocessed element.
 
-	return &ElementSolution{
+It sets the element's global and local displacements given the structure's
+system of equations solution vector (the global node displacements) and computes the axial stress,
+shear force and bending moment in each of the slices of the preprocessed element.
+*/
+func MakeElementSolution(element *preprocess.Element, globalDisp *vec.Vector) *ElementSolution {
+	var (
+		nOfNodes          = len(element.Nodes)
+		nOfSolutionValues = 2*nOfNodes - 2
+	)
+
+	solution := &ElementSolution{
 		Element: element,
+
+		nOfSolutionValues: nOfSolutionValues,
 
 		GlobalXDispl: make([]PointSolutionValue, nOfNodes),
 		GlobalYDispl: make([]PointSolutionValue, nOfNodes),
@@ -44,21 +58,21 @@ func MakeElementSolution(element *preprocess.Element) *ElementSolution {
 		LocalYDispl: make([]PointSolutionValue, nOfNodes),
 		LocalZRot:   make([]PointSolutionValue, nOfNodes),
 
-		AxialStress:                      make([]PointSolutionValue, 2*nOfNodes-2),
-		ShearForce:                       make([]PointSolutionValue, 2*nOfNodes-2),
-		BendingMoment:                    make([]PointSolutionValue, 2*nOfNodes-2),
-		BendingMomentTopFiberAxialStress: make([]PointSolutionValue, 2*nOfNodes-2),
+		AxialStress:                      make([]PointSolutionValue, nOfSolutionValues),
+		ShearForce:                       make([]PointSolutionValue, nOfSolutionValues),
+		BendingMoment:                    make([]PointSolutionValue, nOfSolutionValues),
+		BendingMomentTopFiberAxialStress: make([]PointSolutionValue, nOfSolutionValues),
 	}
+
+	solution.setDisplacements(globalDisp)
+	solution.computeStresses()
+
+	return solution
 }
 
-/*
-SolveUsingDisplacements sets the element's global and local displacements given the structure's
-system of equations solution vector (the global node displacements) and computes the stresses in
-each of the slices of the preprocessed element.
-*/
-func (es *ElementSolution) SolveUsingDisplacements(globalDisp *vec.Vector) {
-	es.setDisplacements(globalDisp)
-	es.computeStresses()
+// RefFrame returns the element's reference frame.
+func (es *ElementSolution) RefFrame() g2d.RefFrame {
+	return es.Element.Geometry.RefFrame()
 }
 
 /*
@@ -181,4 +195,40 @@ func (es *ElementSolution) computeStresses() {
 		es.BendingMoment[j+1] = PointSolutionValue{leadNode.T, leadBending}
 		es.BendingMomentTopFiberAxialStress[j+1] = PointSolutionValue{leadNode.T, leadBending / sStrong}
 	}
+}
+
+/*
+GlobalStartTorsor returns the forces and moment torsor {fx, fy, mz} at the start node
+in global coordinates.
+
+Sign convention:
+	- a tensile stress (positive) yields a negative force value
+	- a positive shear force yields a positive force value
+	- a positive bending moment yields a negative moment value
+*/
+func (es *ElementSolution) GlobalStartTorsor() *math.Torsor {
+	return math.MakeTorsor(
+		-es.AxialStress[0].Value*es.Section().Area,
+		es.ShearForce[0].Value,
+		-es.BendingMoment[0].Value,
+	).ProjectedToGlobal(es.RefFrame())
+}
+
+/*
+GlobalEndTorsor returns the forces and moment torsor {fx, fy, mz} at the end node
+in global coordinates.
+
+Sign convention:
+	- a tensile stress (positive) yields a positive force value
+	- a positive shear force yields a negative force value
+	- a positive bending moment yields a positive moment value
+*/
+func (es *ElementSolution) GlobalEndTorsor() *math.Torsor {
+	index := es.nOfSolutionValues - 1
+
+	return math.MakeTorsor(
+		es.AxialStress[index].Value*es.Section().Area,
+		-es.ShearForce[index].Value,
+		es.BendingMoment[index].Value,
+	).ProjectedToGlobal(es.RefFrame())
 }

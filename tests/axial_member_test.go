@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	strmath "github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
 )
@@ -73,6 +74,14 @@ func TestAxialMemberWithConcentratedLoad(t *testing.T) {
 			if !inkgeom.FloatsEqualEps(bending.Value, 0.0, displError) {
 				t.Errorf("Expected no bending moment but got %f at t = %f", bending.Value, bending.T)
 			}
+		}
+	})
+
+	t.Run("Reaction Torsor", func(t *testing.T) {
+		want := strmath.MakeTorsor(-l.Value, 0.0, 0.0)
+
+		if got := sol.NodeReactions()["fixed-node"]; !got.Equals(want) {
+			t.Errorf("Expected reaction torsor %v, but got %v", want, got)
 		}
 	})
 }

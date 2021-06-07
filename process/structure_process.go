@@ -12,20 +12,20 @@ Conjugate Gradient numerical procedure.
 The local element stresses are computed using the displacements obtained in the first step.
 */
 func Solve(structure *preprocess.Structure, options SolveOptions) *Solution {
-	globalDisplacements := computeGlobalDisplacements(structure, options)
-
 	var (
-		elementSolution  *ElementSolution
-		elementSolutions = make([]*ElementSolution, structure.ElementsCount())
+		globalDisplacements = computeGlobalDisplacements(structure, options)
+		elementSolutions    = make([]*ElementSolution, structure.ElementsCount())
 	)
 
 	log.StartComputeStresses()
 	for i, element := range structure.Elements {
-		elementSolution = MakeElementSolution(element)
-		elementSolution.SolveUsingDisplacements(globalDisplacements)
-		elementSolutions[i] = elementSolution
+		elementSolutions[i] = MakeElementSolution(element, globalDisplacements)
 	}
 	log.EndComputeStresses()
 
-	return &Solution{Metadata: &structure.Metadata, Elements: elementSolutions}
+	return &Solution{
+		Metadata: &structure.Metadata,
+		Nodes:    structure.Nodes,
+		Elements: elementSolutions,
+	}
 }
