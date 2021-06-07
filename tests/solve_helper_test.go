@@ -6,6 +6,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/process"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
+	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
@@ -101,5 +102,49 @@ func makeAxialElementStructure(
 			nodeTwo.Id: nodeTwo,
 		},
 		Elements: []*structure.Element{axialElement},
+	}
+}
+
+func makeTwoElementsCantileverReactionsStructure(distLoadVal, concLoadValue float64) *structure.Structure {
+	var (
+		nodeOne    = structure.MakeNode("n1", g2d.MakePoint(0, 0), &structure.NilConstraint)
+		nodeTwo    = structure.MakeNode("n2", g2d.MakePoint(length, 0), &structure.FullConstraint)
+		nodeThree  = structure.MakeNode("n3", g2d.MakePoint(2*length, 0.5*length), &structure.NilConstraint)
+		elementOne = structure.MakeElement(
+			"el-1",
+			nodeOne,
+			nodeTwo,
+			&structure.FullConstraint,
+			&structure.FullConstraint,
+			material,
+			section,
+			noConcLoads,
+			[]*load.DistributedLoad{
+				load.MakeDistributed(load.FY, true, inkgeom.MinT, distLoadVal, inkgeom.MaxT, distLoadVal),
+			},
+		)
+		elementTwo = structure.MakeElement(
+			"el-2",
+			nodeTwo,
+			nodeThree,
+			&structure.FullConstraint,
+			&structure.FullConstraint,
+			material,
+			section,
+			[]*load.ConcentratedLoad{
+				load.MakeConcentrated(load.FY, true, inkgeom.MaxT, concLoadValue),
+			},
+			noDistLoads,
+		)
+	)
+
+	return &structure.Structure{
+		Metadata: structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
+		Nodes: map[contracts.StrID]*structure.Node{
+			nodeOne.Id:   nodeOne,
+			nodeTwo.Id:   nodeTwo,
+			nodeThree.Id: nodeThree,
+		},
+		Elements: []*structure.Element{elementOne, elementTwo},
 	}
 }

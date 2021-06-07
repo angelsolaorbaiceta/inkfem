@@ -70,6 +70,11 @@ func MakeElementSolution(element *preprocess.Element, globalDisp *vec.Vector) *E
 	return solution
 }
 
+// RefFrame returns the element's reference frame.
+func (es *ElementSolution) RefFrame() g2d.RefFrame {
+	return es.Element.Geometry.RefFrame()
+}
+
 /*
 setDisplacements sets the global and local displacements given the structure's system of equations
 solution vector (the global node displacements).
@@ -197,30 +202,33 @@ GlobalStartTorsor returns the forces and moment torsor {fx, fy, mz} at the start
 in global coordinates.
 
 Sign convention:
-	- In the start node, a tensile stress (positive) yields a negative force value.
-	- In the start node, a positive shear force yields a positive force value.
-	- In the start node, a positive bending moment yields a negative moment value.
+	- a tensile stress (positive) yields a negative force value
+	- a positive shear force yields a positive force value
+	- a positive bending moment yields a negative moment value
 */
 func (es *ElementSolution) GlobalStartTorsor() *math.Torsor {
-	// TODO: project in local coords
 	return math.MakeTorsor(
 		-es.AxialStress[0].Value*es.Section().Area,
 		es.ShearForce[0].Value,
 		-es.BendingMoment[0].Value,
-	)
+	).ProjectedToGlobal(es.RefFrame())
 }
 
 /*
 GlobalEndTorsor returns the forces and moment torsor {fx, fy, mz} at the end node
 in global coordinates.
+
+Sign convention:
+	- a tensile stress (positive) yields a positive force value
+	- a positive shear force yields a negative force value
+	- a positive bending moment yields a positive moment value
 */
 func (es *ElementSolution) GlobalEndTorsor() *math.Torsor {
 	index := es.nOfSolutionValues - 1
 
-	// TODO: project in local coords
 	return math.MakeTorsor(
 		es.AxialStress[index].Value*es.Section().Area,
-		es.ShearForce[index].Value,
+		-es.ShearForce[index].Value,
 		es.BendingMoment[index].Value,
-	)
+	).ProjectedToGlobal(es.RefFrame())
 }

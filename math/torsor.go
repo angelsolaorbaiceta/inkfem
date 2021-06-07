@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 /*
@@ -60,6 +61,15 @@ func (minuend *Torsor) Minus(subtrahend *Torsor) *Torsor {
 		minuend.fy-subtrahend.fy,
 		minuend.mz-subtrahend.mz,
 	)
+}
+
+/*
+ProjectedToGlobal creates a new torsor with the values projected to the global reference frame
+assuming it was originally projected in the passed in reference frame.
+*/
+func (torsor *Torsor) ProjectedToGlobal(refFrame g2d.RefFrame) *Torsor {
+	projectedForces := refFrame.ProjectionsToGlobal(torsor.fx, torsor.fy)
+	return MakeTorsor(projectedForces.X, projectedForces.Y, torsor.mz)
 }
 
 // Equals checks whether this an another torsors are equal.
