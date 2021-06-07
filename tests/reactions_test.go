@@ -16,7 +16,7 @@ func TestTwoElementsCantileverReactions(t *testing.T) {
 		str               = makeTwoElementsCantileverReactionsStructure(qyValue, fyValue)
 		sol               = solveStructure(str)
 		reactions         = sol.NodeReactions()["n2"]
-		reactionsErrorEps = 1.0
+		reactionsErrorEps = 4.0
 	)
 
 	t.Run("Fx reaction", func(t *testing.T) {
