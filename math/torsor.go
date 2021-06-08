@@ -54,6 +54,14 @@ func (augend *Torsor) Plus(addend *Torsor) *Torsor {
 	)
 }
 
+func (augend *Torsor) PlusComponents(fx, fy, mz float64) *Torsor {
+	return MakeTorsor(
+		augend.fx+fx,
+		augend.fy+fy,
+		augend.mz+mz,
+	)
+}
+
 // Minus creates a new torsor result of subtracting another to this one.
 func (minuend *Torsor) Minus(subtrahend *Torsor) *Torsor {
 	return MakeTorsor(
