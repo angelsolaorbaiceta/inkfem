@@ -1,0 +1,211 @@
+inkfem v1.0
+
+|materials| 1
+'steel_275' -> 0.00000785 21000000.0 8100000.0 0.3 27500.0 43000.0
+
+|sections| 1
+'ipe_100' -> 10.3 171.0 15.92 34.2 5.79
+
+|nodes| 66
+1 -> 0 0 {dx dy rz}
+2 -> 700 0 {dx dy rz}
+3 -> 1400 0 {dx dy rz}
+4 -> 2100 0 {dx dy rz}
+5 -> 2800 0 {dx dy rz}
+6 -> 3500 0 {dx dy rz}
+7 -> 4200 0 {dx dy rz}
+8 -> 4900 0 {dx dy rz}
+9 -> 5600 0 {dx dy rz}
+10 -> 6300 0 {dx dy rz}
+11 -> 7000 0 {dx dy rz}
+12 -> 0 300 {}
+13 -> 700 300 {}
+14 -> 1400 300 {}
+15 -> 2100 300 {}
+16 -> 2800 300 {}
+17 -> 3500 300 {}
+18 -> 4200 300 {}
+19 -> 4900 300 {}
+20 -> 5600 300 {}
+21 -> 6300 300 {}
+22 -> 7000 300 {}
+23 -> 0 600 {}
+24 -> 700 600 {}
+25 -> 1400 600 {}
+26 -> 2100 600 {}
+27 -> 2800 600 {}
+28 -> 3500 600 {}
+29 -> 4200 600 {}
+30 -> 4900 600 {}
+31 -> 5600 600 {}
+32 -> 6300 600 {}
+33 -> 7000 600 {}
+34 -> 0 900 {}
+35 -> 700 900 {}
+36 -> 1400 900 {}
+37 -> 2100 900 {}
+38 -> 2800 900 {}
+39 -> 3500 900 {}
+40 -> 4200 900 {}
+41 -> 4900 900 {}
+42 -> 5600 900 {}
+43 -> 6300 900 {}
+44 -> 7000 900 {}
+45 -> 0 1200 {}
+46 -> 700 1200 {}
+47 -> 1400 1200 {}
+48 -> 2100 1200 {}
+49 -> 2800 1200 {}
+50 -> 3500 1200 {}
+51 -> 4200 1200 {}
+52 -> 4900 1200 {}
+53 -> 5600 1200 {}
+54 -> 6300 1200 {}
+55 -> 7000 1200 {}
+56 -> 0 1500 {}
+57 -> 700 1500 {}
+58 -> 1400 1500 {}
+59 -> 2100 1500 {}
+60 -> 2800 1500 {}
+61 -> 3500 1500 {}
+62 -> 4200 1500 {}
+63 -> 4900 1500 {}
+64 -> 5600 1500 {}
+65 -> 6300 1500 {}
+66 -> 7000 1500 {}
+
+|loads| 25
+fy ld 56 0.0 -50.0 1.0 -50.0
+fy ld 58 0.0 -50.0 1.0 -50.0
+fy ld 60 0.0 -50.0 1.0 -50.0
+fy ld 62 0.0 -50.0 1.0 -50.0
+fy ld 64 0.0 -50.0 1.0 -50.0
+fy ld 66 0.0 -50.0 1.0 -50.0
+fy ld 68 0.0 -50.0 1.0 -50.0
+fy ld 70 0.0 -50.0 1.0 -50.0
+fy ld 72 0.0 -50.0 1.0 -50.0
+fy ld 74 0.0 -50.0 1.0 -50.0
+fy ld 76 0.0 -50.0 1.0 -50.0
+fy ld 78 0.0 -50.0 1.0 -50.0
+fy ld 80 0.0 -50.0 1.0 -50.0
+fy ld 82 0.0 -50.0 1.0 -50.0
+fy ld 84 0.0 -50.0 1.0 -50.0
+fy ld 86 0.0 -50.0 1.0 -50.0
+fy ld 88 0.0 -50.0 1.0 -50.0
+fy ld 90 0.0 -50.0 1.0 -50.0
+fy ld 92 0.0 -50.0 1.0 -50.0
+fy ld 94 0.0 -50.0 1.0 -50.0
+fy ld 96 0.0 -50.0 1.0 -50.0
+fy ld 98 0.0 -50.0 1.0 -50.0
+fy ld 100 0.0 -50.0 1.0 -50.0
+fy ld 102 0.0 -50.0 1.0 -50.0
+fy ld 104 0.0 -50.0 1.0 -50.0
+
+|elements| 105
+# columns
+1 -> 1 {dx dy rz} 12 {dx dy rz} 'steel_275' 'ipe_100'
+2 -> 2 {dx dy rz} 13 {dx dy rz} 'steel_275' 'ipe_100'
+3 -> 3 {dx dy rz} 14 {dx dy rz} 'steel_275' 'ipe_100'
+4 -> 4 {dx dy rz} 15 {dx dy rz} 'steel_275' 'ipe_100'
+5 -> 5 {dx dy rz} 16 {dx dy rz} 'steel_275' 'ipe_100'
+6 -> 6 {dx dy rz} 17 {dx dy rz} 'steel_275' 'ipe_100'
+7 -> 7 {dx dy rz} 18 {dx dy rz} 'steel_275' 'ipe_100'
+8 -> 8 {dx dy rz} 19 {dx dy rz} 'steel_275' 'ipe_100'
+9 -> 9 {dx dy rz} 20 {dx dy rz} 'steel_275' 'ipe_100'
+10 -> 10 {dx dy rz} 21 {dx dy rz} 'steel_275' 'ipe_100'
+11 -> 11 {dx dy rz} 22 {dx dy rz} 'steel_275' 'ipe_100'
+12 -> 12 {dx dy rz} 23 {dx dy rz} 'steel_275' 'ipe_100'
+13 -> 13 {dx dy rz} 24 {dx dy rz} 'steel_275' 'ipe_100'
+14 -> 14 {dx dy rz} 25 {dx dy rz} 'steel_275' 'ipe_100'
+15 -> 15 {dx dy rz} 26 {dx dy rz} 'steel_275' 'ipe_100'
+16 -> 16 {dx dy rz} 27 {dx dy rz} 'steel_275' 'ipe_100'
+17 -> 17 {dx dy rz} 28 {dx dy rz} 'steel_275' 'ipe_100'
+18 -> 18 {dx dy rz} 29 {dx dy rz} 'steel_275' 'ipe_100'
+19 -> 19 {dx dy rz} 30 {dx dy rz} 'steel_275' 'ipe_100'
+20 -> 20 {dx dy rz} 31 {dx dy rz} 'steel_275' 'ipe_100'
+21 -> 21 {dx dy rz} 32 {dx dy rz} 'steel_275' 'ipe_100'
+22 -> 22 {dx dy rz} 33 {dx dy rz} 'steel_275' 'ipe_100'
+23 -> 23 {dx dy rz} 34 {dx dy rz} 'steel_275' 'ipe_100'
+24 -> 24 {dx dy rz} 35 {dx dy rz} 'steel_275' 'ipe_100'
+25 -> 25 {dx dy rz} 36 {dx dy rz} 'steel_275' 'ipe_100'
+26 -> 26 {dx dy rz} 37 {dx dy rz} 'steel_275' 'ipe_100'
+27 -> 27 {dx dy rz} 38 {dx dy rz} 'steel_275' 'ipe_100'
+28 -> 28 {dx dy rz} 39 {dx dy rz} 'steel_275' 'ipe_100'
+29 -> 29 {dx dy rz} 40 {dx dy rz} 'steel_275' 'ipe_100'
+30 -> 30 {dx dy rz} 41 {dx dy rz} 'steel_275' 'ipe_100'
+31 -> 31 {dx dy rz} 42 {dx dy rz} 'steel_275' 'ipe_100'
+32 -> 32 {dx dy rz} 43 {dx dy rz} 'steel_275' 'ipe_100'
+33 -> 33 {dx dy rz} 44 {dx dy rz} 'steel_275' 'ipe_100'
+34 -> 34 {dx dy rz} 45 {dx dy rz} 'steel_275' 'ipe_100'
+35 -> 35 {dx dy rz} 46 {dx dy rz} 'steel_275' 'ipe_100'
+36 -> 36 {dx dy rz} 47 {dx dy rz} 'steel_275' 'ipe_100'
+37 -> 37 {dx dy rz} 48 {dx dy rz} 'steel_275' 'ipe_100'
+38 -> 38 {dx dy rz} 49 {dx dy rz} 'steel_275' 'ipe_100'
+39 -> 39 {dx dy rz} 50 {dx dy rz} 'steel_275' 'ipe_100'
+40 -> 40 {dx dy rz} 51 {dx dy rz} 'steel_275' 'ipe_100'
+41 -> 41 {dx dy rz} 52 {dx dy rz} 'steel_275' 'ipe_100'
+42 -> 42 {dx dy rz} 53 {dx dy rz} 'steel_275' 'ipe_100'
+43 -> 43 {dx dy rz} 54 {dx dy rz} 'steel_275' 'ipe_100'
+44 -> 44 {dx dy rz} 55 {dx dy rz} 'steel_275' 'ipe_100'
+45 -> 45 {dx dy rz} 56 {dx dy rz} 'steel_275' 'ipe_100'
+46 -> 46 {dx dy rz} 57 {dx dy rz} 'steel_275' 'ipe_100'
+47 -> 47 {dx dy rz} 58 {dx dy rz} 'steel_275' 'ipe_100'
+48 -> 48 {dx dy rz} 59 {dx dy rz} 'steel_275' 'ipe_100'
+49 -> 49 {dx dy rz} 60 {dx dy rz} 'steel_275' 'ipe_100'
+50 -> 50 {dx dy rz} 61 {dx dy rz} 'steel_275' 'ipe_100'
+51 -> 51 {dx dy rz} 62 {dx dy rz} 'steel_275' 'ipe_100'
+52 -> 52 {dx dy rz} 63 {dx dy rz} 'steel_275' 'ipe_100'
+53 -> 53 {dx dy rz} 64 {dx dy rz} 'steel_275' 'ipe_100'
+54 -> 54 {dx dy rz} 65 {dx dy rz} 'steel_275' 'ipe_100'
+55 -> 55 {dx dy rz} 66 {dx dy rz} 'steel_275' 'ipe_100'
+# beams
+56 -> 12 {dx dy rz} 13 {dx dy rz} 'steel_275' 'ipe_100'
+57 -> 13 {dx dy rz} 14 {dx dy rz} 'steel_275' 'ipe_100'
+58 -> 14 {dx dy rz} 15 {dx dy rz} 'steel_275' 'ipe_100'
+59 -> 15 {dx dy rz} 16 {dx dy rz} 'steel_275' 'ipe_100'
+60 -> 16 {dx dy rz} 17 {dx dy rz} 'steel_275' 'ipe_100'
+61 -> 17 {dx dy rz} 18 {dx dy rz} 'steel_275' 'ipe_100'
+62 -> 18 {dx dy rz} 19 {dx dy rz} 'steel_275' 'ipe_100'
+63 -> 19 {dx dy rz} 20 {dx dy rz} 'steel_275' 'ipe_100'
+64 -> 20 {dx dy rz} 21 {dx dy rz} 'steel_275' 'ipe_100'
+65 -> 21 {dx dy rz} 22 {dx dy rz} 'steel_275' 'ipe_100'
+66 -> 23 {dx dy rz} 24 {dx dy rz} 'steel_275' 'ipe_100'
+67 -> 24 {dx dy rz} 25 {dx dy rz} 'steel_275' 'ipe_100'
+68 -> 25 {dx dy rz} 26 {dx dy rz} 'steel_275' 'ipe_100'
+69 -> 26 {dx dy rz} 27 {dx dy rz} 'steel_275' 'ipe_100'
+70 -> 27 {dx dy rz} 28 {dx dy rz} 'steel_275' 'ipe_100'
+71 -> 28 {dx dy rz} 29 {dx dy rz} 'steel_275' 'ipe_100'
+72 -> 29 {dx dy rz} 30 {dx dy rz} 'steel_275' 'ipe_100'
+73 -> 30 {dx dy rz} 31 {dx dy rz} 'steel_275' 'ipe_100'
+74 -> 31 {dx dy rz} 32 {dx dy rz} 'steel_275' 'ipe_100'
+75 -> 32 {dx dy rz} 33 {dx dy rz} 'steel_275' 'ipe_100'
+76 -> 34 {dx dy rz} 35 {dx dy rz} 'steel_275' 'ipe_100'
+77 -> 35 {dx dy rz} 36 {dx dy rz} 'steel_275' 'ipe_100'
+78 -> 36 {dx dy rz} 37 {dx dy rz} 'steel_275' 'ipe_100'
+79 -> 37 {dx dy rz} 38 {dx dy rz} 'steel_275' 'ipe_100'
+80 -> 38 {dx dy rz} 39 {dx dy rz} 'steel_275' 'ipe_100'
+81 -> 39 {dx dy rz} 40 {dx dy rz} 'steel_275' 'ipe_100'
+82 -> 40 {dx dy rz} 41 {dx dy rz} 'steel_275' 'ipe_100'
+83 -> 41 {dx dy rz} 42 {dx dy rz} 'steel_275' 'ipe_100'
+84 -> 42 {dx dy rz} 43 {dx dy rz} 'steel_275' 'ipe_100'
+85 -> 43 {dx dy rz} 44 {dx dy rz} 'steel_275' 'ipe_100'
+86 -> 45 {dx dy rz} 46 {dx dy rz} 'steel_275' 'ipe_100'
+87 -> 46 {dx dy rz} 47 {dx dy rz} 'steel_275' 'ipe_100'
+88 -> 47 {dx dy rz} 48 {dx dy rz} 'steel_275' 'ipe_100'
+89 -> 48 {dx dy rz} 49 {dx dy rz} 'steel_275' 'ipe_100'
+90 -> 49 {dx dy rz} 50 {dx dy rz} 'steel_275' 'ipe_100'
+91 -> 50 {dx dy rz} 51 {dx dy rz} 'steel_275' 'ipe_100'
+92 -> 51 {dx dy rz} 52 {dx dy rz} 'steel_275' 'ipe_100'
+93 -> 52 {dx dy rz} 53 {dx dy rz} 'steel_275' 'ipe_100'
+94 -> 53 {dx dy rz} 54 {dx dy rz} 'steel_275' 'ipe_100'
+95 -> 54 {dx dy rz} 55 {dx dy rz} 'steel_275' 'ipe_100'
+96 -> 56 {dx dy rz} 57 {dx dy rz} 'steel_275' 'ipe_100'
+97 -> 57 {dx dy rz} 58 {dx dy rz} 'steel_275' 'ipe_100'
+98 -> 58 {dx dy rz} 59 {dx dy rz} 'steel_275' 'ipe_100'
+99 -> 59 {dx dy rz} 60 {dx dy rz} 'steel_275' 'ipe_100'
+100 -> 60 {dx dy rz} 61 {dx dy rz} 'steel_275' 'ipe_100'
+101 -> 61 {dx dy rz} 62 {dx dy rz} 'steel_275' 'ipe_100'
+102 -> 62 {dx dy rz} 63 {dx dy rz} 'steel_275' 'ipe_100'
+103 -> 63 {dx dy rz} 64 {dx dy rz} 'steel_275' 'ipe_100'
+104 -> 64 {dx dy rz} 65 {dx dy rz} 'steel_275' 'ipe_100'
+105 -> 65 {dx dy rz} 66 {dx dy rz} 'steel_275' 'ipe_100'
