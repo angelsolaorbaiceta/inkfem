@@ -54,6 +54,7 @@ func (augend *Torsor) Plus(addend *Torsor) *Torsor {
 	)
 }
 
+// PlusComponents creates a new torsor result of adding the passed in torsor components to this one.
 func (augend *Torsor) PlusComponents(fx, fy, mz float64) *Torsor {
 	return MakeTorsor(
 		augend.fx+fx,
@@ -77,6 +78,15 @@ assuming it was originally projected in the passed in reference frame.
 */
 func (torsor *Torsor) ProjectedToGlobal(refFrame g2d.RefFrame) *Torsor {
 	projectedForces := refFrame.ProjectionsToGlobal(torsor.fx, torsor.fy)
+	return MakeTorsor(projectedForces.X, projectedForces.Y, torsor.mz)
+}
+
+/*
+ProjectedTo creates a new torsor with the values projected to the passed in reference frame
+assuming it was originally projected in the global reference frame.
+*/
+func (torsor *Torsor) ProjectedTo(refFrame g2d.RefFrame) *Torsor {
+	projectedForces := refFrame.ProjectProjections(torsor.fx, torsor.fy)
 	return MakeTorsor(projectedForces.X, projectedForces.Y, torsor.mz)
 }
 

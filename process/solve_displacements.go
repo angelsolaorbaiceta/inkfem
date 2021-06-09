@@ -3,9 +3,9 @@ package process
 import (
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/log"
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/lineq"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 	"github.com/angelsolaorbaiceta/inkmath/nums"
@@ -128,19 +128,17 @@ func addDispConstraints(
 
 func addTermsToLoadVector(sysVector *vec.Vector, element *preprocess.Element) {
 	var (
-		localLoad    [3]float64
-		globalForces g2d.Projectable
+		globalTorsor *math.Torsor
 		dofs         [3]int
 		refFrame     = element.Geometry.RefFrame()
 	)
 
 	for _, node := range element.Nodes {
-		localLoad = node.NetLocalLoadVector()
-		globalForces = refFrame.ProjectionsToGlobal(localLoad[0], localLoad[1])
+		globalTorsor = node.NetLocalLoadTorsor().ProjectedToGlobal(refFrame)
 		dofs = node.DegreesOfFreedomNum()
 
-		sysVector.SetValue(dofs[0], globalForces.X)
-		sysVector.SetValue(dofs[1], globalForces.Y)
-		sysVector.SetValue(dofs[2], localLoad[2])
+		sysVector.SetValue(dofs[0], globalTorsor.Fx())
+		sysVector.SetValue(dofs[1], globalTorsor.Fy())
+		sysVector.SetValue(dofs[2], globalTorsor.Mz())
 	}
 }

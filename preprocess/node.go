@@ -101,13 +101,13 @@ func (n Node) LocalRightMz() float64 {
 	return n.rightLocalLoad.Mz()
 }
 
-// NetLocalLoadVector returns the array of net local load values {Fx, Fy, Mz}.
-func (n Node) NetLocalLoadVector() [3]float64 {
-	return [3]float64{
+// NetLocalLoadTorsor returns the array of net local load values {Fx, Fy, Mz}.
+func (n Node) NetLocalLoadTorsor() *math.Torsor {
+	return math.MakeTorsor(
 		n.NetLocalFx(),
 		n.NetLocalFy(),
 		n.NetLocalMz(),
-	}
+	)
 }
 
 /*
@@ -144,8 +144,8 @@ func (n *Node) DistanceTo(other *Node) float64 {
 }
 
 // AddLocalExternalLoad adds the given load values to the load applied from the left finite element.
-func (n *Node) AddLocalExternalLoad(fx, fy, mz float64) {
-	n.externalLocalLoad = n.externalLocalLoad.PlusComponents(fx, fy, mz)
+func (n *Node) AddLocalExternalLoad(loadTorsor *math.Torsor) {
+	n.externalLocalLoad = n.externalLocalLoad.Plus(loadTorsor)
 }
 
 /*

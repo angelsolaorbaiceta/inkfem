@@ -1,10 +1,12 @@
 package preprocess
 
 import (
+	"sort"
+
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
-	"sort"
 )
 
 // Minimum distance between two consecutive t values in the slices.
@@ -63,8 +65,8 @@ func sliceLoadedElementPositions(
 }
 
 /*
-Collects all the concentrated loads t parameter value, provided the value is not extreme, that is,
-`t != tMin` and `t != tMax`.
+SlicePositionsForConcentratedLoads collects all the concentrated loads t parameter value, provided
+the value is not extreme, that is, `t != tMin` and `t != tMax`.
 */
 func slicePositionsForConcentratedLoads(loads []*load.ConcentratedLoad) []inkgeom.TParam {
 	var tVals []inkgeom.TParam
@@ -79,8 +81,8 @@ func slicePositionsForConcentratedLoads(loads []*load.ConcentratedLoad) []inkgeo
 }
 
 /*
-Collects all the distibutd loads start and end position t values, provided these values are not
-extreme, that is, `t != tMin` and `t != tMax`.
+SlicePositionsForDistributedLoads collects all the distibutd loads start and end position t values,
+provided these values are not extreme, that is, `t != tMin` and `t != tMax`.
 */
 func slicePositionsForDistributedLoads(loads []*load.DistributedLoad) []inkgeom.TParam {
 	var tVals []inkgeom.TParam
@@ -99,8 +101,8 @@ func slicePositionsForDistributedLoads(loads []*load.DistributedLoad) []inkgeom.
 }
 
 /*
-Creates all the nodes for the given t positions and applies the concentrated loads on those t
-positions where one is defined.
+MakeNodesWithConcentratedLoads creates all the nodes for the given t positions and applies the
+concentrated loads on those t positions where one is defined.
 
 If the load is in global coordinates, its vector representation is projected into the element's
 local reference frame.
@@ -116,19 +118,15 @@ func makeNodesWithConcentratedLoads(element *structure.Element, tPos []inkgeom.T
 
 		for _, load := range element.ConcentratedLoads {
 			if t.Equals(load.T) {
-				var localForces [3]float64
+				var localLoadTorsor *math.Torsor
 
 				if load.IsInLocalCoords {
-					localForces = load.AsVector()
+					localLoadTorsor = load.AsTorsor()
 				} else {
-					localForces = load.ProjectedVectorValue(elemRefFrame)
+					localLoadTorsor = load.AsTorsorProjectedTo(elemRefFrame)
 				}
 
-				node.AddLocalExternalLoad(
-					localForces[0],
-					localForces[1],
-					localForces[2],
-				)
+				node.AddLocalExternalLoad(localLoadTorsor)
 			}
 		}
 
