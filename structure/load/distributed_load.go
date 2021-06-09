@@ -56,8 +56,8 @@ func (load *DistributedLoad) ValueAt(t inkgeom.TParam) float64 {
 	)
 }
 
-// AsVectorAt returns the the distributed load vector at a given position.
-func (load *DistributedLoad) AsVectorAt(t inkgeom.TParam) *math.Torsor {
+// AsTorsorAt returns the the distributed load vector at a given position.
+func (load *DistributedLoad) AsTorsorAt(t inkgeom.TParam) *math.Torsor {
 	value := load.ValueAt(t)
 
 	switch load.Term {
@@ -76,11 +76,11 @@ func (load *DistributedLoad) AsVectorAt(t inkgeom.TParam) *math.Torsor {
 }
 
 /*
-ProjectedVectorAt returns the distributed load vector at a given position projected in a
+AsTorsorProjectedAt returns the distributed load vector at a given position projected in a
 reference frame.
 */
-func (load *DistributedLoad) ProjectedVectorAt(t inkgeom.TParam, refFrame g2d.RefFrame) *math.Torsor {
-	return load.AsVectorAt(t).ProjectedTo(refFrame)
+func (load *DistributedLoad) AsTorsorProjectedAt(t inkgeom.TParam, refFrame g2d.RefFrame) *math.Torsor {
+	return load.AsTorsorAt(t).ProjectedTo(refFrame)
 }
 
 // Equals tests whether the two loads are equal or not.
