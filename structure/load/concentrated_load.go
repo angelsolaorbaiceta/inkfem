@@ -52,12 +52,6 @@ func (load *ConcentratedLoad) AsTorsorProjectedTo(refFrame g2d.RefFrame) *math.T
 	return load.AsTorsor().ProjectedTo(refFrame)
 }
 
-// TODO: remove
-// ForcesVector returns a vector for a concentrated load with the components of {Fx, Fy}.
-func (load *ConcentratedLoad) ForcesVector() g2d.Projectable {
-	return g2d.MakeVector(load.LocalFx(), load.LocalFy())
-}
-
 func (load *ConcentratedLoad) LocalFx() float64 {
 	if load.Term == FX {
 		return load.Value

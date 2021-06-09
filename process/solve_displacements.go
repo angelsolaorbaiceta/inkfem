@@ -13,7 +13,8 @@ import (
 )
 
 /*
-Computes the structure's global displacements given the preprocessed structure.
+ComputeGlobalDisplacements computes the structure's global displacements given the
+preprocessed structure.
 
 The process involves generating the structure's system of equations and solving it using the
 Preconditioned Conjugate Gradiend numerical procedure.
@@ -43,7 +44,8 @@ func computeGlobalDisplacements(structure *preprocess.Structure, options SolveOp
 }
 
 /*
-Generates the system of equations matrix and vector from the preprocessed structure.
+MakeSystemOfEquations generates the system of equations matrix and vector from the
+preprocessed structure.
 
 It computes each of the sliced element's stiffness matrices and assembles them into one
 global matrix. It also assembles the global loads vector from the sliced element nodes.
