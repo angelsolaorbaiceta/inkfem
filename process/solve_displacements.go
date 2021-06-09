@@ -3,9 +3,9 @@ package process
 import (
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/log"
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/lineq"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 	"github.com/angelsolaorbaiceta/inkmath/nums"
@@ -13,7 +13,8 @@ import (
 )
 
 /*
-Computes the structure's global displacements given the preprocessed structure.
+ComputeGlobalDisplacements computes the structure's global displacements given the
+preprocessed structure.
 
 The process involves generating the structure's system of equations and solving it using the
 Preconditioned Conjugate Gradiend numerical procedure.
@@ -43,7 +44,8 @@ func computeGlobalDisplacements(structure *preprocess.Structure, options SolveOp
 }
 
 /*
-Generates the system of equations matrix and vector from the preprocessed structure.
+MakeSystemOfEquations generates the system of equations matrix and vector from the
+preprocessed structure.
 
 It computes each of the sliced element's stiffness matrices and assembles them into one
 global matrix. It also assembles the global loads vector from the sliced element nodes.
@@ -128,19 +130,17 @@ func addDispConstraints(
 
 func addTermsToLoadVector(sysVector *vec.Vector, element *preprocess.Element) {
 	var (
-		localLoad    [3]float64
-		globalForces g2d.Projectable
+		globalTorsor *math.Torsor
 		dofs         [3]int
 		refFrame     = element.Geometry.RefFrame()
 	)
 
 	for _, node := range element.Nodes {
-		localLoad = node.NetLocalLoadVector()
-		globalForces = refFrame.ProjectionsToGlobal(localLoad[0], localLoad[1])
+		globalTorsor = node.NetLocalLoadTorsor().ProjectedToGlobal(refFrame)
 		dofs = node.DegreesOfFreedomNum()
 
-		sysVector.SetValue(dofs[0], globalForces.X)
-		sysVector.SetValue(dofs[1], globalForces.Y)
-		sysVector.SetValue(dofs[2], localLoad[2])
+		sysVector.SetValue(dofs[0], globalTorsor.Fx())
+		sysVector.SetValue(dofs[1], globalTorsor.Fy())
+		sysVector.SetValue(dofs[2], globalTorsor.Mz())
 	}
 }

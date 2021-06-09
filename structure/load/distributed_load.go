@@ -1,6 +1,7 @@
 package load
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/nums"
@@ -12,10 +13,8 @@ Load is a distributed or concentrated load.
 Distributed loads are linear: the start and end values are interpolated linearly.
 
 A load is expressed as:
-	- a term of application, which in 2D can be: Force in X, Force in Y or
-	Moment about Z
-	- a projection frame, which can be local to the element to which load is
-	applied or global
+	- a term of application, which in 2D can be: Force in X, Force in Y or Moment about Z
+	- a projection frame, which can be local to the element to which load is applied or global
   - start/end position and value
 */
 type DistributedLoad struct {
@@ -57,19 +56,19 @@ func (load *DistributedLoad) ValueAt(t inkgeom.TParam) float64 {
 	)
 }
 
-// AsVectorAt returns the the distributed load vector at a given position.
-func (load *DistributedLoad) AsVectorAt(t inkgeom.TParam) [3]float64 {
+// AsTorsorAt returns the the distributed load vector at a given position.
+func (load *DistributedLoad) AsTorsorAt(t inkgeom.TParam) *math.Torsor {
 	value := load.ValueAt(t)
 
 	switch load.Term {
 	case FX:
-		return [3]float64{value, 0.0, 0.0}
+		return math.MakeTorsor(value, 0.0, 0.0)
 
 	case FY:
-		return [3]float64{0.0, value, 0.0}
+		return math.MakeTorsor(0.0, value, 0.0)
 
 	case MZ:
-		return [3]float64{0.0, 0.0, value}
+		return math.MakeTorsor(0.0, 0.0, value)
 
 	default:
 		panic("Unknown load term: " + load.Term)
@@ -77,19 +76,11 @@ func (load *DistributedLoad) AsVectorAt(t inkgeom.TParam) [3]float64 {
 }
 
 /*
-ProjectedVectorAt returns the distributed load vector at a given position projected in a
+AsTorsorProjectedAt returns the distributed load vector at a given position projected in a
 reference frame.
 */
-func (load *DistributedLoad) ProjectedVectorAt(t inkgeom.TParam, refFrame g2d.RefFrame) [3]float64 {
-	var (
-		vectorValue     = load.AsVectorAt(t)
-		projectedVector = refFrame.ProjectVector(g2d.MakeVector(vectorValue[0], vectorValue[1]))
-	)
-
-	vectorValue[0] = projectedVector.X
-	vectorValue[1] = projectedVector.Y
-
-	return vectorValue
+func (load *DistributedLoad) AsTorsorProjectedAt(t inkgeom.TParam, refFrame g2d.RefFrame) *math.Torsor {
+	return load.AsTorsorAt(t).ProjectedTo(refFrame)
 }
 
 // Equals tests whether the two loads are equal or not.

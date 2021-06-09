@@ -4,6 +4,7 @@ Package load contains definition of loads applied to structural members.
 package load
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkmath/nums"
@@ -41,14 +42,14 @@ func (load *ConcentratedLoad) IsNodal() bool {
 	return load.T.IsMin() || load.T.IsMax()
 }
 
-// AsVector returns a vector with the components of the load.
-func (load *ConcentratedLoad) AsVector() [3]float64 {
-	return [3]float64{load.LocalFx(), load.LocalFy(), load.LocalMz()}
+// AsTorsor returns a vector with the components of the load.
+func (load *ConcentratedLoad) AsTorsor() *math.Torsor {
+	return math.MakeTorsor(load.LocalFx(), load.LocalFy(), load.LocalMz())
 }
 
-// ForcesVector returns a vector for a concentrated load with the components of {Fx, Fy}.
-func (load *ConcentratedLoad) ForcesVector() g2d.Projectable {
-	return g2d.MakeVector(load.LocalFx(), load.LocalFy())
+// AsTorsorProjectedTo returns the concentrated load vector projected in a reference frame.
+func (load *ConcentratedLoad) AsTorsorProjectedTo(refFrame g2d.RefFrame) *math.Torsor {
+	return load.AsTorsor().ProjectedTo(refFrame)
 }
 
 func (load *ConcentratedLoad) LocalFx() float64 {
@@ -73,12 +74,6 @@ func (load *ConcentratedLoad) LocalMz() float64 {
 	}
 
 	return 0.0
-}
-
-// ProjectedVectorValue returns the concentrated load vector projected in a reference frame.
-func (load *ConcentratedLoad) ProjectedVectorValue(refFrame g2d.RefFrame) [3]float64 {
-	projectedVector := refFrame.ProjectVector(load.ForcesVector())
-	return [3]float64{projectedVector.X, projectedVector.Y, load.LocalMz()}
 }
 
 // Equals tests whether the two loads are equal or not.

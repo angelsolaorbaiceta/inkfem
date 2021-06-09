@@ -1,6 +1,7 @@
 package preprocess
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
@@ -21,7 +22,7 @@ func applyDistributedLoadsToNodes(nodes []*Node, loads []*load.DistributedLoad) 
 // Applies a distribute load to the trailing and leading nodes in a finite element.
 func applyDistributedLoadToNodes(load *load.DistributedLoad, trailNode, leadNode *Node) {
 	var (
-		startLoad, endLoad = forceVectorInLocalCoords(load, trailNode, leadNode)
+		startLoad, endLoad = forceTorsorInLocalCoords(load, trailNode, leadNode)
 		length             = trailNode.DistanceTo(leadNode)
 		halfLength         = 0.5 * length
 		length2            = length * length
@@ -30,51 +31,51 @@ func applyDistributedLoadToNodes(load *load.DistributedLoad, trailNode, leadNode
 	)
 
 	var (
-		trailFx       = (startLoad[0] * halfLength) + (length2 * loadSlopes[0] / 6.0)
-		trailFy       = (startLoad[1] * halfLength) + (3.0 * length2 * loadSlopes[1] / 20.0)
-		trailFyMoment = (startLoad[1] * length2 / 12.0) + (length3 * loadSlopes[1] / 30.0)
+		trailFx       = (startLoad.Fx() * halfLength) + (length2 * loadSlopes.Fx() / 6.0)
+		trailFy       = (startLoad.Fy() * halfLength) + (3.0 * length2 * loadSlopes.Fy() / 20.0)
+		trailFyMoment = (startLoad.Fy() * length2 / 12.0) + (length3 * loadSlopes.Fy() / 30.0)
 	)
 	trailNode.AddLocalLeftLoad(
 		trailFx,
 		trailFy,
-		(startLoad[2]*halfLength)+trailFyMoment,
+		(startLoad.Mz()*halfLength)+trailFyMoment,
 	)
 
 	var (
-		leadFx       = (startLoad[0] * halfLength) + (length2 * loadSlopes[0] / 3.0)
-		leadFy       = (startLoad[1] * halfLength) + (7.0 * length2 * loadSlopes[1] / 20.0)
-		leadFyMoment = -(startLoad[1] * length2 / 12.0) - (length3 * loadSlopes[1] / 20.0)
+		leadFx       = (startLoad.Fx() * halfLength) + (length2 * loadSlopes.Fx() / 3.0)
+		leadFy       = (startLoad.Fy() * halfLength) + (7.0 * length2 * loadSlopes.Fy() / 20.0)
+		leadFyMoment = -(startLoad.Fy() * length2 / 12.0) - (length3 * loadSlopes.Fy() / 20.0)
 	)
 	leadNode.AddLocalRightLoad(
 		leadFx,
 		leadFy,
-		(startLoad[2]*halfLength)+leadFyMoment,
+		(startLoad.Mz()*halfLength)+leadFyMoment,
 	)
 }
 
-func forceVectorInLocalCoords(
+func forceTorsorInLocalCoords(
 	load *load.DistributedLoad,
 	trailNode, leadNode *Node,
-) (startLoad, endLoad [3]float64) {
+) (startLoad, endLoad *math.Torsor) {
 	if load.IsInLocalCoords {
-		startLoad = load.AsVectorAt(trailNode.T)
-		endLoad = load.AsVectorAt(leadNode.T)
+		startLoad = load.AsTorsorAt(trailNode.T)
+		endLoad = load.AsTorsorAt(leadNode.T)
 	} else {
 		elementReferenceFrame := g2d.MakeRefFrameWithIVersor(
 			g2d.MakeVectorFromTo(trailNode.Position, leadNode.Position),
 		)
 
-		startLoad = load.ProjectedVectorAt(trailNode.T, elementReferenceFrame)
-		endLoad = load.ProjectedVectorAt(leadNode.T, elementReferenceFrame)
+		startLoad = load.AsTorsorProjectedAt(trailNode.T, elementReferenceFrame)
+		endLoad = load.AsTorsorProjectedAt(leadNode.T, elementReferenceFrame)
 	}
 
 	return
 }
 
-func computeLoadSlopes(startLoad, endLoad [3]float64, length float64) [3]float64 {
-	return [3]float64{
-		(endLoad[0] - startLoad[0]) / length,
-		(endLoad[1] - startLoad[1]) / length,
-		(endLoad[2] - startLoad[2]) / length,
-	}
+func computeLoadSlopes(startLoad, endLoad *math.Torsor, length float64) *math.Torsor {
+	return math.MakeTorsor(
+		(endLoad.Fx()-startLoad.Fx())/length,
+		(endLoad.Fy()-startLoad.Fy())/length,
+		(endLoad.Mz()-startLoad.Mz())/length,
+	)
 }

@@ -1,6 +1,7 @@
 package preprocess
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom"
@@ -41,28 +42,29 @@ func sliceAxialElement(element *structure.Element) *Element {
 }
 
 /*
-Assuming all loads are nodal (concentrated and applied to the ends of the element), computes the net,
-locally projected loads at the start end (sFx & sFy) and at the end end (eFx & eFy).
+NetNodalLoadValues computes the net, locally projected loads at the start end (sFx & sFy) and at
+the end end (eFx & eFy), assuming all loads are nodal (concentrated and applied to the ends of
+the element).
 */
 func netNodalLoadValues(
 	loads []*load.ConcentratedLoad,
 	localRefFrame g2d.RefFrame,
 ) (sFx, sFy, eFx, eFy float64) {
-	var localForcesVector g2d.Projectable
+	var localLoadTorsor *math.Torsor
 
 	for _, ld := range loads {
 		if ld.IsInLocalCoords {
-			localForcesVector = ld.ForcesVector()
+			localLoadTorsor = ld.AsTorsor()
 		} else {
-			localForcesVector = localRefFrame.ProjectVector(ld.ForcesVector())
+			localLoadTorsor = ld.AsTorsorProjectedTo(localRefFrame)
 		}
 
 		if ld.T.IsMin() {
-			sFx += localForcesVector.X
-			sFy += localForcesVector.Y
+			sFx += localLoadTorsor.Fx()
+			sFy += localLoadTorsor.Fy()
 		} else if ld.T.IsMax() {
-			eFx += localForcesVector.X
-			eFy += localForcesVector.Y
+			eFx += localLoadTorsor.Fx()
+			eFy += localLoadTorsor.Fy()
 		}
 	}
 
