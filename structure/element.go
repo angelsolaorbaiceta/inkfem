@@ -20,7 +20,7 @@ TODO: choose the bending axis
 TODO: buckling analysis
 */
 type Element struct {
-	Id, StartNodeID, EndNodeID contracts.StrID
+	id, startNodeID, endNodeID contracts.StrID
 	Geometry                   g2d.Segment
 	StartLink, EndLink         *Constraint
 	material                   *Material
@@ -40,9 +40,9 @@ func MakeElement(
 	distributedLoads []*load.DistributedLoad,
 ) *Element {
 	return &Element{
-		Id:                id,
-		StartNodeID:       startNode.Id,
-		EndNodeID:         endNode.Id,
+		id:                id,
+		startNodeID:       startNode.Id,
+		endNodeID:         endNode.Id,
 		Geometry:          g2d.MakeSegment(startNode.Position, endNode.Position),
 		StartLink:         startLink,
 		EndLink:           endLink,
@@ -69,6 +69,19 @@ func MakeElementWithoutLoads(
 		[]*load.ConcentratedLoad{},
 		[]*load.DistributedLoad{},
 	)
+}
+
+// GetID returns the element's id. Implements Identifiable interface.
+func (e Element) GetID() contracts.StrID {
+	return e.id
+}
+
+func (e Element) StartNodeID() contracts.StrID {
+	return e.startNodeID
+}
+
+func (e Element) EndNodeID() contracts.StrID {
+	return e.endNodeID
 }
 
 // StartPoint returns the position of the start node of this element's geometry.
@@ -199,25 +212,23 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 
 // Equals tests whether this element is equal to other.
 func (e *Element) Equals(other *Element) bool {
-	return e.StartNodeID == other.StartNodeID &&
-		e.EndNodeID == other.EndNodeID &&
+	return e.startNodeID == other.startNodeID &&
+		e.endNodeID == other.endNodeID &&
 		e.StartLink.Equals(other.StartLink) &&
 		e.EndLink.Equals(other.EndLink) &&
 		e.material.Name == other.material.Name &&
 		e.section.Name == other.section.Name
 }
 
-// GetID returns the element's id. Implements Identifiable interface.
-func (e Element) GetID() contracts.StrID {
-	return e.Id
-}
-
 func (e Element) String() string {
 	return fmt.Sprintf(
 		"%s -> %s %s %s %s %s %s",
-		e.Id,
-		e.StartNodeID, e.StartLink.String(),
-		e.EndNodeID, e.EndLink.String(),
-		e.material.Name, e.section.Name,
+		e.id,
+		e.startNodeID,
+		e.StartLink.String(),
+		e.endNodeID,
+		e.EndLink.String(),
+		e.material.Name,
+		e.section.Name,
 	)
 }
