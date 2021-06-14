@@ -64,8 +64,8 @@ func TestElementHasLoadsApplied(t *testing.T) {
 func TestElementIsAxial(t *testing.T) {
 	t.Run("isn't axial if start link allows rotation", func(t *testing.T) {
 		element := makeElement()
-		element.StartLink = &DispConstraint
-		element.EndLink = &FullConstraint
+		element.startLink = &DispConstraint
+		element.endLink = &FullConstraint
 
 		if element.IsAxialMember() {
 			t.Error("Element shouln't be axial")
@@ -74,8 +74,8 @@ func TestElementIsAxial(t *testing.T) {
 
 	t.Run("isn't axial if end link allows rotation", func(t *testing.T) {
 		element := makeElement()
-		element.StartLink = &FullConstraint
-		element.EndLink = &DispConstraint
+		element.startLink = &FullConstraint
+		element.endLink = &DispConstraint
 
 		if element.IsAxialMember() {
 			t.Error("Element shouln't be axial")
@@ -85,8 +85,8 @@ func TestElementIsAxial(t *testing.T) {
 	t.Run("isn't axial if has at least a distributed load", func(t *testing.T) {
 		l := load.MakeDistributed(load.FX, true, inkgeom.MinT, 20, inkgeom.MaxT, 40)
 		element := makeDistLoadedElement(l)
-		element.StartLink = &DispConstraint
-		element.EndLink = &DispConstraint
+		element.startLink = &DispConstraint
+		element.endLink = &DispConstraint
 
 		if element.IsAxialMember() {
 			t.Error("Element shouln't be axial")
@@ -96,8 +96,8 @@ func TestElementIsAxial(t *testing.T) {
 	t.Run("isn't axial if has at least a concentrated non-nodal load", func(t *testing.T) {
 		l := load.MakeConcentrated(load.MZ, true, inkgeom.HalfT, 10)
 		element := makeConcLoadedElement(l)
-		element.StartLink = &DispConstraint
-		element.EndLink = &DispConstraint
+		element.startLink = &DispConstraint
+		element.endLink = &DispConstraint
 
 		if element.IsAxialMember() {
 			t.Error("Element shouln't be axial")
@@ -107,8 +107,8 @@ func TestElementIsAxial(t *testing.T) {
 	t.Run("isn't axial if has at least a nodal MZ load", func(t *testing.T) {
 		l := load.MakeConcentrated(load.MZ, true, inkgeom.MinT, 10)
 		element := makeConcLoadedElement(l)
-		element.StartLink = &DispConstraint
-		element.EndLink = &DispConstraint
+		element.startLink = &DispConstraint
+		element.endLink = &DispConstraint
 
 		if element.IsAxialMember() {
 			t.Error("Element shouln't be axial")
@@ -118,8 +118,8 @@ func TestElementIsAxial(t *testing.T) {
 	t.Run("is axial if pinned and all loads are nodal and not MZ", func(t *testing.T) {
 		l := load.MakeConcentrated(load.FY, true, inkgeom.MinT, 10)
 		element := makeConcLoadedElement(l)
-		element.StartLink = &DispConstraint
-		element.EndLink = &DispConstraint
+		element.startLink = &DispConstraint
+		element.endLink = &DispConstraint
 
 		if !element.IsAxialMember() {
 			t.Error("Element should be axial")
@@ -134,7 +134,7 @@ func TestHorizontalElementGlobalStiffnessMatrix(t *testing.T) {
 		e       = material.YoungMod
 		i       = section.IStrong
 		a       = section.Area
-		l       = element.Geometry.Length()
+		l       = element.Length()
 	)
 
 	t.Run("Fx -> Dx terms", func(t *testing.T) {

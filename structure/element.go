@@ -22,7 +22,7 @@ TODO: buckling analysis
 type Element struct {
 	id, startNodeID, endNodeID contracts.StrID
 	geometry                   g2d.Segment
-	StartLink, EndLink         *Constraint
+	startLink, endLink         *Constraint
 	material                   *Material
 	section                    *Section
 	ConcentratedLoads          []*load.ConcentratedLoad
@@ -44,8 +44,8 @@ func MakeElement(
 		startNodeID:       startNode.Id,
 		endNodeID:         endNode.Id,
 		geometry:          g2d.MakeSegment(startNode.Position, endNode.Position),
-		StartLink:         startLink,
-		EndLink:           endLink,
+		startLink:         startLink,
+		endLink:           endLink,
 		material:          material,
 		section:           section,
 		ConcentratedLoads: concentratedLoads,
@@ -87,6 +87,18 @@ func (e Element) RefFrame() g2d.RefFrame {
 	return e.geometry.RefFrame()
 }
 
+func (e Element) DirectionVersor() g2d.Projectable {
+	return e.geometry.DirectionVersor()
+}
+
+func (e Element) NormalVersor() g2d.Projectable {
+	return e.geometry.NormalVersor()
+}
+
+func (e Element) Length() float64 {
+	return e.geometry.Length()
+}
+
 func (e Element) LengthBetween(tStart, tEnd inkgeom.TParam) float64 {
 	return e.geometry.LengthBetween(tStart, tEnd)
 }
@@ -104,6 +116,14 @@ func (e Element) EndPoint() g2d.Projectable {
 // PointAt returns the position of a middle point in this element's geometry.
 func (e Element) PointAt(t inkgeom.TParam) g2d.Projectable {
 	return e.geometry.PointAt(t)
+}
+
+func (e Element) StartLink() *Constraint {
+	return e.startLink
+}
+
+func (e Element) EndLink() *Constraint {
+	return e.endLink
 }
 
 // Material returns the material for the element.
@@ -140,7 +160,7 @@ func (e Element) IsAxialMember() bool {
 		}
 	}
 
-	return e.StartLink.AllowsRotation() && e.EndLink.AllowsRotation()
+	return e.startLink.AllowsRotation() && e.endLink.AllowsRotation()
 }
 
 /*
@@ -221,8 +241,8 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 func (e *Element) Equals(other *Element) bool {
 	return e.startNodeID == other.startNodeID &&
 		e.endNodeID == other.endNodeID &&
-		e.StartLink.Equals(other.StartLink) &&
-		e.EndLink.Equals(other.EndLink) &&
+		e.startLink.Equals(other.startLink) &&
+		e.endLink.Equals(other.endLink) &&
 		e.material.Name == other.material.Name &&
 		e.section.Name == other.section.Name
 }
@@ -232,9 +252,9 @@ func (e Element) String() string {
 		"%s -> %s %s %s %s %s %s",
 		e.id,
 		e.startNodeID,
-		e.StartLink.String(),
+		e.startLink.String(),
 		e.endNodeID,
-		e.EndLink.String(),
+		e.endLink.String(),
 		e.material.Name,
 		e.section.Name,
 	)
