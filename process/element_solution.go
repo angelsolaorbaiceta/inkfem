@@ -72,7 +72,7 @@ func MakeElementSolution(element *preprocess.Element, globalDisp *vec.Vector) *E
 
 // RefFrame returns the element's reference frame.
 func (es *ElementSolution) RefFrame() g2d.RefFrame {
-	return es.Element.Geometry.RefFrame()
+	return es.Element.RefFrame()
 }
 
 /*
@@ -104,7 +104,7 @@ func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
 		}
 
 		// local displacements
-		elementFrame = es.Element.Geometry.RefFrame()
+		elementFrame = es.Element.RefFrame()
 		localDisplacementsProj = elementFrame.ProjectProjections(
 			es.GlobalXDispl[j].Value,
 			es.GlobalYDispl[j].Value,
@@ -147,7 +147,7 @@ func (es *ElementSolution) computeStresses() {
 	for i := 1; i < len(es.Element.Nodes); i++ {
 		j = 2 * (i - 1)
 		trailNode, leadNode = es.Element.Nodes[i-1], es.Element.Nodes[i]
-		length = es.Element.Geometry.LengthBetween(trailNode.T, leadNode.T)
+		length = es.Element.LengthBetween(trailNode.T, leadNode.T)
 		length2 = length * length
 		length3 = length2 * length
 		eil = ei / length

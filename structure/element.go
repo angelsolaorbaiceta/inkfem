@@ -21,7 +21,7 @@ TODO: buckling analysis
 */
 type Element struct {
 	id, startNodeID, endNodeID contracts.StrID
-	Geometry                   g2d.Segment
+	geometry                   g2d.Segment
 	StartLink, EndLink         *Constraint
 	material                   *Material
 	section                    *Section
@@ -43,7 +43,7 @@ func MakeElement(
 		id:                id,
 		startNodeID:       startNode.Id,
 		endNodeID:         endNode.Id,
-		Geometry:          g2d.MakeSegment(startNode.Position, endNode.Position),
+		geometry:          g2d.MakeSegment(startNode.Position, endNode.Position),
 		StartLink:         startLink,
 		EndLink:           endLink,
 		material:          material,
@@ -71,7 +71,6 @@ func MakeElementWithoutLoads(
 	)
 }
 
-// GetID returns the element's id. Implements Identifiable interface.
 func (e Element) GetID() contracts.StrID {
 	return e.id
 }
@@ -84,19 +83,27 @@ func (e Element) EndNodeID() contracts.StrID {
 	return e.endNodeID
 }
 
+func (e Element) RefFrame() g2d.RefFrame {
+	return e.geometry.RefFrame()
+}
+
+func (e Element) LengthBetween(tStart, tEnd inkgeom.TParam) float64 {
+	return e.geometry.LengthBetween(tStart, tEnd)
+}
+
 // StartPoint returns the position of the start node of this element's geometry.
 func (e Element) StartPoint() g2d.Projectable {
-	return e.Geometry.Start
+	return e.geometry.Start
 }
 
 // EndPoint returns the position of the end node of this element's geometry.
 func (e Element) EndPoint() g2d.Projectable {
-	return e.Geometry.End
+	return e.geometry.End
 }
 
 // PointAt returns the position of a middle point in this element's geometry.
 func (e Element) PointAt(t inkgeom.TParam) g2d.Projectable {
-	return e.Geometry.PointAt(t)
+	return e.geometry.PointAt(t)
 }
 
 // Material returns the material for the element.
@@ -144,9 +151,9 @@ It returns the element's stiffness matrix in the global reference frame.
 */
 func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMatrix {
 	var (
-		l    = e.Geometry.LengthBetween(startT, endT)
-		c    = e.Geometry.RefFrame().Cos()
-		s    = e.Geometry.RefFrame().Sin()
+		l    = e.geometry.LengthBetween(startT, endT)
+		c    = e.geometry.RefFrame().Cos()
+		s    = e.geometry.RefFrame().Sin()
 		ea   = e.material.YoungMod * e.section.Area
 		ei   = e.material.YoungMod * e.section.IStrong
 		c2   = c * c

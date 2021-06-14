@@ -132,7 +132,7 @@ func addTermsToLoadVector(sysVector *vec.Vector, element *preprocess.Element) {
 	var (
 		globalTorsor *math.Torsor
 		dofs         [3]int
-		refFrame     = element.Geometry.RefFrame()
+		refFrame     = element.RefFrame()
 	)
 
 	for _, node := range element.Nodes {

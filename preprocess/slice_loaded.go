@@ -110,11 +110,11 @@ local reference frame.
 func makeNodesWithConcentratedLoads(element *structure.Element, tPos []inkgeom.TParam) []*Node {
 	var (
 		nodes        = make([]*Node, len(tPos))
-		elemRefFrame = element.Geometry.RefFrame()
+		elemRefFrame = element.RefFrame()
 	)
 
 	for i, t := range tPos {
-		node := MakeUnloadedNode(t, element.Geometry.PointAt(t))
+		node := MakeUnloadedNode(t, element.PointAt(t))
 
 		for _, load := range element.ConcentratedLoads {
 			if t.Equals(load.T) {
