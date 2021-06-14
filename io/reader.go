@@ -47,8 +47,8 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		loadsDefined               = false
 		majorVersion, minorVersion int
 		nodes                      *map[contracts.StrID]*structure.Node
-		materials                  *map[string]*structure.Material
-		sections                   *map[string]*structure.Section
+		materials                  *MaterialsByName
+		sections                   *SectionsByName
 		concentratedLoads          ConcLoadsById
 		distributedLoads           DistLoadsById
 		elements                   *[]*structure.Element
@@ -124,9 +124,11 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 	return structure.Structure{
 		Metadata: structure.StrMetadata{
 			MajorVersion: majorVersion,
-			MinorVersion: minorVersion},
+			MinorVersion: minorVersion,
+		},
 		Nodes:    *nodes,
-		Elements: *elements}
+		Elements: *elements,
+	}
 }
 
 func parseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {

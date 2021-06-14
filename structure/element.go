@@ -212,8 +212,6 @@ func (e Element) GetID() contracts.StrID {
 	return e.Id
 }
 
-/* <-- Stringer --> */
-
 func (e Element) String() string {
 	return fmt.Sprintf(
 		"%s -> %s %s %s %s %s %s",
