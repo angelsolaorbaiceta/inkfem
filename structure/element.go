@@ -141,6 +141,15 @@ func (e Element) HasLoadsApplied() bool {
 	return len(e.ConcentratedLoads) > 0 || len(e.DistributedLoads) > 0
 }
 
+func (e *Element) IncludeOwnWeightLoad() {
+	loadValue := e.section.Area * e.material.Density
+
+	e.DistributedLoads = append(
+		e.DistributedLoads,
+		load.MakeDistributed(load.FY, false, inkgeom.MinT, loadValue, inkgeom.MaxT, loadValue),
+	)
+}
+
 /*
 IsAxialMember returns true if this element is pinned in both ends and, in case of having loads
 applied, they are always in the end positions of the directrix and does not include moments about Z,

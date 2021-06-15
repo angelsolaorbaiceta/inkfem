@@ -44,8 +44,10 @@ func TestElementEndPoint(t *testing.T) {
 
 func TestElementHasLoadsApplied(t *testing.T) {
 	t.Run("has loads applied", func(t *testing.T) {
-		l := load.MakeConcentrated(load.FX, true, inkgeom.MinT, 10)
-		element := makeConcLoadedElement(l)
+		var (
+			l       = load.MakeConcentrated(load.FX, true, inkgeom.MinT, 10)
+			element = makeConcLoadedElement(l)
+		)
 
 		if !element.HasLoadsApplied() {
 			t.Error("Element has loads applied")
@@ -59,6 +61,23 @@ func TestElementHasLoadsApplied(t *testing.T) {
 			t.Error("Element doesn't have loads applied")
 		}
 	})
+}
+
+func TestIncludeOwnWeightLoad(t *testing.T) {
+	var (
+		element       = makeElement()
+		wantLoadValue = section.Area * material.Density
+		wantLoad      = load.MakeDistributed(load.FY, false, inkgeom.MinT, wantLoadValue, inkgeom.MaxT, wantLoadValue)
+	)
+
+	element.IncludeOwnWeightLoad()
+
+	if nOfLoads := len(element.DistributedLoads); nOfLoads != 1 {
+		t.Errorf("Expected one load, but got %d", nOfLoads)
+	}
+	if got := element.DistributedLoads[0]; !got.Equals(wantLoad) {
+		t.Errorf("Want load %v, but got %v", wantLoad, got)
+	}
 }
 
 func TestElementIsAxial(t *testing.T) {
