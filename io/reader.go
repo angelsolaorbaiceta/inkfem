@@ -27,7 +27,7 @@ StructureFromFile Reads the given .inkfem file and tries to parse a structure fr
 The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm' are the major and
 minor version numbers of inkfem used to produce the file or required to compute the structure.
 */
-func StructureFromFile(filePath string) structure.Structure {
+func StructureFromFile(filePath string, options ReaderOptions) structure.Structure {
 	file, error := os.Open(filePath)
 	if error != nil {
 		log.Fatal(error)
@@ -36,10 +36,10 @@ func StructureFromFile(filePath string) structure.Structure {
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
-	return parseStructure(scanner)
+	return parseStructure(scanner, options)
 }
 
-func parseStructure(scanner *bufio.Scanner) structure.Structure {
+func parseStructure(scanner *bufio.Scanner, options ReaderOptions) structure.Structure {
 	var (
 		nodesDefined               = false
 		materialsDefined           = false
@@ -47,8 +47,8 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 		loadsDefined               = false
 		majorVersion, minorVersion int
 		nodes                      *map[contracts.StrID]*structure.Node
-		materials                  *map[string]*structure.Material
-		sections                   *map[string]*structure.Section
+		materials                  *MaterialsByName
+		sections                   *SectionsByName
 		concentratedLoads          ConcLoadsById
 		distributedLoads           DistLoadsById
 		elements                   *[]*structure.Element
@@ -112,6 +112,7 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 					sections,
 					&concentratedLoads,
 					&distributedLoads,
+					options,
 				)
 			}
 		}
@@ -124,9 +125,11 @@ func parseStructure(scanner *bufio.Scanner) structure.Structure {
 	return structure.Structure{
 		Metadata: structure.StrMetadata{
 			MajorVersion: majorVersion,
-			MinorVersion: minorVersion},
+			MinorVersion: minorVersion,
+		},
 		Nodes:    *nodes,
-		Elements: *elements}
+		Elements: *elements,
+	}
 }
 
 func parseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {

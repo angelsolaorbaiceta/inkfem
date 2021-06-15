@@ -71,8 +71,8 @@ func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
 		}
 		element           = makeElementWithLoads(loads)
 		slicedEl          = sliceAxialElement(element)
-		expectedProjLoadX = g2d.MakeVector(0, 100).DotTimes(element.Geometry.DirectionVersor())
-		expectedProjLoadY = g2d.MakeVector(0, 100).DotTimes(element.Geometry.NormalVersor())
+		expectedProjLoadX = g2d.MakeVector(0, 100).DotTimes(element.DirectionVersor())
+		expectedProjLoadY = g2d.MakeVector(0, 100).DotTimes(element.NormalVersor())
 	)
 
 	if fx := slicedEl.Nodes[0].NetLocalFx(); !nums.FuzzyEqual(fx, expectedProjLoadX) {

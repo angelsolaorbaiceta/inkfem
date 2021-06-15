@@ -32,9 +32,10 @@ func main() {
 	log.StartProcess()
 
 	var (
-		outPath      = strings.TrimSuffix(*flags.InputFilePath, ".inkfem")
-		structure    = readStructureFromFile(*flags.InputFilePath)
-		preStructure = preprocessStructure(structure)
+		outPath       = strings.TrimSuffix(*flags.InputFilePath, ".inkfem")
+		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: *flags.ShouldIncludeOwnWeight}
+		structure     = readStructureFromFile(*flags.InputFilePath, readerOptions)
+		preStructure  = preprocessStructure(structure)
 	)
 
 	if *flags.Preprocess {
@@ -54,9 +55,9 @@ func main() {
 	log.ResultTable()
 }
 
-func readStructureFromFile(filePath string) *structure.Structure {
+func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *structure.Structure {
 	log.StartReadFile()
-	structure := io.StructureFromFile(filePath)
+	structure := io.StructureFromFile(filePath, readerOptions)
 	log.EndReadFile(structure.NodesCount(), structure.ElementsCount())
 
 	return &structure

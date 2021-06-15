@@ -10,7 +10,10 @@ import (
 var solution *process.Solution
 
 func BenchmarkSolveStructure(b *testing.B) {
-	str := io.StructureFromFile("./retic_10x5.inkfem")
+	var (
+		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: true}
+		str           = io.StructureFromFile("./retic_10x5.inkfem", readerOptions)
+	)
 
 	for n := 0; n < b.N; n++ {
 		solution = solveStructure(&str)

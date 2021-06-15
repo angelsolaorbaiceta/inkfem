@@ -20,9 +20,9 @@ TODO: choose the bending axis
 TODO: buckling analysis
 */
 type Element struct {
-	Id, StartNodeID, EndNodeID contracts.StrID
-	Geometry                   g2d.Segment
-	StartLink, EndLink         *Constraint
+	id, startNodeID, endNodeID contracts.StrID
+	geometry                   g2d.Segment
+	startLink, endLink         *Constraint
 	material                   *Material
 	section                    *Section
 	ConcentratedLoads          []*load.ConcentratedLoad
@@ -40,12 +40,12 @@ func MakeElement(
 	distributedLoads []*load.DistributedLoad,
 ) *Element {
 	return &Element{
-		Id:                id,
-		StartNodeID:       startNode.Id,
-		EndNodeID:         endNode.Id,
-		Geometry:          g2d.MakeSegment(startNode.Position, endNode.Position),
-		StartLink:         startLink,
-		EndLink:           endLink,
+		id:                id,
+		startNodeID:       startNode.Id,
+		endNodeID:         endNode.Id,
+		geometry:          g2d.MakeSegment(startNode.Position, endNode.Position),
+		startLink:         startLink,
+		endLink:           endLink,
 		material:          material,
 		section:           section,
 		ConcentratedLoads: concentratedLoads,
@@ -71,19 +71,59 @@ func MakeElementWithoutLoads(
 	)
 }
 
+func (e Element) GetID() contracts.StrID {
+	return e.id
+}
+
+func (e Element) StartNodeID() contracts.StrID {
+	return e.startNodeID
+}
+
+func (e Element) EndNodeID() contracts.StrID {
+	return e.endNodeID
+}
+
+func (e Element) RefFrame() g2d.RefFrame {
+	return e.geometry.RefFrame()
+}
+
+func (e Element) DirectionVersor() g2d.Projectable {
+	return e.geometry.DirectionVersor()
+}
+
+func (e Element) NormalVersor() g2d.Projectable {
+	return e.geometry.NormalVersor()
+}
+
+func (e Element) Length() float64 {
+	return e.geometry.Length()
+}
+
+func (e Element) LengthBetween(tStart, tEnd inkgeom.TParam) float64 {
+	return e.geometry.LengthBetween(tStart, tEnd)
+}
+
 // StartPoint returns the position of the start node of this element's geometry.
 func (e Element) StartPoint() g2d.Projectable {
-	return e.Geometry.Start
+	return e.geometry.Start
 }
 
 // EndPoint returns the position of the end node of this element's geometry.
 func (e Element) EndPoint() g2d.Projectable {
-	return e.Geometry.End
+	return e.geometry.End
 }
 
 // PointAt returns the position of a middle point in this element's geometry.
 func (e Element) PointAt(t inkgeom.TParam) g2d.Projectable {
-	return e.Geometry.PointAt(t)
+	return e.geometry.PointAt(t)
+}
+
+func (e Element) StartLink() *Constraint {
+	return e.startLink
+}
+
+func (e Element) EndLink() *Constraint {
+	return e.endLink
 }
 
 // Material returns the material for the element.
@@ -99,6 +139,15 @@ func (e Element) Section() *Section {
 // HasLoadsApplied returns true if any load of any type is applied to the element.
 func (e Element) HasLoadsApplied() bool {
 	return len(e.ConcentratedLoads) > 0 || len(e.DistributedLoads) > 0
+}
+
+func (e *Element) IncludeOwnWeightLoad() {
+	loadValue := e.section.Area * e.material.Density
+
+	e.DistributedLoads = append(
+		e.DistributedLoads,
+		load.MakeDistributed(load.FY, false, inkgeom.MinT, loadValue, inkgeom.MaxT, loadValue),
+	)
 }
 
 /*
@@ -120,7 +169,7 @@ func (e Element) IsAxialMember() bool {
 		}
 	}
 
-	return e.StartLink.AllowsRotation() && e.EndLink.AllowsRotation()
+	return e.startLink.AllowsRotation() && e.endLink.AllowsRotation()
 }
 
 /*
@@ -131,9 +180,9 @@ It returns the element's stiffness matrix in the global reference frame.
 */
 func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMatrix {
 	var (
-		l    = e.Geometry.LengthBetween(startT, endT)
-		c    = e.Geometry.RefFrame().Cos()
-		s    = e.Geometry.RefFrame().Sin()
+		l    = e.geometry.LengthBetween(startT, endT)
+		c    = e.geometry.RefFrame().Cos()
+		s    = e.geometry.RefFrame().Sin()
 		ea   = e.material.YoungMod * e.section.Area
 		ei   = e.material.YoungMod * e.section.IStrong
 		c2   = c * c
@@ -199,27 +248,23 @@ func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMat
 
 // Equals tests whether this element is equal to other.
 func (e *Element) Equals(other *Element) bool {
-	return e.StartNodeID == other.StartNodeID &&
-		e.EndNodeID == other.EndNodeID &&
-		e.StartLink.Equals(other.StartLink) &&
-		e.EndLink.Equals(other.EndLink) &&
+	return e.startNodeID == other.startNodeID &&
+		e.endNodeID == other.endNodeID &&
+		e.startLink.Equals(other.startLink) &&
+		e.endLink.Equals(other.endLink) &&
 		e.material.Name == other.material.Name &&
 		e.section.Name == other.section.Name
 }
 
-// GetID returns the element's id. Implements Identifiable interface.
-func (e Element) GetID() contracts.StrID {
-	return e.Id
-}
-
-/* <-- Stringer --> */
-
 func (e Element) String() string {
 	return fmt.Sprintf(
 		"%s -> %s %s %s %s %s %s",
-		e.Id,
-		e.StartNodeID, e.StartLink.String(),
-		e.EndNodeID, e.EndLink.String(),
-		e.material.Name, e.section.Name,
+		e.id,
+		e.startNodeID,
+		e.startLink.String(),
+		e.endNodeID,
+		e.endLink.String(),
+		e.material.Name,
+		e.section.Name,
 	)
 }

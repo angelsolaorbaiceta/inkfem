@@ -23,7 +23,7 @@ func sliceAxialElement(element *structure.Element) *Element {
 	}
 
 	if element.HasLoadsApplied() {
-		sFx, sFy, eFx, eFy := netNodalLoadValues(element.ConcentratedLoads, element.Geometry.RefFrame())
+		sFx, sFy, eFx, eFy := netNodalLoadValues(element.ConcentratedLoads, element.RefFrame())
 
 		return MakeElement(
 			element,

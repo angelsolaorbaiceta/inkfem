@@ -83,10 +83,10 @@ func assignDof(str *Structure) {
 	}
 
 	for _, element := range str.Elements {
-		startNode = str.Nodes[element.StartNodeID]
-		endNode = str.Nodes[element.EndNodeID]
-		startLink = element.StartLink
-		endLink = element.EndLink
+		startNode = str.Nodes[element.StartNodeID()]
+		endNode = str.Nodes[element.EndNodeID()]
+		startLink = element.StartLink()
+		endLink = element.EndLink()
 		nodesCount = len(element.Nodes)
 
 		/* First Node */

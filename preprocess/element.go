@@ -65,13 +65,13 @@ func (a ByGeometryPos) Swap(i, j int) {
 }
 
 func (a ByGeometryPos) Less(i, j int) bool {
-	iStart := a[i].Geometry.Start
-	jStart := a[j].Geometry.Start
+	iStart := a[i].StartPoint()
+	jStart := a[j].StartPoint()
 	if pos := iStart.Compare(jStart); pos != 0 {
 		return pos < 0
 	}
 
-	iEnd := a[i].Geometry.End
-	jEnd := a[j].Geometry.End
+	iEnd := a[i].EndPoint()
+	jEnd := a[j].EndPoint()
 	return iEnd.Compare(jEnd) < 0
 }

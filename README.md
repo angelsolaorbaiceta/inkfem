@@ -24,6 +24,17 @@ $ inkfem -i path/to/structure.inkfem -p
 This will generate an additional file with the `.inkfempre` extension containing the information about how the structure has been sliced into finite elements.
 
 
+### Available Flags
+
+- `-i (string)`: input file path
+- `-v (bool)`: uses verbose output, including the time taken for each operation
+- `-p (bool)`: to save the preprocessed structure into a `.inkfempre` file
+- `-mat (bool)`: to save the system of equation's matrix as png image
+- `-safe (bool)`: to perform some extra safety checks before proceeding with the resolution
+- `-error (float64)`: to choose the maximum displacement error allowed in the resolution
+- `-weight (bool)`: to include the own weight of the elements
+
+
 ## Build
 
 To build the binary, execute the `build.sh` script:

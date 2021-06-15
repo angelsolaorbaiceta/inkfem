@@ -204,9 +204,21 @@ func TestDeserializeElements(t *testing.T) {
 			"1": {load.MakeConcentrated(load.FY, true, inkgeom.MinT, -50)},
 			"2": {load.MakeConcentrated(load.MZ, true, inkgeom.MaxT, -30)},
 		}
+		ownWeightLoadVal = materials["mat"].Density * sections["sec"].Area
+		ownWeightLoad    = []*load.DistributedLoad{
+			load.MakeDistributed(load.FY, false, inkgeom.MinT, ownWeightLoadVal, inkgeom.MaxT, ownWeightLoadVal),
+		}
 		distributedLoads = DistLoadsById{}
 
-		elements = deserializeElements(lines, &nodes, &materials, &sections, &concentratedLoads, &distributedLoads)
+		elements = deserializeElements(
+			lines,
+			&nodes,
+			&materials,
+			&sections,
+			&concentratedLoads,
+			&distributedLoads,
+			ReaderOptions{ShouldIncludeOwnWeight: true},
+		)
 
 		wantElOne = structure.MakeElement(
 			"1", nodes["1"], nodes["2"],
@@ -224,10 +236,52 @@ func TestDeserializeElements(t *testing.T) {
 		)
 	)
 
-	if got := (*elements)[0]; !got.Equals(wantElOne) {
-		t.Errorf("Expected element %v, got %v", wantElOne, got)
-	}
-	if got := (*elements)[1]; !got.Equals(wantElTwo) {
-		t.Errorf("Expected element %v, got %v", wantElTwo, got)
-	}
+	var (
+		elOne = (*elements)[0]
+		elTwo = (*elements)[1]
+	)
+
+	t.Run("Elements read", func(t *testing.T) {
+		if !elOne.Equals(wantElOne) {
+			t.Errorf("Expected element %v, got %v", wantElOne, elOne)
+		}
+		if !elTwo.Equals(wantElTwo) {
+			t.Errorf("Expected element %v, got %v", wantElTwo, elTwo)
+		}
+	})
+
+	t.Run("Elements concentrated loads", func(t *testing.T) {
+		if !load.ConcentratedLoadsEqual(elOne.ConcentratedLoads, wantElOne.ConcentratedLoads) {
+			t.Errorf(
+				"Expected element concentrated loads %v, but got %v",
+				wantElOne.ConcentratedLoads,
+				elOne.ConcentratedLoads,
+			)
+		}
+		if !load.ConcentratedLoadsEqual(elTwo.ConcentratedLoads, wantElTwo.ConcentratedLoads) {
+			t.Errorf(
+				"Expected element concentrated loads %v, but got %v",
+				wantElTwo.ConcentratedLoads,
+				elTwo.ConcentratedLoads,
+			)
+		}
+	})
+
+	t.Run("Elements distributed loads", func(t *testing.T) {
+		if !load.DistributedLoadsEqual(elOne.DistributedLoads, ownWeightLoad) {
+			t.Errorf(
+				"Expected element distributed loads %v, but got %v",
+				ownWeightLoad,
+				elOne.DistributedLoads,
+			)
+		}
+		if !load.DistributedLoadsEqual(elTwo.DistributedLoads, ownWeightLoad) {
+			t.Errorf(
+				"Expected element distributed loads %v, but got %v",
+				ownWeightLoad,
+				elTwo.DistributedLoads,
+			)
+		}
+	})
+
 }

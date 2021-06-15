@@ -92,3 +92,17 @@ func (load *DistributedLoad) Equals(other *DistributedLoad) bool {
 		load.EndT.Equals(other.EndT) &&
 		nums.FuzzyEqual(load.EndValue, other.EndValue)
 }
+
+func DistributedLoadsEqual(a, b []*DistributedLoad) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i, load := range a {
+		if !load.Equals(b[i]) {
+			return false
+		}
+	}
+
+	return true
+}
