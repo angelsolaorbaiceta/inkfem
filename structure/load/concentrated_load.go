@@ -83,3 +83,17 @@ func (load *ConcentratedLoad) Equals(other *ConcentratedLoad) bool {
 		load.T.Equals(other.T) &&
 		nums.FuzzyEqual(load.Value, other.Value)
 }
+
+func ConcentratedLoadsEqual(a, b []*ConcentratedLoad) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i, load := range a {
+		if !load.Equals(b[i]) {
+			return false
+		}
+	}
+
+	return true
+}

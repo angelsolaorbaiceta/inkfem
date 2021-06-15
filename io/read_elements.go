@@ -40,9 +40,18 @@ func readElements(
 	sections *SectionsByName,
 	concentratedLoads *ConcLoadsById,
 	distributedLoads *DistLoadsById,
+	readerOptions ReaderOptions,
 ) *[]*structure.Element {
 	lines := definitionLines(scanner, count)
-	return deserializeElements(lines, nodes, materials, sections, concentratedLoads, distributedLoads)
+	return deserializeElements(
+		lines,
+		nodes,
+		materials,
+		sections,
+		concentratedLoads,
+		distributedLoads,
+		readerOptions,
+	)
 }
 
 func deserializeElements(
@@ -52,6 +61,7 @@ func deserializeElements(
 	sections *SectionsByName,
 	concentratedLoads *ConcLoadsById,
 	distributedLoads *DistLoadsById,
+	readerOptions ReaderOptions,
 ) *[]*structure.Element {
 	var (
 		element  *structure.Element
@@ -60,6 +70,10 @@ func deserializeElements(
 
 	for i, line := range lines {
 		element = deserializeElement(line, nodes, materials, sections, concentratedLoads, distributedLoads)
+		if readerOptions.ShouldIncludeOwnWeight {
+			element.IncludeOwnWeightLoad()
+		}
+
 		elements[i] = element
 	}
 
