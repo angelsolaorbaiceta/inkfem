@@ -52,24 +52,28 @@ func makeCantileverBeamStructure(
 	var (
 		nodeOne = structure.MakeNode("fixed-node", g2d.MakePoint(0, 0), &structure.FullConstraint)
 		nodeTwo = structure.MakeNode("free-node", g2d.MakePoint(length, 0), &structure.NilConstraint)
-		beam    = structure.MakeElement(
+		beam    = structure.MakeElementBuilder(
 			"beam",
-			nodeOne,
-			nodeTwo,
-			&structure.FullConstraint,
-			&structure.FullConstraint,
+		).WithStartNode(
+			nodeOne, &structure.FullConstraint,
+		).WithEndNode(
+			nodeTwo, &structure.FullConstraint,
+		).WithMaterial(
 			material,
+		).WithSection(
 			section,
+		).AddConcentratedLoads(
 			concentratedLoads,
+		).AddDistributedLoads(
 			distributedLoads,
-		)
+		).Build()
 	)
 
 	return &structure.Structure{
 		Metadata: structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
 		Nodes: map[contracts.StrID]*structure.Node{
-			nodeOne.Id: nodeOne,
-			nodeTwo.Id: nodeTwo,
+			nodeOne.GetID(): nodeOne,
+			nodeTwo.GetID(): nodeTwo,
 		},
 		Elements: []*structure.Element{beam},
 	}
@@ -82,24 +86,28 @@ func makeAxialElementStructure(
 	var (
 		nodeOne      = structure.MakeNode("fixed-node", g2d.MakePoint(0, 0), &structure.FullConstraint)
 		nodeTwo      = structure.MakeNode("free-node", g2d.MakePoint(length, 0), &structure.NilConstraint)
-		axialElement = structure.MakeElement(
+		axialElement = structure.MakeElementBuilder(
 			"axial-element",
-			nodeOne,
-			nodeTwo,
-			&structure.FullConstraint,
-			&structure.FullConstraint,
+		).WithStartNode(
+			nodeOne, &structure.FullConstraint,
+		).WithEndNode(
+			nodeTwo, &structure.FullConstraint,
+		).WithMaterial(
 			material,
+		).WithSection(
 			section,
+		).AddConcentratedLoads(
 			concentratedLoads,
+		).AddDistributedLoads(
 			distributedLoads,
-		)
+		).Build()
 	)
 
 	return &structure.Structure{
 		Metadata: structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
 		Nodes: map[contracts.StrID]*structure.Node{
-			nodeOne.Id: nodeOne,
-			nodeTwo.Id: nodeTwo,
+			nodeOne.GetID(): nodeOne,
+			nodeTwo.GetID(): nodeTwo,
 		},
 		Elements: []*structure.Element{axialElement},
 	}
@@ -107,43 +115,50 @@ func makeAxialElementStructure(
 
 func makeTwoElementsCantileverReactionsStructure(distLoadVal, concLoadValue float64) *structure.Structure {
 	var (
-		nodeOne    = structure.MakeNode("n1", g2d.MakePoint(0, 0), &structure.NilConstraint)
-		nodeTwo    = structure.MakeNode("n2", g2d.MakePoint(length, 0), &structure.FullConstraint)
-		nodeThree  = structure.MakeNode("n3", g2d.MakePoint(2*length, 0.5*length), &structure.NilConstraint)
-		elementOne = structure.MakeElement(
+		nodeOne   = structure.MakeNode("n1", g2d.MakePoint(0, 0), &structure.NilConstraint)
+		nodeTwo   = structure.MakeNode("n2", g2d.MakePoint(length, 0), &structure.FullConstraint)
+		nodeThree = structure.MakeNode("n3", g2d.MakePoint(2*length, 0.5*length), &structure.NilConstraint)
+
+		elementOne = structure.MakeElementBuilder(
 			"el-1",
-			nodeOne,
-			nodeTwo,
-			&structure.FullConstraint,
-			&structure.FullConstraint,
+		).WithStartNode(
+			nodeOne, &structure.FullConstraint,
+		).WithEndNode(
+			nodeTwo, &structure.FullConstraint,
+		).WithMaterial(
 			material,
+		).WithSection(
 			section,
-			noConcLoads,
+		).AddDistributedLoads(
 			[]*load.DistributedLoad{
 				load.MakeDistributed(load.FY, true, inkgeom.MinT, distLoadVal, inkgeom.MaxT, distLoadVal),
 			},
-		)
-		elementTwo = structure.MakeElement(
+		).Build()
+
+		elementTwo = structure.MakeElementBuilder(
 			"el-2",
+		).WithStartNode(
 			nodeTwo,
-			nodeThree,
 			&structure.FullConstraint,
-			&structure.FullConstraint,
+		).WithEndNode(
+			nodeThree, &structure.FullConstraint,
+		).WithMaterial(
 			material,
+		).WithSection(
 			section,
+		).AddConcentratedLoads(
 			[]*load.ConcentratedLoad{
 				load.MakeConcentrated(load.FY, true, inkgeom.MaxT, concLoadValue),
 			},
-			noDistLoads,
-		)
+		).Build()
 	)
 
 	return &structure.Structure{
 		Metadata: structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
 		Nodes: map[contracts.StrID]*structure.Node{
-			nodeOne.Id:   nodeOne,
-			nodeTwo.Id:   nodeTwo,
-			nodeThree.Id: nodeThree,
+			nodeOne.GetID():   nodeOne,
+			nodeTwo.GetID():   nodeTwo,
+			nodeThree.GetID(): nodeThree,
 		},
 		Elements: []*structure.Element{elementOne, elementTwo},
 	}

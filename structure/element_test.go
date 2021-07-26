@@ -65,12 +65,10 @@ func TestElementHasLoadsApplied(t *testing.T) {
 
 func TestIncludeOwnWeightLoad(t *testing.T) {
 	var (
-		element       = makeElement()
+		element       = makeElementWithOwnWeight()
 		wantLoadValue = section.Area * material.Density
 		wantLoad      = load.MakeDistributed(load.FY, false, inkgeom.MinT, wantLoadValue, inkgeom.MaxT, wantLoadValue)
 	)
-
-	element.IncludeOwnWeightLoad()
 
 	if nOfLoads := len(element.DistributedLoads); nOfLoads != 1 {
 		t.Errorf("Expected one load, but got %d", nOfLoads)
@@ -259,32 +257,61 @@ func TestHorizontalElementGlobalStiffnessMatrix(t *testing.T) {
 }
 
 func makeElement() *Element {
-	return MakeElementWithoutLoads(
+	return MakeElementBuilder(
 		elementID,
-		startNode, endNode,
-		&FullConstraint, &FullConstraint,
-		material, section,
-	)
+	).WithStartNode(
+		startNode, &FullConstraint,
+	).WithEndNode(
+		endNode, &FullConstraint,
+	).WithMaterial(
+		material,
+	).WithSection(
+		section,
+	).Build()
+}
+
+func makeElementWithOwnWeight() *Element {
+	return MakeElementBuilder(
+		elementID,
+	).WithStartNode(
+		startNode, &FullConstraint,
+	).WithEndNode(
+		endNode, &FullConstraint,
+	).WithMaterial(
+		material,
+	).WithSection(
+		section,
+	).IncludeOwnWeightLoad().Build()
 }
 
 func makeConcLoadedElement(l *load.ConcentratedLoad) *Element {
-	return MakeElement(
+	return MakeElementBuilder(
 		elementID,
-		startNode, endNode,
-		&FullConstraint, &FullConstraint,
-		material, section,
+	).WithStartNode(
+		startNode, &FullConstraint,
+	).WithEndNode(
+		endNode, &FullConstraint,
+	).WithMaterial(
+		material,
+	).WithSection(
+		section,
+	).AddConcentratedLoads(
 		[]*load.ConcentratedLoad{l},
-		[]*load.DistributedLoad{},
-	)
+	).Build()
 }
 
 func makeDistLoadedElement(l *load.DistributedLoad) *Element {
-	return MakeElement(
+	return MakeElementBuilder(
 		elementID,
-		startNode, endNode,
-		&FullConstraint, &FullConstraint,
-		material, section,
-		[]*load.ConcentratedLoad{},
+	).WithStartNode(
+		startNode, &FullConstraint,
+	).WithEndNode(
+		endNode, &FullConstraint,
+	).WithMaterial(
+		material,
+	).WithSection(
+		section,
+	).AddDistributedLoads(
 		[]*load.DistributedLoad{l},
-	)
+	).Build()
 }

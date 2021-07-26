@@ -17,44 +17,44 @@ type ElementBuilder struct {
 	distributedLoads   []*load.DistributedLoad
 }
 
-func MakeElementBuilder(id contracts.StrID) ElementBuilder {
+func MakeElementBuilder(id contracts.StrID) *ElementBuilder {
 	builder := ElementBuilder{}
 	builder.id = id
 
-	return builder
+	return &builder
 }
 
 func (builder *ElementBuilder) WithStartNode(
 	startNode *Node,
 	startLink *Constraint,
-) ElementBuilder {
+) *ElementBuilder {
 	builder.startNode = startNode
 	builder.startLink = startLink
 
-	return *builder
+	return builder
 }
 
 func (builder *ElementBuilder) WithEndNode(
 	endNode *Node,
 	endLink *Constraint,
-) ElementBuilder {
+) *ElementBuilder {
 	builder.endNode = endNode
 	builder.endLink = endLink
 
-	return *builder
+	return builder
 }
 
-func (builder *ElementBuilder) WithMaterial(material *Material) ElementBuilder {
+func (builder *ElementBuilder) WithMaterial(material *Material) *ElementBuilder {
 	builder.material = material
-	return *builder
+	return builder
 }
 
-func (builder *ElementBuilder) WithSection(section *Section) ElementBuilder {
+func (builder *ElementBuilder) WithSection(section *Section) *ElementBuilder {
 	builder.section = section
-	return *builder
+	return builder
 }
 
-func (builder *ElementBuilder) IncludeOwnWeightLoad() ElementBuilder {
+func (builder *ElementBuilder) IncludeOwnWeightLoad() *ElementBuilder {
 	builder.ensureSectionAndMaterial()
 
 	var (
@@ -63,17 +63,17 @@ func (builder *ElementBuilder) IncludeOwnWeightLoad() ElementBuilder {
 	)
 	builder.distributedLoads = append(builder.distributedLoads, load)
 
-	return *builder
+	return builder
 }
 
-func (builder *ElementBuilder) AddConcentratedLoads(loads []*load.ConcentratedLoad) ElementBuilder {
+func (builder *ElementBuilder) AddConcentratedLoads(loads []*load.ConcentratedLoad) *ElementBuilder {
 	builder.concentratedLoads = append(builder.concentratedLoads, loads...)
-	return *builder
+	return builder
 }
 
-func (builder *ElementBuilder) AddDistributedLoads(loads []*load.DistributedLoad) ElementBuilder {
+func (builder *ElementBuilder) AddDistributedLoads(loads []*load.DistributedLoad) *ElementBuilder {
 	builder.distributedLoads = append(builder.distributedLoads, loads...)
-	return *builder
+	return builder
 }
 
 func (builder ElementBuilder) Build() *Element {

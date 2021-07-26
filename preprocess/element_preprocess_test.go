@@ -174,19 +174,22 @@ func TestMultipleLoadsNotAddingPositionTwice(t *testing.T) {
 /* <-- Non Axial Member : Loaded -> loads --> */
 
 func TestDistributedLocalLoadDistribution(t *testing.T) {
-	element := structure.MakeElement(
+	element := structure.MakeElementBuilder(
 		"1",
-		structure.MakeFreeNodeAtPosition("1", 0.0, 0.0),
-		structure.MakeFreeNodeAtPosition("2", 4.0, 0.0),
-		&structure.DispConstraint,
-		&structure.DispConstraint,
-		structure.MakeUnitMaterial(),
+	).WithStartNode(
+		structure.MakeFreeNodeAtPosition("1", 0.0, 0.0), &structure.DispConstraint,
+	).WithEndNode(
+		structure.MakeFreeNodeAtPosition("2", 4.0, 0.0), &structure.DispConstraint,
+	).WithSection(
 		structure.MakeUnitSection(),
-		[]*load.ConcentratedLoad{},
+	).WithMaterial(
+		structure.MakeUnitMaterial(),
+	).AddDistributedLoads(
 		[]*load.DistributedLoad{
 			load.MakeDistributed(load.FY, true, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0),
 		},
-	)
+	).Build()
+
 	slicedEl := sliceLoadedElement(element, 2)
 
 	// First Node
@@ -224,19 +227,22 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 }
 
 func TestDistributedGlobalLoadDistribution(t *testing.T) {
-	element := structure.MakeElement(
+	element := structure.MakeElementBuilder(
 		"1",
-		structure.MakeFreeNodeAtPosition("1", 0.0, 0.0),
-		structure.MakeFreeNodeAtPosition("2", 4.0, 4.0),
-		&structure.DispConstraint,
-		&structure.DispConstraint,
-		structure.MakeUnitMaterial(),
+	).WithStartNode(
+		structure.MakeFreeNodeAtPosition("1", 0.0, 0.0), &structure.DispConstraint,
+	).WithEndNode(
+		structure.MakeFreeNodeAtPosition("2", 4.0, 4.0), &structure.DispConstraint,
+	).WithSection(
 		structure.MakeUnitSection(),
-		[]*load.ConcentratedLoad{},
+	).WithMaterial(
+		structure.MakeUnitMaterial(),
+	).AddDistributedLoads(
 		[]*load.DistributedLoad{
 			load.MakeDistributed(load.FY, false, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0),
 		},
-	)
+	).Build()
+
 	slicedEl := sliceLoadedElement(element, 2)
 
 	// First Node
@@ -274,21 +280,24 @@ func TestDistributedGlobalLoadDistribution(t *testing.T) {
 }
 
 func TestConcentratedLocalLoadDistribution(t *testing.T) {
-	element := structure.MakeElement(
+	element := structure.MakeElementBuilder(
 		"1",
-		structure.MakeFreeNodeAtPosition("1", 0.0, 0.0),
-		structure.MakeFreeNodeAtPosition("2", 4.0, 0.0),
-		&structure.DispConstraint,
-		&structure.DispConstraint,
-		structure.MakeUnitMaterial(),
+	).WithStartNode(
+		structure.MakeFreeNodeAtPosition("1", 0.0, 0.0), &structure.DispConstraint,
+	).WithEndNode(
+		structure.MakeFreeNodeAtPosition("2", 4.0, 0.0), &structure.DispConstraint,
+	).WithSection(
 		structure.MakeUnitSection(),
+	).WithMaterial(
+		structure.MakeUnitMaterial(),
+	).AddConcentratedLoads(
 		[]*load.ConcentratedLoad{
 			load.MakeConcentrated(load.FX, true, inkgeom.MakeTParam(0.25), 3.0),
 			load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.25), 5.0),
 			load.MakeConcentrated(load.MZ, true, inkgeom.MakeTParam(0.25), 7.0),
 		},
-		[]*load.DistributedLoad{},
-	)
+	).Build()
+
 	slicedEl := sliceLoadedElement(element, 2)
 
 	if fx := slicedEl.Nodes[1].NetLocalFx(); fx != 3.0 {
@@ -303,19 +312,22 @@ func TestConcentratedLocalLoadDistribution(t *testing.T) {
 }
 
 func TestConcentratedGlobalLoadDistribution(t *testing.T) {
-	element := structure.MakeElement(
+	element := structure.MakeElementBuilder(
 		"1",
-		structure.MakeFreeNodeAtPosition("1", 0.0, 0.0),
-		structure.MakeFreeNodeAtPosition("2", 4.0, 4.0),
-		&structure.DispConstraint,
-		&structure.DispConstraint,
-		structure.MakeUnitMaterial(),
+	).WithStartNode(
+		structure.MakeFreeNodeAtPosition("1", 0.0, 0.0), &structure.DispConstraint,
+	).WithEndNode(
+		structure.MakeFreeNodeAtPosition("2", 4.0, 4.0), &structure.DispConstraint,
+	).WithSection(
 		structure.MakeUnitSection(),
+	).WithMaterial(
+		structure.MakeUnitMaterial(),
+	).AddConcentratedLoads(
 		[]*load.ConcentratedLoad{
 			load.MakeConcentrated(load.FY, false, inkgeom.MakeTParam(0.25), 5.0),
 		},
-		[]*load.DistributedLoad{},
-	)
+	).Build()
+
 	slicedEl := sliceLoadedElement(element, 2)
 
 	if fx := slicedEl.Nodes[1].NetLocalFx(); !nums.FuzzyEqual(fx, 5.0/math.Sqrt2) {
@@ -332,29 +344,31 @@ func TestConcentratedGlobalLoadDistribution(t *testing.T) {
 /* <-- Utils --> */
 
 func makeElementWithLoads(loads []*load.ConcentratedLoad) *structure.Element {
-	return structure.MakeElement(
+	return structure.MakeElementBuilder(
 		"1",
-		structure.MakeFreeNodeAtPosition("1", 1.0, 2.0),
-		structure.MakeFreeNodeAtPosition("2", 3.0, 4.0),
-		&structure.DispConstraint,
-		&structure.DispConstraint,
+	).WithStartNode(
+		structure.MakeFreeNodeAtPosition("1", 1.0, 2.0), &structure.DispConstraint,
+	).WithEndNode(
+		structure.MakeFreeNodeAtPosition("2", 3.0, 4.0), &structure.DispConstraint,
+	).WithMaterial(
 		structure.MakeUnitMaterial(),
+	).WithSection(
 		structure.MakeUnitSection(),
+	).AddConcentratedLoads(
 		loads,
-		[]*load.DistributedLoad{},
-	)
+	).Build()
 }
 
 func makeElementWithoutLoads() *structure.Element {
-	return structure.MakeElement(
+	return structure.MakeElementBuilder(
 		"1",
-		structure.MakeFreeNodeAtPosition("1", 1.0, 2.0),
-		structure.MakeFreeNodeAtPosition("2", 3.0, 4.0),
-		&structure.DispConstraint,
-		&structure.DispConstraint,
+	).WithStartNode(
+		structure.MakeFreeNodeAtPosition("1", 1.0, 2.0), &structure.DispConstraint,
+	).WithEndNode(
+		structure.MakeFreeNodeAtPosition("2", 3.0, 4.0), &structure.DispConstraint,
+	).WithMaterial(
 		structure.MakeUnitMaterial(),
+	).WithSection(
 		structure.MakeUnitSection(),
-		[]*load.ConcentratedLoad{},
-		[]*load.DistributedLoad{},
-	)
+	).Build()
 }

@@ -11,7 +11,7 @@ const unsetDOFNumber = -1
 
 // Node is a point in the structure where one or more resistant elements meet.
 type Node struct {
-	Id                 contracts.StrID
+	id                 contracts.StrID
 	Position           g2d.Projectable
 	ExternalConstraint *Constraint
 	globalDof          [3]int
@@ -88,19 +88,15 @@ func (n *Node) Equals(other *Node) bool {
 		n.ExternalConstraint.Equals(other.ExternalConstraint)
 }
 
-/* <-- Identifiable --> */
-
 // GetID returns the node's id.
 func (n Node) GetID() contracts.StrID {
-	return n.Id
+	return n.id
 }
-
-/* <-- Stringer --> */
 
 func (n Node) String() string {
 	return fmt.Sprintf(
 		"%s -> %f %f %s | DOF: %v",
-		n.Id, n.Position.X, n.Position.Y,
+		n.id, n.Position.X, n.Position.Y,
 		n.ExternalConstraint.String(),
 		n.DegreesOfFreedomNum(),
 	)
