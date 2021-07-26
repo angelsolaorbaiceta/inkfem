@@ -16,6 +16,8 @@ a material.
 
 An Element can have distributed and concentrated loads applied to it.
 
+To create an element, use the `ElementBuilder`.
+
 TODO: choose the bending axis
 TODO: buckling analysis
 */
@@ -27,48 +29,6 @@ type Element struct {
 	section                    *Section
 	ConcentratedLoads          []*load.ConcentratedLoad
 	DistributedLoads           []*load.DistributedLoad
-}
-
-// MakeElement creates a new element with all properties initialized.
-func MakeElement(
-	id contracts.StrID,
-	startNode, endNode *Node,
-	startLink, endLink *Constraint,
-	material *Material,
-	section *Section,
-	concentratedLoads []*load.ConcentratedLoad,
-	distributedLoads []*load.DistributedLoad,
-) *Element {
-	return &Element{
-		id:                id,
-		startNodeID:       startNode.Id,
-		endNodeID:         endNode.Id,
-		geometry:          g2d.MakeSegment(startNode.Position, endNode.Position),
-		startLink:         startLink,
-		endLink:           endLink,
-		material:          material,
-		section:           section,
-		ConcentratedLoads: concentratedLoads,
-		DistributedLoads:  distributedLoads,
-	}
-}
-
-// MakeElementWithoutLoads creates a new element with no external loads.
-func MakeElementWithoutLoads(
-	id contracts.StrID,
-	startNode, endNode *Node,
-	startLink, endLink *Constraint,
-	material *Material,
-	section *Section,
-) *Element {
-	return MakeElement(
-		id,
-		startNode, endNode,
-		startLink, endLink,
-		material, section,
-		[]*load.ConcentratedLoad{},
-		[]*load.DistributedLoad{},
-	)
 }
 
 func (e Element) GetID() contracts.StrID {
@@ -139,15 +99,6 @@ func (e Element) Section() *Section {
 // HasLoadsApplied returns true if any load of any type is applied to the element.
 func (e Element) HasLoadsApplied() bool {
 	return len(e.ConcentratedLoads) > 0 || len(e.DistributedLoads) > 0
-}
-
-func (e *Element) IncludeOwnWeightLoad() {
-	loadValue := e.section.Area * e.material.Density
-
-	e.DistributedLoads = append(
-		e.DistributedLoads,
-		load.MakeDistributed(load.FY, false, inkgeom.MinT, loadValue, inkgeom.MaxT, loadValue),
-	)
 }
 
 /*

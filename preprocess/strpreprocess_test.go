@@ -61,18 +61,37 @@ func makeStructure() *Structure {
 		nB = structure.MakeFreeNodeAtPosition("2", 0, 100)
 		nC = structure.MakeFreeNodeAtPosition("3", 100, 0)
 
-		elemOrigA = structure.MakeElementWithoutLoads(
-			"1", nA, nB, &structure.FullConstraint, &structure.FullConstraint,
-			structure.MakeUnitMaterial(), structure.MakeUnitSection(),
-		)
-		elemOrigB = structure.MakeElementWithoutLoads(
-			"2", nA, nC, &structure.DispConstraint, &structure.FullConstraint,
-			structure.MakeUnitMaterial(), structure.MakeUnitSection(),
-		)
+		elemOrigA = structure.MakeElementBuilder(
+			"1",
+		).WithStartNode(
+			nA, &structure.FullConstraint,
+		).WithEndNode(
+			nB, &structure.FullConstraint,
+		).WithMaterial(
+			structure.MakeUnitMaterial(),
+		).WithSection(
+			structure.MakeUnitSection(),
+		).Build()
+
+		elemOrigB = structure.MakeElementBuilder(
+			"2",
+		).WithStartNode(
+			nA, &structure.DispConstraint,
+		).WithEndNode(
+			nC, &structure.FullConstraint,
+		).WithMaterial(
+			structure.MakeUnitMaterial(),
+		).WithSection(
+			structure.MakeUnitSection(),
+		).Build()
 	)
 
 	return &Structure{
-		Nodes: map[contracts.StrID]*structure.Node{nA.Id: nA, nB.Id: nB, nC.Id: nC},
+		Nodes: map[contracts.StrID]*structure.Node{
+			nA.GetID(): nA,
+			nB.GetID(): nB,
+			nC.GetID(): nC,
+		},
 		Elements: []*Element{
 			MakeElement(elemOrigA, []*Node{
 				MakeUnloadedNode(inkgeom.MinT, nA.Position),

@@ -49,7 +49,7 @@ func assignDof(str *Structure) {
 	updateStructuralNodeDof := func(n *structure.Node) {
 		if !n.HasDegreesOfFreedomNum() {
 			n.SetDegreesOfFreedomNum(dof, dof+1, dof+2)
-			str.Nodes[n.Id] = n
+			str.Nodes[n.GetID()] = n
 			dof += 3
 		}
 	}

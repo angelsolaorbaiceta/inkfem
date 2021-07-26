@@ -30,7 +30,7 @@ func deserializeNodesByID(lines []string) *map[contracts.StrID]*structure.Node {
 
 	for _, line := range lines {
 		node = deserializeNode(line)
-		nodes[node.Id] = node
+		nodes[node.GetID()] = node
 	}
 
 	return &nodes

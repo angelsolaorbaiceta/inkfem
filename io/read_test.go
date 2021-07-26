@@ -220,20 +220,37 @@ func TestDeserializeElements(t *testing.T) {
 			ReaderOptions{ShouldIncludeOwnWeight: true},
 		)
 
-		wantElOne = structure.MakeElement(
-			"1", nodes["1"], nodes["2"],
-			&structure.FullConstraint, &structure.DispConstraint,
-			materials["mat"], sections["sec"],
-			concentratedLoads["1"],
+		wantElOne = structure.MakeElementBuilder(
+			"1",
+		).WithStartNode(
+			nodes["1"], &structure.FullConstraint,
+		).WithEndNode(
+			nodes["2"], &structure.DispConstraint,
+		).WithMaterial(
+			materials["mat"],
+		).WithSection(
+			sections["sec"],
+		).AddDistributedLoads(
 			distributedLoads["1"],
-		)
-		wantElTwo = structure.MakeElement(
-			"2", nodes["1"], nodes["3"],
-			&structure.DispConstraint, &structure.FullConstraint,
-			materials["mat"], sections["sec"],
-			concentratedLoads["2"],
+		).AddConcentratedLoads(
+			concentratedLoads["1"],
+		).Build()
+
+		wantElTwo = structure.MakeElementBuilder(
+			"2",
+		).WithStartNode(
+			nodes["1"], &structure.DispConstraint,
+		).WithEndNode(
+			nodes["3"], &structure.FullConstraint,
+		).WithMaterial(
+			materials["mat"],
+		).WithSection(
+			sections["sec"],
+		).AddDistributedLoads(
 			distributedLoads["2"],
-		)
+		).AddConcentratedLoads(
+			concentratedLoads["2"],
+		).Build()
 	)
 
 	var (

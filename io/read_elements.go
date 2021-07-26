@@ -63,18 +63,17 @@ func deserializeElements(
 	distributedLoads *DistLoadsById,
 	readerOptions ReaderOptions,
 ) *[]*structure.Element {
-	var (
-		element  *structure.Element
-		elements = make([]*structure.Element, len(lines))
-	)
-
+	elements := make([]*structure.Element, len(lines))
 	for i, line := range lines {
-		element = deserializeElement(line, nodes, materials, sections, concentratedLoads, distributedLoads)
-		if readerOptions.ShouldIncludeOwnWeight {
-			element.IncludeOwnWeightLoad()
-		}
-
-		elements[i] = element
+		elements[i] = deserializeElement(
+			line,
+			nodes,
+			materials,
+			sections,
+			concentratedLoads,
+			distributedLoads,
+			readerOptions,
+		)
 	}
 
 	return &elements
@@ -87,6 +86,7 @@ func deserializeElement(
 	sections *SectionsByName,
 	concentratedLoads *ConcLoadsById,
 	distributedLoads *DistLoadsById,
+	readerOptions ReaderOptions,
 ) *structure.Element {
 	var (
 		components         = readElementComponents(definition)
@@ -95,17 +95,27 @@ func deserializeElement(
 		section            = extractSectionForElement(components, sections)
 	)
 
-	return structure.MakeElement(
+	builder := structure.MakeElementBuilder(
 		components.id,
-		startNode,
-		endNode,
-		components.startLink,
-		components.endLink,
+	).WithStartNode(
+		startNode, components.startLink,
+	).WithEndNode(
+		endNode, components.endLink,
+	).WithMaterial(
 		material,
+	).WithSection(
 		section,
+	).AddConcentratedLoads(
 		(*concentratedLoads)[components.id],
+	).AddDistributedLoads(
 		(*distributedLoads)[components.id],
 	)
+
+	if readerOptions.ShouldIncludeOwnWeight {
+		builder.IncludeOwnWeightLoad()
+	}
+
+	return builder.Build()
 }
 
 type elementComponents struct {
