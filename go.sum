@@ -1,10 +1,6 @@
-github.com/angelsolaorbaiceta/inkgeom v0.1.0 h1:do+b8WXBOtZbT1mT534TVtnOJgj0+OsU1v1YHrVRWWc=
-github.com/angelsolaorbaiceta/inkgeom v0.1.0/go.mod h1:67SrszU2zZjuCdUJ+q98XZAyAlbCQAVFV4gqB7bmXa4=
-github.com/angelsolaorbaiceta/inkgeom v0.1.1 h1:scEEjieYCX8CmcA4vt6GcHM7iNCLioQVqvpN0x8G6RI=
-github.com/angelsolaorbaiceta/inkgeom v0.1.1/go.mod h1:67SrszU2zZjuCdUJ+q98XZAyAlbCQAVFV4gqB7bmXa4=
 github.com/angelsolaorbaiceta/inkgeom v0.1.2 h1:yDPiapuo/MM2wuac7piit9bQBPDYK5QEpV3tMEZzEmI=
 github.com/angelsolaorbaiceta/inkgeom v0.1.2/go.mod h1:67SrszU2zZjuCdUJ+q98XZAyAlbCQAVFV4gqB7bmXa4=
-github.com/angelsolaorbaiceta/inkmath v0.1.0 h1:UeG/Eyiy9jkAO0uF4pLyQKF+m8deGjkIRp5McoT/5GQ=
-github.com/angelsolaorbaiceta/inkmath v0.1.0/go.mod h1:cXjkMLUXXXHVDtExYtLRCbtbFgCAAWr4c2tFOCuXzzg=
-github.com/angelsolaorbaiceta/inkmath v0.1.1 h1:bzqgyr55xfnreLuKHrpVzM+hQabfoVDrYb8nTtvbGKg=
-github.com/angelsolaorbaiceta/inkmath v0.1.1/go.mod h1:cXjkMLUXXXHVDtExYtLRCbtbFgCAAWr4c2tFOCuXzzg=
+github.com/angelsolaorbaiceta/inkmath v0.2.0 h1:F5ZffJt61B87lI6u7zwFhSdvUxwnEdn5OkD3cqo/qi0=
+github.com/angelsolaorbaiceta/inkmath v0.2.0/go.mod h1:CdLHsjexPbl/MxosNjmLYQpRyfJ9WCo3mF+rQ7y96XY=
+github.com/angelsolaorbaiceta/inkmath v0.2.1 h1:qS+aZBESITDse85/2njp0funJN5RkpPgFSYbjgadMiQ=
+github.com/angelsolaorbaiceta/inkmath v0.2.1/go.mod h1:FXvzjVSjQ48n1RPHsuWSjEI3jFA2sB0Jo+Ae/ay930E=

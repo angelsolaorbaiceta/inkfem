@@ -39,7 +39,7 @@ It sets the element's global and local displacements given the structure's
 system of equations solution vector (the global node displacements) and computes the axial stress,
 shear force and bending moment in each of the slices of the preprocessed element.
 */
-func MakeElementSolution(element *preprocess.Element, globalDisp *vec.Vector) *ElementSolution {
+func MakeElementSolution(element *preprocess.Element, globalDisp vec.ReadOnlyVector) *ElementSolution {
 	var (
 		nOfNodes          = len(element.Nodes)
 		nOfSolutionValues = 2*nOfNodes - 2
@@ -79,7 +79,7 @@ func (es *ElementSolution) RefFrame() g2d.RefFrame {
 setDisplacements sets the global and local displacements given the structure's system of equations
 solution vector (the global node displacements).
 */
-func (es *ElementSolution) setDisplacements(globalDisp *vec.Vector) {
+func (es *ElementSolution) setDisplacements(globalDisp vec.ReadOnlyVector) {
 	var (
 		nodeDofs               [3]int
 		localDisplacementsProj g2d.Projectable
