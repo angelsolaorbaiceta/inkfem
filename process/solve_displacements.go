@@ -19,7 +19,10 @@ preprocessed structure.
 The process involves generating the structure's system of equations and solving it using the
 Preconditioned Conjugate Gradiend numerical procedure.
 */
-func computeGlobalDisplacements(structure *preprocess.Structure, options SolveOptions) *vec.Vector {
+func computeGlobalDisplacements(
+	structure *preprocess.Structure,
+	options SolveOptions,
+) vec.ReadOnlyVector {
 	log.StartAssembleSysEqs()
 	sysMatrix, sysVector := makeSystemOfEquations(structure)
 	log.EndAssembleSysEqs(sysVector.Length())
@@ -60,7 +63,7 @@ preprocessed structure.
 It computes each of the sliced element's stiffness matrices and assembles them into one
 global matrix. It also assembles the global loads vector from the sliced element nodes.
 */
-func makeSystemOfEquations(structure *preprocess.Structure) (mat.ReadOnlyMatrix, *vec.Vector) {
+func makeSystemOfEquations(structure *preprocess.Structure) (mat.ReadOnlyMatrix, vec.ReadOnlyVector) {
 	var (
 		sysMatrix = mat.MakeSparse(structure.DofsCount, structure.DofsCount)
 		sysVector = vec.Make(structure.DofsCount)
@@ -106,7 +109,7 @@ func addTermsToStiffnessMatrix(matrix mat.MutableMatrix, element *preprocess.Ele
 
 func addDispConstraints(
 	matrix mat.MutableMatrix,
-	vector *vec.Vector,
+	vector vec.MutableVector,
 	nodes *map[contracts.StrID]*structure.Node,
 ) {
 	var (
@@ -138,7 +141,7 @@ func addDispConstraints(
 	}
 }
 
-func addTermsToLoadVector(sysVector *vec.Vector, element *preprocess.Element) {
+func addTermsToLoadVector(sysVector vec.MutableVector, element *preprocess.Element) {
 	var (
 		globalTorsor *math.Torsor
 		dofs         [3]int
