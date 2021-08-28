@@ -30,8 +30,9 @@ func computeGlobalDisplacements(structure *preprocess.Structure, options SolveOp
 
 	log.StartSolveSysEqs()
 	solver := lineq.PreconditionedConjugateGradientSolver{
-		MaxError: options.MaxDisplacementsError,
-		MaxIter:  sysVector.Length(),
+		MaxError:       options.MaxDisplacementsError,
+		MaxIter:        sysVector.Length(),
+		Preconditioner: computePreconditioner(sysMatrix),
 	}
 	if options.SafeChecks && !solver.CanSolve(sysMatrix, sysVector) {
 		panic("Solver cannot solve system!")
@@ -41,6 +42,15 @@ func computeGlobalDisplacements(structure *preprocess.Structure, options SolveOp
 	log.EndSolveSysEqs(globalDispSolution.IterCount, globalDispSolution.MinError)
 
 	return globalDispSolution.Solution
+}
+
+func computePreconditioner(m mat.ReadOnlyMatrix) mat.ReadOnlyMatrix {
+	precond := mat.MakeSparse(m.Rows(), m.Cols())
+	for i := 0; i < m.Rows(); i++ {
+		precond.SetValue(i, i, 1.0/m.Value(i, i))
+	}
+
+	return precond
 }
 
 /*
