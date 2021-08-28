@@ -2,6 +2,7 @@ package io
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -115,7 +116,11 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) structure.Str
 					options,
 				)
 			}
+
+		default:
+			panic(fmt.Sprintf("Unknown header in file: '%s'", line))
 		}
+
 	}
 
 	if err := scanner.Err(); err != nil {
