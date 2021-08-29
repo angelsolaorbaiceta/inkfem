@@ -10,7 +10,7 @@
       "request": "launch",
       "mode": "auto",
       "program": "${fileDirname}",
-      "args": ["-i", ""]
+      "args": ["-i", "examples/axial_element.inkfem"]
     }
   ]
 }

@@ -2,13 +2,15 @@ package io
 
 import (
 	"bufio"
+	_ "embed"
 	"os"
 	"text/template"
 
 	"github.com/angelsolaorbaiceta/inkfem/process"
 )
 
-const preTemplatePath = "io/templates/solution.template.txt"
+//go:embed templates/solution.template.txt
+var solutionTemplateBytes []byte
 
 /*
 StructureSolutionToFile writes the solution of a structure to a file with the
@@ -22,7 +24,7 @@ func StructureSolutionToFile(solution *process.Solution, filePath string) {
 	defer file.Close()
 
 	var (
-		tmpl   = template.Must(template.ParseFiles(preTemplatePath))
+		tmpl   = template.Must(template.New("solution").Parse(string(solutionTemplateBytes)))
 		writer = bufio.NewWriter(file)
 	)
 

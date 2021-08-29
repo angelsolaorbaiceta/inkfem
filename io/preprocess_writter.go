@@ -2,13 +2,17 @@ package io
 
 import (
 	"bufio"
+	_ "embed"
 	"os"
 	"text/template"
 
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 )
 
-const solTemplatePath = "io/templates/preprocess.template.txt"
+// const solTemplatePath = "io/templates/preprocess.template.txt"
+
+//go:embed templates/preprocess.template.txt
+var preprocessTemplateBytes []byte
 
 // PreprocessedStructureToFile Writes the given preprocessed structure to a file.
 func PreprocessedStructureToFile(structure *preprocess.Structure, filePath string) {
@@ -19,7 +23,7 @@ func PreprocessedStructureToFile(structure *preprocess.Structure, filePath strin
 	defer file.Close()
 
 	var (
-		tmpl   = template.Must(template.ParseFiles(solTemplatePath))
+		tmpl   = template.Must(template.New("preprocess").Parse(string(preprocessTemplateBytes)))
 		writer = bufio.NewWriter(file)
 	)
 
