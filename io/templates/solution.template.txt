@@ -7,15 +7,15 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 |bars| {{.ElementCount}}
 {{range .Elements}}
 {{.String}}
-__gxd__{{range .GlobalXDispl}}
+__gdx__{{range .GlobalXDispl}}
 {{.String}}{{end}}
-__gyd__{{range .GlobalYDispl}}
+__gdy__{{range .GlobalYDispl}}
 {{.String}}{{end}}
 __grz__{{range .GlobalZRot}}
 {{.String}}{{end}}
-__lxd__{{range .LocalXDispl}}
+__ldx__{{range .LocalXDispl}}
 {{.String}}{{end}}
-__lyd__{{range .LocalYDispl}}
+__ldy__{{range .LocalYDispl}}
 {{.String}}{{end}}
 __lrz__{{range .LocalZRot}}
 {{.String}}{{end}}
