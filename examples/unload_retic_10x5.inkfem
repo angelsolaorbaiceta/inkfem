@@ -76,7 +76,7 @@ inkfem v1.0
 
 |loads| 0
 
-|elements| 105
+|bars| 105
 # columns
 1 -> 1 {dx dy rz} 12 {dx dy rz} 'steel_275' 'ipe_100'
 2 -> 2 {dx dy rz} 13 {dx dy rz} 'steel_275' 'ipe_100'

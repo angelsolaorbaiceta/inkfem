@@ -213,16 +213,16 @@ A concentrated force in the element with id 11 local y-axis direction, at positi
 fy l 11 0.0 -70.0
 ```
 
-## The Elements
+## The Bars
 
-The elements are defined under the header:
+The bars are defined under the header:
 
 ```
-|elements| n
+|bars| n
 ```
 
-where `n` is the number of elements that follow, each defined in its own line.
-Each element is defined following the format:
+where `n` is the number of bars that follow, each defined in its own line.
+Each bar is defined following the format:
 
 ## Input File Example
 
@@ -251,7 +251,7 @@ inkfem v1.0
 
 fy ld 4 0.0 -50.0 1.0 -75.0
 
-|elements| 7
+|bars| 7
 
 1 -> 1{dx dy rz} 2{dx dy rz} 'mat_A' 'sec_A'
 2 -> 1{dx dy rz} 3{dx dy rz} 'mat_A' 'sec_A'

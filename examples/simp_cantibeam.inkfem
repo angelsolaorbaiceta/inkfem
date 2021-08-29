@@ -14,5 +14,5 @@ inkfem v1.0
 |loads| 1
 fy ld 1 0.0 -50.0 1.0 -50.0 # distrubuted load
 
-|elements| 1
+|bars| 1
 1 -> 1{dx dy rz} 2{dx dy rz} 'steel_275' 'ipe_100'

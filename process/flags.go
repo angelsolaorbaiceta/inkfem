@@ -28,7 +28,7 @@ func ParseOrShowUsage() CLIFlags {
 		SysMatrixToPng:         flag.Bool("mat", false, "save system of equations matrix to png image file?"),
 		SafeChecks:             flag.Bool("safe", false, "perform safety checks?"),
 		DispMaxError:           flag.Float64("error", 1e-5, "maximum allowed displacements error"),
-		ShouldIncludeOwnWeight: flag.Bool("weight", false, "include the elements self weight as distributed load?"),
+		ShouldIncludeOwnWeight: flag.Bool("weight", false, "include the bars self weight as distributed load?"),
 	}
 
 	flag.Parse()

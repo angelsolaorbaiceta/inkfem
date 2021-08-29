@@ -6,7 +6,7 @@ dof_count: {{.DofsCount}}
 {{range .Nodes}}
 {{.String}}{{end}}
 
-|elements| {{.ElementsCount}}
+|bars| {{.ElementsCount}}
 {{range .Elements}}
 {{.String}} >> {{.NodesCount}} {{range .Nodes}}
 {{.String}}{{end}}

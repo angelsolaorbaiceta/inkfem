@@ -13,5 +13,5 @@ inkfem v1.0
 |loads| 1
 fx ld 1 0.0 400.0 1.0 0.0 
 
-|elements| 1
+|bars| 1
 1 -> 1{dx dy rz} 2{dx dy rz} 'steel' 'ipe_120'

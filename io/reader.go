@@ -19,7 +19,7 @@ var (
 	materialsHeaderRegex = regexp.MustCompile(`(?:\|materials\|\s*)(\d+)`)
 	sectionsHeaderRegex  = regexp.MustCompile(`(?:\|sections\|\s*)(\d+)`)
 	loadsHeaderRegex     = regexp.MustCompile(`(?:\|loads\|\s*)(\d+)`)
-	elementsHeaderRegex  = regexp.MustCompile(`(?:\|elements\|\s*)(\d+)`)
+	barsHeaderRegex      = regexp.MustCompile(`(?:\|bars\|\s*)(\d+)`)
 )
 
 /*
@@ -95,7 +95,7 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) structure.Str
 				loadsDefined = true
 			}
 
-		case elementsHeaderRegex.MatchString(line):
+		case barsHeaderRegex.MatchString(line):
 			{
 				if !(nodesDefined && materialsDefined && sectionsDefined && loadsDefined) {
 					panic(
@@ -104,7 +104,7 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) structure.Str
 					)
 				}
 
-				elementsCount, _ := strconv.Atoi(elementsHeaderRegex.FindStringSubmatch(line)[1])
+				elementsCount, _ := strconv.Atoi(barsHeaderRegex.FindStringSubmatch(line)[1])
 				elements = readElements(
 					scanner,
 					elementsCount,

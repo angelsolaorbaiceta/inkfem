@@ -4,7 +4,7 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 {{range $nodeId, $reaction := .NodeReactions}}
 {{$nodeId}} -> {{$reaction.String}}{{end}}
 
-|elements| {{.ElementCount}}
+|bars| {{.ElementCount}}
 {{range .Elements}}
 {{.String}}
 __gxd__{{range .GlobalXDispl}}

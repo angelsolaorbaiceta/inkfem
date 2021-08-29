@@ -23,7 +23,6 @@ $ inkfem -i path/to/structure.inkfem -p
 
 This will generate an additional file with the `.inkfempre` extension containing the information about how the structure has been sliced into finite elements.
 
-
 ### Available Flags
 
 - `-i (string)`: input file path
@@ -32,8 +31,7 @@ This will generate an additional file with the `.inkfempre` extension containing
 - `-mat (bool)`: to save the system of equation's matrix as png image
 - `-safe (bool)`: to perform some extra safety checks before proceeding with the resolution
 - `-error (float64)`: to choose the maximum displacement error allowed in the resolution
-- `-weight (bool)`: to include the own weight of the elements
-
+- `-weight (bool)`: to include the own weight of the bars
 
 ## Build
 
@@ -44,7 +42,6 @@ $ ./build.sh
 ```
 
 This will produce the `inkfem` binary in the project's root directory.
-
 
 ## Test
 
@@ -59,7 +56,6 @@ You can also run the tests inside a particular package like so:
 ```bash
 $ go test ./process
 ```
-
 
 ## Code Structure
 
