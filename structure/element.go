@@ -209,7 +209,7 @@ func (e *Element) Equals(other *Element) bool {
 
 func (e Element) String() string {
 	return fmt.Sprintf(
-		"%s -> %s %s %s %s %s %s",
+		"%s -> %s %s %s %s '%s' '%s'",
 		e.id,
 		e.startNodeID,
 		e.startLink.String(),
