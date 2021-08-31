@@ -8,14 +8,27 @@ import (
 )
 
 func TestDeserializeNode(t *testing.T) {
-	var (
-		got  = deserializeNode("1 -> 10.1 20.2 { dx dy rz }")
-		want = structure.MakeNode("1", g2d.MakePoint(10.1, 20.2), &structure.FullConstraint)
-	)
+	t.Run("deserializes the node", func(t *testing.T) {
+		var (
+			got  = deserializeNode("1 -> 10.1 20.2 { dx dy rz }")
+			want = structure.MakeNode("1", g2d.MakePoint(10.1, 20.2), &structure.FullConstraint)
+		)
 
-	if !got.Equals(want) {
-		t.Errorf("Expected %v, got %v", want, got)
-	}
+		if !got.Equals(want) {
+			t.Errorf("Expected %v, got %v", want, got)
+		}
+	})
+
+	t.Run("deserializes the node with scientific notation coordinates", func(t *testing.T) {
+		var (
+			got  = deserializeNode("1 -> 1e+2 2.0e-2 { dx dy rz }")
+			want = structure.MakeNode("1", g2d.MakePoint(100.0, 0.02), &structure.FullConstraint)
+		)
+
+		if !got.Equals(want) {
+			t.Errorf("Expected %v, got %v", want, got)
+		}
+	})
 }
 
 func TestDeserializeNodes(t *testing.T) {

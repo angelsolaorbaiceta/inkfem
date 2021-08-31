@@ -3,7 +3,7 @@ package io
 import "fmt"
 
 const (
-	floatExpr         = `-?\d+\.?\d*`
+	floatExpr         = `(?:-?\d+)(?:\.\d*)?(?:[eE][+-]\d+)?`
 	validNameExpr     = `[\w\-_ ]+`
 	validIDExpr       = `[\w\-_]+`
 	constraintExpr    = `{[drxyz ]*}`
