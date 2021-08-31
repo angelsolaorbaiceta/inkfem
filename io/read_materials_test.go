@@ -22,7 +22,7 @@ func TestDeserializeMaterial(t *testing.T) {
 		}
 	})
 
-	t.Run("deserializes the material using scientific notation", func(t *testing.T) {
+	t.Run("deserializes the material using scientific notation numbers", func(t *testing.T) {
 		var (
 			got  = deserializeMaterial("'steel' -> 1.1e2 2.2e-2 3e3 4.4 5.5 6.6")
 			want = structure.MakeMaterial("steel", 110.0, 0.022, 3000, 4.4, 5.5, 6.6)
