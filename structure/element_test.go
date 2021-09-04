@@ -66,7 +66,7 @@ func TestElementHasLoadsApplied(t *testing.T) {
 func TestIncludeOwnWeightLoad(t *testing.T) {
 	var (
 		element       = makeElementWithOwnWeight()
-		wantLoadValue = section.Area * material.Density
+		wantLoadValue = -section.Area * material.Density
 		wantLoad      = load.MakeDistributed(load.FY, false, inkgeom.MinT, wantLoadValue, inkgeom.MaxT, wantLoadValue)
 	)
 

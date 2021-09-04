@@ -30,7 +30,7 @@ func TestDeserializeBars(t *testing.T) {
 			"1": {load.MakeConcentrated(load.FY, true, inkgeom.MinT, -50)},
 			"2": {load.MakeConcentrated(load.MZ, true, inkgeom.MaxT, -30)},
 		}
-		ownWeightLoadVal = materials["mat"].Density * sections["sec"].Area
+		ownWeightLoadVal = -materials["mat"].Density * sections["sec"].Area
 		ownWeightLoad    = []*load.DistributedLoad{
 			load.MakeDistributed(load.FY, false, inkgeom.MinT, ownWeightLoadVal, inkgeom.MaxT, ownWeightLoadVal),
 		}

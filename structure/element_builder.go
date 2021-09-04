@@ -58,7 +58,7 @@ func (builder *ElementBuilder) IncludeOwnWeightLoad() *ElementBuilder {
 	builder.ensureSectionAndMaterial()
 
 	var (
-		loadValue = builder.section.Area * builder.material.Density
+		loadValue = -builder.section.Area * builder.material.Density
 		load      = load.MakeDistributed(load.FY, false, inkgeom.MinT, loadValue, inkgeom.MaxT, loadValue)
 	)
 	builder.distributedLoads = append(builder.distributedLoads, load)
