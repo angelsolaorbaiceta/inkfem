@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkfem/math"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 const unsetDOF = -1
@@ -23,8 +23,8 @@ The `rightLocalLoad` is the equivalent load, in local coordinates, from the fini
 to the right of the node.
 */
 type Node struct {
-	T                 inkgeom.TParam
-	Position          g2d.Projectable
+	T                 nums.TParam
+	Position          *g2d.Point
 	externalLocalLoad *math.Torsor
 	leftLocalLoad     *math.Torsor
 	rightLocalLoad    *math.Torsor
@@ -36,8 +36,8 @@ MakeNode creates a new node with given T parameter value, position and local ext
 loads {fx, fy, mz}.
 */
 func MakeNode(
-	t inkgeom.TParam,
-	position g2d.Projectable,
+	t nums.TParam,
+	position *g2d.Point,
 	fx, fy, mz float64,
 ) *Node {
 	return &Node{
@@ -51,7 +51,7 @@ func MakeNode(
 }
 
 // MakeUnloadedNode creates a new node with given T parameter value, position, and no loads applied.
-func MakeUnloadedNode(t inkgeom.TParam, position g2d.Projectable) *Node {
+func MakeUnloadedNode(t nums.TParam, position *g2d.Point) *Node {
 	return &Node{
 		T:                 t,
 		Position:          position,
@@ -174,8 +174,8 @@ func (n Node) String() string {
 	return fmt.Sprintf(
 		"%f : %f %f \n\t left  : %s \n\t right : %s \n\t net   : %s \n\t dof   : %v",
 		n.T.Value(),
-		n.Position.X,
-		n.Position.Y,
+		n.Position.X(),
+		n.Position.Y(),
 		leftLoads,
 		rightLoads,
 		loads,

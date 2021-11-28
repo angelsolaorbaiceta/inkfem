@@ -3,8 +3,8 @@ package structure
 import (
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 type ElementBuilder struct {
@@ -59,7 +59,7 @@ func (builder *ElementBuilder) IncludeOwnWeightLoad() *ElementBuilder {
 
 	var (
 		loadValue = -builder.section.Area * builder.material.Density
-		load      = load.MakeDistributed(load.FY, false, inkgeom.MinT, loadValue, inkgeom.MaxT, loadValue)
+		load      = load.MakeDistributed(load.FY, false, nums.MinT, loadValue, nums.MaxT, loadValue)
 	)
 	builder.distributedLoads = append(builder.distributedLoads, load)
 

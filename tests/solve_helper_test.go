@@ -6,8 +6,8 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/process"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 var (
@@ -131,7 +131,7 @@ func makeTwoElementsCantileverReactionsStructure(distLoadVal, concLoadValue floa
 			section,
 		).AddDistributedLoads(
 			[]*load.DistributedLoad{
-				load.MakeDistributed(load.FY, true, inkgeom.MinT, distLoadVal, inkgeom.MaxT, distLoadVal),
+				load.MakeDistributed(load.FY, true, nums.MinT, distLoadVal, nums.MaxT, distLoadVal),
 			},
 		).Build()
 
@@ -148,7 +148,7 @@ func makeTwoElementsCantileverReactionsStructure(distLoadVal, concLoadValue floa
 			section,
 		).AddConcentratedLoads(
 			[]*load.ConcentratedLoad{
-				load.MakeConcentrated(load.FY, true, inkgeom.MaxT, concLoadValue),
+				load.MakeConcentrated(load.FY, true, nums.MaxT, concLoadValue),
 			},
 		).Build()
 	)

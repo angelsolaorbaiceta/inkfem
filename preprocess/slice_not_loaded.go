@@ -2,7 +2,7 @@ package preprocess
 
 import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 /*
@@ -15,7 +15,7 @@ func sliceElementWithoutLoads(element *structure.Element, slices int) *Element {
 	}
 
 	var (
-		tPos  = inkgeom.SubTParamCompleteRangeTimes(slices)
+		tPos  = nums.SubTParamCompleteRangeTimes(slices)
 		nodes = make([]*Node, len(tPos))
 	)
 

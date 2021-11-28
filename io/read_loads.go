@@ -7,7 +7,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 var (
@@ -86,9 +86,9 @@ func deserializeDistributedLoad(line string) (contracts.StrID, *load.Distributed
 		load.MakeDistributed(
 			term,
 			isInLocalCoords,
-			inkgeom.MakeTParam(tStart),
+			nums.MakeTParam(tStart),
 			valStart,
-			inkgeom.MakeTParam(tEnd),
+			nums.MakeTParam(tEnd),
 			valEnd,
 		)
 }
@@ -104,5 +104,5 @@ func deserializeConcentratedLoad(line string) (contracts.StrID, *load.Concentrat
 	t := ensureParseFloat(groups[4], "concentrated load T")
 	val := ensureParseFloat(groups[5], "concentrated load value")
 
-	return elementID, load.MakeConcentrated(term, isInLocalCoords, inkgeom.MakeTParam(t), val)
+	return elementID, load.MakeConcentrated(term, isInLocalCoords, nums.MakeTParam(t), val)
 }

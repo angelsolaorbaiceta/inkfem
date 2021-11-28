@@ -6,9 +6,8 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
-	"github.com/angelsolaorbaiceta/inkmath/nums"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 // TODO: separate into shorter and more focused test files
@@ -36,10 +35,10 @@ func TestSliceAxialMemberNodePositions(t *testing.T) {
 func TestSliceAxialMemberNodeLoads(t *testing.T) {
 	var (
 		loads = []*load.ConcentratedLoad{
-			load.MakeConcentrated(load.FX, true, inkgeom.MinT, 50.0),
-			load.MakeConcentrated(load.FY, true, inkgeom.MinT, 75.0),
-			load.MakeConcentrated(load.FX, true, inkgeom.MaxT, 100.0),
-			load.MakeConcentrated(load.FY, true, inkgeom.MaxT, 200.0),
+			load.MakeConcentrated(load.FX, true, nums.MinT, 50.0),
+			load.MakeConcentrated(load.FY, true, nums.MinT, 75.0),
+			load.MakeConcentrated(load.FX, true, nums.MaxT, 100.0),
+			load.MakeConcentrated(load.FY, true, nums.MaxT, 200.0),
 		}
 		element  = makeElementWithLoads(loads)
 		slicedEl = sliceAxialElement(element)
@@ -67,7 +66,7 @@ func TestSliceAxialMemberNodeLoads(t *testing.T) {
 func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
 	var (
 		loads = []*load.ConcentratedLoad{
-			load.MakeConcentrated(load.FY, false, inkgeom.MinT, 100.0),
+			load.MakeConcentrated(load.FY, false, nums.MinT, 100.0),
 		}
 		element           = makeElementWithLoads(loads)
 		slicedEl          = sliceAxialElement(element)
@@ -75,10 +74,10 @@ func TestSliceAxialMemberGlobalLoadProjected(t *testing.T) {
 		expectedProjLoadY = g2d.MakeVector(0, 100).DotTimes(element.NormalVersor())
 	)
 
-	if fx := slicedEl.Nodes[0].NetLocalFx(); !nums.FuzzyEqual(fx, expectedProjLoadX) {
+	if fx := slicedEl.Nodes[0].NetLocalFx(); !nums.FloatsEqual(fx, expectedProjLoadX) {
 		t.Error("Node projected Fx value was not as expected")
 	}
-	if fy := slicedEl.Nodes[0].NetLocalFy(); !nums.FuzzyEqual(fy, expectedProjLoadY) {
+	if fy := slicedEl.Nodes[0].NetLocalFy(); !nums.FloatsEqual(fy, expectedProjLoadY) {
 		t.Error("Node projected Fy value was not as expected")
 	}
 }
@@ -97,7 +96,7 @@ func TestSliceNonAxialUnloadedMemberNodePositions(t *testing.T) {
 
 	var (
 		wantStartPoint = element.StartPoint()
-		wantMidPoint   = element.PointAt(inkgeom.HalfT)
+		wantMidPoint   = element.PointAt(nums.HalfT)
 		wantEndPoint   = element.EndPoint()
 	)
 	if pos := slicedEl.Nodes[0].Position; !pos.Equals(wantStartPoint) {
@@ -115,7 +114,7 @@ func TestSliceNonAxialUnloadedMemberNodePositions(t *testing.T) {
 
 func TestDistributedLoadInEntireLengthAddsNoPositions(t *testing.T) {
 	loads := []*load.DistributedLoad{
-		load.MakeDistributed(load.FY, true, inkgeom.MinT, 45.0, inkgeom.MaxT, 55.0),
+		load.MakeDistributed(load.FY, true, nums.MinT, 45.0, nums.MaxT, 55.0),
 	}
 	tPos := sliceLoadedElementPositions([]*load.ConcentratedLoad{}, loads, 2)
 
@@ -126,7 +125,7 @@ func TestDistributedLoadInEntireLengthAddsNoPositions(t *testing.T) {
 
 func TestConcentratedLoadAddsPosition(t *testing.T) {
 	loads := []*load.ConcentratedLoad{
-		load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0),
+		load.MakeConcentrated(load.FY, true, nums.MakeTParam(0.75), 45.0),
 	}
 	tPos := sliceLoadedElementPositions(loads, []*load.DistributedLoad{}, 2)
 
@@ -140,7 +139,7 @@ func TestConcentratedLoadAddsPosition(t *testing.T) {
 
 func TestDistributedLoadAddsTwoPositions(t *testing.T) {
 	loads := []*load.DistributedLoad{
-		load.MakeDistributed(load.FY, true, inkgeom.MakeTParam(0.25), 45.0, inkgeom.MakeTParam(0.75), 55.0),
+		load.MakeDistributed(load.FY, true, nums.MakeTParam(0.25), 45.0, nums.MakeTParam(0.75), 55.0),
 	}
 	tPos := sliceLoadedElementPositions([]*load.ConcentratedLoad{}, loads, 2)
 
@@ -158,10 +157,10 @@ func TestDistributedLoadAddsTwoPositions(t *testing.T) {
 func TestMultipleLoadsNotAddingPositionTwice(t *testing.T) {
 	var (
 		concentratedLoads = []*load.ConcentratedLoad{
-			load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.75), 45.0),
+			load.MakeConcentrated(load.FY, true, nums.MakeTParam(0.75), 45.0),
 		}
 		distributedLoads = []*load.DistributedLoad{
-			load.MakeDistributed(load.FY, true, inkgeom.MakeTParam(0.25), 45.0, inkgeom.MakeTParam(0.75), 55.0),
+			load.MakeDistributed(load.FY, true, nums.MakeTParam(0.25), 45.0, nums.MakeTParam(0.75), 55.0),
 		}
 		tPos = sliceLoadedElementPositions(concentratedLoads, distributedLoads, 2)
 	)
@@ -186,7 +185,7 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 		structure.MakeUnitMaterial(),
 	).AddDistributedLoads(
 		[]*load.DistributedLoad{
-			load.MakeDistributed(load.FY, true, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0),
+			load.MakeDistributed(load.FY, true, nums.MinT, 5.0, nums.MaxT, 5.0),
 		},
 	).Build()
 
@@ -199,7 +198,7 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 	if fy := slicedEl.Nodes[0].NetLocalFy(); fy != 5.0 {
 		t.Errorf("First node Fy expected to be 5.0, but was %f", fy)
 	}
-	if mz := slicedEl.Nodes[0].NetLocalMz(); !nums.FuzzyEqual(mz, 5.0/3.0) {
+	if mz := slicedEl.Nodes[0].NetLocalMz(); !nums.FloatsEqual(mz, 5.0/3.0) {
 		t.Errorf("First node Mz expected to be %f, but was %f", 5.0/3.0, mz)
 	}
 
@@ -221,7 +220,7 @@ func TestDistributedLocalLoadDistribution(t *testing.T) {
 	if fy := slicedEl.Nodes[2].NetLocalFy(); fy != 5.0 {
 		t.Errorf("Third node Fy expected to be 5.0, but was %f", fy)
 	}
-	if mz := slicedEl.Nodes[2].NetLocalMz(); !nums.FuzzyEqual(mz, -5.0/3.0) {
+	if mz := slicedEl.Nodes[2].NetLocalMz(); !nums.FloatsEqual(mz, -5.0/3.0) {
 		t.Errorf("Third node Mz expected to be %f, but was %f", -5.0/3.0, mz)
 	}
 }
@@ -239,28 +238,28 @@ func TestDistributedGlobalLoadDistribution(t *testing.T) {
 		structure.MakeUnitMaterial(),
 	).AddDistributedLoads(
 		[]*load.DistributedLoad{
-			load.MakeDistributed(load.FY, false, inkgeom.MinT, 5.0, inkgeom.MaxT, 5.0),
+			load.MakeDistributed(load.FY, false, nums.MinT, 5.0, nums.MaxT, 5.0),
 		},
 	).Build()
 
 	slicedEl := sliceLoadedElement(element, 2)
 
 	// First Node
-	if fx := slicedEl.Nodes[0].NetLocalFx(); !nums.FuzzyEqual(fx, 5.0) {
+	if fx := slicedEl.Nodes[0].NetLocalFx(); !nums.FloatsEqual(fx, 5.0) {
 		t.Errorf("First node Fx expected to be 5.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[0].NetLocalFy(); !nums.FuzzyEqual(fy, 5.0) {
+	if fy := slicedEl.Nodes[0].NetLocalFy(); !nums.FloatsEqual(fy, 5.0) {
 		t.Errorf("First node Fy expected to be 5.0, but was %f", fy)
 	}
-	if mz, expected := slicedEl.Nodes[0].NetLocalMz(), 10.0/math.Sqrt(18.0); !nums.FuzzyEqual(mz, expected) {
+	if mz, expected := slicedEl.Nodes[0].NetLocalMz(), 10.0/math.Sqrt(18.0); !nums.FloatsEqual(mz, expected) {
 		t.Errorf("First node Mz expected to be %f, but was %f", expected, mz)
 	}
 
 	// Second Node
-	if fx := slicedEl.Nodes[1].NetLocalFx(); !nums.FuzzyEqual(fx, 10.0) {
+	if fx := slicedEl.Nodes[1].NetLocalFx(); !nums.FloatsEqual(fx, 10.0) {
 		t.Errorf("Second node Fx expected to be 10.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[1].NetLocalFy(); !nums.FuzzyEqual(fy, 10.0) {
+	if fy := slicedEl.Nodes[1].NetLocalFy(); !nums.FloatsEqual(fy, 10.0) {
 		t.Errorf("Second node Fy expected to be 10.0, but was %f", fy)
 	}
 	if mz := slicedEl.Nodes[1].NetLocalMz(); mz != 0.0 {
@@ -268,13 +267,13 @@ func TestDistributedGlobalLoadDistribution(t *testing.T) {
 	}
 
 	// Third Node
-	if fx := slicedEl.Nodes[2].NetLocalFx(); !nums.FuzzyEqual(fx, 5.0) {
+	if fx := slicedEl.Nodes[2].NetLocalFx(); !nums.FloatsEqual(fx, 5.0) {
 		t.Errorf("Third node Fx expected to be 5.0, but was %f", fx)
 	}
-	if fy := slicedEl.Nodes[2].NetLocalFy(); !nums.FuzzyEqual(fy, 5.0) {
+	if fy := slicedEl.Nodes[2].NetLocalFy(); !nums.FloatsEqual(fy, 5.0) {
 		t.Errorf("Third node Fy expected to be 5.0, but was %f", fy)
 	}
-	if mz, expected := slicedEl.Nodes[2].NetLocalMz(), -10.0/math.Sqrt(18.0); !nums.FuzzyEqual(mz, expected) {
+	if mz, expected := slicedEl.Nodes[2].NetLocalMz(), -10.0/math.Sqrt(18.0); !nums.FloatsEqual(mz, expected) {
 		t.Errorf("Third node Mz expected to be %f, but was %f", expected, mz)
 	}
 }
@@ -292,9 +291,9 @@ func TestConcentratedLocalLoadDistribution(t *testing.T) {
 		structure.MakeUnitMaterial(),
 	).AddConcentratedLoads(
 		[]*load.ConcentratedLoad{
-			load.MakeConcentrated(load.FX, true, inkgeom.MakeTParam(0.25), 3.0),
-			load.MakeConcentrated(load.FY, true, inkgeom.MakeTParam(0.25), 5.0),
-			load.MakeConcentrated(load.MZ, true, inkgeom.MakeTParam(0.25), 7.0),
+			load.MakeConcentrated(load.FX, true, nums.MakeTParam(0.25), 3.0),
+			load.MakeConcentrated(load.FY, true, nums.MakeTParam(0.25), 5.0),
+			load.MakeConcentrated(load.MZ, true, nums.MakeTParam(0.25), 7.0),
 		},
 	).Build()
 
@@ -324,16 +323,16 @@ func TestConcentratedGlobalLoadDistribution(t *testing.T) {
 		structure.MakeUnitMaterial(),
 	).AddConcentratedLoads(
 		[]*load.ConcentratedLoad{
-			load.MakeConcentrated(load.FY, false, inkgeom.MakeTParam(0.25), 5.0),
+			load.MakeConcentrated(load.FY, false, nums.MakeTParam(0.25), 5.0),
 		},
 	).Build()
 
 	slicedEl := sliceLoadedElement(element, 2)
 
-	if fx := slicedEl.Nodes[1].NetLocalFx(); !nums.FuzzyEqual(fx, 5.0/math.Sqrt2) {
+	if fx := slicedEl.Nodes[1].NetLocalFx(); !nums.FloatsEqual(fx, 5.0/math.Sqrt2) {
 		t.Errorf("First node Fx expected to be %f, but was %f", 5.0/math.Sqrt2, fx)
 	}
-	if fy := slicedEl.Nodes[1].NetLocalFy(); !nums.FuzzyEqual(fy, 5.0/math.Sqrt2) {
+	if fy := slicedEl.Nodes[1].NetLocalFy(); !nums.FloatsEqual(fy, 5.0/math.Sqrt2) {
 		t.Errorf("First node Fy expected to be %f, but was %f", 5.0/math.Sqrt2, fy)
 	}
 	if mz := slicedEl.Nodes[1].NetLocalMz(); mz != 0.0 {

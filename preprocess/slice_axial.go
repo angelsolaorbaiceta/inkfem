@@ -4,8 +4,8 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 /*
@@ -28,16 +28,16 @@ func sliceAxialElement(element *structure.Element) *Element {
 		return MakeElement(
 			element,
 			[]*Node{
-				MakeNode(inkgeom.MinT, element.StartPoint(), sFx, sFy, 0.0),
-				MakeNode(inkgeom.MaxT, element.EndPoint(), eFx, eFy, 0.0),
+				MakeNode(nums.MinT, element.StartPoint(), sFx, sFy, 0.0),
+				MakeNode(nums.MaxT, element.EndPoint(), eFx, eFy, 0.0),
 			})
 	}
 
 	return MakeElement(
 		element,
 		[]*Node{
-			MakeUnloadedNode(inkgeom.MinT, element.StartPoint()),
-			MakeUnloadedNode(inkgeom.MaxT, element.EndPoint()),
+			MakeUnloadedNode(nums.MinT, element.StartPoint()),
+			MakeUnloadedNode(nums.MaxT, element.EndPoint()),
 		})
 }
 
@@ -48,7 +48,7 @@ the element).
 */
 func netNodalLoadValues(
 	loads []*load.ConcentratedLoad,
-	localRefFrame g2d.RefFrame,
+	localRefFrame *g2d.RefFrame,
 ) (sFx, sFy, eFx, eFy float64) {
 	var localLoadTorsor *math.Torsor
 

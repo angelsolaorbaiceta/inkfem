@@ -4,9 +4,8 @@ import (
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
-	"github.com/angelsolaorbaiceta/inkmath/nums"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 const (
@@ -45,7 +44,7 @@ func TestElementEndPoint(t *testing.T) {
 func TestElementHasLoadsApplied(t *testing.T) {
 	t.Run("has loads applied", func(t *testing.T) {
 		var (
-			l       = load.MakeConcentrated(load.FX, true, inkgeom.MinT, 10)
+			l       = load.MakeConcentrated(load.FX, true, nums.MinT, 10)
 			element = makeConcLoadedElement(l)
 		)
 
@@ -67,7 +66,7 @@ func TestIncludeOwnWeightLoad(t *testing.T) {
 	var (
 		element       = makeElementWithOwnWeight()
 		wantLoadValue = -section.Area * material.Density
-		wantLoad      = load.MakeDistributed(load.FY, false, inkgeom.MinT, wantLoadValue, inkgeom.MaxT, wantLoadValue)
+		wantLoad      = load.MakeDistributed(load.FY, false, nums.MinT, wantLoadValue, nums.MaxT, wantLoadValue)
 	)
 
 	if nOfLoads := len(element.DistributedLoads); nOfLoads != 1 {
@@ -100,7 +99,7 @@ func TestElementIsAxial(t *testing.T) {
 	})
 
 	t.Run("isn't axial if has at least a distributed load", func(t *testing.T) {
-		l := load.MakeDistributed(load.FX, true, inkgeom.MinT, 20, inkgeom.MaxT, 40)
+		l := load.MakeDistributed(load.FX, true, nums.MinT, 20, nums.MaxT, 40)
 		element := makeDistLoadedElement(l)
 		element.startLink = &DispConstraint
 		element.endLink = &DispConstraint
@@ -111,7 +110,7 @@ func TestElementIsAxial(t *testing.T) {
 	})
 
 	t.Run("isn't axial if has at least a concentrated non-nodal load", func(t *testing.T) {
-		l := load.MakeConcentrated(load.MZ, true, inkgeom.HalfT, 10)
+		l := load.MakeConcentrated(load.MZ, true, nums.HalfT, 10)
 		element := makeConcLoadedElement(l)
 		element.startLink = &DispConstraint
 		element.endLink = &DispConstraint
@@ -122,7 +121,7 @@ func TestElementIsAxial(t *testing.T) {
 	})
 
 	t.Run("isn't axial if has at least a nodal MZ load", func(t *testing.T) {
-		l := load.MakeConcentrated(load.MZ, true, inkgeom.MinT, 10)
+		l := load.MakeConcentrated(load.MZ, true, nums.MinT, 10)
 		element := makeConcLoadedElement(l)
 		element.startLink = &DispConstraint
 		element.endLink = &DispConstraint
@@ -133,7 +132,7 @@ func TestElementIsAxial(t *testing.T) {
 	})
 
 	t.Run("is axial if pinned and all loads are nodal and not MZ", func(t *testing.T) {
-		l := load.MakeConcentrated(load.FY, true, inkgeom.MinT, 10)
+		l := load.MakeConcentrated(load.FY, true, nums.MinT, 10)
 		element := makeConcLoadedElement(l)
 		element.startLink = &DispConstraint
 		element.endLink = &DispConstraint
@@ -147,7 +146,7 @@ func TestElementIsAxial(t *testing.T) {
 func TestHorizontalElementGlobalStiffnessMatrix(t *testing.T) {
 	var (
 		element = makeElement()
-		matrix  = element.StiffnessGlobalMat(inkgeom.MinT, inkgeom.MaxT)
+		matrix  = element.StiffnessGlobalMat(nums.MinT, nums.MaxT)
 		e       = material.YoungMod
 		i       = section.IStrong
 		a       = section.Area
@@ -157,19 +156,19 @@ func TestHorizontalElementGlobalStiffnessMatrix(t *testing.T) {
 	t.Run("Fx -> Dx terms", func(t *testing.T) {
 		want := e * a / l
 
-		if got := matrix.Value(0, 0); !nums.FuzzyEqual(want, got) {
+		if got := matrix.Value(0, 0); !nums.FloatsEqual(want, got) {
 			t.Errorf("Expected term to be %f, but got %f", want, got)
 		}
 
-		if got := matrix.Value(0, 3); !nums.FuzzyEqual(-want, got) {
+		if got := matrix.Value(0, 3); !nums.FloatsEqual(-want, got) {
 			t.Errorf("Expected term to be %f, but got %f", -want, got)
 		}
 
-		if got := matrix.Value(3, 0); !nums.FuzzyEqual(-want, got) {
+		if got := matrix.Value(3, 0); !nums.FloatsEqual(-want, got) {
 			t.Errorf("Expected term to be %f, but got %f", -want, got)
 		}
 
-		if got := matrix.Value(3, 3); !nums.FuzzyEqual(want, got) {
+		if got := matrix.Value(3, 3); !nums.FloatsEqual(want, got) {
 			t.Errorf("Expected term to be %f, but got %f", want, got)
 		}
 	})
@@ -177,19 +176,19 @@ func TestHorizontalElementGlobalStiffnessMatrix(t *testing.T) {
 	t.Run("Fy -> Dy terms", func(t *testing.T) {
 		want := (12.0 * e * i) / (l * l * l)
 
-		if got := matrix.Value(1, 1); !nums.FuzzyEqual(want, got) {
+		if got := matrix.Value(1, 1); !nums.FloatsEqual(want, got) {
 			t.Errorf("Expected term to be %f, but got %f", want, got)
 		}
 
-		if got := matrix.Value(1, 4); !nums.FuzzyEqual(-want, got) {
+		if got := matrix.Value(1, 4); !nums.FloatsEqual(-want, got) {
 			t.Errorf("Expected term to be %f, but got %f", -want, got)
 		}
 
-		if got := matrix.Value(4, 1); !nums.FuzzyEqual(-want, got) {
+		if got := matrix.Value(4, 1); !nums.FloatsEqual(-want, got) {
 			t.Errorf("Expected term to be %f, but got %f", -want, got)
 		}
 
-		if got := matrix.Value(4, 4); !nums.FuzzyEqual(want, got) {
+		if got := matrix.Value(4, 4); !nums.FloatsEqual(want, got) {
 			t.Errorf("Expected term to be %f, but got %f", want, got)
 		}
 	})
@@ -197,19 +196,19 @@ func TestHorizontalElementGlobalStiffnessMatrix(t *testing.T) {
 	t.Run("Fy -> Rz terms", func(t *testing.T) {
 		want := (6.0 * e * i) / (l * l)
 
-		if got := matrix.Value(1, 2); !nums.FuzzyEqual(want, got) {
+		if got := matrix.Value(1, 2); !nums.FloatsEqual(want, got) {
 			t.Errorf("Expected term to be %f, but got %f", want, got)
 		}
 
-		if got := matrix.Value(1, 5); !nums.FuzzyEqual(want, got) {
+		if got := matrix.Value(1, 5); !nums.FloatsEqual(want, got) {
 			t.Errorf("Expected term to be %f, but got %f", want, got)
 		}
 
-		if got := matrix.Value(4, 2); !nums.FuzzyEqual(-want, got) {
+		if got := matrix.Value(4, 2); !nums.FloatsEqual(-want, got) {
 			t.Errorf("Expected term to be %f, but got %f", -want, got)
 		}
 
-		if got := matrix.Value(4, 5); !nums.FuzzyEqual(-want, got) {
+		if got := matrix.Value(4, 5); !nums.FloatsEqual(-want, got) {
 			t.Errorf("Expected term to be %f, but got %f", -want, got)
 		}
 	})
@@ -217,19 +216,19 @@ func TestHorizontalElementGlobalStiffnessMatrix(t *testing.T) {
 	t.Run("Mz -> Dy terms", func(t *testing.T) {
 		want := (6.0 * e * i) / (l * l)
 
-		if got := matrix.Value(2, 1); !nums.FuzzyEqual(want, got) {
+		if got := matrix.Value(2, 1); !nums.FloatsEqual(want, got) {
 			t.Errorf("Expected term to be %f, but got %f", want, got)
 		}
 
-		if got := matrix.Value(2, 4); !nums.FuzzyEqual(-want, got) {
+		if got := matrix.Value(2, 4); !nums.FloatsEqual(-want, got) {
 			t.Errorf("Expected term to be %f, but got %f", -want, got)
 		}
 
-		if got := matrix.Value(5, 1); !nums.FuzzyEqual(want, got) {
+		if got := matrix.Value(5, 1); !nums.FloatsEqual(want, got) {
 			t.Errorf("Expected term to be %f, but got %f", want, got)
 		}
 
-		if got := matrix.Value(5, 4); !nums.FuzzyEqual(-want, got) {
+		if got := matrix.Value(5, 4); !nums.FloatsEqual(-want, got) {
 			t.Errorf("Expected term to be %f, but got %f", -want, got)
 		}
 	})
@@ -238,19 +237,19 @@ func TestHorizontalElementGlobalStiffnessMatrix(t *testing.T) {
 		wantOne := 2.0 * e * i / l
 		wantTwo := 4.0 * e * i / l
 
-		if got := matrix.Value(2, 2); !nums.FuzzyEqual(wantTwo, got) {
+		if got := matrix.Value(2, 2); !nums.FloatsEqual(wantTwo, got) {
 			t.Errorf("Expected term to be %f, but got %f", wantTwo, got)
 		}
 
-		if got := matrix.Value(2, 5); !nums.FuzzyEqual(wantOne, got) {
+		if got := matrix.Value(2, 5); !nums.FloatsEqual(wantOne, got) {
 			t.Errorf("Expected term to be %f, but got %f", wantOne, got)
 		}
 
-		if got := matrix.Value(5, 2); !nums.FuzzyEqual(wantOne, got) {
+		if got := matrix.Value(5, 2); !nums.FloatsEqual(wantOne, got) {
 			t.Errorf("Expected term to be %f, but got %f", wantOne, got)
 		}
 
-		if got := matrix.Value(5, 5); !nums.FuzzyEqual(wantTwo, got) {
+		if got := matrix.Value(5, 5); !nums.FloatsEqual(wantTwo, got) {
 			t.Errorf("Expected term to be %f, but got %f", wantTwo, got)
 		}
 	})

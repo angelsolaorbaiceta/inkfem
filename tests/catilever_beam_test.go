@@ -6,12 +6,12 @@ import (
 
 	strmath "github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	var (
-		l               = load.MakeConcentrated(load.FY, true, inkgeom.MaxT, -2000)
+		l               = load.MakeConcentrated(load.FY, true, nums.MaxT, -2000)
 		str             = makeCantileverBeamStructure([]*load.ConcentratedLoad{l}, noDistLoads)
 		sol             = solveStructure(str)
 		solutionElement = sol.Elements[0]
@@ -21,7 +21,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 
 	t.Run("global X displacements", func(t *testing.T) {
 		for _, disp := range solutionElement.GlobalXDispl {
-			if !inkgeom.FloatsEqualEps(disp.Value, 0.0, displError) {
+			if !nums.FloatsEqualEps(disp.Value, 0.0, displError) {
 				t.Errorf("Expected no X displacement, but got %f", disp.Value)
 			}
 		}
@@ -29,7 +29,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 
 	t.Run("local X displacements", func(t *testing.T) {
 		for _, disp := range solutionElement.LocalXDispl {
-			if !inkgeom.FloatsEqualEps(disp.Value, 0.0, displError) {
+			if !nums.FloatsEqualEps(disp.Value, 0.0, displError) {
 				t.Errorf("Expected no X displacement, but got %f", disp.Value)
 			}
 		}
@@ -38,10 +38,10 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	t.Run("global Y displacements", func(t *testing.T) {
 		nOfValues := len(solutionElement.GlobalYDispl)
 
-		if got := solutionElement.GlobalYDispl[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
+		if got := solutionElement.GlobalYDispl[0].Value; !nums.FloatsEqualEps(got, 0.0, displError) {
 			t.Error("expected no Y displacement in the constrained end")
 		}
-		if got := solutionElement.GlobalYDispl[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxYDispl, displError) {
+		if got := solutionElement.GlobalYDispl[nOfValues-1].Value; !nums.FloatsEqualEps(got, maxYDispl, displError) {
 			t.Errorf("expected max Y displacement of %f, but got %f", maxYDispl, got)
 		}
 	})
@@ -49,10 +49,10 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	t.Run("local Y displacements", func(t *testing.T) {
 		nOfValues := len(solutionElement.GlobalYDispl)
 
-		if got := solutionElement.LocalYDispl[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
+		if got := solutionElement.LocalYDispl[0].Value; !nums.FloatsEqualEps(got, 0.0, displError) {
 			t.Error("expected no Y displacement in the constrained end")
 		}
-		if got := solutionElement.LocalYDispl[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxYDispl, displError) {
+		if got := solutionElement.LocalYDispl[nOfValues-1].Value; !nums.FloatsEqualEps(got, maxYDispl, displError) {
 			t.Errorf("expected max Y displacement of %f, but got %f", maxYDispl, got)
 		}
 	})
@@ -60,10 +60,10 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	t.Run("global Z rotations", func(t *testing.T) {
 		nOfValues := len(solutionElement.GlobalZRot)
 
-		if got := solutionElement.GlobalZRot[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
+		if got := solutionElement.GlobalZRot[0].Value; !nums.FloatsEqualEps(got, 0.0, displError) {
 			t.Error("expected no Z rotation in the constrained end")
 		}
-		if got := solutionElement.GlobalZRot[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxZRot, displError) {
+		if got := solutionElement.GlobalZRot[nOfValues-1].Value; !nums.FloatsEqualEps(got, maxZRot, displError) {
 			t.Errorf("expected max Z rotation of %f, but got %f", maxZRot, got)
 		}
 	})
@@ -71,17 +71,17 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 	t.Run("local Z rotations", func(t *testing.T) {
 		nOfValues := len(solutionElement.GlobalZRot)
 
-		if got := solutionElement.GlobalZRot[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
+		if got := solutionElement.GlobalZRot[0].Value; !nums.FloatsEqualEps(got, 0.0, displError) {
 			t.Error("expected no Z rotation in the constrained end")
 		}
-		if got := solutionElement.GlobalZRot[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxZRot, displError) {
+		if got := solutionElement.GlobalZRot[nOfValues-1].Value; !nums.FloatsEqualEps(got, maxZRot, displError) {
 			t.Errorf("expected max Z rotation of %f, but got %f", maxZRot, got)
 		}
 	})
 
 	t.Run("Axial stress", func(t *testing.T) {
 		for _, axial := range solutionElement.AxialStress {
-			if !inkgeom.FloatsEqualEps(axial.Value, 0.0, displError) {
+			if !nums.FloatsEqualEps(axial.Value, 0.0, displError) {
 				t.Errorf("Expected no axial stress, but got %f", axial.Value)
 			}
 		}
@@ -91,15 +91,15 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 		expectedShear := -l.Value
 
 		for _, shear := range solutionElement.ShearForce {
-			if !inkgeom.FloatsEqualEps(shear.Value, expectedShear, displError) {
+			if !nums.FloatsEqualEps(shear.Value, expectedShear, displError) {
 				t.Errorf("Expected a Shear force of %f, but got %f at t = %f", expectedShear, shear.Value, shear.T)
 			}
 		}
 	})
 
 	t.Run("Bending moment", func(t *testing.T) {
-		var expectedBending = func(tParam inkgeom.TParam) float64 {
-			return l.Value * length * (inkgeom.MaxT.Value() - tParam.Value())
+		var expectedBending = func(tParam nums.TParam) float64 {
+			return l.Value * length * (nums.MaxT.Value() - tParam.Value())
 		}
 
 		for _, bending := range solutionElement.BendingMoment {
@@ -108,7 +108,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 				want = expectedBending(bending.T)
 			)
 
-			if !inkgeom.FloatsEqualEps(got, want, displError) {
+			if !nums.FloatsEqualEps(got, want, displError) {
 				t.Errorf("Expected a bending moment of %f, but got %f at t = %f", want, got, bending.T)
 			}
 		}
@@ -120,13 +120,13 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 			got  = sol.NodeReactions()["fixed-node"]
 		)
 
-		if !inkgeom.FloatsEqualEps(got.Fx(), want.Fx(), displError) {
+		if !nums.FloatsEqualEps(got.Fx(), want.Fx(), displError) {
 			t.Errorf("Expected Fx reaction %f, but got %f", want.Fx(), got.Fx())
 		}
-		if !inkgeom.FloatsEqualEps(got.Fy(), want.Fy(), displError) {
+		if !nums.FloatsEqualEps(got.Fy(), want.Fy(), displError) {
 			t.Errorf("Expected Fy reaction %f, but got %f", want.Fy(), got.Fy())
 		}
-		if !inkgeom.FloatsEqualEps(got.Mz(), want.Mz(), displError) {
+		if !nums.FloatsEqualEps(got.Mz(), want.Mz(), displError) {
 			t.Errorf("Expected Mz reaction %f, but got %f", want.Mz(), got.Mz())
 		}
 	})
@@ -134,7 +134,7 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 
 func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	var (
-		l               = load.MakeDistributed(load.FY, true, inkgeom.MinT, -200.0, inkgeom.MaxT, 0.0)
+		l               = load.MakeDistributed(load.FY, true, nums.MinT, -200.0, nums.MaxT, 0.0)
 		str             = makeCantileverBeamStructure(noConcLoads, []*load.DistributedLoad{l})
 		sol             = solveStructure(str)
 		solutionElement = sol.Elements[0]
@@ -144,7 +144,7 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 
 	t.Run("global X displacements", func(t *testing.T) {
 		for _, disp := range solutionElement.GlobalXDispl {
-			if !inkgeom.FloatsEqualEps(disp.Value, 0.0, displError) {
+			if !nums.FloatsEqualEps(disp.Value, 0.0, displError) {
 				t.Errorf("Expected no X displacement, but got %f", disp.Value)
 			}
 		}
@@ -152,7 +152,7 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 
 	t.Run("local X displacements", func(t *testing.T) {
 		for _, disp := range solutionElement.LocalXDispl {
-			if !inkgeom.FloatsEqualEps(disp.Value, 0.0, displError) {
+			if !nums.FloatsEqualEps(disp.Value, 0.0, displError) {
 				t.Errorf("Expected no X displacement, but got %f", disp.Value)
 			}
 		}
@@ -161,10 +161,10 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	t.Run("global Y displacements", func(t *testing.T) {
 		nOfValues := len(solutionElement.GlobalYDispl)
 
-		if got := solutionElement.GlobalYDispl[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
+		if got := solutionElement.GlobalYDispl[0].Value; !nums.FloatsEqualEps(got, 0.0, displError) {
 			t.Error("expected no Y displacement in the constrained end")
 		}
-		if got := solutionElement.GlobalYDispl[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxYDispl, displError) {
+		if got := solutionElement.GlobalYDispl[nOfValues-1].Value; !nums.FloatsEqualEps(got, maxYDispl, displError) {
 			t.Errorf("expected max Y displacement of %f, but got %f", maxYDispl, got)
 		}
 	})
@@ -172,10 +172,10 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	t.Run("local Y displacements", func(t *testing.T) {
 		nOfValues := len(solutionElement.GlobalYDispl)
 
-		if got := solutionElement.LocalYDispl[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
+		if got := solutionElement.LocalYDispl[0].Value; !nums.FloatsEqualEps(got, 0.0, displError) {
 			t.Error("expected no Y displacement in the constrained end")
 		}
-		if got := solutionElement.LocalYDispl[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxYDispl, displError) {
+		if got := solutionElement.LocalYDispl[nOfValues-1].Value; !nums.FloatsEqualEps(got, maxYDispl, displError) {
 			t.Errorf("expected max Y displacement of %f, but got %f", maxYDispl, got)
 		}
 	})
@@ -183,10 +183,10 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	t.Run("global Z rotations", func(t *testing.T) {
 		nOfValues := len(solutionElement.GlobalZRot)
 
-		if got := solutionElement.GlobalZRot[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
+		if got := solutionElement.GlobalZRot[0].Value; !nums.FloatsEqualEps(got, 0.0, displError) {
 			t.Error("expected no Z rotation in the constrained end")
 		}
-		if got := solutionElement.GlobalZRot[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxZRot, displError) {
+		if got := solutionElement.GlobalZRot[nOfValues-1].Value; !nums.FloatsEqualEps(got, maxZRot, displError) {
 			t.Errorf("expected max Z rotation of %f, but got %f", maxZRot, got)
 		}
 	})
@@ -194,26 +194,26 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 	t.Run("local Z rotations", func(t *testing.T) {
 		nOfValues := len(solutionElement.GlobalZRot)
 
-		if got := solutionElement.GlobalZRot[0].Value; !inkgeom.FloatsEqualEps(got, 0.0, displError) {
+		if got := solutionElement.GlobalZRot[0].Value; !nums.FloatsEqualEps(got, 0.0, displError) {
 			t.Error("expected no Z rotation in the constrained end")
 		}
-		if got := solutionElement.GlobalZRot[nOfValues-1].Value; !inkgeom.FloatsEqualEps(got, maxZRot, displError) {
+		if got := solutionElement.GlobalZRot[nOfValues-1].Value; !nums.FloatsEqualEps(got, maxZRot, displError) {
 			t.Errorf("expected max Z rotation of %f, but got %f", maxZRot, got)
 		}
 	})
 
 	t.Run("Axial stress", func(t *testing.T) {
 		for _, axial := range solutionElement.AxialStress {
-			if !inkgeom.FloatsEqualEps(axial.Value, 0.0, displError) {
+			if !nums.FloatsEqualEps(axial.Value, 0.0, displError) {
 				t.Errorf("Expected no axial stress, but got %f", axial.Value)
 			}
 		}
 	})
 
 	t.Run("Shear force", func(t *testing.T) {
-		var expectedShear = func(tParam inkgeom.TParam) float64 {
+		var expectedShear = func(tParam nums.TParam) float64 {
 			var (
-				qStart = l.ValueAt(inkgeom.MinT)
+				qStart = l.ValueAt(nums.MinT)
 				x      = length * tParam.Value()
 			)
 
@@ -226,16 +226,16 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 				want = expectedShear(shear.T)
 			)
 
-			if !inkgeom.FloatsEqualEps(got, want, displError) {
+			if !nums.FloatsEqualEps(got, want, displError) {
 				t.Errorf("Expected a Shear force of %f, but got %f at t = %f", want, got, shear.T)
 			}
 		}
 	})
 
 	t.Run("Bending moment", func(t *testing.T) {
-		var expectedBending = func(tParam inkgeom.TParam) float64 {
+		var expectedBending = func(tParam nums.TParam) float64 {
 			var (
-				qStart = l.ValueAt(inkgeom.MinT)
+				qStart = l.ValueAt(nums.MinT)
 				mStart = qStart * math.Pow(length, 2) / 6.0
 				x      = length * tParam.Value()
 			)
@@ -249,7 +249,7 @@ func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
 				want = expectedBending(bending.T)
 			)
 
-			if !inkgeom.FloatsEqualEps(got, want, displError) {
+			if !nums.FloatsEqualEps(got, want, displError) {
 				t.Errorf("Expected a bending moment of %f, but got %f at t = %f", want, got, bending.T)
 			}
 		}
