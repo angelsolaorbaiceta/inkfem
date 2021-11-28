@@ -62,7 +62,7 @@ func forceTorsorInLocalCoords(
 		endLoad = load.AsTorsorAt(leadNode.T)
 	} else {
 		elementReferenceFrame := g2d.MakeRefFrameWithIVersor(
-			g2d.MakeVectorFromTo(trailNode.Position, leadNode.Position),
+			trailNode.Position.VectorTo(leadNode.Position),
 		)
 
 		startLoad = load.AsTorsorProjectedAt(trailNode.T, elementReferenceFrame)

@@ -6,7 +6,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 // Minimum distance between two consecutive t values in the slices.
@@ -43,14 +43,14 @@ func sliceLoadedElementPositions(
 	concentratedLoads []*load.ConcentratedLoad,
 	distributedLoads []*load.DistributedLoad,
 	slices int,
-) []inkgeom.TParam {
-	tPos := inkgeom.SubTParamCompleteRangeTimes(slices)
+) []nums.TParam {
+	tPos := nums.SubTParamCompleteRangeTimes(slices)
 	tPos = append(tPos, slicePositionsForConcentratedLoads(concentratedLoads)...)
 	tPos = append(tPos, slicePositionsForDistributedLoads(distributedLoads)...)
 
-	sort.Sort(inkgeom.ByTParamValue(tPos))
+	sort.Sort(nums.ByTParamValue(tPos))
 
-	var correctedTPos []inkgeom.TParam
+	var correctedTPos []nums.TParam
 	correctedTPos = append(correctedTPos, tPos[0])
 
 	// FIXME: this might remove positions where a cocentrated load is applied, then,
@@ -68,8 +68,8 @@ func sliceLoadedElementPositions(
 SlicePositionsForConcentratedLoads collects all the concentrated loads t parameter value, provided
 the value is not extreme, that is, `t != tMin` and `t != tMax`.
 */
-func slicePositionsForConcentratedLoads(loads []*load.ConcentratedLoad) []inkgeom.TParam {
-	var tVals []inkgeom.TParam
+func slicePositionsForConcentratedLoads(loads []*load.ConcentratedLoad) []nums.TParam {
+	var tVals []nums.TParam
 
 	for _, load := range loads {
 		if !load.T.IsExtreme() {
@@ -84,8 +84,8 @@ func slicePositionsForConcentratedLoads(loads []*load.ConcentratedLoad) []inkgeo
 SlicePositionsForDistributedLoads collects all the distibutd loads start and end position t values,
 provided these values are not extreme, that is, `t != tMin` and `t != tMax`.
 */
-func slicePositionsForDistributedLoads(loads []*load.DistributedLoad) []inkgeom.TParam {
-	var tVals []inkgeom.TParam
+func slicePositionsForDistributedLoads(loads []*load.DistributedLoad) []nums.TParam {
+	var tVals []nums.TParam
 
 	for _, load := range loads {
 		if !load.StartT.IsExtreme() {
@@ -107,7 +107,7 @@ concentrated loads on those t positions where one is defined.
 If the load is in global coordinates, its vector representation is projected into the element's
 local reference frame.
 */
-func makeNodesWithConcentratedLoads(element *structure.Element, tPos []inkgeom.TParam) []*Node {
+func makeNodesWithConcentratedLoads(element *structure.Element, tPos []nums.TParam) []*Node {
 	var (
 		nodes        = make([]*Node, len(tPos))
 		elemRefFrame = element.RefFrame()

@@ -12,7 +12,7 @@ const unsetDOFNumber = -1
 // Node is a point in the structure where one or more resistant elements meet.
 type Node struct {
 	id                 contracts.StrID
-	Position           g2d.Projectable
+	Position           *g2d.Point
 	ExternalConstraint *Constraint
 	globalDof          [3]int
 }
@@ -20,7 +20,7 @@ type Node struct {
 // MakeNode creates a new node with the given id, position and external constraint.
 func MakeNode(
 	id contracts.StrID,
-	position g2d.Projectable,
+	position *g2d.Point,
 	externalConstraint *Constraint,
 ) *Node {
 	return &Node{
@@ -96,7 +96,7 @@ func (n Node) GetID() contracts.StrID {
 func (n Node) String() string {
 	return fmt.Sprintf(
 		"%s -> %f %f %s | DOF: %v",
-		n.id, n.Position.X, n.Position.Y,
+		n.id, n.Position.X(), n.Position.Y(),
 		n.ExternalConstraint.String(),
 		n.DegreesOfFreedomNum(),
 	)

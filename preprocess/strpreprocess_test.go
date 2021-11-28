@@ -5,8 +5,8 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestStartNodesDofs(t *testing.T) {
@@ -94,13 +94,13 @@ func makeStructure() *Structure {
 		},
 		Elements: []*Element{
 			MakeElement(elemOrigA, []*Node{
-				MakeUnloadedNode(inkgeom.MinT, nA.Position),
-				MakeUnloadedNode(inkgeom.MakeTParam(0.5), g2d.MakePoint(0, 50)),
-				MakeUnloadedNode(inkgeom.MaxT, nB.Position)}),
+				MakeUnloadedNode(nums.MinT, nA.Position),
+				MakeUnloadedNode(nums.MakeTParam(0.5), g2d.MakePoint(0, 50)),
+				MakeUnloadedNode(nums.MaxT, nB.Position)}),
 			MakeElement(elemOrigB, []*Node{
-				MakeUnloadedNode(inkgeom.MinT, nA.Position),
-				MakeUnloadedNode(inkgeom.MakeTParam(0.5), g2d.MakePoint(50, 0)),
-				MakeUnloadedNode(inkgeom.MaxT, nC.Position)}),
+				MakeUnloadedNode(nums.MinT, nA.Position),
+				MakeUnloadedNode(nums.MakeTParam(0.5), g2d.MakePoint(50, 0)),
+				MakeUnloadedNode(nums.MaxT, nC.Position)}),
 		},
 	}
 }

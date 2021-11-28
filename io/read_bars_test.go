@@ -6,7 +6,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestDeserializeBars(t *testing.T) {
@@ -27,12 +27,12 @@ func TestDeserializeBars(t *testing.T) {
 			"sec": structure.MakeSection("sec", 10.1, 20.2, 30.3, 40.4, 50.5),
 		}
 		concentratedLoads = ConcLoadsById{
-			"1": {load.MakeConcentrated(load.FY, true, inkgeom.MinT, -50)},
-			"2": {load.MakeConcentrated(load.MZ, true, inkgeom.MaxT, -30)},
+			"1": {load.MakeConcentrated(load.FY, true, nums.MinT, -50)},
+			"2": {load.MakeConcentrated(load.MZ, true, nums.MaxT, -30)},
 		}
 		ownWeightLoadVal = -materials["mat"].Density * sections["sec"].Area
 		ownWeightLoad    = []*load.DistributedLoad{
-			load.MakeDistributed(load.FY, false, inkgeom.MinT, ownWeightLoadVal, inkgeom.MaxT, ownWeightLoadVal),
+			load.MakeDistributed(load.FY, false, nums.MinT, ownWeightLoadVal, nums.MaxT, ownWeightLoadVal),
 		}
 		distributedLoads = DistLoadsById{}
 

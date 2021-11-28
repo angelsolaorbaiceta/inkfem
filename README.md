@@ -57,6 +57,10 @@ You can also run the tests inside a particular package like so:
 $ go test ./process
 ```
 
+## Docs
+
+- [Go Modules](https://go.dev/doc/modules/managing-dependencies)
+
 ## Code Structure
 
 The code is split into four main packages:

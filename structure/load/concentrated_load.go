@@ -5,16 +5,15 @@ package load
 
 import (
 	"github.com/angelsolaorbaiceta/inkfem/math"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
-	"github.com/angelsolaorbaiceta/inkmath/nums"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 // A ConcentratedLoad is a load applied in a specific point.
 type ConcentratedLoad struct {
 	Term            Term
 	IsInLocalCoords bool
-	T               inkgeom.TParam
+	T               nums.TParam
 	Value           float64
 }
 
@@ -27,7 +26,7 @@ Concentrated loads are defined by a position - value tuple.
 func MakeConcentrated(
 	term Term,
 	isInLocalCoords bool,
-	t inkgeom.TParam,
+	t nums.TParam,
 	value float64,
 ) *ConcentratedLoad {
 	return &ConcentratedLoad{term, isInLocalCoords, t, value}
@@ -48,7 +47,7 @@ func (load *ConcentratedLoad) AsTorsor() *math.Torsor {
 }
 
 // AsTorsorProjectedTo returns the concentrated load vector projected in a reference frame.
-func (load *ConcentratedLoad) AsTorsorProjectedTo(refFrame g2d.RefFrame) *math.Torsor {
+func (load *ConcentratedLoad) AsTorsorProjectedTo(refFrame *g2d.RefFrame) *math.Torsor {
 	return load.AsTorsor().ProjectedTo(refFrame)
 }
 
@@ -81,7 +80,7 @@ func (load *ConcentratedLoad) Equals(other *ConcentratedLoad) bool {
 	return load.Term == other.Term &&
 		load.IsInLocalCoords == other.IsInLocalCoords &&
 		load.T.Equals(other.T) &&
-		nums.FuzzyEqual(load.Value, other.Value)
+		nums.FloatsEqual(load.Value, other.Value)
 }
 
 func ConcentratedLoadsEqual(a, b []*ConcentratedLoad) bool {

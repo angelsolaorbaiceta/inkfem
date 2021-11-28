@@ -71,7 +71,7 @@ func MakeElementSolution(element *preprocess.Element, globalDisp vec.ReadOnlyVec
 }
 
 // RefFrame returns the element's reference frame.
-func (es *ElementSolution) RefFrame() g2d.RefFrame {
+func (es *ElementSolution) RefFrame() *g2d.RefFrame {
 	return es.Element.RefFrame()
 }
 
@@ -82,8 +82,8 @@ solution vector (the global node displacements).
 func (es *ElementSolution) setDisplacements(globalDisp vec.ReadOnlyVector) {
 	var (
 		nodeDofs               [3]int
-		localDisplacementsProj g2d.Projectable
-		elementFrame           g2d.RefFrame
+		localDisplacementsProj *g2d.Vector
+		elementFrame           *g2d.RefFrame
 	)
 
 	for j, node := range es.Element.Nodes {
@@ -112,11 +112,11 @@ func (es *ElementSolution) setDisplacements(globalDisp vec.ReadOnlyVector) {
 
 		es.LocalXDispl[j] = PointSolutionValue{
 			node.T,
-			localDisplacementsProj.X,
+			localDisplacementsProj.X(),
 		}
 		es.LocalYDispl[j] = PointSolutionValue{
 			node.T,
-			localDisplacementsProj.Y,
+			localDisplacementsProj.Y(),
 		}
 		es.LocalZRot[j] = PointSolutionValue{
 			node.T,

@@ -5,8 +5,8 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 )
 
@@ -23,7 +23,7 @@ TODO: buckling analysis
 */
 type Element struct {
 	id, startNodeID, endNodeID contracts.StrID
-	geometry                   g2d.Segment
+	geometry                   *g2d.Segment
 	startLink, endLink         *Constraint
 	material                   *Material
 	section                    *Section
@@ -43,15 +43,15 @@ func (e Element) EndNodeID() contracts.StrID {
 	return e.endNodeID
 }
 
-func (e Element) RefFrame() g2d.RefFrame {
+func (e Element) RefFrame() *g2d.RefFrame {
 	return e.geometry.RefFrame()
 }
 
-func (e Element) DirectionVersor() g2d.Projectable {
+func (e Element) DirectionVersor() *g2d.Vector {
 	return e.geometry.DirectionVersor()
 }
 
-func (e Element) NormalVersor() g2d.Projectable {
+func (e Element) NormalVersor() *g2d.Vector {
 	return e.geometry.NormalVersor()
 }
 
@@ -59,22 +59,22 @@ func (e Element) Length() float64 {
 	return e.geometry.Length()
 }
 
-func (e Element) LengthBetween(tStart, tEnd inkgeom.TParam) float64 {
+func (e Element) LengthBetween(tStart, tEnd nums.TParam) float64 {
 	return e.geometry.LengthBetween(tStart, tEnd)
 }
 
 // StartPoint returns the position of the start node of this element's geometry.
-func (e Element) StartPoint() g2d.Projectable {
-	return e.geometry.Start
+func (e Element) StartPoint() *g2d.Point {
+	return e.geometry.Start()
 }
 
 // EndPoint returns the position of the end node of this element's geometry.
-func (e Element) EndPoint() g2d.Projectable {
-	return e.geometry.End
+func (e Element) EndPoint() *g2d.Point {
+	return e.geometry.End()
 }
 
 // PointAt returns the position of a middle point in this element's geometry.
-func (e Element) PointAt(t inkgeom.TParam) g2d.Projectable {
+func (e Element) PointAt(t nums.TParam) *g2d.Point {
 	return e.geometry.PointAt(t)
 }
 
@@ -129,7 +129,7 @@ defined by the elements' geometry reference frame.
 
 It returns the element's stiffness matrix in the global reference frame.
 */
-func (e Element) StiffnessGlobalMat(startT, endT inkgeom.TParam) mat.ReadOnlyMatrix {
+func (e Element) StiffnessGlobalMat(startT, endT nums.TParam) mat.ReadOnlyMatrix {
 	var (
 		l    = e.geometry.LengthBetween(startT, endT)
 		c    = e.geometry.RefFrame().Cos()

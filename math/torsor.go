@@ -3,8 +3,8 @@ package math
 import (
 	"fmt"
 
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 /*
@@ -76,25 +76,25 @@ func (minuend *Torsor) Minus(subtrahend *Torsor) *Torsor {
 ProjectedToGlobal creates a new torsor with the values projected to the global reference frame
 assuming it was originally projected in the passed in reference frame.
 */
-func (torsor *Torsor) ProjectedToGlobal(refFrame g2d.RefFrame) *Torsor {
+func (torsor *Torsor) ProjectedToGlobal(refFrame *g2d.RefFrame) *Torsor {
 	projectedForces := refFrame.ProjectionsToGlobal(torsor.fx, torsor.fy)
-	return MakeTorsor(projectedForces.X, projectedForces.Y, torsor.mz)
+	return MakeTorsor(projectedForces.X(), projectedForces.Y(), torsor.mz)
 }
 
 /*
 ProjectedTo creates a new torsor with the values projected to the passed in reference frame
 assuming it was originally projected in the global reference frame.
 */
-func (torsor *Torsor) ProjectedTo(refFrame g2d.RefFrame) *Torsor {
+func (torsor *Torsor) ProjectedTo(refFrame *g2d.RefFrame) *Torsor {
 	projectedForces := refFrame.ProjectProjections(torsor.fx, torsor.fy)
-	return MakeTorsor(projectedForces.X, projectedForces.Y, torsor.mz)
+	return MakeTorsor(projectedForces.X(), projectedForces.Y(), torsor.mz)
 }
 
 // Equals checks whether this an another torsors are equal.
 func (torsor *Torsor) Equals(other *Torsor) bool {
-	return inkgeom.FloatsEqual(torsor.fx, other.fx) &&
-		inkgeom.FloatsEqual(torsor.fy, other.fy) &&
-		inkgeom.FloatsEqual(torsor.mz, other.mz)
+	return nums.FloatsEqual(torsor.fx, other.fx) &&
+		nums.FloatsEqual(torsor.fy, other.fy) &&
+		nums.FloatsEqual(torsor.mz, other.mz)
 }
 
 func (torsor *Torsor) String() string {

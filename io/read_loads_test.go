@@ -4,14 +4,14 @@ import (
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestDeserializeDistributedLoad(t *testing.T) {
 	barID, gotLoad := deserializeDistributedLoad("fx ld 34 0.1 -50.2 0.9 -65.5")
 	var (
-		startT = inkgeom.MakeTParam(0.1)
-		endT   = inkgeom.MakeTParam(0.9)
+		startT = nums.MakeTParam(0.1)
+		endT   = nums.MakeTParam(0.9)
 		want   = load.MakeDistributed(load.FX, true, startT, -50.2, endT, -65.5)
 	)
 
@@ -25,7 +25,7 @@ func TestDeserializeDistributedLoad(t *testing.T) {
 
 func TestDeserializeConcentratedLoad(t *testing.T) {
 	barID, gotLoad := deserializeConcentratedLoad("fy gc 45 0.5 -70.5")
-	want := load.MakeConcentrated(load.FY, false, inkgeom.HalfT, -70.5)
+	want := load.MakeConcentrated(load.FY, false, nums.HalfT, -70.5)
 
 	if barID != "45" {
 		t.Errorf("Expected bar id 45, got %s", barID)
@@ -46,8 +46,8 @@ func TestDeserializeLoads(t *testing.T) {
 		concentrated                    = allConcentrated["34"]
 		distributed                     = allDistributed["34"]
 
-		startT  = inkgeom.MakeTParam(0.1)
-		endT    = inkgeom.MakeTParam(0.9)
+		startT  = nums.MakeTParam(0.1)
+		endT    = nums.MakeTParam(0.9)
 		loadOne = load.MakeDistributed(load.FX, true, startT, -50.2, endT, -65.5)
 		loadTwo = load.MakeConcentrated(load.FY, false, startT, -70.5)
 	)

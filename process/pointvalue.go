@@ -3,12 +3,12 @@ package process
 import (
 	"fmt"
 
-	"github.com/angelsolaorbaiceta/inkgeom"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 // PointSolutionValue is a tuple of T and Value.
 type PointSolutionValue struct {
-	T     inkgeom.TParam
+	T     nums.TParam
 	Value float64
 }
 

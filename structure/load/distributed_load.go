@@ -2,9 +2,8 @@ package load
 
 import (
 	"github.com/angelsolaorbaiceta/inkfem/math"
-	"github.com/angelsolaorbaiceta/inkgeom"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
-	"github.com/angelsolaorbaiceta/inkmath/nums"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 /*
@@ -20,7 +19,7 @@ A load is expressed as:
 type DistributedLoad struct {
 	Term                 Term
 	IsInLocalCoords      bool
-	StartT, EndT         inkgeom.TParam
+	StartT, EndT         nums.TParam
 	StartValue, EndValue float64
 }
 
@@ -33,16 +32,16 @@ Distributed loads are defined by a start position - value and an end position - 
 func MakeDistributed(
 	term Term,
 	isInLocalCoords bool,
-	startT inkgeom.TParam,
+	startT nums.TParam,
 	startValue float64,
-	endT inkgeom.TParam,
+	endT nums.TParam,
 	endValue float64,
 ) *DistributedLoad {
 	return &DistributedLoad{term, isInLocalCoords, startT, endT, startValue, endValue}
 }
 
 // ValueAt returns the value of the load at a given t Parameter value.
-func (load *DistributedLoad) ValueAt(t inkgeom.TParam) float64 {
+func (load *DistributedLoad) ValueAt(t nums.TParam) float64 {
 	if t.IsLessThan(load.StartT) || t.IsGreaterThan(load.EndT) {
 		return 0.0
 	}
@@ -57,7 +56,7 @@ func (load *DistributedLoad) ValueAt(t inkgeom.TParam) float64 {
 }
 
 // AsTorsorAt returns the the distributed load vector at a given position.
-func (load *DistributedLoad) AsTorsorAt(t inkgeom.TParam) *math.Torsor {
+func (load *DistributedLoad) AsTorsorAt(t nums.TParam) *math.Torsor {
 	value := load.ValueAt(t)
 
 	switch load.Term {
@@ -75,11 +74,9 @@ func (load *DistributedLoad) AsTorsorAt(t inkgeom.TParam) *math.Torsor {
 	}
 }
 
-/*
-AsTorsorProjectedAt returns the distributed load vector at a given position projected in a
-reference frame.
-*/
-func (load *DistributedLoad) AsTorsorProjectedAt(t inkgeom.TParam, refFrame g2d.RefFrame) *math.Torsor {
+// AsTorsorProjectedAt returns the distributed load vector at a given position projected
+// in a reference frame.
+func (load *DistributedLoad) AsTorsorProjectedAt(t nums.TParam, refFrame *g2d.RefFrame) *math.Torsor {
 	return load.AsTorsorAt(t).ProjectedTo(refFrame)
 }
 
@@ -88,9 +85,9 @@ func (load *DistributedLoad) Equals(other *DistributedLoad) bool {
 	return load.Term == other.Term &&
 		load.IsInLocalCoords == other.IsInLocalCoords &&
 		load.StartT.Equals(other.StartT) &&
-		nums.FuzzyEqual(load.StartValue, other.StartValue) &&
+		nums.FloatsEqual(load.StartValue, other.StartValue) &&
 		load.EndT.Equals(other.EndT) &&
-		nums.FuzzyEqual(load.EndValue, other.EndValue)
+		nums.FloatsEqual(load.EndValue, other.EndValue)
 }
 
 func DistributedLoadsEqual(a, b []*DistributedLoad) bool {
