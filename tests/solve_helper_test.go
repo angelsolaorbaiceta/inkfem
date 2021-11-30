@@ -41,7 +41,7 @@ func solveStructure(str *structure.Structure) *process.Solution {
 		SafeChecks:            true,
 		MaxDisplacementsError: displError,
 	}
-	pre := preprocess.DoStructure(str)
+	pre := preprocess.StructureModel(str)
 	return process.Solve(pre, solveOptions)
 }
 

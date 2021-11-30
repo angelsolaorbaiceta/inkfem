@@ -8,15 +8,13 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
-/*
-An axial element is an element which:
-
-- is pinned in both ends and
-- if it has loads, they are concentrated and applied to the ends of the element, and never include a moment about Z
-
-Axial elements can be sliced using only it's end nodes. Axial elements deformation only happens in
-their axial direction: tension or compression.
-*/
+// An axial element is an element which:
+//
+// - is pinned in both ends and
+// - if it has loads, they are concentrated and applied to the ends of the element, and never include a moment about Z
+//
+// Axial elements can be sliced using only it's end nodes. Axial elements deformation only happens in
+// their axial direction: tension or compression.
 func sliceAxialElement(element *structure.Element) *Element {
 	if !element.IsAxialMember() {
 		panic("Expected an axial element")
@@ -41,11 +39,9 @@ func sliceAxialElement(element *structure.Element) *Element {
 		})
 }
 
-/*
-NetNodalLoadValues computes the net, locally projected loads at the start end (sFx & sFy) and at
-the end end (eFx & eFy), assuming all loads are nodal (concentrated and applied to the ends of
-the element).
-*/
+// NetNodalLoadValues computes the net, locally projected loads at the start end (sFx & sFy) and at
+// the end end (eFx & eFy), assuming all loads are nodal (concentrated and applied to the ends of
+// the element).
 func netNodalLoadValues(
 	loads []*load.ConcentratedLoad,
 	localRefFrame *g2d.RefFrame,

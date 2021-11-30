@@ -6,15 +6,16 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-// DoStructure preprocesses the structure by concurrently slicing each of the structural members.
-func DoStructure(s *structure.Structure) *Structure {
+// DoStruStructureModelcture preprocesses the structure by concurrently slicing each of the structural members.
+// The resulting sliced structure includes the degrees of freedom numbering.
+func StructureModel(s *structure.Structure) *Structure {
 	var (
 		channel        = make(chan *Element)
 		slicedElements []*Element
 	)
 
 	for _, element := range s.Elements {
-		go DoElement(element, channel)
+		go ElementModel(element, channel)
 	}
 
 	for i := 0; i < s.ElementsCount(); i++ {

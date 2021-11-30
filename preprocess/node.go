@@ -10,18 +10,16 @@ import (
 
 const unsetDOF = -1
 
-/*
-A Node represents an intermediate point in a sliced element.
-
-This point has a T Parameter associated, loads applied and degrees of freedom numbering for
-the global system.
-
-The `leftLocalLoad` is the equivalent load, in local coordinates, from the finite element located
-to the left of the node.
-
-The `rightLocalLoad` is the equivalent load, in local coordinates, from the finite element located
-to the right of the node.
-*/
+// A Node represents an intermediate point in a sliced element.
+//
+// This point has a T Parameter associated, loads applied and degrees of freedom numbering for
+// the global system.
+//
+// The `leftLocalLoad` is the equivalent load, in local coordinates, from the finite element located
+// to the left of the node.
+//
+// The `rightLocalLoad` is the equivalent load, in local coordinates, from the finite element located
+// to the right of the node.
 type Node struct {
 	T                 nums.TParam
 	Position          *g2d.Point

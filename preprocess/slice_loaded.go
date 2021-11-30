@@ -12,16 +12,14 @@ import (
 // Minimum distance between two consecutive t values in the slices.
 const minDistBetweenTSlices = 1e-3
 
-/*
-Elemets with loads applied are firts sliced a given number of times, and then, all t parameters
-derived from the positions of the applied loads are included.
-
-The positions where concentrated loads are applied are critical as there will be a discontinuity,
-so a node must be added.
-
-The positions where distributed loads start and end also introduce discontinuities, so we also
-include nodes in those positions.
-*/
+// Elemets with loads applied are firts sliced a given number of times, and then, all t parameters
+// derived from the positions of the applied loads are included.
+//
+// The positions where concentrated loads are applied are critical as there will be a discontinuity,
+// so a node must be added.
+//
+// The positions where distributed loads start and end also introduce discontinuities, so we also
+// include nodes in those positions.
 func sliceLoadedElement(element *structure.Element, slices int) *Element {
 	var (
 		tPos  = sliceLoadedElementPositions(element.ConcentratedLoads, element.DistributedLoads, slices)
@@ -33,12 +31,10 @@ func sliceLoadedElement(element *structure.Element, slices int) *Element {
 	return MakeElement(element, nodes)
 }
 
-/*
-Computes all the t values where to slice an element with loads applied.
-
-It starts by slicing the element a given number of times, and then adds all the load start and end t
-values, removing any possible duplications.
-*/
+// Computes all the t values where to slice an element with loads applied.
+//
+// It starts by slicing the element a given number of times, and then adds all the load start and
+// end t values, removing any possible duplications.
 func sliceLoadedElementPositions(
 	concentratedLoads []*load.ConcentratedLoad,
 	distributedLoads []*load.DistributedLoad,
@@ -64,10 +60,8 @@ func sliceLoadedElementPositions(
 	return correctedTPos
 }
 
-/*
-SlicePositionsForConcentratedLoads collects all the concentrated loads t parameter value, provided
-the value is not extreme, that is, `t != tMin` and `t != tMax`.
-*/
+// SlicePositionsForConcentratedLoads collects all the concentrated loads t parameter value, provided
+// the value is not extreme, that is, `t != tMin` and `t != tMax`.
 func slicePositionsForConcentratedLoads(loads []*load.ConcentratedLoad) []nums.TParam {
 	var tVals []nums.TParam
 
@@ -80,10 +74,8 @@ func slicePositionsForConcentratedLoads(loads []*load.ConcentratedLoad) []nums.T
 	return tVals
 }
 
-/*
-SlicePositionsForDistributedLoads collects all the distibutd loads start and end position t values,
-provided these values are not extreme, that is, `t != tMin` and `t != tMax`.
-*/
+// SlicePositionsForDistributedLoads collects all the distibutd loads start and end position t values,
+// provided these values are not extreme, that is, `t != tMin` and `t != tMax`.
 func slicePositionsForDistributedLoads(loads []*load.DistributedLoad) []nums.TParam {
 	var tVals []nums.TParam
 
@@ -100,13 +92,11 @@ func slicePositionsForDistributedLoads(loads []*load.DistributedLoad) []nums.TPa
 	return tVals
 }
 
-/*
-MakeNodesWithConcentratedLoads creates all the nodes for the given t positions and applies the
-concentrated loads on those t positions where one is defined.
-
-If the load is in global coordinates, its vector representation is projected into the element's
-local reference frame.
-*/
+// MakeNodesWithConcentratedLoads creates all the nodes for the given t positions and applies the
+// concentrated loads on those t positions where one is defined.
+//
+// If the load is in global coordinates, its vector representation is projected into the element's
+// local reference frame.
 func makeNodesWithConcentratedLoads(element *structure.Element, tPos []nums.TParam) []*Node {
 	var (
 		nodes        = make([]*Node, len(tPos))
