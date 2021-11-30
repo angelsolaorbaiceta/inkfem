@@ -6,7 +6,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-// DoStruStructureModelcture preprocesses the structure by concurrently slicing each of the structural members.
+// StructureModel preprocesses the structure by concurrently slicing each of the structural members.
 // The resulting sliced structure includes the degrees of freedom numbering.
 func StructureModel(s *structure.Structure) *Structure {
 	var (
@@ -28,15 +28,11 @@ func StructureModel(s *structure.Structure) *Structure {
 	return str
 }
 
-/*
-Assings degrees of freedom numbers to all nodes on sliced elements.
-
-Structural nodes are given degrees of freedom to help in the correct assignment of DOF numbers to
-the elements that meet in the node. Structural elements are first sorted by their geometry positions,
-so the degrees of freedom numbers follow a logical sequence.
-
-The method returns the number degrees of freedom assigned.
-*/
+// Assings degrees of freedom numbers to all nodes on sliced elements.
+//
+// Structural nodes are given degrees of freedom to help in the correct assignment of DOF numbers
+// to the elements that meet in the node. Structural elements are first sorted by their geometry
+// positions, so the degrees of freedom numbers follow a logical sequence.
 func assignDof(str *Structure) {
 	sort.Sort(ByGeometryPos(str.Elements))
 
