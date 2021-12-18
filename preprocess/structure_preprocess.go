@@ -15,7 +15,7 @@ func StructureModel(s *structure.Structure) *Structure {
 	)
 
 	for _, element := range s.Elements {
-		go ElementModel(element, channel)
+		go elementModel(element, channel)
 	}
 
 	for i := 0; i < s.ElementsCount(); i++ {

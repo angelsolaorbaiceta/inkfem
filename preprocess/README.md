@@ -6,4 +6,5 @@ It also provides the means for slicing or preprocessing the structure as it is d
 ## Slicing the structure model
 
 A structure model (`structure.Structure`) can be sliced using the `preprocess.StructureModel` function.
-The result is a '
+This function is the only public function this package exports.
+The result is a `preprocess.Structure`.

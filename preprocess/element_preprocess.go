@@ -9,9 +9,9 @@ const (
 	elementWithoutLoadsSlices = 6
 )
 
-// ElementModel preprocesses the given structural element subdividing it as corresponds.
+// elementModel preprocesses the given structural element subdividing it as corresponds.
 // The result is sent through a channel.
-func ElementModel(element *structure.Element, c chan<- *Element) {
+func elementModel(element *structure.Element, c chan<- *Element) {
 	if element.IsAxialMember() {
 		c <- sliceAxialElement(element)
 	} else if element.HasLoadsApplied() {
