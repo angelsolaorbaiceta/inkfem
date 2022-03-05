@@ -11,10 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const inputFileExt = ".inkfem"
-const preFileExt = ".inkfempre"
-const solFileExt = ".inkfemsol"
-
 var (
 	inputFilePath    string
 	includeOwnWeight bool
@@ -70,14 +66,14 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	log.StartProcess()
 
 	var (
-		outPath       = strings.TrimSuffix(inputFilePath, inputFileExt)
+		outPath       = strings.TrimSuffix(inputFilePath, io.InputFileExt)
 		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: includeOwnWeight}
 		structure     = readStructureFromFile(inputFilePath, readerOptions)
 		preStructure  = preprocessStructure(structure)
 	)
 
 	if preprocessToFile {
-		go io.PreprocessedStructureToFile(preStructure, outPath+preFileExt)
+		go io.PreprocessedStructureToFile(preStructure, outPath+io.PreFileExt)
 	}
 
 	solveOptions := process.SolveOptions{
@@ -88,7 +84,7 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	}
 
 	solution := process.Solve(preStructure, solveOptions)
-	io.StructureSolutionToFile(solution, outPath+solFileExt)
+	io.StructureSolutionToFile(solution, outPath+io.SolFileExt)
 
 	log.ResultTable()
 }
