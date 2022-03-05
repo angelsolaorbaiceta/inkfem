@@ -10,20 +10,24 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
+const inputFileExt = ".inkfem"
+const preFileExt = ".inkfempre"
+const solFileExt = ".inkfemsol"
+
 func main() {
 	flags := process.ParseOrShowUsage()
 	log.SetVerbosity(*flags.Verbose)
 	log.StartProcess()
 
 	var (
-		outPath       = strings.TrimSuffix(*flags.InputFilePath, ".inkfem")
+		outPath       = strings.TrimSuffix(*flags.InputFilePath, inputFileExt)
 		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: *flags.ShouldIncludeOwnWeight}
 		structure     = readStructureFromFile(*flags.InputFilePath, readerOptions)
 		preStructure  = preprocessStructure(structure)
 	)
 
 	if *flags.Preprocess {
-		go io.PreprocessedStructureToFile(preStructure, outPath+".inkfempre")
+		go io.PreprocessedStructureToFile(preStructure, outPath+preFileExt)
 	}
 
 	solveOptions := process.SolveOptions{
@@ -34,7 +38,7 @@ func main() {
 	}
 
 	solution := process.Solve(preStructure, solveOptions)
-	io.StructureSolutionToFile(solution, outPath+".inkfemsol")
+	io.StructureSolutionToFile(solution, outPath+solFileExt)
 
 	log.ResultTable()
 }
