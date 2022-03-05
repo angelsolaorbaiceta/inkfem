@@ -77,4 +77,4 @@ The code is split into four main packages:
 - [preprocess](./preprocess/README.md): implements the preprocessing or slicing of the structure
 - [process](./process/README.md): implements the processing of a sliced/preprocessed structure
 - [io](./io/README.md): reading from `.inkfem` files and writing to `.inkfempre`and `.inkfemsol` files
-  - **cmd**: the commands available to the CLI
+- [cmd](): the commands available to the CLI
