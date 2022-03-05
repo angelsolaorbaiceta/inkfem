@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -39,7 +40,7 @@ StartProcess should be called when the solving process starts.
 func StartProcess() {
 	if isVerbose {
 		// TODO: read version from file
-		fmt.Printf("---------- [ inkfem v1.0 ] ----------\n")
+		log.Printf("---------- [ inkfem v1.0 ] ----------\n")
 	}
 }
 
@@ -180,13 +181,13 @@ func ResultTable() {
 
 		println()
 		println("========================================")
-		fmt.Printf("TOTAL TIME: %dms\n", totalMs)
+		log.Printf("TOTAL TIME: %dms\n", totalMs)
 		println()
-		fmt.Printf("read file         -> %.4f%%\n", readFilePerc)
-		fmt.Printf("preprocess        -> %.4f%%\n", preprocessPerc)
-		fmt.Printf("assemble system   -> %.4f%%\n", assemblePerc)
-		fmt.Printf("solve system      -> %.4f%%\n", solvePerc)
-		fmt.Printf("compute stresses  -> %.4f%%\n", computeStressPerc)
+		log.Printf("read file         -> %.4f%%\n", readFilePerc)
+		log.Printf("preprocess        -> %.4f%%\n", preprocessPerc)
+		log.Printf("assemble system   -> %.4f%%\n", assemblePerc)
+		log.Printf("solve system      -> %.4f%%\n", solvePerc)
+		log.Printf("compute stresses  -> %.4f%%\n", computeStressPerc)
 		println("========================================")
 	}
 }
@@ -197,5 +198,5 @@ func writeStart(message string) {
 }
 
 func writeDone(message string, elapsedTime time.Duration) {
-	fmt.Printf("[DONE in %s] "+message+"\n", elapsedTime)
+	log.Printf("[DONE in %s] "+message+"\n", elapsedTime)
 }
