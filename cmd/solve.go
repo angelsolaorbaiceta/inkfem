@@ -12,18 +12,18 @@ import (
 )
 
 var (
-	inputFilePath    string
-	includeOwnWeight bool
-	dispMaxError     float64
-	useVerbose       bool
-	preprocessToFile bool
-	sysMatrixToPng   bool
-	safeChecks       bool
+	solveInputFilePath    string
+	solveIncludeOwnWeight bool
+	solveDispMaxError     float64
+	solveUseVerbose       bool
+	SolvePreprocessToFile bool
+	solveSysMatrixToPng   bool
+	solveSafeChecks       bool
 
 	solveCommand = &cobra.Command{
 		Use:   "solve",
-		Short: "",
-		Long:  "",
+		Short: "solves the structure",
+		Long:  "solves the structure given in an .inkfem file and saves the result in an .inkfemsol file.",
 		Run:   solveStructure,
 	}
 )
@@ -31,56 +31,56 @@ var (
 func init() {
 	solveCommand.
 		Flags().
-		StringVarP(&inputFilePath, "input", "i", "", "Input file path (required)")
+		StringVarP(&solveInputFilePath, "input", "i", "", "Input file path (required)")
 	solveCommand.MarkFlagRequired("input")
 
 	solveCommand.
 		Flags().
-		BoolVarP(&includeOwnWeight, "weight", "w", false, "include the weight of the bars as a distributed load")
+		BoolVarP(&solveIncludeOwnWeight, "weight", "w", false, "include the weight of the bars as a distributed load")
 
 	solveCommand.
 		Flags().
-		Float64VarP(&dispMaxError, "error", "e", 1e-5, "maximum allowed displacement error")
+		Float64VarP(&solveDispMaxError, "error", "e", 1e-5, "maximum allowed displacement error")
 
 	solveCommand.
 		Flags().
-		BoolVarP(&useVerbose, "verbose", "v", false, "use verbose output")
+		BoolVarP(&solveUseVerbose, "verbose", "v", false, "use verbose output")
 
 	solveCommand.
 		Flags().
-		BoolVarP(&preprocessToFile, "preprocess", "p", false, "dump preprocessed structure to file")
+		BoolVarP(&SolvePreprocessToFile, "preprocess", "p", false, "dump preprocessed structure to file")
 
 	solveCommand.
 		Flags().
-		BoolVarP(&sysMatrixToPng, "matrix", "m", false, "save system matrix as a PNG image")
+		BoolVarP(&solveSysMatrixToPng, "matrix", "m", false, "save system matrix as a PNG image")
 
 	solveCommand.
 		Flags().
-		BoolVarP(&safeChecks, "safe", "s", false, "perform safety checks")
+		BoolVarP(&solveSafeChecks, "safe", "s", false, "perform safety checks")
 
 	rootCmd.AddCommand(solveCommand)
 }
 
 func solveStructure(cmd *cobra.Command, args []string) {
-	log.SetVerbosity(useVerbose)
+	log.SetVerbosity(solveUseVerbose)
 	log.StartProcess()
 
 	var (
-		outPath       = strings.TrimSuffix(inputFilePath, io.InputFileExt)
-		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: includeOwnWeight}
-		structure     = readStructureFromFile(inputFilePath, readerOptions)
+		outPath       = strings.TrimSuffix(solveInputFilePath, io.InputFileExt)
+		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: solveIncludeOwnWeight}
+		structure     = readStructureFromFile(solveInputFilePath, readerOptions)
 		preStructure  = preprocessStructure(structure)
 	)
 
-	if preprocessToFile {
+	if SolvePreprocessToFile {
 		go io.PreprocessedStructureToFile(preStructure, outPath+io.PreFileExt)
 	}
 
 	solveOptions := process.SolveOptions{
-		SaveSysMatrixImage:    sysMatrixToPng,
+		SaveSysMatrixImage:    solveSysMatrixToPng,
 		OutputPath:            outPath,
-		SafeChecks:            safeChecks,
-		MaxDisplacementsError: dispMaxError,
+		SafeChecks:            solveSafeChecks,
+		MaxDisplacementsError: solveDispMaxError,
 	}
 
 	solution := process.Solve(preStructure, solveOptions)
