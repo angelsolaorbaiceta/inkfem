@@ -36,7 +36,7 @@ func init() {
 
 	solveCommand.
 		Flags().
-		BoolVarP(&solveIncludeOwnWeight, "weight", "w", false, "include the weight of the bars as a distributed load")
+		BoolVarP(&solveIncludeOwnWeight, "weight", "w", false, "include the weight of each bars as a distributed load")
 
 	solveCommand.
 		Flags().
