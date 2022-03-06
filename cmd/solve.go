@@ -94,7 +94,7 @@ func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *str
 	structure := io.StructureFromFile(filePath, readerOptions)
 	log.EndReadFile(structure.NodesCount(), structure.ElementsCount())
 
-	return &structure
+	return structure
 }
 
 func preprocessStructure(structure *structure.Structure) *preprocess.Structure {

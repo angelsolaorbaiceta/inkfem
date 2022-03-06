@@ -28,7 +28,7 @@ StructureFromFile Reads the given .inkfem file and tries to parse a structure fr
 The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm' are the major and
 minor version numbers of inkfem used to produce the file or required to compute the structure.
 */
-func StructureFromFile(filePath string, options ReaderOptions) structure.Structure {
+func StructureFromFile(filePath string, options ReaderOptions) *structure.Structure {
 	file, error := os.Open(filePath)
 	if error != nil {
 		log.Fatal(error)
@@ -40,7 +40,7 @@ func StructureFromFile(filePath string, options ReaderOptions) structure.Structu
 	return parseStructure(scanner, options)
 }
 
-func parseStructure(scanner *bufio.Scanner, options ReaderOptions) structure.Structure {
+func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.Structure {
 	var (
 		nodesDefined               = false
 		materialsDefined           = false
@@ -127,7 +127,7 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) structure.Str
 		log.Fatal(err)
 	}
 
-	return structure.Structure{
+	return &structure.Structure{
 		Metadata: structure.StrMetadata{
 			MajorVersion: majorVersion,
 			MinorVersion: minorVersion,
