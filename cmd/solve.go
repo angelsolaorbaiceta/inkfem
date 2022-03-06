@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	solveInputFilePath    string
 	solveIncludeOwnWeight bool
 	solveDispMaxError     float64
 	solveUseVerbose       bool
@@ -21,19 +20,15 @@ var (
 	solveSafeChecks       bool
 
 	solveCommand = &cobra.Command{
-		Use:   "solve",
+		Use:   "solve <inkfem file path>",
 		Short: "solves the structure",
 		Long:  "solves the structure given in an .inkfem file and saves the result in an .inkfemsol file.",
+		Args:  cobra.ExactArgs(1),
 		Run:   solveStructure,
 	}
 )
 
 func init() {
-	solveCommand.
-		Flags().
-		StringVarP(&solveInputFilePath, "input", "i", "", "Input file path (required)")
-	solveCommand.MarkFlagRequired("input")
-
 	solveCommand.
 		Flags().
 		BoolVarP(&solveIncludeOwnWeight, "weight", "w", false, "include the weight of each bars as a distributed load")
@@ -66,9 +61,10 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	log.StartProcess()
 
 	var (
-		outPath       = strings.TrimSuffix(solveInputFilePath, io.InputFileExt)
+		inputFilePath = args[0]
+		outPath       = strings.TrimSuffix(inputFilePath, io.InputFileExt)
 		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: solveIncludeOwnWeight}
-		structure     = readStructureFromFile(solveInputFilePath, readerOptions)
+		structure     = readStructureFromFile(inputFilePath, readerOptions)
 		preStructure  = preprocessStructure(structure)
 	)
 
