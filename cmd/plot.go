@@ -45,7 +45,8 @@ func plotStructure(cmd *cobra.Command, args []string) {
 		readerOptions         = io.ReaderOptions{ShouldIncludeOwnWeight: plotIncludeOwnWeight}
 		structure             = io.StructureFromFile(inputFilePath, readerOptions)
 		strPlotOptions        = plot.StructurePlotOps{
-			Scale: plotScale,
+			Scale:     plotScale,
+			MinMargin: 100,
 		}
 	)
 

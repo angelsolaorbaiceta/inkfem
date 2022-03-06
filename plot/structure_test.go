@@ -2,7 +2,7 @@ package plot
 
 import (
 	"bytes"
-	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
@@ -29,27 +29,44 @@ func TestStructureToSVG(t *testing.T) {
 			WithMaterial(structure.MakeUnitMaterial()).
 			WithSection(structure.MakeUnitSection()).
 			Build()
+
+		strDefinition = &structure.Structure{
+			Metadata: structure.StrMetadata{
+				MajorVersion: 1,
+				MinorVersion: 0,
+			},
+			Nodes: map[contracts.StrID]*structure.Node{
+				"n1": nodeOne,
+				"n2": nodeTwo,
+				"n3": nodeThree,
+			},
+			Elements: []*structure.Element{barOne, barTwo},
+		}
+
+		plotOps = StructurePlotOps{
+			Scale:     5.0,
+			MinMargin: 100,
+		}
 	)
 
-	strDefinition := &structure.Structure{
-		Metadata: structure.StrMetadata{
-			MajorVersion: 1,
-			MinorVersion: 0,
-		},
-		Nodes: map[contracts.StrID]*structure.Node{
-			"n1": nodeOne,
-			"n2": nodeTwo,
-			"n3": nodeThree,
-		},
-		Elements: []*structure.Element{barOne, barTwo},
-	}
-
-	t.Run("computes the right image size given the scale", func(t *testing.T) {
+	t.Run("computes the right image size given the scale and margin", func(t *testing.T) {
 		var b bytes.Buffer
 
-		StructureToSVG(strDefinition, StructurePlotOps{Scale: 5.0}, &b)
-		got := b.String()
+		StructureToSVG(strDefinition, plotOps, &b)
+		var (
+			got = b.String()
+			// structure has a width of 200, times the scale plus the two lateral margins = 1200px
+			wantWidthPattern = "width=\"1200\""
+			// structure has a height of 300, times the scale plust the two vertical margins = 1700px
+			wantHeightPattern = "height=\"1700\""
+		)
 
-		fmt.Printf("---> %s\n", got)
+		if match, err := regexp.MatchString(wantWidthPattern, got); !match || err != nil {
+			t.Errorf("Want %s, but didn't find in:\n%s\n", wantWidthPattern, got)
+		}
+
+		if match, err := regexp.MatchString(wantHeightPattern, got); !match || err != nil {
+			t.Errorf("Want %s, but didn't find in:\n%s\n", wantHeightPattern, got)
+		}
 	})
 }
