@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"os"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/plot"
@@ -40,13 +40,20 @@ func init() {
 
 func plotStructure(cmd *cobra.Command, args []string) {
 	var (
-		inputFilePath = args[0]
-		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: plotIncludeOwnWeight}
-		structure     = io.StructureFromFile(inputFilePath, readerOptions)
+		inputFilePath         = args[0]
+		structurePlotFilePath = inputFilePath + ".svg"
+		readerOptions         = io.ReaderOptions{ShouldIncludeOwnWeight: plotIncludeOwnWeight}
+		structure             = io.StructureFromFile(inputFilePath, readerOptions)
+		strPlotOptions        = plot.StructurePlotOps{
+			Scale: plotScale,
+		}
 	)
 
-	fmt.Printf("The args: %v, the file path: %s\n", args, inputFilePath)
-	// fmt.Printf("%v\n", structure)
+	strPlotFile, err := os.Create(structurePlotFilePath)
+	if err != nil {
+		panic("Could not create file for the structure drawing")
+	}
+	defer strPlotFile.Close()
 
-	plot.StructureToSVG(structure)
+	plot.StructureToSVG(structure, strPlotOptions, strPlotFile)
 }
