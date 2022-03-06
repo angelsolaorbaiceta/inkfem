@@ -3,6 +3,7 @@ module github.com/angelsolaorbaiceta/inkfem
 go 1.17
 
 require (
+	github.com/ajstarks/svgo v0.0.0-20211024235047-1546f124cd8b
 	github.com/angelsolaorbaiceta/inkgeom v0.1.3
 	github.com/angelsolaorbaiceta/inkmath v0.2.1
 	github.com/spf13/cobra v1.3.0
