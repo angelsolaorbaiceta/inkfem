@@ -60,6 +60,8 @@ github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRF
 github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
 github.com/angelsolaorbaiceta/inkgeom v0.1.3 h1:6EPpEdgRGg90wMy5aaEb3/Cj0pMMyeQ20K4d92ULPW8=
 github.com/angelsolaorbaiceta/inkgeom v0.1.3/go.mod h1:Qtjzx4mZFDJ0nyHRgnCIBMz4Pk9jprMRWav2KcfoPBs=
+github.com/angelsolaorbaiceta/inkgeom v0.1.4 h1:U/r3+Ej7xtLnWGnDE/szCkvg+tFrc34Y2vKFej7BqcY=
+github.com/angelsolaorbaiceta/inkgeom v0.1.4/go.mod h1:Qtjzx4mZFDJ0nyHRgnCIBMz4Pk9jprMRWav2KcfoPBs=
 github.com/angelsolaorbaiceta/inkmath v0.2.1 h1:qS+aZBESITDse85/2njp0funJN5RkpPgFSYbjgadMiQ=
 github.com/angelsolaorbaiceta/inkmath v0.2.1/go.mod h1:FXvzjVSjQ48n1RPHsuWSjEI3jFA2sB0Jo+Ae/ay930E=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
