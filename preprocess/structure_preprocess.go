@@ -15,7 +15,7 @@ func StructureModel(str *structure.Structure) *Structure {
 	)
 
 	for _, element := range str.Elements {
-		go elementModel(element, channel)
+		go sliceElement(element, channel)
 	}
 
 	for i := 0; i < str.ElementsCount(); i++ {
