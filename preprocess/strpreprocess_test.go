@@ -87,7 +87,7 @@ func makeStructure() *Structure {
 	)
 
 	return &Structure{
-		Nodes: map[contracts.StrID]*structure.Node{
+		nodes: map[contracts.StrID]*structure.Node{
 			nA.GetID(): nA,
 			nB.GetID(): nB,
 			nC.GetID(): nC,

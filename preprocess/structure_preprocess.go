@@ -8,24 +8,28 @@ import (
 
 // StructureModel preprocesses the structure by concurrently slicing each of the structural members.
 // The resulting sliced structure includes the degrees of freedom numbering.
-func StructureModel(s *structure.Structure) *Structure {
+func StructureModel(str *structure.Structure) *Structure {
 	var (
 		channel        = make(chan *Element)
 		slicedElements []*Element
 	)
 
-	for _, element := range s.Elements {
+	for _, element := range str.Elements {
 		go elementModel(element, channel)
 	}
 
-	for i := 0; i < s.ElementsCount(); i++ {
+	for i := 0; i < str.ElementsCount(); i++ {
 		slicedElements = append(slicedElements, <-channel)
 	}
 
-	str := &Structure{Metadata: s.Metadata, Nodes: s.Nodes, Elements: slicedElements}
-	assignDof(str)
+	slicedStr := &Structure{
+		Metadata: str.Metadata,
+		nodes:    str.NodesById(),
+		Elements: slicedElements,
+	}
+	assignDof(slicedStr)
 
-	return str
+	return slicedStr
 }
 
 // Assings degrees of freedom numbers to all nodes on sliced elements.
@@ -43,10 +47,9 @@ func assignDof(str *Structure) {
 		dof                = 0
 	)
 
-	updateStructuralNodeDof := func(n *structure.Node) {
-		if !n.HasDegreesOfFreedomNum() {
-			n.SetDegreesOfFreedomNum(dof, dof+1, dof+2)
-			str.Nodes[n.GetID()] = n
+	updateStructuralNodeDof := func(node *structure.Node) {
+		if !node.HasDegreesOfFreedomNum() {
+			node.SetDegreesOfFreedomNum(dof, dof+1, dof+2)
 			dof += 3
 		}
 	}
@@ -80,8 +83,7 @@ func assignDof(str *Structure) {
 	}
 
 	for _, element := range str.Elements {
-		startNode = str.Nodes[element.StartNodeID()]
-		endNode = str.Nodes[element.EndNodeID()]
+		startNode, endNode = str.GetElementNodes(element)
 		startLink = element.StartLink()
 		endLink = element.EndLink()
 		nodesCount = len(element.Nodes)

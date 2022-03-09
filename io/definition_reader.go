@@ -127,14 +127,14 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) structure.Str
 		log.Fatal(err)
 	}
 
-	return structure.Structure{
-		Metadata: structure.StrMetadata{
+	return *structure.Make(
+		structure.StrMetadata{
 			MajorVersion: majorVersion,
 			MinorVersion: minorVersion,
 		},
-		Nodes:    *nodes,
-		Elements: *elements,
-	}
+		*nodes,
+		*elements,
+	)
 }
 
 func parseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {

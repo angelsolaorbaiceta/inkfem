@@ -10,7 +10,7 @@ import (
 
 // Solution is the group of all element solutions with the structure metadata.
 type Solution struct {
-	Metadata *structure.StrMetadata
+	Metadata structure.StrMetadata
 	Nodes    map[contracts.StrID]*structure.Node
 	Elements []*ElementSolution
 }
