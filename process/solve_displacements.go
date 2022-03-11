@@ -3,7 +3,6 @@ package process
 import (
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkmath/lineq"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
@@ -66,46 +65,7 @@ func makeSystemOfEquations(str *preprocess.Structure) (mat.ReadOnlyMatrix, vec.R
 		element.SetEquationTerms(sysMatrix, sysVector)
 	}
 
-	addDispConstraints(sysMatrix, sysVector, str.GetAllNodes())
+	str.AddDispConstraints(sysMatrix, sysVector)
 
 	return sysMatrix, sysVector
-}
-
-// Sets the node's external constraints in the system of equations matrix and vector.
-//
-// A constrained degree of freedom is enforced by setting the corresponding matrix row as the
-// identity, and the associated free value as zero. This yields a trivial equation of the form
-// x = 0, where x is the constrained degree of freedom.
-func addDispConstraints(
-	matrix mat.MutableMatrix,
-	vector vec.MutableVector,
-	nodes []*structure.Node,
-) {
-	var (
-		constraint *structure.Constraint
-		dofs       [3]int
-	)
-
-	addConstraintAtDof := func(dof int) {
-		matrix.SetZeroCol(dof)
-		matrix.SetIdentityRow(dof)
-		vector.SetZero(dof)
-	}
-
-	for _, node := range nodes {
-		if node.IsExternallyConstrained() {
-			constraint = node.ExternalConstraint
-			dofs = node.DegreesOfFreedomNum()
-
-			if !constraint.AllowsDispX() {
-				addConstraintAtDof(dofs[0])
-			}
-			if !constraint.AllowsDispY() {
-				addConstraintAtDof(dofs[1])
-			}
-			if !constraint.AllowsRotation() {
-				addConstraintAtDof(dofs[2])
-			}
-		}
-	}
 }
