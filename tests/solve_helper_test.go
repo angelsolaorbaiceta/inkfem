@@ -69,14 +69,14 @@ func makeCantileverBeamStructure(
 		).Build()
 	)
 
-	return &structure.Structure{
-		Metadata: structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
-		Nodes: map[contracts.StrID]*structure.Node{
+	return structure.Make(
+		structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
+		map[contracts.StrID]*structure.Node{
 			nodeOne.GetID(): nodeOne,
 			nodeTwo.GetID(): nodeTwo,
 		},
-		Elements: []*structure.Element{beam},
-	}
+		[]*structure.Element{beam},
+	)
 }
 
 func makeAxialElementStructure(
@@ -103,14 +103,14 @@ func makeAxialElementStructure(
 		).Build()
 	)
 
-	return &structure.Structure{
-		Metadata: structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
-		Nodes: map[contracts.StrID]*structure.Node{
+	return structure.Make(
+		structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
+		map[contracts.StrID]*structure.Node{
 			nodeOne.GetID(): nodeOne,
 			nodeTwo.GetID(): nodeTwo,
 		},
-		Elements: []*structure.Element{axialElement},
-	}
+		[]*structure.Element{axialElement},
+	)
 }
 
 func makeTwoElementsCantileverReactionsStructure(distLoadVal, concLoadValue float64) *structure.Structure {
@@ -153,13 +153,13 @@ func makeTwoElementsCantileverReactionsStructure(distLoadVal, concLoadValue floa
 		).Build()
 	)
 
-	return &structure.Structure{
-		Metadata: structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
-		Nodes: map[contracts.StrID]*structure.Node{
+	return structure.Make(
+		structure.StrMetadata{MajorVersion: 1, MinorVersion: 0},
+		map[contracts.StrID]*structure.Node{
 			nodeOne.GetID():   nodeOne,
 			nodeTwo.GetID():   nodeTwo,
 			nodeThree.GetID(): nodeThree,
 		},
-		Elements: []*structure.Element{elementOne, elementTwo},
-	}
+		[]*structure.Element{elementOne, elementTwo},
+	)
 }
