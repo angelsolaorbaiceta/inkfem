@@ -87,11 +87,13 @@ func makeStructure() *Structure {
 	)
 
 	return &Structure{
-		nodes: map[contracts.StrID]*structure.Node{
-			nA.GetID(): nA,
-			nB.GetID(): nB,
-			nC.GetID(): nC,
-		},
+		NodesById: structure.MakeNodesById(
+			map[contracts.StrID]*structure.Node{
+				nA.GetID(): nA,
+				nB.GetID(): nB,
+				nC.GetID(): nC,
+			},
+		),
 		Elements: []*Element{
 			MakeElement(elemOrigA, []*Node{
 				MakeUnloadedNode(nums.MinT, nA.Position),
