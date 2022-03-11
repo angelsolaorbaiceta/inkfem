@@ -1,14 +1,17 @@
 package preprocess
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
+	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
 // Element after slicing original structural element.
 type Element struct {
 	*structure.Element
-	Nodes          []*Node
+	nodes          []*Node
 	globalStiffMat []mat.ReadOnlyMatrix
 }
 
@@ -19,41 +22,93 @@ func MakeElement(originalElement *structure.Element, nodes []*Node) *Element {
 }
 
 // NodesCount returns the number of nodes in the sliced element.
-func (e Element) NodesCount() int {
-	return len(e.Nodes)
+func (element Element) NodesCount() int {
+	return len(element.nodes)
 }
 
-/*
-ComputeStiffnessMatrices sets the global stiffness matrices for this element in place
-(mutates the element).
+// Nodes is the slice of all nodes in the element.
+func (element Element) Nodes() []*Node {
+	return element.nodes
+}
 
-Each element has a stiffness matrix between two contiguous nodes, so in total that makes n - 1
-matrices, where n is the number of nodes.
-*/
-func (e *Element) ComputeStiffnessMatrices() {
+// NodeAt returns the node at a given index.
+func (element Element) NodeAt(i int) *Node {
+	return element.nodes[i]
+}
+
+// SetEquationTerms sets this element's stiffness and load terms into the global system of equations.
+func (element *Element) SetEquationTerms(matrix mat.MutableMatrix, vector vec.MutableVector) {
+	element.computeStiffnessMatrices()
+	element.addTermsToStiffnessMatrix(matrix)
+	element.addTermsToLoadVector(vector)
+}
+
+// computeStiffnessMatrices sets the global stiffness matrices for this element in place.
+//
+// Each element has a stiffness matrix between two contiguous nodes, so in total that makes n - 1
+// matrices, where n is the number of nodes.
+func (element *Element) computeStiffnessMatrices() {
 	var trail, lead *Node
 
-	for i := 1; i < len(e.Nodes); i++ {
-		trail = e.Nodes[i-1]
-		lead = e.Nodes[i]
-		e.globalStiffMat[i-1] = e.StiffnessGlobalMat(trail.T, lead.T)
+	for i := 1; i < len(element.nodes); i++ {
+		trail = element.nodes[i-1]
+		lead = element.nodes[i]
+		element.globalStiffMat[i-1] = element.StiffnessGlobalMat(trail.T, lead.T)
 	}
 }
 
-/*
-GlobalStiffMatrixAt returns the global stiffness matrix at position i, that is, between
-nodes i and i + 1.
-*/
-func (e Element) GlobalStiffMatrixAt(i int) mat.ReadOnlyMatrix {
+func (element *Element) addTermsToStiffnessMatrix(matrix mat.MutableMatrix) {
+	var (
+		stiffMat                    mat.ReadOnlyMatrix
+		trailNodeDofs, leadNodeDofs [3]int
+		dofs                        [6]int
+		stiffVal                    float64
+	)
+
+	for i := 1; i < len(element.nodes); i++ {
+		stiffMat = element.globalStiffMatrixAt(i - 1)
+		trailNodeDofs = element.nodes[i-1].DegreesOfFreedomNum()
+		leadNodeDofs = element.nodes[i].DegreesOfFreedomNum()
+		dofs = [6]int{
+			trailNodeDofs[0], trailNodeDofs[1], trailNodeDofs[2],
+			leadNodeDofs[0], leadNodeDofs[1], leadNodeDofs[2],
+		}
+
+		for row := 0; row < stiffMat.Rows(); row++ {
+			for col := 0; col < stiffMat.Cols(); col++ {
+				if stiffVal = stiffMat.Value(row, col); !nums.IsCloseToZero(stiffVal) {
+					matrix.AddToValue(dofs[row], dofs[col], stiffVal)
+				}
+			}
+		}
+	}
+}
+
+// globalStiffMatrixAt returns the global stiffness matrix at position i, that is,
+// between nodes i and i + 1.
+func (e Element) globalStiffMatrixAt(i int) mat.ReadOnlyMatrix {
 	return e.globalStiffMat[i]
 }
 
-/* <-- sort.Interface --> */
+func (element *Element) addTermsToLoadVector(sysVector vec.MutableVector) {
+	var (
+		globalTorsor *math.Torsor
+		dofs         [3]int
+		refFrame     = element.RefFrame()
+	)
 
-/*
-ByGeometryPos implements sort.Interface for []Element based on the position of the
-original geometry.
-*/
+	for _, node := range element.nodes {
+		globalTorsor = node.NetLocalLoadTorsor().ProjectedToGlobal(refFrame)
+		dofs = node.DegreesOfFreedomNum()
+
+		sysVector.SetValue(dofs[0], globalTorsor.Fx())
+		sysVector.SetValue(dofs[1], globalTorsor.Fy())
+		sysVector.SetValue(dofs[2], globalTorsor.Mz())
+	}
+}
+
+// ByGeometryPos implements sort.Interface for []Element based on the position of the
+// original geometry.
 type ByGeometryPos []*Element
 
 func (a ByGeometryPos) Len() int {

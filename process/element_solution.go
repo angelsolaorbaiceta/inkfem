@@ -41,7 +41,7 @@ shear force and bending moment in each of the slices of the preprocessed element
 */
 func MakeElementSolution(element *preprocess.Element, globalDisp vec.ReadOnlyVector) *ElementSolution {
 	var (
-		nOfNodes          = len(element.Nodes)
+		nOfNodes          = element.NodesCount()
 		nOfSolutionValues = 2*nOfNodes - 2
 	)
 
@@ -86,7 +86,7 @@ func (es *ElementSolution) setDisplacements(globalDisp vec.ReadOnlyVector) {
 		elementFrame           *g2d.RefFrame
 	)
 
-	for j, node := range es.Element.Nodes {
+	for j, node := range es.Element.Nodes() {
 		nodeDofs = node.DegreesOfFreedomNum()
 
 		// global displacements
@@ -144,9 +144,9 @@ func (es *ElementSolution) computeStresses() {
 		j                                                 int
 	)
 
-	for i := 1; i < len(es.Element.Nodes); i++ {
+	for i := 1; i < es.Element.NodesCount(); i++ {
 		j = 2 * (i - 1)
-		trailNode, leadNode = es.Element.Nodes[i-1], es.Element.Nodes[i]
+		trailNode, leadNode = es.Element.NodeAt(i-1), es.Element.NodeAt(i)
 		length = es.Element.LengthBetween(trailNode.T, leadNode.T)
 		length2 = length * length
 		length3 = length2 * length
