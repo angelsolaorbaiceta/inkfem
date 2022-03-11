@@ -30,18 +30,18 @@ func TestStructureToSVG(t *testing.T) {
 			WithSection(structure.MakeUnitSection()).
 			Build()
 
-		strDefinition = &structure.Structure{
-			Metadata: structure.StrMetadata{
+		strDefinition = structure.Make(
+			structure.StrMetadata{
 				MajorVersion: 1,
 				MinorVersion: 0,
 			},
-			Nodes: map[contracts.StrID]*structure.Node{
+			map[contracts.StrID]*structure.Node{
 				"n1": nodeOne,
 				"n2": nodeTwo,
 				"n3": nodeThree,
 			},
-			Elements: []*structure.Element{barOne, barTwo},
-		}
+			[]*structure.Element{barOne, barTwo},
+		)
 
 		plotOps = StructurePlotOps{
 			Scale:     5.0,

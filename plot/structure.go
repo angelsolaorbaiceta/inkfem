@@ -32,7 +32,7 @@ func StructureToSVG(st *structure.Structure, options StructurePlotOps, w io.Writ
 func structureRectBounds(st *structure.Structure, options StructurePlotOps) *g2d.Rect {
 	nodePositions := make([]*g2d.Point, 0, st.NodesCount())
 
-	for _, node := range st.Nodes {
+	for _, node := range st.GetAllNodes() {
 		nodePositions = append(nodePositions, node.Position)
 	}
 
