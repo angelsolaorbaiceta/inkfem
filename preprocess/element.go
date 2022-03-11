@@ -11,7 +11,7 @@ import (
 // Element after slicing original structural element.
 type Element struct {
 	*structure.Element
-	Nodes          []*Node
+	nodes          []*Node
 	globalStiffMat []mat.ReadOnlyMatrix
 }
 
@@ -23,7 +23,17 @@ func MakeElement(originalElement *structure.Element, nodes []*Node) *Element {
 
 // NodesCount returns the number of nodes in the sliced element.
 func (element Element) NodesCount() int {
-	return len(element.Nodes)
+	return len(element.nodes)
+}
+
+// Nodes is the slice of all nodes in the element.
+func (element Element) Nodes() []*Node {
+	return element.nodes
+}
+
+// NodeAt returns the node at a given index.
+func (element Element) NodeAt(i int) *Node {
+	return element.nodes[i]
 }
 
 // SetEquationTerms sets this element's stiffness and load terms into the global system of equations.
@@ -40,9 +50,9 @@ func (element *Element) SetEquationTerms(matrix mat.MutableMatrix, vector vec.Mu
 func (element *Element) computeStiffnessMatrices() {
 	var trail, lead *Node
 
-	for i := 1; i < len(element.Nodes); i++ {
-		trail = element.Nodes[i-1]
-		lead = element.Nodes[i]
+	for i := 1; i < len(element.nodes); i++ {
+		trail = element.nodes[i-1]
+		lead = element.nodes[i]
 		element.globalStiffMat[i-1] = element.StiffnessGlobalMat(trail.T, lead.T)
 	}
 }
@@ -55,10 +65,10 @@ func (element *Element) addTermsToStiffnessMatrix(matrix mat.MutableMatrix) {
 		stiffVal                    float64
 	)
 
-	for i := 1; i < len(element.Nodes); i++ {
+	for i := 1; i < len(element.nodes); i++ {
 		stiffMat = element.globalStiffMatrixAt(i - 1)
-		trailNodeDofs = element.Nodes[i-1].DegreesOfFreedomNum()
-		leadNodeDofs = element.Nodes[i].DegreesOfFreedomNum()
+		trailNodeDofs = element.nodes[i-1].DegreesOfFreedomNum()
+		leadNodeDofs = element.nodes[i].DegreesOfFreedomNum()
 		dofs = [6]int{
 			trailNodeDofs[0], trailNodeDofs[1], trailNodeDofs[2],
 			leadNodeDofs[0], leadNodeDofs[1], leadNodeDofs[2],
@@ -87,7 +97,7 @@ func (element *Element) addTermsToLoadVector(sysVector vec.MutableVector) {
 		refFrame     = element.RefFrame()
 	)
 
-	for _, node := range element.Nodes {
+	for _, node := range element.nodes {
 		globalTorsor = node.NetLocalLoadTorsor().ProjectedToGlobal(refFrame)
 		dofs = node.DegreesOfFreedomNum()
 

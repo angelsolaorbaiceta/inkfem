@@ -86,23 +86,23 @@ func (str *Structure) assignDof() {
 		startNode, endNode = str.GetElementNodes(element)
 		startLink = element.StartLink()
 		endLink = element.EndLink()
-		nodesCount = len(element.Nodes)
+		nodesCount = element.NodesCount()
 
 		/* First Node */
 		assignNodeDof(startNode)
-		element.Nodes[0].SetDegreesOfFreedomNum(
+		element.NodeAt(0).SetDegreesOfFreedomNum(
 			endNodesDof(startLink, startNode),
 		)
 
 		/* Middle Nodes */
 		for i := 1; i < nodesCount-1; i++ {
-			element.Nodes[i].SetDegreesOfFreedomNum(dof, dof+1, dof+2)
+			element.NodeAt(i).SetDegreesOfFreedomNum(dof, dof+1, dof+2)
 			dof += 3
 		}
 
 		/* Last Node */
 		assignNodeDof(endNode)
-		element.Nodes[nodesCount-1].SetDegreesOfFreedomNum(
+		element.NodeAt(nodesCount - 1).SetDegreesOfFreedomNum(
 			endNodesDof(endLink, endNode),
 		)
 	}
