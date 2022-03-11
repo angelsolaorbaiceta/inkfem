@@ -2,12 +2,10 @@ package process
 
 import (
 	"github.com/angelsolaorbaiceta/inkfem/log"
-	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkmath/lineq"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
-	"github.com/angelsolaorbaiceta/inkmath/nums"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
@@ -65,41 +63,12 @@ func makeSystemOfEquations(str *preprocess.Structure) (mat.ReadOnlyMatrix, vec.R
 	)
 
 	for _, element := range str.Elements {
-		element.ComputeStiffnessMatrices()
-		addTermsToStiffnessMatrix(sysMatrix, element)
-		addTermsToLoadVector(sysVector, element)
+		element.SetEquationTerms(sysMatrix, sysVector)
 	}
 
 	addDispConstraints(sysMatrix, sysVector, str.GetAllNodes())
 
 	return sysMatrix, sysVector
-}
-
-func addTermsToStiffnessMatrix(matrix mat.MutableMatrix, element *preprocess.Element) {
-	var (
-		stiffMat                    mat.ReadOnlyMatrix
-		trailNodeDofs, leadNodeDofs [3]int
-		dofs                        [6]int
-		stiffVal                    float64
-	)
-
-	for i := 1; i < len(element.Nodes); i++ {
-		stiffMat = element.GlobalStiffMatrixAt(i - 1)
-		trailNodeDofs = element.Nodes[i-1].DegreesOfFreedomNum()
-		leadNodeDofs = element.Nodes[i].DegreesOfFreedomNum()
-		dofs = [6]int{
-			trailNodeDofs[0], trailNodeDofs[1], trailNodeDofs[2],
-			leadNodeDofs[0], leadNodeDofs[1], leadNodeDofs[2],
-		}
-
-		for row := 0; row < stiffMat.Rows(); row++ {
-			for col := 0; col < stiffMat.Cols(); col++ {
-				if stiffVal = stiffMat.Value(row, col); !nums.IsCloseToZero(stiffVal) {
-					matrix.AddToValue(dofs[row], dofs[col], stiffVal)
-				}
-			}
-		}
-	}
 }
 
 // Sets the node's external constraints in the system of equations matrix and vector.
@@ -138,22 +107,5 @@ func addDispConstraints(
 				addConstraintAtDof(dofs[2])
 			}
 		}
-	}
-}
-
-func addTermsToLoadVector(sysVector vec.MutableVector, element *preprocess.Element) {
-	var (
-		globalTorsor *math.Torsor
-		dofs         [3]int
-		refFrame     = element.RefFrame()
-	)
-
-	for _, node := range element.Nodes {
-		globalTorsor = node.NetLocalLoadTorsor().ProjectedToGlobal(refFrame)
-		dofs = node.DegreesOfFreedomNum()
-
-		sysVector.SetValue(dofs[0], globalTorsor.Fx())
-		sysVector.SetValue(dofs[1], globalTorsor.Fy())
-		sysVector.SetValue(dofs[2], globalTorsor.Mz())
 	}
 }
