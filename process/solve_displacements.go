@@ -60,8 +60,8 @@ func computePreconditioner(m mat.ReadOnlyMatrix) mat.ReadOnlyMatrix {
 // global matrix. It also assembles the global loads vector from the sliced element nodes.
 func makeSystemOfEquations(str *preprocess.Structure) (mat.ReadOnlyMatrix, vec.ReadOnlyVector) {
 	var (
-		sysMatrix = mat.MakeSparse(str.DofsCount, str.DofsCount)
-		sysVector = vec.Make(str.DofsCount)
+		sysMatrix = mat.MakeSparse(str.DofsCount(), str.DofsCount())
+		sysVector = vec.Make(str.DofsCount())
 	)
 
 	for _, element := range str.Elements {

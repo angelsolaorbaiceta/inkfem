@@ -12,7 +12,7 @@ type Structure struct {
 	Metadata structure.StrMetadata
 	structure.NodesById
 	Elements  []*Element
-	DofsCount int
+	dofsCount int
 }
 
 // GetElementNodes returns the element's start and end nodes.
@@ -23,6 +23,11 @@ func (s *Structure) GetElementNodes(element *Element) (*structure.Node, *structu
 // ElementsCount returns the number of elements in the original structure.
 func (s *Structure) ElementsCount() int {
 	return len(s.Elements)
+}
+
+// DofsCount is the number of degrees of freedom in the preprocessed structure.
+func (s *Structure) DofsCount() int {
+	return s.dofsCount
 }
 
 // Assings degrees of freedom numbers to all nodes on sliced elements.
@@ -100,5 +105,5 @@ func (str *Structure) assignDof() {
 		)
 	}
 
-	str.DofsCount = dof
+	str.dofsCount = dof
 }

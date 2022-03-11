@@ -49,7 +49,7 @@ func TestDofsCount(t *testing.T) {
 	str := makeStructure()
 	str.assignDof()
 
-	if count := str.DofsCount; count != 16 {
+	if count := str.DofsCount(); count != 16 {
 		t.Errorf("Sliced structure expected to have 16 degrees of freedom, but had %d", count)
 	}
 }
