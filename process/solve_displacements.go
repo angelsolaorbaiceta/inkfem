@@ -1,7 +1,6 @@
 package process
 
 import (
-	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
@@ -12,13 +11,11 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
-/*
-ComputeGlobalDisplacements computes the structure's global displacements given the
-preprocessed structure.
-
-The process involves generating the structure's system of equations and solving it using the
-Preconditioned Conjugate Gradiend numerical procedure.
-*/
+// ComputeGlobalDisplacements computes the structure's global displacements given the
+// preprocessed structure.
+//
+// The process involves generating the structure's system of equations and solving it using the
+// Preconditioned Conjugate Gradiend numerical procedure.
 func computeGlobalDisplacements(
 	structure *preprocess.Structure,
 	options SolveOptions,
@@ -56,26 +53,24 @@ func computePreconditioner(m mat.ReadOnlyMatrix) mat.ReadOnlyMatrix {
 	return precond
 }
 
-/*
-MakeSystemOfEquations generates the system of equations matrix and vector from the
-preprocessed structure.
-
-It computes each of the sliced element's stiffness matrices and assembles them into one
-global matrix. It also assembles the global loads vector from the sliced element nodes.
-*/
-func makeSystemOfEquations(structure *preprocess.Structure) (mat.ReadOnlyMatrix, vec.ReadOnlyVector) {
+// MakeSystemOfEquations generates the system of equations matrix and vector from the
+// preprocessed structure.
+//
+// It computes each of the sliced element's stiffness matrices and assembles them into one
+// global matrix. It also assembles the global loads vector from the sliced element nodes.
+func makeSystemOfEquations(str *preprocess.Structure) (mat.ReadOnlyMatrix, vec.ReadOnlyVector) {
 	var (
-		sysMatrix = mat.MakeSparse(structure.DofsCount, structure.DofsCount)
-		sysVector = vec.Make(structure.DofsCount)
+		sysMatrix = mat.MakeSparse(str.DofsCount(), str.DofsCount())
+		sysVector = vec.Make(str.DofsCount())
 	)
 
-	for _, element := range structure.Elements {
+	for _, element := range str.Elements {
 		element.ComputeStiffnessMatrices()
 		addTermsToStiffnessMatrix(sysMatrix, element)
 		addTermsToLoadVector(sysVector, element)
 	}
 
-	addDispConstraints(sysMatrix, sysVector, &structure.Nodes)
+	addDispConstraints(sysMatrix, sysVector, str.GetAllNodes())
 
 	return sysMatrix, sysVector
 }
@@ -107,10 +102,15 @@ func addTermsToStiffnessMatrix(matrix mat.MutableMatrix, element *preprocess.Ele
 	}
 }
 
+// Sets the node's external constraints in the system of equations matrix and vector.
+//
+// A constrained degree of freedom is enforced by setting the corresponding matrix row as the
+// identity, and the associated free value as zero. This yields a trivial equation of the form
+// x = 0, where x is the constrained degree of freedom.
 func addDispConstraints(
 	matrix mat.MutableMatrix,
 	vector vec.MutableVector,
-	nodes *map[contracts.StrID]*structure.Node,
+	nodes []*structure.Node,
 ) {
 	var (
 		constraint *structure.Constraint
@@ -123,7 +123,7 @@ func addDispConstraints(
 		vector.SetZero(dof)
 	}
 
-	for _, node := range *nodes {
+	for _, node := range nodes {
 		if node.IsExternallyConstrained() {
 			constraint = node.ExternalConstraint
 			dofs = node.DegreesOfFreedomNum()
