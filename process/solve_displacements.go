@@ -2,12 +2,9 @@ package process
 
 import (
 	"github.com/angelsolaorbaiceta/inkfem/log"
-	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkmath/lineq"
 	"github.com/angelsolaorbaiceta/inkmath/mat"
-	"github.com/angelsolaorbaiceta/inkmath/nums"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
@@ -65,95 +62,10 @@ func makeSystemOfEquations(str *preprocess.Structure) (mat.ReadOnlyMatrix, vec.R
 	)
 
 	for _, element := range str.Elements {
-		element.ComputeStiffnessMatrices()
-		addTermsToStiffnessMatrix(sysMatrix, element)
-		addTermsToLoadVector(sysVector, element)
+		element.SetEquationTerms(sysMatrix, sysVector)
 	}
 
-	addDispConstraints(sysMatrix, sysVector, str.GetAllNodes())
+	str.AddDispConstraints(sysMatrix, sysVector)
 
 	return sysMatrix, sysVector
-}
-
-func addTermsToStiffnessMatrix(matrix mat.MutableMatrix, element *preprocess.Element) {
-	var (
-		stiffMat                    mat.ReadOnlyMatrix
-		trailNodeDofs, leadNodeDofs [3]int
-		dofs                        [6]int
-		stiffVal                    float64
-	)
-
-	for i := 1; i < len(element.Nodes); i++ {
-		stiffMat = element.GlobalStiffMatrixAt(i - 1)
-		trailNodeDofs = element.Nodes[i-1].DegreesOfFreedomNum()
-		leadNodeDofs = element.Nodes[i].DegreesOfFreedomNum()
-		dofs = [6]int{
-			trailNodeDofs[0], trailNodeDofs[1], trailNodeDofs[2],
-			leadNodeDofs[0], leadNodeDofs[1], leadNodeDofs[2],
-		}
-
-		for row := 0; row < stiffMat.Rows(); row++ {
-			for col := 0; col < stiffMat.Cols(); col++ {
-				if stiffVal = stiffMat.Value(row, col); !nums.IsCloseToZero(stiffVal) {
-					matrix.AddToValue(dofs[row], dofs[col], stiffVal)
-				}
-			}
-		}
-	}
-}
-
-// Sets the node's external constraints in the system of equations matrix and vector.
-//
-// A constrained degree of freedom is enforced by setting the corresponding matrix row as the
-// identity, and the associated free value as zero. This yields a trivial equation of the form
-// x = 0, where x is the constrained degree of freedom.
-func addDispConstraints(
-	matrix mat.MutableMatrix,
-	vector vec.MutableVector,
-	nodes []*structure.Node,
-) {
-	var (
-		constraint *structure.Constraint
-		dofs       [3]int
-	)
-
-	addConstraintAtDof := func(dof int) {
-		matrix.SetZeroCol(dof)
-		matrix.SetIdentityRow(dof)
-		vector.SetZero(dof)
-	}
-
-	for _, node := range nodes {
-		if node.IsExternallyConstrained() {
-			constraint = node.ExternalConstraint
-			dofs = node.DegreesOfFreedomNum()
-
-			if !constraint.AllowsDispX() {
-				addConstraintAtDof(dofs[0])
-			}
-			if !constraint.AllowsDispY() {
-				addConstraintAtDof(dofs[1])
-			}
-			if !constraint.AllowsRotation() {
-				addConstraintAtDof(dofs[2])
-			}
-		}
-	}
-}
-
-func addTermsToLoadVector(sysVector vec.MutableVector, element *preprocess.Element) {
-	var (
-		globalTorsor *math.Torsor
-		dofs         [3]int
-		refFrame     = element.RefFrame()
-	)
-
-	for _, node := range element.Nodes {
-		globalTorsor = node.NetLocalLoadTorsor().ProjectedToGlobal(refFrame)
-		dofs = node.DegreesOfFreedomNum()
-
-		sysVector.SetValue(dofs[0], globalTorsor.Fx())
-		sysVector.SetValue(dofs[1], globalTorsor.Fy())
-		sysVector.SetValue(dofs[2], globalTorsor.Mz())
-	}
 }
