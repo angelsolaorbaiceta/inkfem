@@ -85,17 +85,21 @@ func TestStructureToSVG(t *testing.T) {
 		}
 	})
 
-	// t.Run("draws the bars", func(t *testing.T) {
-	// 	var b bytes.Buffer
+	t.Run("draws the bars", func(t *testing.T) {
+		var b bytes.Buffer
 
-	// 	StructureToSVG(strDefinition, plotOps, &b)
-	// 	var (
-	// 		got               = b.String()
-	// 		wantBarOnePattern = "<line x1=\"100\" y1=\"300\" x2=\"300\" y2=\"100\" stroke-width=\"5\"/>"
-	// 	)
+		StructureToSVG(strDefinition, plotOps, &b)
+		var (
+			got               = b.String()
+			wantBarOnePattern = "<line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"300\""
+			wantBarTwoPattern = "<line x1=\"0\" y1=\"300\" x2=\"200\" y2=\"300\""
+		)
 
-	// 	if match, err := regexp.MatchString(wantBarOnePattern, got); !match || err != nil {
-	// 		t.Errorf("Want %s, but didn't find in:\n%s\n", wantBarOnePattern, got)
-	// 	}
-	// })
+		if match, err := regexp.MatchString(wantBarOnePattern, got); !match || err != nil {
+			t.Errorf("Want %s, but didn't find in:\n%s\n", wantBarOnePattern, got)
+		}
+		if match, err := regexp.MatchString(wantBarTwoPattern, got); !match || err != nil {
+			t.Errorf("Want %s, but didn't find in:\n%s\n", wantBarTwoPattern, got)
+		}
+	})
 }
