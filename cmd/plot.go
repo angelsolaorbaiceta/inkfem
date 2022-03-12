@@ -25,7 +25,7 @@ var (
 func init() {
 	plotCommand.
 		Flags().
-		Float64VarP(&plotScale, "scale", "s", 1.0, "Plot scale")
+		Float64VarP(&plotScale, "scale", "s", 0.25, "Plot scale")
 
 	plotCommand.
 		Flags().

@@ -53,11 +53,11 @@ func TestStructureToSVG(t *testing.T) {
 		var b bytes.Buffer
 
 		StructureToSVG(strDefinition, plotOps, &b)
+		// structure has a width of 200, times the scale plus the two lateral margins = 1200px
+		// structure has a height of 300, times the scale plust the two vertical margins = 1700px
 		var (
-			got = b.String()
-			// structure has a width of 200, times the scale plus the two lateral margins = 1200px
-			wantWidthPattern = "width=\"1200\""
-			// structure has a height of 300, times the scale plust the two vertical margins = 1700px
+			got               = b.String()
+			wantWidthPattern  = "width=\"1200\""
 			wantHeightPattern = "height=\"1700\""
 		)
 
@@ -69,4 +69,33 @@ func TestStructureToSVG(t *testing.T) {
 			t.Errorf("Want %s, but didn't find in:\n%s\n", wantHeightPattern, got)
 		}
 	})
+
+	t.Run("applies an affine transformation", func(t *testing.T) {
+		var b bytes.Buffer
+
+		StructureToSVG(strDefinition, plotOps, &b)
+		// sx = 5, sy = -5, tx = 100, ty = 1700 - 100 = 1600
+		var (
+			got                  = b.String()
+			wantTransformPattern = "matrix\\(5(\\.[0]+)?,0,0,-5(\\.[0]+)?,100(\\.[0]+)?,1600(\\.[0]+)?\\)"
+		)
+
+		if match, err := regexp.MatchString(wantTransformPattern, got); !match || err != nil {
+			t.Errorf("Want %s, but didn't find in:\n%s\n", wantTransformPattern, got)
+		}
+	})
+
+	// t.Run("draws the bars", func(t *testing.T) {
+	// 	var b bytes.Buffer
+
+	// 	StructureToSVG(strDefinition, plotOps, &b)
+	// 	var (
+	// 		got               = b.String()
+	// 		wantBarOnePattern = "<line x1=\"100\" y1=\"300\" x2=\"300\" y2=\"100\" stroke-width=\"5\"/>"
+	// 	)
+
+	// 	if match, err := regexp.MatchString(wantBarOnePattern, got); !match || err != nil {
+	// 		t.Errorf("Want %s, but didn't find in:\n%s\n", wantBarOnePattern, got)
+	// 	}
+	// })
 }
