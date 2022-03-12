@@ -10,7 +10,7 @@ import (
 
 // TODO: move to .inkfemrc file
 const geometryColor = "black"
-const geometryWidth = 2
+const geometryWidth = 1
 
 // drawGeometry draws the geometry of the structural elements in the given canvas, including
 // them inside a group with the adequate affine transformation that results in the y-axis
