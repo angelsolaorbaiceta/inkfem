@@ -86,7 +86,7 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	solution := process.Solve(preStructure, solveOptions)
 	io.StructureSolutionToFile(solution, outPath+io.SolFileExt)
 
-	log.ResultTable()
+	log.Result()
 }
 
 func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *structure.Structure {
