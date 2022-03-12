@@ -131,13 +131,13 @@ func EndComputeStresses() {
 // execution time results.
 func Result() {
 	if isVerbose {
-		totalMs := readFileElapsedTime.Milliseconds() +
-			preprocessElapsedTime.Milliseconds() +
-			assembleSystemElapsedTime.Milliseconds() +
-			solveSystemElapsedTime.Milliseconds() +
-			computeStressesEndTime.Milliseconds()
+		totalTime := readFileElapsedTime +
+			preprocessElapsedTime +
+			assembleSystemElapsedTime +
+			solveSystemElapsedTime +
+			computeStressesEndTime
 
-		log.Printf("Total time: %dms\n", totalMs)
+		log.Printf("Total time: %s\n", totalTime)
 	}
 }
 
