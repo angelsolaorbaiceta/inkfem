@@ -96,4 +96,42 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			t.Error("Want node two")
 		}
 	})
+
+	t.Run("lastly go the bars", func(t *testing.T) {
+		var (
+			wantHeader = "|bars| 1"
+			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'unit_material' 'unit_section' >> 3"
+		)
+
+		if got := gotLines[5]; got != wantHeader {
+			t.Errorf("want '%s', got '%s'", wantHeader, got)
+		}
+		if got := gotLines[6]; got != wantBar {
+			t.Errorf("want '%s', got '%s'", wantBar, got)
+		}
+
+		// first node
+		var (
+			wantFirstNodePattern      = "0(\\.[0]+)? : 0(\\.[0]+)? 0(\\.[0]+)?"
+			wantFirstNodeLeftPattern  = "\\s+left\\s+: {5(\\.[0]+)? 10(\\.[0]+)? 15(\\.[0]+)?}"
+			wantFirstNodeRightPattern = "\\s+right\\s+: {0(\\.[0]+)? 0(\\.[0]+)? 0(\\.[0]+)?}"
+			wantFirstNodeNetPattern   = "\\s+net\\s+: {15(\\.[0]+)? 30(\\.[0]+)? 45(\\.[0]+)?}"
+			wantFirstNodeDofPattern   = "\\s+dof\\s+: \\[0 1 2\\]"
+		)
+		if matches, _ := regexp.MatchString(wantFirstNodePattern, gotLines[7]); !matches {
+			t.Error("Want first node position")
+		}
+		if matches, _ := regexp.MatchString(wantFirstNodeLeftPattern, gotLines[8]); !matches {
+			t.Error("Want first node left load")
+		}
+		if matches, _ := regexp.MatchString(wantFirstNodeRightPattern, gotLines[9]); !matches {
+			t.Error("Want first node right load")
+		}
+		if matches, _ := regexp.MatchString(wantFirstNodeNetPattern, gotLines[10]); !matches {
+			t.Error("Want first node net load")
+		}
+		if matches, _ := regexp.MatchString(wantFirstNodeDofPattern, gotLines[11]); !matches {
+			t.Error("Want first node dofs")
+		}
+	})
 }
