@@ -57,29 +57,21 @@ func makeStructure() *Structure {
 		nB = structure.MakeFreeNodeAtPosition("2", 0, 100)
 		nC = structure.MakeFreeNodeAtPosition("3", 100, 0)
 
-		elemOrigA = structure.MakeElementBuilder(
-			"1",
-		).WithStartNode(
-			nA, &structure.FullConstraint,
-		).WithEndNode(
-			nB, &structure.FullConstraint,
-		).WithMaterial(
-			structure.MakeUnitMaterial(),
-		).WithSection(
-			structure.MakeUnitSection(),
-		).Build()
+		elemOrigA = structure.
+				MakeElementBuilder("1").
+				WithStartNode(nA, &structure.FullConstraint).
+				WithEndNode(nB, &structure.FullConstraint).
+				WithMaterial(structure.MakeUnitMaterial()).
+				WithSection(structure.MakeUnitSection()).
+				Build()
 
-		elemOrigB = structure.MakeElementBuilder(
-			"2",
-		).WithStartNode(
-			nA, &structure.DispConstraint,
-		).WithEndNode(
-			nC, &structure.FullConstraint,
-		).WithMaterial(
-			structure.MakeUnitMaterial(),
-		).WithSection(
-			structure.MakeUnitSection(),
-		).Build()
+		elemOrigB = structure.
+				MakeElementBuilder("2").
+				WithStartNode(nA, &structure.DispConstraint).
+				WithEndNode(nC, &structure.FullConstraint).
+				WithMaterial(structure.MakeUnitMaterial()).
+				WithSection(structure.MakeUnitSection()).
+				Build()
 	)
 
 	return &Structure{
