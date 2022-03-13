@@ -1,1 +1,1 @@
-go test -benchmem -run=^$ -bench ^BenchmarkSolveStructure$ github.com/angelsolaorbaiceta/inkfem/tests
+go test -benchmem -run=^$ -bench ^BenchmarkSolveStructure$ github.com/angelsolaorbaiceta/inkfem/tests -count 4
