@@ -29,10 +29,8 @@ type Node struct {
 	dofs              [3]int
 }
 
-/*
-MakeNode creates a new node with given T parameter value, position and local external
-loads {fx, fy, mz}.
-*/
+// MakeNode creates a new node with given T parameter value, position and local external
+// loads {fx, fy, mz}.
 func MakeNode(
 	t nums.TParam,
 	position *g2d.Point,
@@ -108,12 +106,9 @@ func (n Node) NetLocalLoadTorsor() *math.Torsor {
 	)
 }
 
-/*
-SetDegreesOfFreedomNum adds degrees of freedom numbers to the node.
-
-These degrees of freedom numbers are also the position in the system of equations for the
-corresponding stiffness terms.
-*/
+// SetDegreesOfFreedomNum adds degrees of freedom numbers to the node.
+// These degrees of freedom numbers are also the position in the system of equations for the
+// corresponding stiffness terms.
 func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
 	n.dofs[0] = dx
 	n.dofs[1] = dy
@@ -125,11 +120,8 @@ func (n Node) DegreesOfFreedomNum() [3]int {
 	return n.dofs
 }
 
-/*
-HasDegreesOfFreedomNum returns true if the node has already been assigned degress of freedom.
-
-If any of the DOFs is -1, it's assumed that this node hasn't been assigned DOFs.
-*/
+// HasDegreesOfFreedomNum returns true if the node has already been assigned degress of freedom.
+// If any of the DOFs is -1, it's assumed that this node hasn't been assigned DOFs.
 func (n Node) HasDegreesOfFreedomNum() bool {
 	return n.dofs[0] != unsetDOF ||
 		n.dofs[1] != unsetDOF ||
@@ -146,18 +138,14 @@ func (n *Node) AddLocalExternalLoad(loadTorsor *math.Torsor) {
 	n.externalLocalLoad = n.externalLocalLoad.Plus(loadTorsor)
 }
 
-/*
-AddLocalLeftLoad adds the given load values to the load applied from the finite element where this
-node is to the left of it (where this node is the element's trailing node).
-*/
+// AddLocalLeftLoad adds the given load values to the load applied from the finite element where this
+// node is to the left of it (where this node is the element's trailing node).
 func (n *Node) AddLocalLeftLoad(fx, fy, mz float64) {
 	n.leftLocalLoad = n.leftLocalLoad.PlusComponents(fx, fy, mz)
 }
 
-/*
-AddLocalRightLoad adds the given load values to the load applied from the finite element where this
-node is to the right of it (where this node is the element's leading node).
-*/
+// AddLocalRightLoad adds the given load values to the load applied from the finite element where this
+// node is to the right of it (where this node is the element's leading node).
 func (n *Node) AddLocalRightLoad(fx, fy, mz float64) {
 	n.rightLocalLoad = n.rightLocalLoad.PlusComponents(fx, fy, mz)
 }

@@ -69,7 +69,11 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	)
 
 	if SolvePreprocessToFile {
-		go io.PreprocessedStructureToFile(preStructure, outPath+io.PreFileExt)
+		go (func() {
+			file := io.CreateFile(outPath + io.PreFileExt)
+			defer file.Close()
+			io.WritePreprocessedStructure(preStructure, file)
+		})()
 	}
 
 	solveOptions := process.SolveOptions{

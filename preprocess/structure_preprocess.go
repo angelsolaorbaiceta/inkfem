@@ -21,12 +21,5 @@ func StructureModel(str *structure.Structure) *Structure {
 	}
 	close(channel)
 
-	slicedStr := &Structure{
-		Metadata:  str.Metadata,
-		NodesById: str.NodesById,
-		Elements:  slicedElements,
-	}
-	slicedStr.assignDof()
-
-	return slicedStr
+	return MakeStructure(str.Metadata, str.NodesById, slicedElements)
 }

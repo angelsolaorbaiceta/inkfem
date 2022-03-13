@@ -17,6 +17,22 @@ type Structure struct {
 	dofsCount int
 }
 
+// MakeStructure creates a preprocessed structure with the degrees of freedom numbers set.
+func MakeStructure(
+	metadata structure.StrMetadata,
+	nodesById structure.NodesById,
+	elements []*Element,
+) *Structure {
+	str := &Structure{
+		Metadata:  metadata,
+		NodesById: nodesById,
+		Elements:  elements,
+	}
+	str.assignDof()
+
+	return str
+}
+
 // GetElementNodes returns the element's start and end nodes.
 func (s *Structure) GetElementNodes(element *Element) (*structure.Node, *structure.Node) {
 	return s.GetNodeById(element.StartNodeID()), s.GetNodeById(element.EndNodeID())
