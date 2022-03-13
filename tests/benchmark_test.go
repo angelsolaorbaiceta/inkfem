@@ -16,6 +16,6 @@ func BenchmarkSolveStructure(b *testing.B) {
 	)
 
 	for n := 0; n < b.N; n++ {
-		solution = solveStructure(&str)
+		solution = solveStructure(str)
 	}
 }

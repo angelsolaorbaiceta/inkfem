@@ -8,7 +8,7 @@ import (
 // The resulting sliced structure includes the degrees of freedom numbering.
 func StructureModel(str *structure.Structure) *Structure {
 	var (
-		channel        = make(chan *Element)
+		channel        = make(chan *Element, str.ElementsCount())
 		slicedElements []*Element
 	)
 
@@ -19,6 +19,7 @@ func StructureModel(str *structure.Structure) *Structure {
 	for i := 0; i < str.ElementsCount(); i++ {
 		slicedElements = append(slicedElements, <-channel)
 	}
+	close(channel)
 
 	return MakeStructure(str.Metadata, str.NodesById, slicedElements)
 }
