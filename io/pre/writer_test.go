@@ -15,7 +15,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	)
 
 	WritePreprocessedStructure(str, &writer)
-
+	fmt.Println(writer.String())
 	var gotLines []string
 	for _, line := range strings.Split(writer.String(), "\n") {
 		if line != "" {
