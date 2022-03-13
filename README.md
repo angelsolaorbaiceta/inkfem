@@ -73,7 +73,7 @@ The code is split into four main packages:
 
 - [structure](./structure/README.md): defines the structure model
 - [preprocess](./preprocess/README.md): implements the preprocessing or slicing of the structure
-- [process](./process/README.md): implements the processing of a sliced/preprocessed structure
-- [io](./io/README.md): reading from `.inkfem` files and writing to `.inkfempre`and `.inkfemsol` files
-- [plot](): drawing SVG files from the `.inkfem`, `.inkfempre`and `.inkfemsol` files
-- [cmd](): the commands available to the CLI
+- `process`: implements the processing of a sliced/preprocessed structure
+- [`io`](./io/README.md): reading from `.inkfem` files and writing to `.inkfempre` and `.inkfemsol` files
+- `plot`: drawing SVG files from the `.inkfem`, `.inkfempre` and `.inkfemsol` files
+- `cmd`: the commands available to the CLI
