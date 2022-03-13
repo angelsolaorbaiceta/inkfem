@@ -8,7 +8,8 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
-// Element after slicing original structural element.
+// Element after slicing the original structural element.
+// Consists of a sequence of intermediate nodes with the element's loads applied to them.
 type Element struct {
 	*structure.Element
 	nodes          []*Node
@@ -17,8 +18,11 @@ type Element struct {
 
 // MakeElement creates a new element given the original element and the nodes of the sliced result.
 func MakeElement(originalElement *structure.Element, nodes []*Node) *Element {
-	matrices := make([]mat.ReadOnlyMatrix, len(nodes)-1)
-	return &Element{originalElement, nodes, matrices}
+	return &Element{
+		Element:        originalElement,
+		nodes:          nodes,
+		globalStiffMat: make([]mat.ReadOnlyMatrix, len(nodes)-1),
+	}
 }
 
 // NodesCount returns the number of nodes in the sliced element.
