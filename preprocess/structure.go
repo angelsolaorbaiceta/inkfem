@@ -17,6 +17,19 @@ type Structure struct {
 	dofsCount int
 }
 
+// MakeStructure creates a preprocessed structure.
+func MakeStructure(
+	metadata structure.StrMetadata,
+	nodesById structure.NodesById,
+	elements []*Element,
+) *Structure {
+	return &Structure{
+		Metadata:  metadata,
+		NodesById: nodesById,
+		Elements:  elements,
+	}
+}
+
 // GetElementNodes returns the element's start and end nodes.
 func (s *Structure) GetElementNodes(element *Element) (*structure.Node, *structure.Node) {
 	return s.GetNodeById(element.StartNodeID()), s.GetNodeById(element.EndNodeID())
