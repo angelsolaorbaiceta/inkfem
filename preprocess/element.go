@@ -70,7 +70,7 @@ func (element *Element) addTermsToStiffnessMatrix(matrix mat.MutableMatrix) {
 	)
 
 	for i := 1; i < len(element.nodes); i++ {
-		stiffMat = element.globalStiffMatrixAt(i - 1)
+		stiffMat = element.globalStiffMat[i-1]
 		trailNodeDofs = element.nodes[i-1].DegreesOfFreedomNum()
 		leadNodeDofs = element.nodes[i].DegreesOfFreedomNum()
 		dofs = [6]int{
@@ -86,12 +86,6 @@ func (element *Element) addTermsToStiffnessMatrix(matrix mat.MutableMatrix) {
 			}
 		}
 	}
-}
-
-// globalStiffMatrixAt returns the global stiffness matrix at position i, that is,
-// between nodes i and i + 1.
-func (e Element) globalStiffMatrixAt(i int) mat.ReadOnlyMatrix {
-	return e.globalStiffMat[i]
 }
 
 func (element *Element) addTermsToLoadVector(sysVector vec.MutableVector) {
