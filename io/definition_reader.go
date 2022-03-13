@@ -14,7 +14,6 @@ import (
 )
 
 var (
-	versionRegex         = regexp.MustCompile(`(?:inkfem\s+v)(\d+)(?:[.])(\d+)`)
 	nodesHeaderRegex     = regexp.MustCompile(`(?:\|nodes\|\s*)(\d+)`)
 	materialsHeaderRegex = regexp.MustCompile(`(?:\|materials\|\s*)(\d+)`)
 	sectionsHeaderRegex  = regexp.MustCompile(`(?:\|sections\|\s*)(\d+)`)
@@ -27,9 +26,9 @@ var (
 // The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm' are the major and
 // minor version numbers of inkfem used to produce the file or required to compute the structure.
 func StructureFromFile(filePath string, options ReaderOptions) *structure.Structure {
-	file, error := os.Open(filePath)
-	if error != nil {
-		log.Fatal(error)
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Fatal(err)
 	}
 	defer file.Close()
 
@@ -55,7 +54,7 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 
 	// First line must be "inkfem vM.m"
 	scanner.Scan()
-	majorVersion, minorVersion = parseVersionNumbers(scanner.Text())
+	majorVersion, minorVersion = ParseVersionNumbers(scanner.Text())
 
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -133,19 +132,4 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 		*nodes,
 		*elements,
 	)
-}
-
-func parseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {
-	if foundMatch := versionRegex.MatchString(firstLine); !foundMatch {
-		panic(
-			"Could not parse major and minor version numbers." +
-				"Are you missing 'inkfem vM.m' in your file's first line?",
-		)
-	}
-
-	versions := versionRegex.FindStringSubmatch(firstLine)
-	majorVersion, _ = strconv.Atoi(versions[1])
-	minorVersion, _ = strconv.Atoi(versions[2])
-
-	return
 }

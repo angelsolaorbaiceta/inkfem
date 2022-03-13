@@ -6,48 +6,13 @@ import (
 	"regexp"
 	"strings"
 	"testing"
-
-	"github.com/angelsolaorbaiceta/inkfem/contracts"
-	"github.com/angelsolaorbaiceta/inkfem/preprocess"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestWritePreprocessedStructure(t *testing.T) {
 	var (
-		metadata = structure.StrMetadata{
-			MajorVersion: 2,
-			MinorVersion: 3,
-		}
-		nodeOne   = structure.MakeNodeAtPosition("n1", 0, 0, &structure.FullConstraint)
-		nodeTwo   = structure.MakeFreeNodeAtPosition("n2", 200, 0)
-		nodesById = structure.MakeNodesById(map[contracts.StrID]*structure.Node{
-			nodeOne.GetID(): nodeOne,
-			nodeTwo.GetID(): nodeTwo,
-		})
-		originalElement = structure.MakeElementBuilder("b1").
-				WithStartNode(nodeOne, &structure.FullConstraint).
-				WithEndNode(nodeTwo, &structure.FullConstraint).
-				WithSection(structure.MakeUnitSection()).
-				WithMaterial(structure.MakeUnitMaterial()).
-				Build()
-		preNodes = []*preprocess.Node{
-			preprocess.MakeNode(nums.MinT, originalElement.StartPoint(), 10, 20, 30),
-			preprocess.MakeNode(nums.HalfT, originalElement.PointAt(nums.HalfT), 11, 21, 31),
-			preprocess.MakeNode(nums.MaxT, originalElement.EndPoint(), 12, 22, 32),
-		}
-		elements = []*preprocess.Element{
-			preprocess.MakeElement(originalElement, preNodes),
-		}
-		str    = preprocess.MakeStructure(metadata, nodesById, elements)
+		str    = makeTestPreprocessedStructure()
 		writer bytes.Buffer
 	)
-
-	// Add left load to first node
-	preNodes[0].AddLocalLeftLoad(5, 10, 15)
-
-	// Add right load to last node
-	preNodes[2].AddLocalRightLoad(-5, -10, -15)
 
 	WritePreprocessedStructure(str, &writer)
 
@@ -61,7 +26,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	fmt.Println(writer.String())
 
 	t.Run("first line is always the header with the version", func(t *testing.T) {
-		want := fmt.Sprintf("inkfem v%d.%d", metadata.MajorVersion, metadata.MinorVersion)
+		want := fmt.Sprintf("inkfem v%d.%d", str.Metadata.MajorVersion, str.Metadata.MinorVersion)
 		if got := gotLines[0]; got != want {
 			t.Errorf("Want '%s', got '%s'", want, got)
 		}
