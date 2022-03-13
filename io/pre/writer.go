@@ -1,4 +1,4 @@
-package io
+package pre
 
 import (
 	"bufio"
@@ -9,7 +9,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 )
 
-//go:embed templates/preprocess.template.txt
+//go:embed preprocess.template.txt
 var preprocessTemplateBytes []byte
 
 // WritePreprocessedStructure Writes the given preprocessed structure to the passed in writer.
