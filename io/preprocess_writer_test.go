@@ -119,19 +119,43 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			wantFirstNodeDofPattern   = "\\s+dof\\s+: \\[0 1 2\\]"
 		)
 		if matches, _ := regexp.MatchString(wantFirstNodePattern, gotLines[7]); !matches {
-			t.Error("Want first node position")
+			t.Errorf("Want first node position: %s", gotLines[7])
 		}
 		if matches, _ := regexp.MatchString(wantFirstNodeLeftPattern, gotLines[8]); !matches {
-			t.Error("Want first node left load")
+			t.Errorf("Want first node left load: %s", gotLines[8])
 		}
 		if matches, _ := regexp.MatchString(wantFirstNodeRightPattern, gotLines[9]); !matches {
-			t.Error("Want first node right load")
+			t.Errorf("Want first node right load: %s", gotLines[9])
 		}
 		if matches, _ := regexp.MatchString(wantFirstNodeNetPattern, gotLines[10]); !matches {
-			t.Error("Want first node net load")
+			t.Errorf("Want first node net load: %s", gotLines[10])
 		}
 		if matches, _ := regexp.MatchString(wantFirstNodeDofPattern, gotLines[11]); !matches {
-			t.Error("Want first node dofs")
+			t.Errorf("Want first node dofs: %s", gotLines[11])
+		}
+
+		// second node
+		var (
+			wantSecondNodePattern      = "0\\.5[0]+ : 100(\\.[0]+)? 0(\\.[0]+)?"
+			wantSecondNodeLeftPattern  = "\\s+left\\s+: {0(\\.[0]+)? 0(\\.[0]+)? 0(\\.[0]+)?}"
+			wantSecondNodeRightPattern = "\\s+right\\s+: {0(\\.[0]+)? 0(\\.[0]+)? 0(\\.[0]+)?}"
+			wantSecondNodeNetPattern   = "\\s+net\\s+: {11(\\.[0]+)? 21(\\.[0]+)? 31(\\.[0]+)?}"
+			wantSecondNodeDofPattern   = "\\s+dof\\s+: \\[3 4 5\\]"
+		)
+		if matches, _ := regexp.MatchString(wantSecondNodePattern, gotLines[12]); !matches {
+			t.Errorf("Want second node position: %s", gotLines[12])
+		}
+		if matches, _ := regexp.MatchString(wantSecondNodeLeftPattern, gotLines[13]); !matches {
+			t.Errorf("Want second node left load: %s", gotLines[13])
+		}
+		if matches, _ := regexp.MatchString(wantSecondNodeRightPattern, gotLines[14]); !matches {
+			t.Errorf("Want second node right load: %s", gotLines[14])
+		}
+		if matches, _ := regexp.MatchString(wantSecondNodeNetPattern, gotLines[15]); !matches {
+			t.Errorf("Want second node net load: %s", gotLines[15])
+		}
+		if matches, _ := regexp.MatchString(wantSecondNodeDofPattern, gotLines[16]); !matches {
+			t.Errorf("Want second node dofs: %s", gotLines[16])
 		}
 	})
 }
