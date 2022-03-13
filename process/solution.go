@@ -32,8 +32,8 @@ func (solution *Solution) NodeReactions() map[contracts.StrID]*math.Torsor {
 	return nodeReactions
 }
 
-// ReactionInNode computes the reaction torsor {fx, fy, mz} in the node with the passed in ID
-// in global coordinates.
+// ReactionInNode computes the reaction torsor {fx, fy, mz} in the node with the passed
+// in ID in global coordinates.
 //
 // If the node isn't externally constrained, the reaction will always be a nil torsor {0, 0, 0}.
 // If the structure contains no node with the given ID, it'll panic.
