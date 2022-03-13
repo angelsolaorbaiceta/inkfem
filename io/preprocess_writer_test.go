@@ -157,5 +157,29 @@ func TestWritePreprocessedStructure(t *testing.T) {
 		if matches, _ := regexp.MatchString(wantSecondNodeDofPattern, gotLines[16]); !matches {
 			t.Errorf("Want second node dofs: %s", gotLines[16])
 		}
+
+		// second node
+		var (
+			wantThirdNodePattern      = "1(\\.[0]+)? : 200(\\.[0]+)? 0(\\.[0]+)?"
+			wantThirdNodeLeftPattern  = "\\s+left\\s+: {0(\\.[0]+)? 0(\\.[0]+)? 0(\\.[0]+)?}"
+			wantThirdNodeRightPattern = "\\s+right\\s+: {-5(\\.[0]+)? -10(\\.[0]+)? -15(\\.[0]+)?}"
+			wantThirdNodeNetPattern   = "\\s+net\\s+: {7(\\.[0]+)? 12(\\.[0]+)? 17(\\.[0]+)?}"
+			wantThirdNodeDofPattern   = "\\s+dof\\s+: \\[6 7 8\\]"
+		)
+		if matches, _ := regexp.MatchString(wantThirdNodePattern, gotLines[17]); !matches {
+			t.Errorf("Want second node position: %s", gotLines[17])
+		}
+		if matches, _ := regexp.MatchString(wantThirdNodeLeftPattern, gotLines[18]); !matches {
+			t.Errorf("Want second node left load: %s", gotLines[18])
+		}
+		if matches, _ := regexp.MatchString(wantThirdNodeRightPattern, gotLines[19]); !matches {
+			t.Errorf("Want second node right load: %s", gotLines[19])
+		}
+		if matches, _ := regexp.MatchString(wantThirdNodeNetPattern, gotLines[20]); !matches {
+			t.Errorf("Want second node net load: %s", gotLines[20])
+		}
+		if matches, _ := regexp.MatchString(wantThirdNodeDofPattern, gotLines[21]); !matches {
+			t.Errorf("Want second node dofs: %s", gotLines[21])
+		}
 	})
 }
