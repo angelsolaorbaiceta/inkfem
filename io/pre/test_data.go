@@ -53,7 +53,9 @@ func makeTestPreprocessedStructure() *preprocess.Structure {
 	// Add right load to last node
 	preNodes[2].AddLocalRightLoad(-5, -10, -15)
 
-	return preprocess.MakeStructure(original.Metadata, original.NodesById, elements)
+	return preprocess.
+		MakeStructure(original.Metadata, original.NodesById, elements).
+		AssignDof()
 }
 
 func makePreprocessedReader() io.Reader {

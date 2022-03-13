@@ -10,6 +10,11 @@ import (
 
 // Structure result of preprocessing original structure, ready to be solved.
 // The elements of a preprocessed structure are already sliced.
+//
+// A preprocessed structure can be created using the MakeStructure function. The created
+// structure doesn't have the degrees of freedom assigned. For that, the following function
+// must be called:
+//	structure.AssignDof()
 type Structure struct {
 	Metadata structure.StrMetadata
 	structure.NodesById
@@ -17,7 +22,7 @@ type Structure struct {
 	dofsCount int
 }
 
-// MakeStructure creates a preprocessed structure with the degrees of freedom numbers set.
+// MakeStructure creates a preprocessed structure.
 func MakeStructure(
 	metadata structure.StrMetadata,
 	nodesById structure.NodesById,
@@ -28,7 +33,6 @@ func MakeStructure(
 		NodesById: nodesById,
 		Elements:  elements,
 	}
-	str.assignDof()
 
 	return str
 }
@@ -48,12 +52,12 @@ func (s *Structure) DofsCount() int {
 	return s.dofsCount
 }
 
-// Assings degrees of freedom numbers to all nodes on sliced elements.
+// AssignDof assigns degrees of freedom numbers to all nodes on sliced elements.
 //
 // Structural nodes are given degrees of freedom to help in the correct assignment of DOF numbers
 // to the elements that meet in the node. Structural elements are first sorted by their geometry
 // positions, so the degrees of freedom numbers follow a logical sequence.
-func (str *Structure) assignDof() {
+func (str *Structure) AssignDof() *Structure {
 	sort.Sort(ByGeometryPos(str.Elements))
 
 	var (
@@ -124,6 +128,8 @@ func (str *Structure) assignDof() {
 	}
 
 	str.dofsCount = dof
+
+	return str
 }
 
 // AddDispConstraints sets the node's external constraints in the system of equations

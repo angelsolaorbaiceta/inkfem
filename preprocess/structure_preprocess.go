@@ -21,5 +21,5 @@ func StructureModel(str *structure.Structure) *Structure {
 	}
 	close(channel)
 
-	return MakeStructure(str.Metadata, str.NodesById, slicedElements)
+	return MakeStructure(str.Metadata, str.NodesById, slicedElements).AssignDof()
 }

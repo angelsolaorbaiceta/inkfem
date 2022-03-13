@@ -17,7 +17,11 @@ func Read(st structure.Structure, reader io.Reader) *preprocess.Structure {
 
 	metadata := parseMetadata(scanner)
 
-	return preprocess.MakeStructure(metadata, st.NodesById, []*preprocess.Element{})
+	return preprocess.MakeStructure(
+		metadata,
+		st.NodesById,
+		[]*preprocess.Element{},
+	)
 }
 
 func parseMetadata(scanner *bufio.Scanner) structure.StrMetadata {
