@@ -40,8 +40,8 @@ func (element Element) NodeAt(i int) *Node {
 	return element.nodes[i]
 }
 
-// SetEquationTerms sets this element's stiffness and load terms into the global system of equations.
-func (element *Element) SetEquationTerms(matrix mat.MutableMatrix, vector vec.MutableVector) {
+// setEquationTerms sets this element's stiffness and load terms into the global system of equations.
+func (element *Element) setEquationTerms(matrix mat.MutableMatrix, vector vec.MutableVector) {
 	element.computeStiffnessMatrices()
 	element.addTermsToStiffnessMatrix(matrix)
 	element.addTermsToLoadVector(vector)
