@@ -12,16 +12,14 @@ import (
 // Consists of a sequence of intermediate nodes with the element's loads applied to them.
 type Element struct {
 	*structure.Element
-	nodes          []*Node
-	globalStiffMat []mat.ReadOnlyMatrix
+	nodes []*Node
 }
 
 // MakeElement creates a new element given the original element and the nodes of the sliced result.
 func MakeElement(originalElement *structure.Element, nodes []*Node) *Element {
 	return &Element{
-		Element:        originalElement,
-		nodes:          nodes,
-		globalStiffMat: make([]mat.ReadOnlyMatrix, len(nodes)-1),
+		Element: originalElement,
+		nodes:   nodes,
 	}
 }
 
@@ -42,37 +40,23 @@ func (element Element) NodeAt(i int) *Node {
 
 // setEquationTerms sets this element's stiffness and load terms into the global system of equations.
 func (element *Element) setEquationTerms(matrix mat.MutableMatrix, vector vec.MutableVector) {
-	element.computeStiffnessMatrices()
 	element.addTermsToStiffnessMatrix(matrix)
 	element.addTermsToLoadVector(vector)
-}
-
-// computeStiffnessMatrices sets the global stiffness matrices for this element in place.
-//
-// Each element has a stiffness matrix between two contiguous nodes, so in total that makes n - 1
-// matrices, where n is the number of nodes.
-func (element *Element) computeStiffnessMatrices() {
-	var trail, lead *Node
-
-	for i := 1; i < len(element.nodes); i++ {
-		trail = element.nodes[i-1]
-		lead = element.nodes[i]
-		element.globalStiffMat[i-1] = element.StiffnessGlobalMat(trail.T, lead.T)
-	}
 }
 
 func (element *Element) addTermsToStiffnessMatrix(matrix mat.MutableMatrix) {
 	var (
 		stiffMat                    mat.ReadOnlyMatrix
+		trailNode, leadNode         *Node
 		trailNodeDofs, leadNodeDofs [3]int
 		dofs                        [6]int
 		stiffVal                    float64
 	)
 
 	for i := 1; i < len(element.nodes); i++ {
-		stiffMat = element.globalStiffMatrixAt(i - 1)
-		trailNodeDofs = element.nodes[i-1].DegreesOfFreedomNum()
-		leadNodeDofs = element.nodes[i].DegreesOfFreedomNum()
+		trailNode, leadNode = element.nodes[i-1], element.nodes[i]
+		trailNodeDofs, leadNodeDofs = trailNode.DegreesOfFreedomNum(), leadNode.DegreesOfFreedomNum()
+		stiffMat = element.StiffnessGlobalMat(trailNode.T, leadNode.T)
 		dofs = [6]int{
 			trailNodeDofs[0], trailNodeDofs[1], trailNodeDofs[2],
 			leadNodeDofs[0], leadNodeDofs[1], leadNodeDofs[2],
@@ -86,12 +70,6 @@ func (element *Element) addTermsToStiffnessMatrix(matrix mat.MutableMatrix) {
 			}
 		}
 	}
-}
-
-// globalStiffMatrixAt returns the global stiffness matrix at position i, that is,
-// between nodes i and i + 1.
-func (e Element) globalStiffMatrixAt(i int) mat.ReadOnlyMatrix {
-	return e.globalStiffMat[i]
 }
 
 func (element *Element) addTermsToLoadVector(sysVector vec.MutableVector) {
