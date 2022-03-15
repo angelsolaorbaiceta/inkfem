@@ -34,21 +34,30 @@ func Reticular(params ReticStructureParams) *structure.Structure {
 
 func generateNodes(params ReticStructureParams) map[contracts.StrID]*structure.Node {
 	var (
-		nodes     = make(map[contracts.StrID]*structure.Node)
-		nodeIndex = 0
-		nodeId    string
+		nodes      = make(map[contracts.StrID]*structure.Node)
+		nodeIndex  = 0
+		nodeId     string
+		constraint *structure.Constraint
 	)
 
-	for i := 0; i < params.Spans+1; i++ {
-		for j := 0; j < params.Levels+1; j++ {
+	for i := 0; i < params.Levels+1; i++ {
+		if i == 0 {
+			constraint = &structure.FullConstraint
+		} else {
+			constraint = &structure.NilConstraint
+		}
+
+		for j := 0; j < params.Spans+1; j++ {
 			nodeId = fmt.Sprint(nodeIndex + 1)
 
 			nodes[nodeId] = structure.MakeNodeAtPosition(
 				nodeId,
-				0.0,
-				0.0,
-				&structure.FullConstraint,
+				float64(j)*params.Span,
+				float64(i)*params.Height,
+				constraint,
 			)
+
+			nodeIndex += 1
 		}
 	}
 
