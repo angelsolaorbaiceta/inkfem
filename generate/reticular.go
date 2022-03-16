@@ -67,23 +67,38 @@ func generateNodes(params ReticStructureParams) map[contracts.StrID]*structure.N
 
 func generateBars(params ReticStructureParams, nodes map[contracts.StrID]*structure.Node) []*structure.Element {
 	var (
-		// rows      = params.Cols + 1
+		rows      = params.Levels + 1
 		cols      = params.Spans + 1
-		barsCount = 5
+		barsCount = 2*cols*rows - 2*cols - rows + 1
 		bars      = make([]*structure.Element, barsCount)
 		barIndex  = 0
 	)
 
-	var isLowestNodesRow = func(index int) bool {
-		return index <= cols
+	var isLowestNodesRow = func(id int) bool {
+		return id <= cols
 	}
 
-	// var isUpperNodesRow = func(index int) bool {
-	// 	return index <= rows
-	// }
+	var isRowsLastNode = func(id int) bool {
+		return id%cols == 0
+	}
+
+	var isUpperNodesRow = func(id int) bool {
+		return id > cols*(rows-1)
+	}
 
 	for i := 1; i <= len(nodes); i++ {
-		if isLowestNodesRow(i) {
+		if !isRowsLastNode(i) && !isLowestNodesRow(i) {
+			bars[barIndex] = structure.MakeElementBuilder(fmt.Sprint(barIndex+1)).
+				WithStartNode(nodes[fmt.Sprint(i)], &structure.FullConstraint).
+				WithEndNode(nodes[fmt.Sprint(i+1)], &structure.FullConstraint).
+				WithMaterial(params.Material).
+				WithSection(params.Section).
+				Build()
+
+			barIndex += 1
+		}
+
+		if !isUpperNodesRow(i) {
 			bars[barIndex] = structure.MakeElementBuilder(fmt.Sprint(barIndex+1)).
 				WithStartNode(nodes[fmt.Sprint(i)], &structure.FullConstraint).
 				WithEndNode(nodes[fmt.Sprint(i+cols)], &structure.FullConstraint).
@@ -93,10 +108,6 @@ func generateBars(params ReticStructureParams, nodes map[contracts.StrID]*struct
 
 			barIndex += 1
 		}
-		// else if isUpperNodesRow(i) {
-
-		// } else {
-		// }
 	}
 
 	return bars
