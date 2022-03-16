@@ -198,6 +198,7 @@ func (e Element) StiffnessGlobalMat(startT, endT nums.TParam) mat.ReadOnlyMatrix
 }
 
 // Equals tests whether this element is equal to other.
+// Loads aren't compared, two bars with different set of loads can be equal.
 func (e *Element) Equals(other *Element) bool {
 	return e.startNodeID == other.startNodeID &&
 		e.endNodeID == other.endNodeID &&
