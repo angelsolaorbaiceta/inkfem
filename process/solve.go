@@ -16,7 +16,7 @@ func Solve(str *preprocess.Structure, options SolveOptions) *Solution {
 	)
 
 	log.StartComputeStresses()
-	for i, element := range str.Elements {
+	for i, element := range str.Elements() {
 		elementSolutions[i] = MakeElementSolution(element, globalDisplacements)
 	}
 	log.EndComputeStresses()

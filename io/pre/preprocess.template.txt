@@ -6,7 +6,7 @@ dof_count: {{.DofsCount}}
 {{range .GetAllNodes}}
 {{.String}}{{end}}
 
-|materials| 1
+|materials| {{.MaterialsCount}}
 
 |bars| {{.ElementsCount}}
 {{range .Elements}}

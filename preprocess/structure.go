@@ -18,7 +18,7 @@ import (
 type Structure struct {
 	Metadata structure.StrMetadata
 	structure.NodesById
-	Elements  []*Element
+	ElementsSeq
 	dofsCount int
 }
 
@@ -29,9 +29,9 @@ func MakeStructure(
 	elements []*Element,
 ) *Structure {
 	str := &Structure{
-		Metadata:  metadata,
-		NodesById: nodesById,
-		Elements:  elements,
+		Metadata:    metadata,
+		NodesById:   nodesById,
+		ElementsSeq: ElementsSeq{elements: elements},
 	}
 
 	return str
@@ -40,11 +40,6 @@ func MakeStructure(
 // GetElementNodes returns the element's start and end nodes.
 func (s *Structure) GetElementNodes(element *Element) (*structure.Node, *structure.Node) {
 	return s.GetNodeById(element.StartNodeID()), s.GetNodeById(element.EndNodeID())
-}
-
-// ElementsCount returns the number of elements in the original structure.
-func (s *Structure) ElementsCount() int {
-	return len(s.Elements)
 }
 
 // DofsCount is the number of degrees of freedom in the preprocessed structure.
@@ -58,7 +53,7 @@ func (s *Structure) DofsCount() int {
 // to the elements that meet in the node. Structural elements are first sorted by their geometry
 // positions, so the degrees of freedom numbers follow a logical sequence.
 func (str *Structure) AssignDof() *Structure {
-	sort.Sort(ByGeometryPos(str.Elements))
+	sort.Sort(ByGeometryPos(str.Elements()))
 
 	var (
 		startNode, endNode *structure.Node
@@ -102,7 +97,7 @@ func (str *Structure) AssignDof() *Structure {
 		return
 	}
 
-	for _, element := range str.Elements {
+	for _, element := range str.Elements() {
 		startNode, endNode = str.GetElementNodes(element)
 		startLink = element.StartLink()
 		endLink = element.EndLink()
@@ -143,7 +138,7 @@ func (str *Structure) MakeSystemOfEquations() (mat.ReadOnlyMatrix, vec.ReadOnlyV
 		sysVector = vec.Make(str.DofsCount())
 	)
 
-	for _, element := range str.Elements {
+	for _, element := range str.Elements() {
 		element.setEquationTerms(sysMatrix, sysVector)
 	}
 
