@@ -4,17 +4,20 @@ import (
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
+	"github.com/angelsolaorbaiceta/inkfem/structure/load"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestGenerateReticularStructure(t *testing.T) {
 	var (
 		params = ReticStructureParams{
-			Spans:    1,
-			Levels:   2,
-			Span:     300.0,
-			Height:   200.0,
-			Section:  structure.MakeUnitSection(),
-			Material: structure.MakeUnitMaterial(),
+			Spans:         1,
+			Levels:        2,
+			Span:          300.0,
+			Height:        200.0,
+			LoadDistValue: 50.0,
+			Section:       structure.MakeUnitSection(),
+			Material:      structure.MakeUnitMaterial(),
 		}
 		str = Reticular(params)
 
@@ -61,6 +64,13 @@ func TestGenerateReticularStructure(t *testing.T) {
 			WithMaterial(structure.MakeUnitMaterial()).
 			WithSection(structure.MakeUnitSection()).
 			Build()
+
+		load = load.MakeDistributed(
+			load.FY,
+			true,
+			nums.MinT, -params.LoadDistValue,
+			nums.MaxT, -params.LoadDistValue,
+		)
 	)
 
 	t.Run("generates the nodes", func(t *testing.T) {
@@ -120,6 +130,46 @@ func TestGenerateReticularStructure(t *testing.T) {
 
 		if got := str.GetElementById("6"); !got.Equals(e6) {
 			t.Errorf("Want %v, got %v", e6, got)
+		}
+	})
+
+	t.Run("doesn't add loads to the columns", func(t *testing.T) {
+		b1 := str.GetElementById("1")
+		if len(b1.ConcentratedLoads) > 0 || len(b1.DistributedLoads) > 0 {
+			t.Error("Expected bar to not have any load applied")
+		}
+
+		b2 := str.GetElementById("2")
+		if len(b2.ConcentratedLoads) > 0 || len(b2.DistributedLoads) > 0 {
+			t.Error("Expected bar to not have any load applied")
+		}
+
+		b4 := str.GetElementById("4")
+		if len(b4.ConcentratedLoads) > 0 || len(b4.DistributedLoads) > 0 {
+			t.Error("Expected bar to not have any load applied")
+		}
+
+		b5 := str.GetElementById("5")
+		if len(b5.ConcentratedLoads) > 0 || len(b5.DistributedLoads) > 0 {
+			t.Error("Expected bar to not have any load applied")
+		}
+	})
+
+	t.Run("adds horizontal distributed loads to the beams", func(t *testing.T) {
+		b3 := str.GetElementById("3")
+		if len(b3.ConcentratedLoads) > 0 {
+			t.Error("Expected bar to not have any concentrated load applied")
+		}
+		if len(b3.DistributedLoads) != 1 || !b3.DistributedLoads[0].Equals(load) {
+			t.Error("Wrong distributed load")
+		}
+
+		b6 := str.GetElementById("6")
+		if len(b6.ConcentratedLoads) > 0 {
+			t.Error("Expected bar to not have any concentrated load applied")
+		}
+		if len(b6.DistributedLoads) != 1 || !b6.DistributedLoads[0].Equals(load) {
+			t.Error("Wrong distributed load")
 		}
 	})
 }
