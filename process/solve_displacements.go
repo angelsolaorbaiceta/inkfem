@@ -18,7 +18,7 @@ func computeGlobalDisplacements(
 	options SolveOptions,
 ) vec.ReadOnlyVector {
 	log.StartAssembleSysEqs()
-	sysMatrix, sysVector := makeSystemOfEquations(structure)
+	sysMatrix, sysVector := structure.MakeSystemOfEquations()
 	log.EndAssembleSysEqs(sysVector.Length())
 
 	if options.SaveSysMatrixImage {
@@ -48,24 +48,4 @@ func computePreconditioner(m mat.ReadOnlyMatrix) mat.ReadOnlyMatrix {
 	}
 
 	return precond
-}
-
-// MakeSystemOfEquations generates the system of equations matrix and vector from the
-// preprocessed structure.
-//
-// It computes each of the sliced element's stiffness matrices and assembles them into one
-// global matrix. It also assembles the global loads vector from the sliced element nodes.
-func makeSystemOfEquations(str *preprocess.Structure) (mat.ReadOnlyMatrix, vec.ReadOnlyVector) {
-	var (
-		sysMatrix = mat.MakeSparse(str.DofsCount(), str.DofsCount())
-		sysVector = vec.Make(str.DofsCount())
-	)
-
-	for _, element := range str.Elements {
-		element.SetEquationTerms(sysMatrix, sysVector)
-	}
-
-	str.AddDispConstraints(sysMatrix, sysVector)
-
-	return sysMatrix, sysVector
 }

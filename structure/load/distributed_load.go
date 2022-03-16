@@ -6,16 +6,13 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
-/*
-Load is a distributed or concentrated load.
-
-Distributed loads are linear: the start and end values are interpolated linearly.
-
-A load is expressed as:
-	- a term of application, which in 2D can be: Force in X, Force in Y or Moment about Z
-	- a projection frame, which can be local to the element to which load is applied or global
-  - start/end position and value
-*/
+// A DistributedLoad is a load which effect is distributed over a length.
+// Distributed loads are linear: the start and end values are interpolated linearly.
+//
+// A load is expressed as:
+// - a term of application, which in 2D can be: Force in X, Force in Y or Moment about Z
+// - a projection frame, which can be local to the element to which load is applied or global
+// - start/end position and value
 type DistributedLoad struct {
 	Term                 Term
 	IsInLocalCoords      bool
@@ -23,12 +20,10 @@ type DistributedLoad struct {
 	StartValue, EndValue float64
 }
 
-/*
-MakeDistributed creates a distributed load for the given term (FX, FY, MZ) which may be defined
-locally to the element it will be applied to or referenced in global coordinates.
-
-Distributed loads are defined by a start position - value and an end position - value tuples.
-*/
+// MakeDistributed creates a distributed load for the given term (FX, FY, MZ) which may be defined
+// locally to the element it will be applied to or referenced in global coordinates.
+//
+// Distributed loads are defined by a start position - value and an end position - value tuples.
 func MakeDistributed(
 	term Term,
 	isInLocalCoords bool,

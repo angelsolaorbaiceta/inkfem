@@ -76,6 +76,11 @@ func (builder *ElementBuilder) AddDistributedLoads(loads []*load.DistributedLoad
 	return builder
 }
 
+func (builder *ElementBuilder) AddDistributedLoad(load *load.DistributedLoad) *ElementBuilder {
+	builder.distributedLoads = append(builder.distributedLoads, load)
+	return builder
+}
+
 func (builder ElementBuilder) Build() *Element {
 	builder.ensureNodesInfo()
 	builder.ensureSectionAndMaterial()

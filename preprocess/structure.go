@@ -132,13 +132,33 @@ func (str *Structure) AssignDof() *Structure {
 	return str
 }
 
+// MakeSystemOfEquations generates the system of equations matrix and vector from the
+// preprocessed structure.
+//
+// It computes each of the sliced element's stiffness matrices and assembles them into one
+// global matrix. It also assembles the global loads vector from the sliced element nodes.
+func (str *Structure) MakeSystemOfEquations() (mat.ReadOnlyMatrix, vec.ReadOnlyVector) {
+	var (
+		sysMatrix = mat.MakeSparse(str.DofsCount(), str.DofsCount())
+		sysVector = vec.Make(str.DofsCount())
+	)
+
+	for _, element := range str.Elements {
+		element.setEquationTerms(sysMatrix, sysVector)
+	}
+
+	str.addDispConstraints(sysMatrix, sysVector)
+
+	return sysMatrix, sysVector
+}
+
 // AddDispConstraints sets the node's external constraints in the system of equations
 // matrix and vector.
 //
 // A constrained degree of freedom is enforced by setting the corresponding matrix row as the
 // identity, and the associated free value as zero. This yields a trivial equation of the form
 // x = 0, where x is the constrained degree of freedom.
-func (s *Structure) AddDispConstraints(matrix mat.MutableMatrix, vector vec.MutableVector) {
+func (s *Structure) addDispConstraints(matrix mat.MutableMatrix, vector vec.MutableVector) {
 	var (
 		constraint *structure.Constraint
 		dofs       [3]int
