@@ -36,7 +36,7 @@ func makeTestOriginalStructure() *structure.Structure {
 func makeTestPreprocessedStructure() *preprocess.Structure {
 	var (
 		original        = makeTestOriginalStructure()
-		originalElement = original.Elements[0]
+		originalElement = original.Elements()[0]
 		preNodes        = []*preprocess.Node{
 			preprocess.MakeNode(nums.MinT, originalElement.StartPoint(), 10, 20, 30),
 			preprocess.MakeNode(nums.HalfT, originalElement.PointAt(nums.HalfT), 11, 21, 31),

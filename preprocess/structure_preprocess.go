@@ -12,7 +12,7 @@ func StructureModel(str *structure.Structure) *Structure {
 		slicedElements []*Element
 	)
 
-	for _, element := range str.Elements {
+	for _, element := range str.Elements() {
 		go sliceElement(element, channel)
 	}
 

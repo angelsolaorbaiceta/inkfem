@@ -36,7 +36,7 @@ func drawGeometry(
 
 	var startPoint, endPoint *g2d.Point
 
-	for _, element := range st.Elements {
+	for _, element := range st.Elements() {
 		startPoint = element.StartPoint()
 		endPoint = element.EndPoint()
 
