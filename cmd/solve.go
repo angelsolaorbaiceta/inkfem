@@ -73,7 +73,7 @@ func solveStructure(cmd *cobra.Command, args []string) {
 		go (func() {
 			file := io.CreateFile(outPath + io.PreFileExt)
 			defer file.Close()
-			iopre.WritePreprocessedStructure(preStructure, file)
+			iopre.Write(preStructure, file)
 		})()
 	}
 

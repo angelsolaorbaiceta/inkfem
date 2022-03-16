@@ -14,7 +14,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 		writer bytes.Buffer
 	)
 
-	WritePreprocessedStructure(str, &writer)
+	Write(str, &writer)
 	fmt.Println(writer.String())
 	var gotLines []string
 	for _, line := range strings.Split(writer.String(), "\n") {
@@ -61,6 +61,10 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			t.Error("Want node two")
 		}
 	})
+
+	t.Run("then go the materials", func(t *testing.T) {})
+
+	t.Run("then go the sections", func(t *testing.T) {})
 
 	t.Run("lastly go the bars", func(t *testing.T) {
 		var (
