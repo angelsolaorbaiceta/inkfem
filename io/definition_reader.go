@@ -39,22 +39,20 @@ func StructureFromFile(filePath string, options ReaderOptions) *structure.Struct
 
 func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.Structure {
 	var (
-		nodesDefined               = false
-		materialsDefined           = false
-		sectionsDefined            = false
-		loadsDefined               = false
-		majorVersion, minorVersion int
-		nodes                      *map[contracts.StrID]*structure.Node
-		materials                  *MaterialsByName
-		sections                   *SectionsByName
-		concentratedLoads          ConcLoadsById
-		distributedLoads           DistLoadsById
-		elements                   *[]*structure.Element
+		nodesDefined      = false
+		materialsDefined  = false
+		sectionsDefined   = false
+		loadsDefined      = false
+		nodes             *map[contracts.StrID]*structure.Node
+		materials         *MaterialsByName
+		sections          *SectionsByName
+		concentratedLoads ConcLoadsById
+		distributedLoads  DistLoadsById
+		elements          *[]*structure.Element
 	)
 
 	// First line must be "inkfem vM.m"
-	scanner.Scan()
-	majorVersion, minorVersion = ParseVersionNumbers(scanner.Text())
+	metadata := ParseMetadata(scanner)
 
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -124,12 +122,5 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 		log.Fatal(err)
 	}
 
-	return structure.Make(
-		structure.StrMetadata{
-			MajorVersion: majorVersion,
-			MinorVersion: minorVersion,
-		},
-		*nodes,
-		*elements,
-	)
+	return structure.Make(metadata, *nodes, *elements)
 }
