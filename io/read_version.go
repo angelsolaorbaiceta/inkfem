@@ -1,8 +1,11 @@
 package io
 
 import (
+	"bufio"
 	"regexp"
 	"strconv"
+
+	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
 var versionRegex = regexp.MustCompile(`(?:inkfem\s+v)(\d+)(?:[.])(\d+)`)
@@ -24,4 +27,15 @@ func ParseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {
 	minorVersion, _ = strconv.Atoi(versions[2])
 
 	return
+}
+
+// ParseMetadata reads the structure metadata from the structure files first line: "inkfem vM.m".
+func ParseMetadata(scanner *bufio.Scanner) structure.StrMetadata {
+	// First line must be "inkfem vM.m"
+	scanner.Scan()
+	majorVersion, minorVersion := ParseVersionNumbers(scanner.Text())
+	return structure.StrMetadata{
+		MajorVersion: majorVersion,
+		MinorVersion: minorVersion,
+	}
 }

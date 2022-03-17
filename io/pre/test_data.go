@@ -64,12 +64,16 @@ func makePreprocessedReader() io.Reader {
 	dof_count: 9
 	
 	|nodes| 2
-	
 	n1 -> 0.000000 0.000000 { dx dy rz } | DOF: [0 1 2]
 	n2 -> 200.000000 0.000000 { } | DOF: [6 7 8]
+
+	|materials| 1
+	'unit_material' -> 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+
+	|sections| 1
+	'unit_section' -> 1.000000 1.000000 1.000000 1.000000 1.000000
 	
 	|bars| 1
-	
 	b1 -> n1 { dx dy rz } n2 { dx dy rz } 'unit_material' 'unit_section' >> 3
 	0.000000 : 0.000000 0.000000
 					 left  : {5.000000 10.000000 15.000000}
