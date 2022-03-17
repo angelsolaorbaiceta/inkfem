@@ -59,7 +59,7 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 
-		if lineIsComment(line) || lineIsEmpty(line) {
+		if ShouldIgnoreLine(line) {
 			continue
 		}
 

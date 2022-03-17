@@ -9,6 +9,14 @@ import (
 
 const commentDeclaration = "#"
 
+// ShouldIgnoreLine decides whether a given line can be ignored.
+// A line can be ignored if, after removing the surrounding white space, it's empty or starts
+// with "#", the comment opener.
+func ShouldIgnoreLine(line string) bool {
+	trimmedLine := strings.TrimSpace(line)
+	return lineIsComment(trimmedLine) || lineIsEmpty(trimmedLine)
+}
+
 func lineIsComment(line string) bool {
 	return strings.HasPrefix(line, commentDeclaration)
 }
