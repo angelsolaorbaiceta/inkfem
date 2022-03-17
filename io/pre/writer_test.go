@@ -14,8 +14,8 @@ func TestWritePreprocessedStructure(t *testing.T) {
 		writer         bytes.Buffer
 		nodesOffset    = 2
 		materiasOffset = nodesOffset + 3
-		sectionsOffset = materiasOffset
-		barsOffset     = sectionsOffset + 2
+		sectionsOffset = materiasOffset + 2
+		barsOffset     = sectionsOffset + 1
 	)
 
 	Write(str, &writer)
@@ -80,7 +80,15 @@ func TestWritePreprocessedStructure(t *testing.T) {
 		}
 	})
 
-	t.Run("then go the sections", func(t *testing.T) {})
+	t.Run("then go the sections", func(t *testing.T) {
+		var (
+			wantHeader = "|sections| 1"
+		)
+
+		if got := gotLines[sectionsOffset]; got != wantHeader {
+			t.Errorf("want '%s', got '%s'", wantHeader, got)
+		}
+	})
 
 	t.Run("lastly go the bars", func(t *testing.T) {
 		var (

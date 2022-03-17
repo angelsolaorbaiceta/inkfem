@@ -8,6 +8,8 @@ dof_count: {{.DofsCount}}
 |materials| {{.MaterialsCount}}{{range $key, $value := .GetMaterialsByName}}
 {{$value}}{{end}}
 
+|sections| {{.SectionsCount}}
+
 |bars| {{.ElementsCount}}{{range .Elements}}
 {{.String}} >> {{.NodesCount}}{{range .Nodes}}
 {{.String}}{{end}}

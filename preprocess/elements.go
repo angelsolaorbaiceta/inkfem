@@ -5,6 +5,7 @@ import "github.com/angelsolaorbaiceta/inkfem/structure"
 type ElementsSeq struct {
 	elements        []*Element
 	materialsByName map[string]*structure.Material
+	sectionsByName  map[string]*structure.Section
 }
 
 // ElementsCount returns the number of elements in the original structure.
@@ -17,13 +18,13 @@ func (el *ElementsSeq) Elements() []*Element {
 	return el.elements
 }
 
-// MaterialsCount is the number of different materials in the structure.
+// MaterialsCount is the number of different materials used in the elements.
 // Two materials are considered different if their names are.
 func (el *ElementsSeq) MaterialsCount() int {
 	return len(el.GetMaterialsByName())
 }
 
-// GetMaterialsByName returns a map of materials by material name.
+// GetMaterialsByName returns a map of all used materials by name.
 func (el *ElementsSeq) GetMaterialsByName() map[string]*structure.Material {
 	if el.materialsByName == nil {
 		el.materialsByName = make(map[string]*structure.Material)
@@ -36,4 +37,25 @@ func (el *ElementsSeq) GetMaterialsByName() map[string]*structure.Material {
 	}
 
 	return el.materialsByName
+}
+
+// SectionsCount is the number of different sections used in the elements.
+// Two sections are considered different if their names are.
+func (el *ElementsSeq) SectionsCount() int {
+	return len(el.GetSectionsByName())
+}
+
+// GetSectionsByName returns a map of all used sections by name.
+func (el *ElementsSeq) GetSectionsByName() map[string]*structure.Section {
+	if el.sectionsByName == nil {
+		el.sectionsByName = make(map[string]*structure.Section)
+		var section *structure.Section
+
+		for _, element := range el.elements {
+			section = element.Section()
+			el.sectionsByName[section.Name] = section
+		}
+	}
+
+	return el.sectionsByName
 }
