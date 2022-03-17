@@ -18,8 +18,8 @@ var materialDefinitionRegex = regexp.MustCompile(
 		floatGroupExpr("yield") + spaceExpr +
 		floatGroupExpr("ultimate") + optionalSpaceExpr + "$")
 
-func readMaterials(scanner *bufio.Scanner, count int) *map[string]*structure.Material {
-	lines := definitionLines(scanner, count)
+func ReadMaterials(scanner *bufio.Scanner, count int) *map[string]*structure.Material {
+	lines := ExtractDefinitionLines(scanner, count)
 	return deserializeMaterialsByName(lines)
 }
 

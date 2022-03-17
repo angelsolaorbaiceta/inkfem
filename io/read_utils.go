@@ -25,7 +25,10 @@ func lineIsEmpty(line string) bool {
 	return len(line) < 1
 }
 
-func definitionLines(scanner *bufio.Scanner, count int) []string {
+// ExtractDefinitionLines gets the next "count" lines from the scanner, ignoring comments
+// and blank lines.
+// The extracted lines are trimmed to remove the blank space around them.
+func ExtractDefinitionLines(scanner *bufio.Scanner, count int) []string {
 	var (
 		line  string
 		lines = make([]string, count)
@@ -33,11 +36,11 @@ func definitionLines(scanner *bufio.Scanner, count int) []string {
 
 	for i := 0; i < count; {
 		if !scanner.Scan() {
-			panic("Couldn't read all expected lines")
+			panic(fmt.Sprintf("Couldn't read all expected %d lines", count))
 		}
 
-		line = scanner.Text()
-		if lineIsComment(line) {
+		line = strings.TrimSpace(scanner.Text())
+		if ShouldIgnoreLine(line) {
 			continue
 		}
 

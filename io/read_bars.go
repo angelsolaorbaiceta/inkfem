@@ -42,7 +42,7 @@ func readElements(
 	distributedLoads *DistLoadsById,
 	readerOptions ReaderOptions,
 ) *[]*structure.Element {
-	lines := definitionLines(scanner, count)
+	lines := ExtractDefinitionLines(scanner, count)
 	return deserializeElements(
 		lines,
 		nodes,

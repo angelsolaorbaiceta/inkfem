@@ -34,7 +34,7 @@ type ConcLoadsById = map[contracts.StrID][]*load.ConcentratedLoad
 type DistLoadsById = map[contracts.StrID][]*load.DistributedLoad
 
 func readLoads(scanner *bufio.Scanner, count int) (ConcLoadsById, DistLoadsById) {
-	lines := definitionLines(scanner, count)
+	lines := ExtractDefinitionLines(scanner, count)
 	return deserializeLoadsByElementID(lines)
 }
 

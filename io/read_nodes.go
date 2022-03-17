@@ -17,8 +17,8 @@ var nodeDefinitionRegex = regexp.MustCompile(
 		floatGroupExpr("y") + spaceExpr +
 		constraintGroupExpr("constraints") + optionalSpaceExpr + "$")
 
-func readNodes(scanner *bufio.Scanner, count int) *map[contracts.StrID]*structure.Node {
-	lines := definitionLines(scanner, count)
+func ReadNodes(scanner *bufio.Scanner, count int) *map[contracts.StrID]*structure.Node {
+	lines := ExtractDefinitionLines(scanner, count)
 	return deserializeNodesByID(lines)
 }
 

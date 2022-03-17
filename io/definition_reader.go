@@ -65,14 +65,14 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 		case nodesHeaderRegex.MatchString(line):
 			{
 				nodesCount, _ := strconv.Atoi(nodesHeaderRegex.FindStringSubmatch(line)[1])
-				nodes = readNodes(scanner, nodesCount)
+				nodes = ReadNodes(scanner, nodesCount)
 				nodesDefined = true
 			}
 
 		case materialsHeaderRegex.MatchString(line):
 			{
 				materialsCount, _ := strconv.Atoi(materialsHeaderRegex.FindStringSubmatch(line)[1])
-				materials = readMaterials(scanner, materialsCount)
+				materials = ReadMaterials(scanner, materialsCount)
 				materialsDefined = true
 			}
 
