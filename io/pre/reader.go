@@ -3,6 +3,7 @@ package pre
 import (
 	"bufio"
 	"io"
+	"strings"
 
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
@@ -16,6 +17,18 @@ func Read(st structure.Structure, reader io.Reader) *preprocess.Structure {
 	scanner.Split(bufio.ScanLines)
 
 	metadata := inkio.ParseMetadata(scanner)
+
+	var (
+		line string
+	)
+
+	for scanner.Scan() {
+		line = strings.TrimSpace(scanner.Text())
+
+		if inkio.ShouldIgnoreLine(line) {
+			continue
+		}
+	}
 
 	return preprocess.MakeStructure(
 		metadata,

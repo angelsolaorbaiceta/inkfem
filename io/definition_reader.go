@@ -5,20 +5,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-)
-
-var (
-	nodesHeaderRegex     = regexp.MustCompile(`(?:\|nodes\|\s*)(\d+)`)
-	materialsHeaderRegex = regexp.MustCompile(`(?:\|materials\|\s*)(\d+)`)
-	sectionsHeaderRegex  = regexp.MustCompile(`(?:\|sections\|\s*)(\d+)`)
-	loadsHeaderRegex     = regexp.MustCompile(`(?:\|loads\|\s*)(\d+)`)
-	barsHeaderRegex      = regexp.MustCompile(`(?:\|bars\|\s*)(\d+)`)
 )
 
 // StructureFromFile Reads the given .inkfem file and tries to parse a structure from the data defined.
@@ -39,6 +29,7 @@ func StructureFromFile(filePath string, options ReaderOptions) *structure.Struct
 
 func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.Structure {
 	var (
+		line              string
 		nodesDefined      = false
 		materialsDefined  = false
 		sectionsDefined   = false
@@ -55,42 +46,42 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 	metadata := ParseMetadata(scanner)
 
 	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
+		line = strings.TrimSpace(scanner.Text())
 
 		if ShouldIgnoreLine(line) {
 			continue
 		}
 
 		switch {
-		case nodesHeaderRegex.MatchString(line):
+		case IsNodesHeader(line):
 			{
-				nodesCount, _ := strconv.Atoi(nodesHeaderRegex.FindStringSubmatch(line)[1])
+				nodesCount := ExtractNodesCount(line)
 				nodes = ReadNodes(scanner, nodesCount)
 				nodesDefined = true
 			}
 
-		case materialsHeaderRegex.MatchString(line):
+		case IsMaterialsHeader(line):
 			{
-				materialsCount, _ := strconv.Atoi(materialsHeaderRegex.FindStringSubmatch(line)[1])
+				materialsCount := ExtractMaterialsCount(line)
 				materials = ReadMaterials(scanner, materialsCount)
 				materialsDefined = true
 			}
 
-		case sectionsHeaderRegex.MatchString(line):
+		case IsSectionsHeader(line):
 			{
-				sectionsCount, _ := strconv.Atoi(sectionsHeaderRegex.FindStringSubmatch(line)[1])
-				sections = readSections(scanner, sectionsCount)
+				sectionsCount := ExtractSectionsCount(line)
+				sections = ReadSections(scanner, sectionsCount)
 				sectionsDefined = true
 			}
 
-		case loadsHeaderRegex.MatchString(line):
+		case IsLoadsHeader(line):
 			{
-				loadsCount, _ := strconv.Atoi(loadsHeaderRegex.FindStringSubmatch(line)[1])
+				loadsCount := ExtractLoadsCount(line)
 				concentratedLoads, distributedLoads = readLoads(scanner, loadsCount)
 				loadsDefined = true
 			}
 
-		case barsHeaderRegex.MatchString(line):
+		case IsBarsHeader(line):
 			{
 				if !(nodesDefined && materialsDefined && sectionsDefined && loadsDefined) {
 					panic(
@@ -99,7 +90,7 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 					)
 				}
 
-				elementsCount, _ := strconv.Atoi(barsHeaderRegex.FindStringSubmatch(line)[1])
+				elementsCount := ExtractBarsCount(line)
 				elements = readElements(
 					scanner,
 					elementsCount,

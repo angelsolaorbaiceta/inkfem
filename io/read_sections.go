@@ -17,7 +17,7 @@ var sectionDefinitionRegex = regexp.MustCompile(
 		floatGroupExpr("sstrong") + spaceExpr +
 		floatGroupExpr("sweak") + optionalSpaceExpr + "$")
 
-func readSections(scanner *bufio.Scanner, count int) *map[string]*structure.Section {
+func ReadSections(scanner *bufio.Scanner, count int) *map[string]*structure.Section {
 	lines := ExtractDefinitionLines(scanner, count)
 	return deserializeSectionsByName(lines)
 }
