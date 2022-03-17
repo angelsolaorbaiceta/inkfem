@@ -5,10 +5,11 @@ dof_count: {{.DofsCount}}
 |nodes| {{.NodesCount}}{{range .GetAllNodes}}
 {{.String}}{{end}}
 
-|materials| {{.MaterialsCount}}{{range $key, $value := .GetMaterialsByName}}
-{{$value}}{{end}}
+|materials| {{.MaterialsCount}}{{range $key, $material := .GetMaterialsByName}}
+{{$material}}{{end}}
 
-|sections| {{.SectionsCount}}
+|sections| {{.SectionsCount}}{{range $key, $section := .GetSectionsByName}}
+{{$section}}{{end}}
 
 |bars| {{.ElementsCount}}{{range .Elements}}
 {{.String}} >> {{.NodesCount}}{{range .Nodes}}
