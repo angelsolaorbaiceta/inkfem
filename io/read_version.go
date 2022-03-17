@@ -30,6 +30,7 @@ func ParseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {
 }
 
 // ParseMetadata reads the structure metadata from the structure files first line: "inkfem vM.m".
+// Panics if the first line doesn't follow the expected format.
 func ParseMetadata(scanner *bufio.Scanner) structure.StrMetadata {
 	// First line must be "inkfem vM.m"
 	scanner.Scan()

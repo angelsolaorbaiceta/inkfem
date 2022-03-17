@@ -23,4 +23,10 @@ func TestRead(t *testing.T) {
 			t.Errorf("Want %v, got %v", want, got)
 		}
 	})
+
+	t.Run("parses the degrees of freedom count", func(t *testing.T) {
+		if got := str.DofsCount(); got != 9 {
+			t.Errorf("Want 9 DOFs, got %d", got)
+		}
+	})
 }

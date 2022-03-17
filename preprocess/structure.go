@@ -47,6 +47,14 @@ func (s *Structure) DofsCount() int {
 	return s.dofsCount
 }
 
+// SetDofsCount sets the number of degrees of freedom the preprocessed structure has.
+// This method is to be used when the structure is read from a file where the DOFs are
+// already assigned.
+func (s *Structure) SetDofsCount(dofsCount int) *Structure {
+	s.dofsCount = dofsCount
+	return s
+}
+
 // AssignDof assigns degrees of freedom numbers to all nodes on sliced elements.
 //
 // Structural nodes are given degrees of freedom to help in the correct assignment of DOF numbers
