@@ -15,7 +15,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 		nodesOffset    = 2
 		materiasOffset = nodesOffset + 3
 		sectionsOffset = materiasOffset
-		barsOffset     = sectionsOffset + 1
+		barsOffset     = sectionsOffset + 2
 	)
 
 	Write(str, &writer)
@@ -68,12 +68,15 @@ func TestWritePreprocessedStructure(t *testing.T) {
 
 	t.Run("then go the materials", func(t *testing.T) {
 		var (
-			wantHeader = "|materials| 1"
-			// wantMaterialPattern = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'unit_material' 'unit_section' >> 3"
+			wantHeader          = "|materials| 1"
+			wantMaterialPattern = "unit_material -> 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+"
 		)
 
 		if got := gotLines[materiasOffset]; got != wantHeader {
 			t.Errorf("want '%s', got '%s'", wantHeader, got)
+		}
+		if matches, _ := regexp.MatchString(wantMaterialPattern, gotLines[materiasOffset+1]); !matches {
+			t.Errorf("Want material: %s", gotLines[materiasOffset+1])
 		}
 	})
 
