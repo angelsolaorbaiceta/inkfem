@@ -44,7 +44,7 @@ func MakeUnitMaterial() *Material {
 // preprocessed and solution file formats are affected.
 func (m *Material) String() string {
 	return fmt.Sprintf(
-		"%s -> %f %f %f %f %f %f",
+		"'%s' -> %f %f %f %f %f %f",
 		m.Name,
 		m.Density,
 		m.YoungMod,

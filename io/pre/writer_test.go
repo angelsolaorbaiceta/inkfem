@@ -19,15 +19,12 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	)
 
 	Write(str, &writer)
-	fmt.Println(writer.String())
 	var gotLines []string
 	for _, line := range strings.Split(writer.String(), "\n") {
 		if line != "" {
 			gotLines = append(gotLines, line)
 		}
 	}
-
-	fmt.Println(writer.String())
 
 	t.Run("first line is always the header with the version", func(t *testing.T) {
 		want := fmt.Sprintf("inkfem v%d.%d", str.Metadata.MajorVersion, str.Metadata.MinorVersion)
@@ -69,7 +66,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	t.Run("then go the materials", func(t *testing.T) {
 		var (
 			wantHeader          = "|materials| 1"
-			wantMaterialPattern = "unit_material -> 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+"
+			wantMaterialPattern = "'unit_material' -> 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+"
 		)
 
 		if got := gotLines[materiasOffset]; got != wantHeader {
@@ -83,14 +80,14 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	t.Run("then go the sections", func(t *testing.T) {
 		var (
 			wantHeader         = "|sections| 1"
-			wantSectionPattern = "unit_section -> 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+"
+			wantSectionPattern = "'unit_section' -> 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+"
 		)
 
 		if got := gotLines[sectionsOffset]; got != wantHeader {
 			t.Errorf("want '%s', got '%s'", wantHeader, got)
 		}
 		if matches, _ := regexp.MatchString(wantSectionPattern, gotLines[sectionsOffset+1]); !matches {
-			t.Errorf("Want material: %s", gotLines[sectionsOffset+1])
+			t.Errorf("Want section: %s", gotLines[sectionsOffset+1])
 		}
 	})
 

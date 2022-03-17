@@ -36,7 +36,7 @@ func MakeSection(name string, area, iStrong, iWeak, sStrong, sWeak float64) *Sec
 // preprocessed and solution file formats are affected.
 func (s *Section) String() string {
 	return fmt.Sprintf(
-		"%s -> %f %f %f %f %f",
+		"'%s' -> %f %f %f %f %f",
 		s.Name,
 		s.Area,
 		s.IStrong,
