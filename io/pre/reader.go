@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -18,17 +19,15 @@ var (
 )
 
 // Read parses a preprocessed structure from a file.
-// This function requires access to the original structure in order to fill in the details.
-func Read(st structure.Structure, reader io.Reader) *preprocess.Structure {
+func Read(reader io.Reader) *preprocess.Structure {
 	scanner := bufio.NewScanner(reader)
 	scanner.Split(bufio.ScanLines)
 
 	var (
 		metadata    = inkio.ParseMetadata(scanner)
 		numberOfDof = extractNumberOfDof(scanner)
-	)
-
-	var (
+		nodes       map[contracts.StrID]*structure.Node
+		// nodesDefined = false
 		line string
 	)
 
@@ -40,13 +39,18 @@ func Read(st structure.Structure, reader io.Reader) *preprocess.Structure {
 		}
 
 		switch {
-
+		case inkio.IsNodesHeader(line):
+			{
+				nodesCount := inkio.ExtractNodesCount(line)
+				nodes = inkio.ReadNodes(scanner, nodesCount)
+				// nodesDefined = true
+			}
 		}
 	}
 
 	return preprocess.MakeStructure(
 		metadata,
-		st.NodesById,
+		structure.MakeNodesById(nodes),
 		[]*preprocess.Element{},
 	).SetDofsCount(numberOfDof)
 }

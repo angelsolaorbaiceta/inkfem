@@ -44,8 +44,8 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	t.Run("then go the original nodes", func(t *testing.T) {
 		var (
 			wantHeader         = "|nodes| 2"
-			wantNodeOnePattern = "n1 -> 0(\\.[0]+)? 0(\\.[0]+)? { } | DOF: \\[6 7 8\\]"
-			wantNodeTwoPattern = "n2 -> 200(\\.[0]+)? 0(\\.[0]+)? { dx dy rz } | DOF: \\[0 1 2\\]"
+			wantNodeOnePattern = "n1 -> 0(\\.[0]+)? 0(\\.[0]+)? { } | \\[6 7 8\\]"
+			wantNodeTwoPattern = "n2 -> 200(\\.[0]+)? 0(\\.[0]+)? { dx dy rz } | \\[0 1 2\\]"
 		)
 
 		if got := gotLines[nodesOffset]; got != wantHeader {

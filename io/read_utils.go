@@ -65,3 +65,18 @@ func ensureParseFloat(stringValue string, context string) float64 {
 
 	return value
 }
+
+func ensureParseInt(stringValue string, context string) int {
+	value, err := strconv.Atoi(stringValue)
+	if err != nil {
+		panic(
+			fmt.Sprintf(
+				"Error reading %s: can't parse integer number from %s",
+				context,
+				stringValue,
+			),
+		)
+	}
+
+	return value
+}

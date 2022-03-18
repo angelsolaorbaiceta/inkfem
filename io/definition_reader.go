@@ -34,12 +34,12 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 		materialsDefined  = false
 		sectionsDefined   = false
 		loadsDefined      = false
-		nodes             *map[contracts.StrID]*structure.Node
+		nodes             map[contracts.StrID]*structure.Node
 		materials         *MaterialsByName
 		sections          *SectionsByName
 		concentratedLoads ConcLoadsById
 		distributedLoads  DistLoadsById
-		elements          *[]*structure.Element
+		elements          []*structure.Element
 	)
 
 	// First line must be "inkfem vM.m"
@@ -113,5 +113,5 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 		log.Fatal(err)
 	}
 
-	return structure.Make(metadata, *nodes, *elements)
+	return structure.Make(metadata, nodes, elements)
 }

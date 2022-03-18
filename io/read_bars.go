@@ -35,13 +35,13 @@ var elementDefinitionRegex = regexp.MustCompile(
 func readElements(
 	scanner *bufio.Scanner,
 	count int,
-	nodes *map[contracts.StrID]*structure.Node,
+	nodes map[contracts.StrID]*structure.Node,
 	materials *MaterialsByName,
 	sections *SectionsByName,
 	concentratedLoads *ConcLoadsById,
 	distributedLoads *DistLoadsById,
 	readerOptions ReaderOptions,
-) *[]*structure.Element {
+) []*structure.Element {
 	lines := ExtractDefinitionLines(scanner, count)
 	return deserializeElements(
 		lines,
@@ -56,13 +56,13 @@ func readElements(
 
 func deserializeElements(
 	lines []string,
-	nodes *map[contracts.StrID]*structure.Node,
+	nodes map[contracts.StrID]*structure.Node,
 	materials *MaterialsByName,
 	sections *SectionsByName,
 	concentratedLoads *ConcLoadsById,
 	distributedLoads *DistLoadsById,
 	readerOptions ReaderOptions,
-) *[]*structure.Element {
+) []*structure.Element {
 	elements := make([]*structure.Element, len(lines))
 	for i, line := range lines {
 		elements[i] = deserializeElement(
@@ -76,12 +76,12 @@ func deserializeElements(
 		)
 	}
 
-	return &elements
+	return elements
 }
 
 func deserializeElement(
 	definition string,
-	nodes *map[contracts.StrID]*structure.Node,
+	nodes map[contracts.StrID]*structure.Node,
 	materials *MaterialsByName,
 	sections *SectionsByName,
 	concentratedLoads *ConcLoadsById,
@@ -144,11 +144,11 @@ func readElementComponents(definition string) *elementComponents {
 
 func extractNodesForElement(
 	components *elementComponents,
-	nodes *map[contracts.StrID]*structure.Node,
+	nodes map[contracts.StrID]*structure.Node,
 ) (startNode, endNode *structure.Node) {
 	var ok bool
 
-	startNode, ok = (*nodes)[components.startNodeID]
+	startNode, ok = nodes[components.startNodeID]
 	if !ok {
 		panic(
 			fmt.Sprintf(
@@ -157,7 +157,7 @@ func extractNodesForElement(
 		)
 	}
 
-	endNode, ok = (*nodes)[components.endNodeID]
+	endNode, ok = nodes[components.endNodeID]
 	if !ok {
 		panic(
 			fmt.Sprintf(

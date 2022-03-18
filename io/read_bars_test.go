@@ -38,7 +38,7 @@ func TestDeserializeBars(t *testing.T) {
 
 		elements = deserializeElements(
 			lines,
-			&nodes,
+			nodes,
 			&materials,
 			&sections,
 			&concentratedLoads,
@@ -80,8 +80,8 @@ func TestDeserializeBars(t *testing.T) {
 	)
 
 	var (
-		elOne = (*elements)[0]
-		elTwo = (*elements)[1]
+		elOne = (elements)[0]
+		elTwo = (elements)[1]
 	)
 
 	t.Run("Elements read", func(t *testing.T) {

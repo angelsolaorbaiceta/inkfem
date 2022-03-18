@@ -45,16 +45,16 @@ func TestDeserializeNodes(t *testing.T) {
 		nodeThree = structure.MakeNode("3", g2d.MakePoint(70.1, 80.2), &structure.NilConstraint)
 	)
 
-	if size := len(*nodes); size != 3 {
+	if size := len(nodes); size != 3 {
 		t.Errorf("Expected 3 nodes, but got %d", size)
 	}
-	if got := (*nodes)["1"]; !got.Equals(nodeOne) {
+	if got := (nodes)["1"]; !got.Equals(nodeOne) {
 		t.Errorf("Expected node %v, but got %v", nodeOne, got)
 	}
-	if got := (*nodes)["2"]; !got.Equals(nodeTwo) {
+	if got := (nodes)["2"]; !got.Equals(nodeTwo) {
 		t.Errorf("Expected node %v, but got %v", nodeTwo, got)
 	}
-	if got := (*nodes)["3"]; !got.Equals(nodeThree) {
+	if got := (nodes)["3"]; !got.Equals(nodeThree) {
 		t.Errorf("Expected node %v, but got %v", nodeThree, got)
 	}
 }
