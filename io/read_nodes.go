@@ -16,7 +16,7 @@ var nodeDefinitionRegex = regexp.MustCompile(
 		floatGroupExpr("x") + spaceExpr +
 		floatGroupExpr("y") + spaceExpr +
 		constraintGroupExpr("constraints") + optionalSpaceExpr +
-		`(?:\| \[(\d+ \d+ \d+)\])?` + optionalSpaceExpr +
+		`(?:\| \[(?P<dof>\d+ \d+ \d+)\])?` + optionalSpaceExpr +
 		"$",
 )
 
@@ -46,12 +46,12 @@ func deserializeNode(definition string) *structure.Node {
 	}
 
 	var (
-		groups = nodeDefinitionRegex.FindStringSubmatch(definition)
+		groups = ExtractNamedGroups(nodeDefinitionRegex, definition) //nodeDefinitionRegex.FindStringSubmatch(definition)
 
-		id                 = groups[1]
-		x                  = ensureParseFloat(groups[2], "node x position")
-		y                  = ensureParseFloat(groups[3], "node y position")
-		externalConstraint = groups[4]
+		id                 = groups["id"]
+		x                  = ensureParseFloat(groups["x"], "node x position")
+		y                  = ensureParseFloat(groups["y"], "node y position")
+		externalConstraint = groups["constraints"]
 
 		node = structure.MakeNodeAtPosition(
 			id,
@@ -60,12 +60,12 @@ func deserializeNode(definition string) *structure.Node {
 		)
 	)
 
-	if len(groups) > 5 {
+	if dofString, hasDof := groups["dof"]; hasDof {
 		var (
-			dofsAsStrings = strings.Fields(groups[5])
-			dof1          = ensureParseInt(dofsAsStrings[0], "node dx DOF")
-			dof2          = ensureParseInt(dofsAsStrings[1], "node dy DOF")
-			dof3          = ensureParseInt(dofsAsStrings[2], "node rz DOF")
+			dofs = strings.Fields(dofString)
+			dof1 = ensureParseInt(dofs[0], "node dx DOF")
+			dof2 = ensureParseInt(dofs[1], "node dy DOF")
+			dof3 = ensureParseInt(dofs[2], "node rz DOF")
 		)
 
 		node.SetDegreesOfFreedomNum(dof1, dof2, dof3)

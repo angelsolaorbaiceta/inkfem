@@ -7,6 +7,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
+// TODO: test with DOF
 func TestDeserializeNode(t *testing.T) {
 	t.Run("deserializes the node", func(t *testing.T) {
 		var (

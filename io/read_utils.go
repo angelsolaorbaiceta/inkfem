@@ -3,6 +3,7 @@ package io
 import (
 	"bufio"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -49,6 +50,23 @@ func ExtractDefinitionLines(scanner *bufio.Scanner, count int) []string {
 	}
 
 	return lines
+}
+
+func ExtractNamedGroups(re *regexp.Regexp, str string) map[string]string {
+	var (
+		matches = re.FindStringSubmatch(str)
+		result  = make(map[string]string)
+	)
+
+	for i, name := range re.SubexpNames() {
+		if i == 0 || len(matches[i]) == 0 {
+			continue
+		}
+
+		result[name] = matches[i]
+	}
+
+	return result
 }
 
 func ensureParseFloat(stringValue string, context string) float64 {
