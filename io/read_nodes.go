@@ -18,10 +18,10 @@ const (
 // <id> -> <xCoord> <yCoord> {[dx dy rz]} <| DOF: [0 1 2]>
 var nodeDefinitionRegex = regexp.MustCompile(
 	"^" + IdGrpExpr + ArrowExpr +
-		FloatGroupExpr(xPosGroupName) + spaceExpr +
-		FloatGroupExpr(yPosGroupName) + spaceExpr +
-		ConstraintGroupExpr(constraintsGroupName) + optionalSpaceExpr +
-		DofGroup + optionalSpaceExpr + "$",
+		FloatGroupExpr(xPosGroupName) + SpaceExpr +
+		FloatGroupExpr(yPosGroupName) + SpaceExpr +
+		ConstraintGroupExpr(constraintsGroupName) + OptionalSpaceExpr +
+		DofGrpExpr + OptionalSpaceExpr + "$",
 )
 
 // ReadNodes reads and parses "count" nodes from the lines in the lines reader.
@@ -64,7 +64,7 @@ func deserializeNode(definition string) *structure.Node {
 		)
 	)
 
-	if dofString, hasDof := groups[DofGroupName]; hasDof {
+	if dofString, hasDof := groups[DofGrpName]; hasDof {
 		var (
 			dofs = strings.Fields(dofString)
 			dof1 = ensureParseInt(dofs[0], "node dx DOF")

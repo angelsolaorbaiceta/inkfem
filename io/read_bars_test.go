@@ -37,17 +37,11 @@ func TestDeserializeBars(t *testing.T) {
 		distributedLoads = structure.DistLoadsById{}
 		data             = &structure.StructureData{
 			Nodes:             nodes,
-			Materials:         &materials,
-			Sections:          &sections,
-			ConcentratedLoads: &concentratedLoads,
-			DistributedLoads:  &distributedLoads,
+			Materials:         materials,
+			Sections:          sections,
+			ConcentratedLoads: concentratedLoads,
+			DistributedLoads:  distributedLoads,
 		}
-
-		elements = deserializeBars(
-			lines,
-			data,
-			ReaderOptions{ShouldIncludeOwnWeight: true},
-		)
 
 		wantElOne = structure.MakeElementBuilder(
 			"1",
@@ -83,8 +77,8 @@ func TestDeserializeBars(t *testing.T) {
 	)
 
 	var (
-		elOne = (elements)[0]
-		elTwo = (elements)[1]
+		elOne = DeserializeBar(lines[0], data, ReaderOptions{ShouldIncludeOwnWeight: true})
+		elTwo = DeserializeBar(lines[1], data, ReaderOptions{ShouldIncludeOwnWeight: true})
 	)
 
 	t.Run("Elements read", func(t *testing.T) {

@@ -10,18 +10,18 @@ import (
 // '<name>' -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
 var sectionDefinitionRegex = regexp.MustCompile(
 	"^" + NameGrpExpr + ArrowExpr +
-		FloatGroupExpr("area") + spaceExpr +
-		FloatGroupExpr("istrong") + spaceExpr +
-		FloatGroupExpr("iweak") + spaceExpr +
-		FloatGroupExpr("sstrong") + spaceExpr +
-		FloatGroupExpr("sweak") + optionalSpaceExpr + "$")
+		FloatGroupExpr("area") + SpaceExpr +
+		FloatGroupExpr("istrong") + SpaceExpr +
+		FloatGroupExpr("iweak") + SpaceExpr +
+		FloatGroupExpr("sstrong") + SpaceExpr +
+		FloatGroupExpr("sweak") + OptionalSpaceExpr + "$")
 
-func ReadSections(linesReader *LinesReader, count int) *map[string]*structure.Section {
+func ReadSections(linesReader *LinesReader, count int) map[string]*structure.Section {
 	lines := linesReader.GetNextLines(count)
 	return deserializeSectionsByName(lines)
 }
 
-func deserializeSectionsByName(lines []string) *map[string]*structure.Section {
+func deserializeSectionsByName(lines []string) map[string]*structure.Section {
 	var (
 		section  *structure.Section
 		sections = make(map[string]*structure.Section)
@@ -32,7 +32,7 @@ func deserializeSectionsByName(lines []string) *map[string]*structure.Section {
 		sections[section.Name] = section
 	}
 
-	return &sections
+	return sections
 }
 
 func deserializeSection(definition string) *structure.Section {

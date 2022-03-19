@@ -1,13 +1,12 @@
 package io
 
 import (
-	"fmt"
 	"regexp"
 
-	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
+// TODO: use group names instead
 const (
 	idIndex = iota + 1
 	startNodeIDIndex
@@ -18,15 +17,25 @@ const (
 	sectionNameIndex
 )
 
+const (
+	startNodeGroupName = "start_node"
+	endNodeGroupName   = "end_node"
+	startLinkGroupName = "start_link"
+	endLinkGroupName   = "end_link"
+	materialGroupName  = "material"
+	sectionGroupName   = "section"
+)
+
 // <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section>
 var elementDefinitionRegex = regexp.MustCompile(
 	"^" + IdGrpExpr + ArrowExpr +
-		IdGroupExpr("start_node") + optionalSpaceExpr +
-		ConstraintGroupExpr("start_link") + spaceExpr +
-		IdGroupExpr("end_node") + optionalSpaceExpr +
-		ConstraintGroupExpr("end_link") + spaceExpr +
-		NameGroupExpr("material") + spaceExpr +
-		NameGroupExpr("section") + optionalSpaceExpr + "$")
+		IdGroupExpr(startNodeGroupName) + OptionalSpaceExpr +
+		ConstraintGroupExpr(startLinkGroupName) + SpaceExpr +
+		IdGroupExpr(endNodeGroupName) + OptionalSpaceExpr +
+		ConstraintGroupExpr(endLinkGroupName) + SpaceExpr +
+		NameGroupExpr(materialGroupName) + SpaceExpr +
+		NameGroupExpr(sectionGroupName) + OptionalSpaceExpr + "$",
+)
 
 func readBars(
 	linesReader *LinesReader,
@@ -34,141 +43,48 @@ func readBars(
 	data *structure.StructureData,
 	readerOptions ReaderOptions,
 ) []*structure.Element {
-	lines := linesReader.GetNextLines(count)
-	return deserializeBars(lines, data, readerOptions)
-}
+	var (
+		lines = linesReader.GetNextLines(count)
+		bars  = make([]*structure.Element, count)
+	)
 
-func deserializeBars(
-	lines []string,
-	data *structure.StructureData,
-	readerOptions ReaderOptions,
-) []*structure.Element {
-	elements := make([]*structure.Element, len(lines))
 	for i, line := range lines {
-		elements[i] = deserializeElement(line, data, readerOptions)
+		bars[i] = DeserializeBar(line, data, readerOptions)
 	}
 
-	return elements
+	return bars
 }
 
-func deserializeElement(
-	definition string,
+// DeserializeBar parses a bar from the definition line and given the nodes, material, section
+// and loads to use for its creation.
+// Using the reader options, the bar can be added loads for its own weight.
+func DeserializeBar(
+	line string,
 	data *structure.StructureData,
 	readerOptions ReaderOptions,
 ) *structure.Element {
 	var (
-		components         = readElementComponents(definition)
-		startNode, endNode = extractNodesForElement(components, data.Nodes)
-		material           = extractMaterialForElement(components, data.Materials)
-		section            = extractSectionForElement(components, data.Sections)
+		groups    = ExtractNamedGroups(elementDefinitionRegex, line)
+		id        = groups[IdGrpName]
+		startNode = data.Nodes[groups[startNodeGroupName]]
+		startLink = constraintFromString(groups[startLinkGroupName])
+		endNode   = data.Nodes[groups[endNodeGroupName]]
+		endLink   = constraintFromString(groups[endLinkGroupName])
+		material  = data.Materials[groups[materialGroupName]]
+		section   = data.Sections[groups[sectionGroupName]]
 	)
 
-	builder := structure.MakeElementBuilder(
-		components.id,
-	).WithStartNode(
-		startNode, components.startLink,
-	).WithEndNode(
-		endNode, components.endLink,
-	).WithMaterial(
-		material,
-	).WithSection(
-		section,
-	).AddConcentratedLoads(
-		(*data.ConcentratedLoads)[components.id],
-	).AddDistributedLoads(
-		(*data.DistributedLoads)[components.id],
-	)
+	builder := structure.MakeElementBuilder(id).
+		WithStartNode(startNode, startLink).
+		WithEndNode(endNode, endLink).
+		WithMaterial(material).
+		WithSection(section).
+		AddConcentratedLoads(data.ConcentratedLoads[id]).
+		AddDistributedLoads(data.DistributedLoads[id])
 
 	if readerOptions.ShouldIncludeOwnWeight {
 		builder.IncludeOwnWeightLoad()
 	}
 
 	return builder.Build()
-}
-
-type elementComponents struct {
-	id, startNodeID, endNodeID contracts.StrID
-	materialName, sectionName  string
-	startLink, endLink         *structure.Constraint
-}
-
-func readElementComponents(definition string) *elementComponents {
-	if !elementDefinitionRegex.MatchString(definition) {
-		panic(fmt.Sprintf("Found element with wrong format: '%s'", definition))
-	}
-
-	groups := elementDefinitionRegex.FindStringSubmatch(definition)
-
-	return &elementComponents{
-		id:           groups[idIndex],
-		startNodeID:  groups[startNodeIDIndex],
-		endNodeID:    groups[endNodeIDIndex],
-		materialName: groups[materialNameIndex],
-		sectionName:  groups[sectionNameIndex],
-		startLink:    constraintFromString(groups[startLinkIndex]),
-		endLink:      constraintFromString(groups[endLinkIndex]),
-	}
-}
-
-func extractNodesForElement(
-	components *elementComponents,
-	nodes map[contracts.StrID]*structure.Node,
-) (startNode, endNode *structure.Node) {
-	var ok bool
-
-	startNode, ok = nodes[components.startNodeID]
-	if !ok {
-		panic(
-			fmt.Sprintf(
-				"Element %s with unknown start node id: %s", components.id, components.startNodeID,
-			),
-		)
-	}
-
-	endNode, ok = nodes[components.endNodeID]
-	if !ok {
-		panic(
-			fmt.Sprintf(
-				"Element %s with unknown end node id: %s", components.id, components.endNodeID,
-			),
-		)
-	}
-
-	return
-}
-
-func extractMaterialForElement(
-	components *elementComponents,
-	materials *map[string]*structure.Material,
-) *structure.Material {
-	material, ok := (*materials)[components.materialName]
-	if !ok {
-		panic(
-			fmt.Sprintf(
-				"Element %s: couldn't find material with name '%s'",
-				components.id,
-				components.materialName,
-			),
-		)
-	}
-
-	return material
-}
-
-func extractSectionForElement(
-	components *elementComponents,
-	sections *map[string]*structure.Section,
-) *structure.Section {
-	section, ok := (*sections)[components.sectionName]
-	if !ok {
-		panic(
-			fmt.Sprintf(
-				"Element %s: couldn't find section with name '%s'",
-				components.id,
-				components.sectionName,
-			),
-		)
-	}
-
-	return section
 }

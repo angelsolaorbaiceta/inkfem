@@ -3,24 +3,26 @@ package io
 import "fmt"
 
 const (
-	floatExpr         = `[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?`
-	validNameExpr     = `[\w\-_ ]+`
-	validIDExpr       = `[\w\-_]+`
-	constraintExpr    = `{[drxyz ]*}`
-	optionalSpaceExpr = `\s*`
-	spaceExpr         = `\s+`
+	floatExpr      = `[+-]?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?`
+	validNameExpr  = `[\w\-_ ]+`
+	validIDExpr    = `[\w\-_]+`
+	constraintExpr = `{[drxyz ]*}`
 )
 
 const (
-	NameGrpExpr             = `'(?P<name>` + validNameExpr + `)'`
-	IdGrpExpr               = `(?P<id>` + validIDExpr + `)`
+	OptionalSpaceExpr       = `\s*`
+	SpaceExpr               = `\s+`
+	NameGrpName             = "name"
+	NameGrpExpr             = `'(?P<` + NameGrpName + `>` + validNameExpr + `)'`
+	IdGrpName               = "id"
+	IdGrpExpr               = `(?P<` + IdGrpName + `>` + validIDExpr + `)`
 	ArrowExpr               = `\s*->\s*`
 	LoadTermExpr            = `(?P<term>[fm]{1}[xyz]{1})\s+`
 	LoadElementID           = `(?P<element>` + validIDExpr + `)\s+`
 	DistributedLoadRefExpr  = `(?P<ref>[lg]{1})d\s+`
 	ConcentratedLoadRefExpr = `(?P<ref>[lg]{1})c\s+`
-	DofGroupName            = "dof"
-	DofGroup                = `(?:\| \[(?P<` + DofGroupName + `>\d+ \d+ \d+)\])?`
+	DofGrpName              = "dof"
+	DofGrpExpr              = `(?:\| \[(?P<` + DofGrpName + `>\d+ \d+ \d+)\])?`
 )
 
 func FloatGroupExpr(groupName string) string {

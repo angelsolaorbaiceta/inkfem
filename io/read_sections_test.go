@@ -48,10 +48,10 @@ func TestDeserializeSections(t *testing.T) {
 		wantSecTwo = structure.MakeSection(secTwoName, 10.1, 20.2, 30.3, 40.4, 50.5)
 	)
 
-	if got := (*sectionsByName)[secOneName]; !got.Equals(wantSecOne) {
+	if got := sectionsByName[secOneName]; !got.Equals(wantSecOne) {
 		t.Errorf("Expected section %v, got %v", wantSecOne, got)
 	}
-	if got := (*sectionsByName)[secTwoName]; !got.Equals(wantSecTwo) {
+	if got := sectionsByName[secTwoName]; !got.Equals(wantSecTwo) {
 		t.Errorf("Expected section %v, got %v", wantSecTwo, got)
 	}
 }

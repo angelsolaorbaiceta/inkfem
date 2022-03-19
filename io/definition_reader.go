@@ -34,8 +34,8 @@ func parseStructure(linesReader *LinesReader, options ReaderOptions) *structure.
 		sectionsDefined   = false
 		loadsDefined      = false
 		nodes             map[contracts.StrID]*structure.Node
-		materials         *structure.MaterialsByName
-		sections          *structure.SectionsByName
+		materials         structure.MaterialsByName
+		sections          structure.SectionsByName
 		concentratedLoads structure.ConcLoadsById
 		distributedLoads  structure.DistLoadsById
 		bars              []*structure.Element
@@ -90,8 +90,8 @@ func parseStructure(linesReader *LinesReader, options ReaderOptions) *structure.
 					Nodes:             nodes,
 					Materials:         materials,
 					Sections:          sections,
-					ConcentratedLoads: &concentratedLoads,
-					DistributedLoads:  &distributedLoads,
+					ConcentratedLoads: concentratedLoads,
+					DistributedLoads:  distributedLoads,
 				}
 				bars = readBars(linesReader, barsCount, data, options)
 			}

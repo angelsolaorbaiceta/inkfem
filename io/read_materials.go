@@ -10,19 +10,19 @@ import (
 // '<name>' -> <density> <young> <shear> <poisson> <yield> <ultimate>
 var materialDefinitionRegex = regexp.MustCompile(
 	"^" + NameGrpExpr + ArrowExpr +
-		FloatGroupExpr("density") + spaceExpr +
-		FloatGroupExpr("young") + spaceExpr +
-		FloatGroupExpr("shear") + spaceExpr +
-		FloatGroupExpr("poisson") + spaceExpr +
-		FloatGroupExpr("yield") + spaceExpr +
-		FloatGroupExpr("ultimate") + optionalSpaceExpr + "$")
+		FloatGroupExpr("density") + SpaceExpr +
+		FloatGroupExpr("young") + SpaceExpr +
+		FloatGroupExpr("shear") + SpaceExpr +
+		FloatGroupExpr("poisson") + SpaceExpr +
+		FloatGroupExpr("yield") + SpaceExpr +
+		FloatGroupExpr("ultimate") + OptionalSpaceExpr + "$")
 
-func ReadMaterials(linesReader *LinesReader, count int) *map[string]*structure.Material {
+func ReadMaterials(linesReader *LinesReader, count int) map[string]*structure.Material {
 	lines := linesReader.GetNextLines(count)
 	return deserializeMaterialsByName(lines)
 }
 
-func deserializeMaterialsByName(lines []string) *map[string]*structure.Material {
+func deserializeMaterialsByName(lines []string) map[string]*structure.Material {
 	var (
 		material  *structure.Material
 		materials = make(map[string]*structure.Material)
@@ -33,7 +33,7 @@ func deserializeMaterialsByName(lines []string) *map[string]*structure.Material 
 		materials[material.Name] = material
 	}
 
-	return &materials
+	return materials
 }
 
 func deserializeMaterial(definition string) *structure.Material {

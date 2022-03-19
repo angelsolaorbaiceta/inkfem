@@ -26,7 +26,14 @@ func lineIsEmpty(line string) bool {
 }
 
 // ExtractNamedGroups returns a map of matches by group id.
+// Panics if the given string doesn't match the regular expression.
 func ExtractNamedGroups(re *regexp.Regexp, str string) map[string]string {
+	if !re.MatchString(str) {
+		panic(
+			fmt.Sprintf("'%s' doesn't match expression: %s", str, re),
+		)
+	}
+
 	var (
 		matches = re.FindStringSubmatch(str)
 		result  = make(map[string]string)

@@ -6,20 +6,25 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-// <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section>
-// var elementDefinitionRegex = regexp.MustCompile(
-// 	"^" + idGrpExpr + arrowExpr +
-// 		idGroupExpr("start_node") + optionalSpaceExpr +
-// 		constraintGroupExpr("start_link") + spaceExpr +
-// 		idGroupExpr("end_node") + optionalSpaceExpr +
-// 		constraintGroupExpr("end_link") + spaceExpr +
-// 		nameGroupExpr("material") + spaceExpr +
-// 		nameGroupExpr("section") + optionalSpaceExpr + "$")
-
 func readBars(
 	linesReader *inkio.LinesReader,
 	count int,
 	data *structure.StructureData,
 ) []*preprocess.Element {
-	return []*preprocess.Element{}
+	var (
+		lines = linesReader.GetNextLines(count)
+		bars  = make([]*preprocess.Element, count)
+	)
+
+	for i, line := range lines {
+		bars[i] = deserializeBar(line, data)
+	}
+
+	return bars
+}
+
+func deserializeBar(line string, data *structure.StructureData) *preprocess.Element {
+	originalElement := inkio.DeserializeBar(line, data, inkio.ReaderOptions{ShouldIncludeOwnWeight: false})
+
+	return preprocess.MakeElement(originalElement, []*preprocess.Node{})
 }

@@ -24,8 +24,8 @@ func Read(reader io.Reader) *preprocess.Structure {
 		metadata         = inkio.ParseMetadata(linesReader)
 		numberOfDof      = extractNumberOfDof(linesReader)
 		nodes            map[contracts.StrID]*structure.Node
-		materials        *structure.MaterialsByName
-		sections         *structure.SectionsByName
+		materials        structure.MaterialsByName
+		sections         structure.SectionsByName
 		bars             []*preprocess.Element
 		nodesDefined     = false
 		materialsDefined = false
@@ -76,8 +76,8 @@ func Read(reader io.Reader) *preprocess.Structure {
 					Nodes:             nodes,
 					Materials:         materials,
 					Sections:          sections,
-					ConcentratedLoads: &structure.ConcLoadsById{},
-					DistributedLoads:  &structure.DistLoadsById{},
+					ConcentratedLoads: structure.ConcLoadsById{},
+					DistributedLoads:  structure.DistLoadsById{},
 				}
 				bars = readBars(linesReader, barsCount, data)
 			}

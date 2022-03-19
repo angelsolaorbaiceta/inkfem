@@ -13,8 +13,8 @@ type DistLoadsById = map[contracts.StrID][]*load.DistributedLoad
 
 type StructureData struct {
 	Nodes             NodesByIdMap
-	Materials         *MaterialsByName
-	Sections          *SectionsByName
-	ConcentratedLoads *ConcLoadsById
-	DistributedLoads  *DistLoadsById
+	Materials         MaterialsByName
+	Sections          SectionsByName
+	ConcentratedLoads ConcLoadsById
+	DistributedLoads  DistLoadsById
 }

@@ -15,18 +15,18 @@ var (
 	distLoadDefinitionRegex = regexp.MustCompile(
 		"^" + LoadTermExpr + DistributedLoadRefExpr +
 			LoadElementID +
-			FloatGroupExpr("t_start") + spaceExpr +
-			FloatGroupExpr("val_start") + spaceExpr +
-			FloatGroupExpr("t_end") + spaceExpr +
-			FloatGroupExpr("val_end") + optionalSpaceExpr + "$",
+			FloatGroupExpr("t_start") + SpaceExpr +
+			FloatGroupExpr("val_start") + SpaceExpr +
+			FloatGroupExpr("t_end") + SpaceExpr +
+			FloatGroupExpr("val_end") + OptionalSpaceExpr + "$",
 	)
 
 	// <term> <reference> <elementId> <t> <value>
 	concLoadDefinitionRegex = regexp.MustCompile(
 		"^" + LoadTermExpr + ConcentratedLoadRefExpr +
 			LoadElementID +
-			FloatGroupExpr("t") + spaceExpr +
-			FloatGroupExpr("val") + optionalSpaceExpr + "$",
+			FloatGroupExpr("t") + SpaceExpr +
+			FloatGroupExpr("val") + OptionalSpaceExpr + "$",
 	)
 )
 
