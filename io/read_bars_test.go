@@ -26,7 +26,7 @@ func TestDeserializeBars(t *testing.T) {
 		sections = map[string]*structure.Section{
 			"sec": structure.MakeSection("sec", 10.1, 20.2, 30.3, 40.4, 50.5),
 		}
-		concentratedLoads = ConcLoadsById{
+		concentratedLoads = structure.ConcLoadsById{
 			"1": {load.MakeConcentrated(load.FY, true, nums.MinT, -50)},
 			"2": {load.MakeConcentrated(load.MZ, true, nums.MaxT, -30)},
 		}
@@ -34,15 +34,18 @@ func TestDeserializeBars(t *testing.T) {
 		ownWeightLoad    = []*load.DistributedLoad{
 			load.MakeDistributed(load.FY, false, nums.MinT, ownWeightLoadVal, nums.MaxT, ownWeightLoadVal),
 		}
-		distributedLoads = DistLoadsById{}
+		distributedLoads = structure.DistLoadsById{}
+		data             = &structure.StructureData{
+			Nodes:             nodes,
+			Materials:         &materials,
+			Sections:          &sections,
+			ConcentratedLoads: &concentratedLoads,
+			DistributedLoads:  &distributedLoads,
+		}
 
-		elements = deserializeElements(
+		elements = deserializeBars(
 			lines,
-			nodes,
-			&materials,
-			&sections,
-			&concentratedLoads,
-			&distributedLoads,
+			data,
 			ReaderOptions{ShouldIncludeOwnWeight: true},
 		)
 

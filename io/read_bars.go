@@ -18,9 +18,6 @@ const (
 	sectionNameIndex
 )
 
-type MaterialsByName = map[string]*structure.Material
-type SectionsByName = map[string]*structure.Section
-
 // <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section>
 var elementDefinitionRegex = regexp.MustCompile(
 	"^" + idGrpExpr + arrowExpr +
@@ -31,48 +28,24 @@ var elementDefinitionRegex = regexp.MustCompile(
 		nameGroupExpr("material") + spaceExpr +
 		nameGroupExpr("section") + optionalSpaceExpr + "$")
 
-func readElements(
+func readBars(
 	linesReader *LinesReader,
 	count int,
-	nodes map[contracts.StrID]*structure.Node,
-	materials *MaterialsByName,
-	sections *SectionsByName,
-	concentratedLoads *ConcLoadsById,
-	distributedLoads *DistLoadsById,
+	data *structure.StructureData,
 	readerOptions ReaderOptions,
 ) []*structure.Element {
 	lines := linesReader.GetNextLines(count)
-	return deserializeElements(
-		lines,
-		nodes,
-		materials,
-		sections,
-		concentratedLoads,
-		distributedLoads,
-		readerOptions,
-	)
+	return deserializeBars(lines, data, readerOptions)
 }
 
-func deserializeElements(
+func deserializeBars(
 	lines []string,
-	nodes map[contracts.StrID]*structure.Node,
-	materials *MaterialsByName,
-	sections *SectionsByName,
-	concentratedLoads *ConcLoadsById,
-	distributedLoads *DistLoadsById,
+	data *structure.StructureData,
 	readerOptions ReaderOptions,
 ) []*structure.Element {
 	elements := make([]*structure.Element, len(lines))
 	for i, line := range lines {
-		elements[i] = deserializeElement(
-			line,
-			nodes,
-			materials,
-			sections,
-			concentratedLoads,
-			distributedLoads,
-			readerOptions,
-		)
+		elements[i] = deserializeElement(line, data, readerOptions)
 	}
 
 	return elements
@@ -80,18 +53,14 @@ func deserializeElements(
 
 func deserializeElement(
 	definition string,
-	nodes map[contracts.StrID]*structure.Node,
-	materials *MaterialsByName,
-	sections *SectionsByName,
-	concentratedLoads *ConcLoadsById,
-	distributedLoads *DistLoadsById,
+	data *structure.StructureData,
 	readerOptions ReaderOptions,
 ) *structure.Element {
 	var (
 		components         = readElementComponents(definition)
-		startNode, endNode = extractNodesForElement(components, nodes)
-		material           = extractMaterialForElement(components, materials)
-		section            = extractSectionForElement(components, sections)
+		startNode, endNode = extractNodesForElement(components, data.Nodes)
+		material           = extractMaterialForElement(components, data.Materials)
+		section            = extractSectionForElement(components, data.Sections)
 	)
 
 	builder := structure.MakeElementBuilder(
@@ -105,9 +74,9 @@ func deserializeElement(
 	).WithSection(
 		section,
 	).AddConcentratedLoads(
-		(*concentratedLoads)[components.id],
+		(*data.ConcentratedLoads)[components.id],
 	).AddDistributedLoads(
-		(*distributedLoads)[components.id],
+		(*data.DistributedLoads)[components.id],
 	)
 
 	if readerOptions.ShouldIncludeOwnWeight {

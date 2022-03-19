@@ -30,13 +30,31 @@ func TestRead(t *testing.T) {
 		}
 	})
 
-	t.Run("parses the ndoes", func(t *testing.T) {
+	t.Run("parses the nodes", func(t *testing.T) {
 		var (
 			wantN1 = wantStr.GetNodeById("n1")
+			wantN2 = wantStr.GetNodeById("n2")
 		)
 
 		if got := str.GetNodeById("n1"); !got.Equals(wantN1) {
 			t.Errorf("Want %v, got %v", wantN1, got)
 		}
+		if got := str.GetNodeById("n2"); !got.Equals(wantN2) {
+			t.Errorf("Want %v, got %v", wantN2, got)
+		}
 	})
+
+	// t.Run("parses the materials", func(t *testing.T) {
+	// 	wantMaterial := structure.MakeUnitMaterial()
+
+	// 	if str.MaterialsCount() != 1 {
+	// 		t.Errorf("Want one material")
+	// 	}
+
+	// 	if got := str.GetMaterialsByName()[wantMaterial.Name]; !got.Equals(wantMaterial) {
+	// 		t.Errorf("Want %v, got %v", wantMaterial, got)
+	// 	}
+	// })
+
+	t.Run("parses the bars", func(t *testing.T) {})
 }

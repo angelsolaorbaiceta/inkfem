@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
+	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
@@ -29,21 +30,18 @@ var (
 	)
 )
 
-type ConcLoadsById = map[contracts.StrID][]*load.ConcentratedLoad
-type DistLoadsById = map[contracts.StrID][]*load.DistributedLoad
-
-func readLoads(linesReader *LinesReader, count int) (ConcLoadsById, DistLoadsById) {
+func readLoads(linesReader *LinesReader, count int) (structure.ConcLoadsById, structure.DistLoadsById) {
 	lines := linesReader.GetNextLines(count)
 	return deserializeLoadsByElementID(lines)
 }
 
-func deserializeLoadsByElementID(lines []string) (ConcLoadsById, DistLoadsById) {
+func deserializeLoadsByElementID(lines []string) (structure.ConcLoadsById, structure.DistLoadsById) {
 	var (
 		elementID        contracts.StrID
 		concentratedLoad *load.ConcentratedLoad
 		distributedLoad  *load.DistributedLoad
-		concentrated     = make(ConcLoadsById)
-		distributed      = make(DistLoadsById)
+		concentrated     = make(structure.ConcLoadsById)
+		distributed      = make(structure.DistLoadsById)
 	)
 
 	for _, line := range lines {

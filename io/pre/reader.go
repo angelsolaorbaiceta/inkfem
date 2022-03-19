@@ -19,15 +19,18 @@ var (
 // Read parses a preprocessed structure from a file.
 func Read(reader io.Reader) *preprocess.Structure {
 	linesReader := inkio.MakeLinesReader(reader)
-	// scanner := bufio.NewScanner(reader)
-	// scanner.Split(bufio.ScanLines)
 
 	var (
-		metadata    = inkio.ParseMetadata(linesReader)
-		numberOfDof = extractNumberOfDof(linesReader)
-		nodes       map[contracts.StrID]*structure.Node
-		// nodesDefined = false
-		line string
+		metadata         = inkio.ParseMetadata(linesReader)
+		numberOfDof      = extractNumberOfDof(linesReader)
+		nodes            map[contracts.StrID]*structure.Node
+		materials        *structure.MaterialsByName
+		sections         *structure.SectionsByName
+		bars             []*preprocess.Element
+		nodesDefined     = false
+		materialsDefined = false
+		sectionsDefined  = false
+		line             string
 	)
 
 	for linesReader.ReadNext() {
@@ -42,15 +45,50 @@ func Read(reader io.Reader) *preprocess.Structure {
 			{
 				nodesCount := inkio.ExtractNodesCount(line)
 				nodes = inkio.ReadNodes(linesReader, nodesCount)
-				// nodesDefined = true
+				nodesDefined = true
+			}
+
+		case inkio.IsMaterialsHeader(line):
+			{
+				materialsCount := inkio.ExtractMaterialsCount(line)
+				materials = inkio.ReadMaterials(linesReader, materialsCount)
+				materialsDefined = true
+			}
+
+		case inkio.IsSectionsHeader(line):
+			{
+				sectionsCount := inkio.ExtractSectionsCount(line)
+				sections = inkio.ReadSections(linesReader, sectionsCount)
+				sectionsDefined = true
+			}
+
+		case inkio.IsBarsHeader(line):
+			{
+				if !(nodesDefined && materialsDefined && sectionsDefined) {
+					panic(
+						"Can't' parse the bars if some of the following isn't already parsed:" +
+							" nodes, materials and sections",
+					)
+				}
+
+				barsCount := inkio.ExtractBarsCount(line)
+				data := &structure.StructureData{
+					Nodes:             nodes,
+					Materials:         materials,
+					Sections:          sections,
+					ConcentratedLoads: &structure.ConcLoadsById{},
+					DistributedLoads:  &structure.DistLoadsById{},
+				}
+				bars = readBars(linesReader, barsCount, data)
 			}
 		}
+
 	}
 
 	return preprocess.MakeStructure(
 		metadata,
 		structure.MakeNodesById(nodes),
-		[]*preprocess.Element{},
+		bars,
 	).SetDofsCount(numberOfDof)
 }
 

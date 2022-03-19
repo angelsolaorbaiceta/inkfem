@@ -13,6 +13,8 @@ import (
 //
 // The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm' are the major and
 // minor version numbers of inkfem used to produce the file or required to compute the structure.
+//
+// TODO: pass in a reader io.Reader instead of a file path
 func StructureFromFile(filePath string, options ReaderOptions) *structure.Structure {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -32,11 +34,11 @@ func parseStructure(linesReader *LinesReader, options ReaderOptions) *structure.
 		sectionsDefined   = false
 		loadsDefined      = false
 		nodes             map[contracts.StrID]*structure.Node
-		materials         *MaterialsByName
-		sections          *SectionsByName
-		concentratedLoads ConcLoadsById
-		distributedLoads  DistLoadsById
-		elements          []*structure.Element
+		materials         *structure.MaterialsByName
+		sections          *structure.SectionsByName
+		concentratedLoads structure.ConcLoadsById
+		distributedLoads  structure.DistLoadsById
+		bars              []*structure.Element
 	)
 
 	// First line must be "inkfem vM.m"
@@ -78,22 +80,20 @@ func parseStructure(linesReader *LinesReader, options ReaderOptions) *structure.
 			{
 				if !(nodesDefined && materialsDefined && sectionsDefined && loadsDefined) {
 					panic(
-						"Can't' define elements if some of the following not already defined: " +
+						"Can't' parse the bars if any of the following isn't already parsed: " +
 							"nodes, materials, sections and loads",
 					)
 				}
 
-				elementsCount := ExtractBarsCount(line)
-				elements = readElements(
-					linesReader,
-					elementsCount,
-					nodes,
-					materials,
-					sections,
-					&concentratedLoads,
-					&distributedLoads,
-					options,
-				)
+				barsCount := ExtractBarsCount(line)
+				data := &structure.StructureData{
+					Nodes:             nodes,
+					Materials:         materials,
+					Sections:          sections,
+					ConcentratedLoads: &concentratedLoads,
+					DistributedLoads:  &distributedLoads,
+				}
+				bars = readBars(linesReader, barsCount, data, options)
 			}
 
 		default:
@@ -107,5 +107,5 @@ func parseStructure(linesReader *LinesReader, options ReaderOptions) *structure.
 	// 	log.Fatal(err)
 	// }
 
-	return structure.Make(metadata, nodes, elements)
+	return structure.Make(metadata, nodes, bars)
 }

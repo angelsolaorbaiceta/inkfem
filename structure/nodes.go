@@ -8,11 +8,11 @@ import (
 
 // NodesById is a composable map of nodes with some useful methods.
 type NodesById struct {
-	nodes         map[contracts.StrID]*Node
+	nodes         NodesByIdMap
 	allNodesCache []*Node
 }
 
-func MakeNodesById(nodes map[contracts.StrID]*Node) NodesById {
+func MakeNodesById(nodes NodesByIdMap) NodesById {
 	return NodesById{nodes: nodes, allNodesCache: nil}
 }
 
@@ -47,6 +47,6 @@ func (n *NodesById) GetAllNodes() []*Node {
 }
 
 // NodesById is a map where the nodes of the structure can be accessed by their id.
-func (n *NodesById) NodesById() map[contracts.StrID]*Node {
+func (n *NodesById) NodesById() NodesByIdMap {
 	return n.nodes
 }

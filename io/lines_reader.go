@@ -8,7 +8,7 @@ import (
 )
 
 // A LinesReader reads lines from a buffered scanner one by one, ignoring blank and commented
-// lines.
+// lines. All returned lines are trimmed to remove the blank space around them.
 type LinesReader struct {
 	scanner        *bufio.Scanner
 	nextLine       *string
