@@ -13,20 +13,20 @@ import (
 var (
 	// <term> <reference-type> <elementId> <tStart> <valueStart> <tEnd> <valueEnd>
 	distLoadDefinitionRegex = regexp.MustCompile(
-		"^" + loadTermExpr + distributedLoadRefExpr +
-			loadElementID +
-			floatGroupExpr("t_start") + spaceExpr +
-			floatGroupExpr("val_start") + spaceExpr +
-			floatGroupExpr("t_end") + spaceExpr +
-			floatGroupExpr("val_end") + optionalSpaceExpr + "$",
+		"^" + LoadTermExpr + DistributedLoadRefExpr +
+			LoadElementID +
+			FloatGroupExpr("t_start") + spaceExpr +
+			FloatGroupExpr("val_start") + spaceExpr +
+			FloatGroupExpr("t_end") + spaceExpr +
+			FloatGroupExpr("val_end") + optionalSpaceExpr + "$",
 	)
 
 	// <term> <reference> <elementId> <t> <value>
 	concLoadDefinitionRegex = regexp.MustCompile(
-		"^" + loadTermExpr + concentratedLoadRefExpr +
-			loadElementID +
-			floatGroupExpr("t") + spaceExpr +
-			floatGroupExpr("val") + optionalSpaceExpr + "$",
+		"^" + LoadTermExpr + ConcentratedLoadRefExpr +
+			LoadElementID +
+			FloatGroupExpr("t") + spaceExpr +
+			FloatGroupExpr("val") + optionalSpaceExpr + "$",
 	)
 )
 

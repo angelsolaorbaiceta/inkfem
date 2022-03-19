@@ -9,30 +9,32 @@ const (
 	constraintExpr    = `{[drxyz ]*}`
 	optionalSpaceExpr = `\s*`
 	spaceExpr         = `\s+`
-
-	nameGrpExpr             = `'(?P<name>` + validNameExpr + `)'`
-	idGrpExpr               = `(?P<id>` + validIDExpr + `)`
-	arrowExpr               = `\s*->\s*`
-	loadTermExpr            = `(?P<term>[fm]{1}[xyz]{1})\s+`
-	loadElementID           = `(?P<element>` + validIDExpr + `)\s+`
-	distributedLoadRefExpr  = `(?P<ref>[lg]{1})d\s+`
-	concentratedLoadRefExpr = `(?P<ref>[lg]{1})c\s+`
-	dofGroupName            = "dof"
-	dofGroup                = `(?:\| \[(?P<` + dofGroupName + `>\d+ \d+ \d+)\])?`
 )
 
-func floatGroupExpr(groupName string) string {
+const (
+	NameGrpExpr             = `'(?P<name>` + validNameExpr + `)'`
+	IdGrpExpr               = `(?P<id>` + validIDExpr + `)`
+	ArrowExpr               = `\s*->\s*`
+	LoadTermExpr            = `(?P<term>[fm]{1}[xyz]{1})\s+`
+	LoadElementID           = `(?P<element>` + validIDExpr + `)\s+`
+	DistributedLoadRefExpr  = `(?P<ref>[lg]{1})d\s+`
+	ConcentratedLoadRefExpr = `(?P<ref>[lg]{1})c\s+`
+	DofGroupName            = "dof"
+	DofGroup                = `(?:\| \[(?P<` + DofGroupName + `>\d+ \d+ \d+)\])?`
+)
+
+func FloatGroupExpr(groupName string) string {
 	return fmt.Sprintf(`(?P<%s>%s)`, groupName, floatExpr)
 }
 
-func idGroupExpr(groupName string) string {
+func IdGroupExpr(groupName string) string {
 	return fmt.Sprintf(`(?P<%s>%s)`, groupName, validIDExpr)
 }
 
-func nameGroupExpr(groupName string) string {
+func NameGroupExpr(groupName string) string {
 	return fmt.Sprintf(`'(?P<%s>%s)'`, groupName, validNameExpr)
 }
 
-func constraintGroupExpr(groupName string) string {
+func ConstraintGroupExpr(groupName string) string {
 	return fmt.Sprintf(`(?P<%s>%s)`, groupName, constraintExpr)
 }

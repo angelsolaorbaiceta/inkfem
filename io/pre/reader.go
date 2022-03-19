@@ -66,8 +66,8 @@ func Read(reader io.Reader) *preprocess.Structure {
 			{
 				if !(nodesDefined && materialsDefined && sectionsDefined) {
 					panic(
-						"Can't' parse the bars if some of the following isn't already parsed:" +
-							" nodes, materials and sections",
+						"Can't' parse the bars if some of the following isn't already parsed: " +
+							"nodes, materials and sections",
 					)
 				}
 

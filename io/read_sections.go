@@ -9,12 +9,12 @@ import (
 
 // '<name>' -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
 var sectionDefinitionRegex = regexp.MustCompile(
-	"^" + nameGrpExpr + arrowExpr +
-		floatGroupExpr("area") + spaceExpr +
-		floatGroupExpr("istrong") + spaceExpr +
-		floatGroupExpr("iweak") + spaceExpr +
-		floatGroupExpr("sstrong") + spaceExpr +
-		floatGroupExpr("sweak") + optionalSpaceExpr + "$")
+	"^" + NameGrpExpr + ArrowExpr +
+		FloatGroupExpr("area") + spaceExpr +
+		FloatGroupExpr("istrong") + spaceExpr +
+		FloatGroupExpr("iweak") + spaceExpr +
+		FloatGroupExpr("sstrong") + spaceExpr +
+		FloatGroupExpr("sweak") + optionalSpaceExpr + "$")
 
 func ReadSections(linesReader *LinesReader, count int) *map[string]*structure.Section {
 	lines := linesReader.GetNextLines(count)

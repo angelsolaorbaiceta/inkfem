@@ -1,6 +1,11 @@
 package preprocess
 
-import "github.com/angelsolaorbaiceta/inkfem/structure"
+import (
+	"fmt"
+
+	"github.com/angelsolaorbaiceta/inkfem/contracts"
+	"github.com/angelsolaorbaiceta/inkfem/structure"
+)
 
 type ElementsSeq struct {
 	elements        []*Element
@@ -16,6 +21,18 @@ func (el *ElementsSeq) ElementsCount() int {
 // Elements returns a slice containing all elements.
 func (el *ElementsSeq) Elements() []*Element {
 	return el.elements
+}
+
+// GetElementById returns the element with the given id or panics.
+// This operation has an O(n) time complexity as it needs to iterate over all elements.
+func (el *ElementsSeq) GetElementById(id contracts.StrID) *Element {
+	for _, element := range el.elements {
+		if element.GetID() == id {
+			return element
+		}
+	}
+
+	panic(fmt.Sprintf("Can't find element with id %s", id))
 }
 
 // MaterialsCount is the number of different materials used in the elements.

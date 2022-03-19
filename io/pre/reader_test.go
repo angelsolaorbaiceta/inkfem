@@ -56,5 +56,11 @@ func TestRead(t *testing.T) {
 	// 	}
 	// })
 
-	t.Run("parses the bars", func(t *testing.T) {})
+	t.Run("parses the bars", func(t *testing.T) {
+		wantBar := wantStr.GetElementById("b1")
+
+		if got := str.GetElementById("b1"); !got.Equals(wantBar) {
+			t.Errorf("Want %v, got %v", wantBar, got)
+		}
+	})
 }

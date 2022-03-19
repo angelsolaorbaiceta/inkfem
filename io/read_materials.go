@@ -9,13 +9,13 @@ import (
 
 // '<name>' -> <density> <young> <shear> <poisson> <yield> <ultimate>
 var materialDefinitionRegex = regexp.MustCompile(
-	"^" + nameGrpExpr + arrowExpr +
-		floatGroupExpr("density") + spaceExpr +
-		floatGroupExpr("young") + spaceExpr +
-		floatGroupExpr("shear") + spaceExpr +
-		floatGroupExpr("poisson") + spaceExpr +
-		floatGroupExpr("yield") + spaceExpr +
-		floatGroupExpr("ultimate") + optionalSpaceExpr + "$")
+	"^" + NameGrpExpr + ArrowExpr +
+		FloatGroupExpr("density") + spaceExpr +
+		FloatGroupExpr("young") + spaceExpr +
+		FloatGroupExpr("shear") + spaceExpr +
+		FloatGroupExpr("poisson") + spaceExpr +
+		FloatGroupExpr("yield") + spaceExpr +
+		FloatGroupExpr("ultimate") + optionalSpaceExpr + "$")
 
 func ReadMaterials(linesReader *LinesReader, count int) *map[string]*structure.Material {
 	lines := linesReader.GetNextLines(count)

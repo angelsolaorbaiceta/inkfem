@@ -88,3 +88,9 @@ func (element *Element) addTermsToLoadVector(sysVector vec.MutableVector) {
 		sysVector.SetValue(dofs[2], globalTorsor.Mz())
 	}
 }
+
+// Equals compares this bar with another one and returns true if both have the same nodes.
+func (e *Element) Equals(other *Element) bool {
+	// TODO: implement me
+	return true
+}

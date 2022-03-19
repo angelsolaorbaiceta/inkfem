@@ -20,13 +20,13 @@ const (
 
 // <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section>
 var elementDefinitionRegex = regexp.MustCompile(
-	"^" + idGrpExpr + arrowExpr +
-		idGroupExpr("start_node") + optionalSpaceExpr +
-		constraintGroupExpr("start_link") + spaceExpr +
-		idGroupExpr("end_node") + optionalSpaceExpr +
-		constraintGroupExpr("end_link") + spaceExpr +
-		nameGroupExpr("material") + spaceExpr +
-		nameGroupExpr("section") + optionalSpaceExpr + "$")
+	"^" + IdGrpExpr + ArrowExpr +
+		IdGroupExpr("start_node") + optionalSpaceExpr +
+		ConstraintGroupExpr("start_link") + spaceExpr +
+		IdGroupExpr("end_node") + optionalSpaceExpr +
+		ConstraintGroupExpr("end_link") + spaceExpr +
+		NameGroupExpr("material") + spaceExpr +
+		NameGroupExpr("section") + optionalSpaceExpr + "$")
 
 func readBars(
 	linesReader *LinesReader,
