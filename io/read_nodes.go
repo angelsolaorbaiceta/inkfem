@@ -1,7 +1,6 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 	"strings"
@@ -25,9 +24,9 @@ var nodeDefinitionRegex = regexp.MustCompile(
 		dofGroup + optionalSpaceExpr + "$",
 )
 
-// ReadNodes reads and parses "count" nodes from the lines in "scanner".
-func ReadNodes(scanner *bufio.Scanner, count int) map[contracts.StrID]*structure.Node {
-	lines := ExtractDefinitionLines(scanner, count)
+// ReadNodes reads and parses "count" nodes from the lines in the lines reader.
+func ReadNodes(linesReader *LinesReader, count int) map[contracts.StrID]*structure.Node {
+	lines := linesReader.GetNextLines(count)
 	return deserializeNodesByID(lines)
 }
 

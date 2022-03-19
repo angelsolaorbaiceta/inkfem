@@ -1,7 +1,6 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 
@@ -18,8 +17,8 @@ var materialDefinitionRegex = regexp.MustCompile(
 		floatGroupExpr("yield") + spaceExpr +
 		floatGroupExpr("ultimate") + optionalSpaceExpr + "$")
 
-func ReadMaterials(scanner *bufio.Scanner, count int) *map[string]*structure.Material {
-	lines := ExtractDefinitionLines(scanner, count)
+func ReadMaterials(linesReader *LinesReader, count int) *map[string]*structure.Material {
+	lines := linesReader.GetNextLines(count)
 	return deserializeMaterialsByName(lines)
 }
 

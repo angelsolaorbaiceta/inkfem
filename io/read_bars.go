@@ -1,7 +1,6 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 
@@ -33,7 +32,7 @@ var elementDefinitionRegex = regexp.MustCompile(
 		nameGroupExpr("section") + optionalSpaceExpr + "$")
 
 func readElements(
-	scanner *bufio.Scanner,
+	linesReader *LinesReader,
 	count int,
 	nodes map[contracts.StrID]*structure.Node,
 	materials *MaterialsByName,
@@ -42,7 +41,7 @@ func readElements(
 	distributedLoads *DistLoadsById,
 	readerOptions ReaderOptions,
 ) []*structure.Element {
-	lines := ExtractDefinitionLines(scanner, count)
+	lines := linesReader.GetNextLines(count)
 	return deserializeElements(
 		lines,
 		nodes,

@@ -1,7 +1,6 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 
@@ -33,8 +32,8 @@ var (
 type ConcLoadsById = map[contracts.StrID][]*load.ConcentratedLoad
 type DistLoadsById = map[contracts.StrID][]*load.DistributedLoad
 
-func readLoads(scanner *bufio.Scanner, count int) (ConcLoadsById, DistLoadsById) {
-	lines := ExtractDefinitionLines(scanner, count)
+func readLoads(linesReader *LinesReader, count int) (ConcLoadsById, DistLoadsById) {
+	lines := linesReader.GetNextLines(count)
 	return deserializeLoadsByElementID(lines)
 }
 

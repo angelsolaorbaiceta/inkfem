@@ -1,7 +1,6 @@
 package io
 
 import (
-	"bufio"
 	"regexp"
 	"strconv"
 
@@ -31,10 +30,14 @@ func ParseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {
 
 // ParseMetadata reads the structure metadata from the structure files first line: "inkfem vM.m".
 // Panics if the first line doesn't follow the expected format.
-func ParseMetadata(scanner *bufio.Scanner) structure.StrMetadata {
+func ParseMetadata(linesReader *LinesReader) structure.StrMetadata {
 	// First line must be "inkfem vM.m"
-	scanner.Scan()
-	majorVersion, minorVersion := ParseVersionNumbers(scanner.Text())
+	if !linesReader.ReadNext() {
+		panic("The first line should be 'inkfem vM.m'")
+	}
+
+	majorVersion, minorVersion := ParseVersionNumbers(linesReader.GetNextLine())
+
 	return structure.StrMetadata{
 		MajorVersion: majorVersion,
 		MinorVersion: minorVersion,

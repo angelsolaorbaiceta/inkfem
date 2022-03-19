@@ -1,7 +1,6 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 
@@ -17,8 +16,8 @@ var sectionDefinitionRegex = regexp.MustCompile(
 		floatGroupExpr("sstrong") + spaceExpr +
 		floatGroupExpr("sweak") + optionalSpaceExpr + "$")
 
-func ReadSections(scanner *bufio.Scanner, count int) *map[string]*structure.Section {
-	lines := ExtractDefinitionLines(scanner, count)
+func ReadSections(linesReader *LinesReader, count int) *map[string]*structure.Section {
+	lines := linesReader.GetNextLines(count)
 	return deserializeSectionsByName(lines)
 }
 

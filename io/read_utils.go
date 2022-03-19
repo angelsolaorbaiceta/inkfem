@@ -1,7 +1,6 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -24,32 +23,6 @@ func lineIsComment(line string) bool {
 
 func lineIsEmpty(line string) bool {
 	return len(line) < 1
-}
-
-// ExtractDefinitionLines gets the next "count" lines from the scanner, ignoring comments
-// and blank lines.
-// The extracted lines are trimmed to remove the blank space around them.
-func ExtractDefinitionLines(scanner *bufio.Scanner, count int) []string {
-	var (
-		line  string
-		lines = make([]string, count)
-	)
-
-	for i := 0; i < count; {
-		if !scanner.Scan() {
-			panic(fmt.Sprintf("Couldn't read all expected %d lines", count))
-		}
-
-		line = strings.TrimSpace(scanner.Text())
-		if ShouldIgnoreLine(line) {
-			continue
-		}
-
-		lines[i] = line
-		i++
-	}
-
-	return lines
 }
 
 // ExtractNamedGroups returns a map of matches by group id.

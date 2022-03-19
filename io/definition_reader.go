@@ -1,11 +1,9 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -22,12 +20,11 @@ func StructureFromFile(filePath string, options ReaderOptions) *structure.Struct
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	return parseStructure(scanner, options)
+	linesReader := MakeLinesReader(file)
+	return parseStructure(linesReader, options)
 }
 
-func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.Structure {
+func parseStructure(linesReader *LinesReader, options ReaderOptions) *structure.Structure {
 	var (
 		line              string
 		nodesDefined      = false
@@ -43,41 +40,37 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 	)
 
 	// First line must be "inkfem vM.m"
-	metadata := ParseMetadata(scanner)
+	metadata := ParseMetadata(linesReader)
 
-	for scanner.Scan() {
-		line = strings.TrimSpace(scanner.Text())
-
-		if ShouldIgnoreLine(line) {
-			continue
-		}
+	for linesReader.ReadNext() {
+		line = linesReader.GetNextLine()
 
 		switch {
 		case IsNodesHeader(line):
 			{
 				nodesCount := ExtractNodesCount(line)
-				nodes = ReadNodes(scanner, nodesCount)
+				nodes = ReadNodes(linesReader, nodesCount)
 				nodesDefined = true
 			}
 
 		case IsMaterialsHeader(line):
 			{
 				materialsCount := ExtractMaterialsCount(line)
-				materials = ReadMaterials(scanner, materialsCount)
+				materials = ReadMaterials(linesReader, materialsCount)
 				materialsDefined = true
 			}
 
 		case IsSectionsHeader(line):
 			{
 				sectionsCount := ExtractSectionsCount(line)
-				sections = ReadSections(scanner, sectionsCount)
+				sections = ReadSections(linesReader, sectionsCount)
 				sectionsDefined = true
 			}
 
 		case IsLoadsHeader(line):
 			{
 				loadsCount := ExtractLoadsCount(line)
-				concentratedLoads, distributedLoads = readLoads(scanner, loadsCount)
+				concentratedLoads, distributedLoads = readLoads(linesReader, loadsCount)
 				loadsDefined = true
 			}
 
@@ -92,7 +85,7 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 
 				elementsCount := ExtractBarsCount(line)
 				elements = readElements(
-					scanner,
+					linesReader,
 					elementsCount,
 					nodes,
 					materials,
@@ -109,9 +102,10 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 
 	}
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
+	// TODO: lines reader error handling?
+	// if err := scanner.Err(); err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	return structure.Make(metadata, nodes, elements)
 }

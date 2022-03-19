@@ -1,12 +1,10 @@
 package pre
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
@@ -20,19 +18,20 @@ var (
 
 // Read parses a preprocessed structure from a file.
 func Read(reader io.Reader) *preprocess.Structure {
-	scanner := bufio.NewScanner(reader)
-	scanner.Split(bufio.ScanLines)
+	linesReader := inkio.MakeLinesReader(reader)
+	// scanner := bufio.NewScanner(reader)
+	// scanner.Split(bufio.ScanLines)
 
 	var (
-		metadata    = inkio.ParseMetadata(scanner)
-		numberOfDof = extractNumberOfDof(scanner)
+		metadata    = inkio.ParseMetadata(linesReader)
+		numberOfDof = extractNumberOfDof(linesReader)
 		nodes       map[contracts.StrID]*structure.Node
 		// nodesDefined = false
 		line string
 	)
 
-	for scanner.Scan() {
-		line = strings.TrimSpace(scanner.Text())
+	for linesReader.ReadNext() {
+		line = linesReader.GetNextLine()
 
 		if inkio.ShouldIgnoreLine(line) {
 			continue
@@ -42,7 +41,7 @@ func Read(reader io.Reader) *preprocess.Structure {
 		case inkio.IsNodesHeader(line):
 			{
 				nodesCount := inkio.ExtractNodesCount(line)
-				nodes = inkio.ReadNodes(scanner, nodesCount)
+				nodes = inkio.ReadNodes(linesReader, nodesCount)
 				// nodesDefined = true
 			}
 		}
@@ -55,20 +54,17 @@ func Read(reader io.Reader) *preprocess.Structure {
 	).SetDofsCount(numberOfDof)
 }
 
-func extractNumberOfDof(scanner *bufio.Scanner) int {
-	var line string
+func extractNumberOfDof(linesReader *inkio.LinesReader) int {
+	linesReader.ReadNext()
 
-	for scanner.Scan() {
-		line = scanner.Text()
-
-		if dofRegex.MatchString(line) {
-			dofs, err := strconv.Atoi(dofRegex.FindStringSubmatch(line)[1])
-			if err != nil {
-				panic(fmt.Sprintf("Can't read number of degrees of freedom from '%s'", line))
-			}
-
-			return dofs
+	line := linesReader.GetNextLine()
+	if dofRegex.MatchString(line) {
+		dofs, err := strconv.Atoi(dofRegex.FindStringSubmatch(line)[1])
+		if err != nil {
+			panic(fmt.Sprintf("Can't read number of degrees of freedom from '%s'", line))
 		}
+
+		return dofs
 	}
 
 	panic("Preprocessed file without 'dof_count' set")
