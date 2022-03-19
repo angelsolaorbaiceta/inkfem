@@ -76,10 +76,12 @@ func (n Node) HasDegreesOfFreedomNum() bool {
 }
 
 // SetDegreesOfFreedomNum assigns numbers to the degress of freedom of the node.
-func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
+func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) *Node {
 	n.globalDof[0] = dx
 	n.globalDof[1] = dy
 	n.globalDof[2] = rz
+
+	return n
 }
 
 // Equals tests whether this node and other are equal.

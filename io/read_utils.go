@@ -52,6 +52,7 @@ func ExtractDefinitionLines(scanner *bufio.Scanner, count int) []string {
 	return lines
 }
 
+// ExtractNamedGroups returns a map of matches by group id.
 func ExtractNamedGroups(re *regexp.Regexp, str string) map[string]string {
 	var (
 		matches = re.FindStringSubmatch(str)

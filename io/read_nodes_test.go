@@ -7,7 +7,6 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
-// TODO: test with DOF
 func TestDeserializeNode(t *testing.T) {
 	t.Run("deserializes the node", func(t *testing.T) {
 		var (
@@ -38,24 +37,26 @@ func TestDeserializeNodes(t *testing.T) {
 			"1 -> 10.1 20.2 { dx dy rz }",
 			"2 -> 40.1 50.2 { dx dy }",
 			"3 -> 70.1 80.2 { }",
+			"4 -> 20.5 50.2 { } | [3 4 50]",
 		}
 		nodes = deserializeNodesByID(lines)
 
-		nodeOne   = structure.MakeNode("1", g2d.MakePoint(10.1, 20.2), &structure.FullConstraint)
-		nodeTwo   = structure.MakeNode("2", g2d.MakePoint(40.1, 50.2), &structure.DispConstraint)
-		nodeThree = structure.MakeNode("3", g2d.MakePoint(70.1, 80.2), &structure.NilConstraint)
+		nodeOne   = structure.MakeNodeAtPosition("1", 10.1, 20.2, &structure.FullConstraint)
+		nodeTwo   = structure.MakeNodeAtPosition("2", 40.1, 50.2, &structure.DispConstraint)
+		nodeThree = structure.MakeNodeAtPosition("3", 70.1, 80.2, &structure.NilConstraint)
+		nodeFour  = structure.MakeNodeAtPosition("4", 20.5, 50.2, &structure.NilConstraint).SetDegreesOfFreedomNum(3, 4, 50)
 	)
 
-	if size := len(nodes); size != 3 {
-		t.Errorf("Expected 3 nodes, but got %d", size)
+	if got := nodes["1"]; !got.Equals(nodeOne) {
+		t.Errorf("Want node %v, got %v", nodeOne, got)
 	}
-	if got := (nodes)["1"]; !got.Equals(nodeOne) {
-		t.Errorf("Expected node %v, but got %v", nodeOne, got)
+	if got := nodes["2"]; !got.Equals(nodeTwo) {
+		t.Errorf("Want node %v, got %v", nodeTwo, got)
 	}
-	if got := (nodes)["2"]; !got.Equals(nodeTwo) {
-		t.Errorf("Expected node %v, but got %v", nodeTwo, got)
+	if got := nodes["3"]; !got.Equals(nodeThree) {
+		t.Errorf("Want node %v, got %v", nodeThree, got)
 	}
-	if got := (nodes)["3"]; !got.Equals(nodeThree) {
-		t.Errorf("Expected node %v, but got %v", nodeThree, got)
+	if got := nodes["4"]; !got.Equals(nodeFour) {
+		t.Errorf("Want node %v, got %v", nodeFour, got)
 	}
 }

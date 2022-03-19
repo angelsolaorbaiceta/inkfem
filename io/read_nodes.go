@@ -46,7 +46,7 @@ func deserializeNode(definition string) *structure.Node {
 	}
 
 	var (
-		groups = ExtractNamedGroups(nodeDefinitionRegex, definition) //nodeDefinitionRegex.FindStringSubmatch(definition)
+		groups = ExtractNamedGroups(nodeDefinitionRegex, definition)
 
 		id                 = groups["id"]
 		x                  = ensureParseFloat(groups["x"], "node x position")
