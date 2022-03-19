@@ -44,17 +44,29 @@ func TestReadPreprocessModel(t *testing.T) {
 		}
 	})
 
-	// t.Run("parses the materials", func(t *testing.T) {
-	// 	wantMaterial := structure.MakeUnitMaterial()
+	t.Run("parses the materials", func(t *testing.T) {
+		wantMaterial := structure.MakeUnitMaterial()
 
-	// 	if str.MaterialsCount() != 1 {
-	// 		t.Errorf("Want one material")
-	// 	}
+		if str.MaterialsCount() != 1 {
+			t.Error("Want one material")
+		}
 
-	// 	if got := str.GetMaterialsByName()[wantMaterial.Name]; !got.Equals(wantMaterial) {
-	// 		t.Errorf("Want %v, got %v", wantMaterial, got)
-	// 	}
-	// })
+		if got := str.GetMaterialsByName()[wantMaterial.Name]; !got.Equals(wantMaterial) {
+			t.Errorf("Want %v, got %v", wantMaterial, got)
+		}
+	})
+
+	t.Run("parses the sections", func(t *testing.T) {
+		wantSection := structure.MakeUnitSection()
+
+		if str.SectionsCount() != 1 {
+			t.Error("Want one section")
+		}
+
+		if got := str.GetSectionsByName()[wantSection.Name]; !got.Equals(wantSection) {
+			t.Errorf("Want %v, got %v", wantSection, got)
+		}
+	})
 
 	// t.Run("parses the bars", func(t *testing.T) {
 	// 	wantBar := wantStr.GetElementById("b1")

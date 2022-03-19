@@ -6,17 +6,6 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-// TODO: use group names instead
-const (
-	idIndex = iota + 1
-	startNodeIDIndex
-	startLinkIndex
-	endNodeIDIndex
-	endLinkIndex
-	materialNameIndex
-	sectionNameIndex
-)
-
 const (
 	startNodeGroupName = "start_node"
 	endNodeGroupName   = "end_node"
@@ -24,6 +13,7 @@ const (
 	endLinkGroupName   = "end_link"
 	materialGroupName  = "material"
 	sectionGroupName   = "section"
+	numNodesGroupName  = "n_nodes"
 )
 
 // <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section>
@@ -34,7 +24,10 @@ var elementDefinitionRegex = regexp.MustCompile(
 		IdGroupExpr(endNodeGroupName) + OptionalSpaceExpr +
 		ConstraintGroupExpr(endLinkGroupName) + SpaceExpr +
 		NameGroupExpr(materialGroupName) + SpaceExpr +
-		NameGroupExpr(sectionGroupName) + OptionalSpaceExpr + "$",
+		NameGroupExpr(sectionGroupName) + OptionalSpaceExpr +
+		`(?:>>` + OptionalSpaceExpr +
+		`(?P<` + numNodesGroupName + `>\d+))?` +
+		"$",
 )
 
 func readBars(
