@@ -17,6 +17,8 @@ const (
 	loadElementID           = `(?P<element>` + validIDExpr + `)\s+`
 	distributedLoadRefExpr  = `(?P<ref>[lg]{1})d\s+`
 	concentratedLoadRefExpr = `(?P<ref>[lg]{1})c\s+`
+	dofGroupName            = "dof"
+	dofGroup                = `(?:\| \[(?P<` + dofGroupName + `>\d+ \d+ \d+)\])?`
 )
 
 func floatGroupExpr(groupName string) string {

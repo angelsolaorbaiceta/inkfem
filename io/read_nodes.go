@@ -10,14 +10,19 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
+const (
+	xPosGroupName        = "x"
+	yPosGroupName        = "y"
+	constraintsGroupName = "constraints"
+)
+
 // <id> -> <xCoord> <yCoord> {[dx dy rz]} <| DOF: [0 1 2]>
 var nodeDefinitionRegex = regexp.MustCompile(
 	"^" + idGrpExpr + arrowExpr +
-		floatGroupExpr("x") + spaceExpr +
-		floatGroupExpr("y") + spaceExpr +
-		constraintGroupExpr("constraints") + optionalSpaceExpr +
-		`(?:\| \[(?P<dof>\d+ \d+ \d+)\])?` + optionalSpaceExpr +
-		"$",
+		floatGroupExpr(xPosGroupName) + spaceExpr +
+		floatGroupExpr(yPosGroupName) + spaceExpr +
+		constraintGroupExpr(constraintsGroupName) + optionalSpaceExpr +
+		dofGroup + optionalSpaceExpr + "$",
 )
 
 // ReadNodes reads and parses "count" nodes from the lines in "scanner".
@@ -49,9 +54,9 @@ func deserializeNode(definition string) *structure.Node {
 		groups = ExtractNamedGroups(nodeDefinitionRegex, definition)
 
 		id                 = groups["id"]
-		x                  = ensureParseFloat(groups["x"], "node x position")
-		y                  = ensureParseFloat(groups["y"], "node y position")
-		externalConstraint = groups["constraints"]
+		x                  = ensureParseFloat(groups[xPosGroupName], "node x position")
+		y                  = ensureParseFloat(groups[yPosGroupName], "node y position")
+		externalConstraint = groups[constraintsGroupName]
 
 		node = structure.MakeNodeAtPosition(
 			id,
@@ -60,7 +65,7 @@ func deserializeNode(definition string) *structure.Node {
 		)
 	)
 
-	if dofString, hasDof := groups["dof"]; hasDof {
+	if dofString, hasDof := groups[dofGroupName]; hasDof {
 		var (
 			dofs = strings.Fields(dofString)
 			dof1 = ensureParseInt(dofs[0], "node dx DOF")
