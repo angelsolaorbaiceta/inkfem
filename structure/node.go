@@ -76,16 +76,21 @@ func (n Node) HasDegreesOfFreedomNum() bool {
 }
 
 // SetDegreesOfFreedomNum assigns numbers to the degress of freedom of the node.
-func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
+func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) *Node {
 	n.globalDof[0] = dx
 	n.globalDof[1] = dy
 	n.globalDof[2] = rz
+
+	return n
 }
 
 // Equals tests whether this node and other are equal.
 func (n *Node) Equals(other *Node) bool {
 	return n.Position.Equals(other.Position) &&
-		n.ExternalConstraint.Equals(other.ExternalConstraint)
+		n.ExternalConstraint.Equals(other.ExternalConstraint) &&
+		n.globalDof[0] == other.globalDof[0] &&
+		n.globalDof[1] == other.globalDof[1] &&
+		n.globalDof[2] == other.globalDof[2]
 }
 
 // GetID returns the node's id.
@@ -95,7 +100,7 @@ func (n Node) GetID() contracts.StrID {
 
 func (n Node) String() string {
 	return fmt.Sprintf(
-		"%s -> %f %f %s | DOF: %v",
+		"%s -> %f %f %s | %v",
 		n.id, n.Position.X(), n.Position.Y(),
 		n.ExternalConstraint.String(),
 		n.DegreesOfFreedomNum(),

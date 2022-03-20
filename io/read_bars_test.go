@@ -9,6 +9,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
+// TODO: test preprocessed ndoes
 func TestDeserializeBars(t *testing.T) {
 	var (
 		lines = []string{
@@ -26,7 +27,7 @@ func TestDeserializeBars(t *testing.T) {
 		sections = map[string]*structure.Section{
 			"sec": structure.MakeSection("sec", 10.1, 20.2, 30.3, 40.4, 50.5),
 		}
-		concentratedLoads = ConcLoadsById{
+		concentratedLoads = structure.ConcLoadsById{
 			"1": {load.MakeConcentrated(load.FY, true, nums.MinT, -50)},
 			"2": {load.MakeConcentrated(load.MZ, true, nums.MaxT, -30)},
 		}
@@ -34,17 +35,14 @@ func TestDeserializeBars(t *testing.T) {
 		ownWeightLoad    = []*load.DistributedLoad{
 			load.MakeDistributed(load.FY, false, nums.MinT, ownWeightLoadVal, nums.MaxT, ownWeightLoadVal),
 		}
-		distributedLoads = DistLoadsById{}
-
-		elements = deserializeElements(
-			lines,
-			&nodes,
-			&materials,
-			&sections,
-			&concentratedLoads,
-			&distributedLoads,
-			ReaderOptions{ShouldIncludeOwnWeight: true},
-		)
+		distributedLoads = structure.DistLoadsById{}
+		data             = &structure.StructureData{
+			Nodes:             nodes,
+			Materials:         materials,
+			Sections:          sections,
+			ConcentratedLoads: concentratedLoads,
+			DistributedLoads:  distributedLoads,
+		}
 
 		wantElOne = structure.MakeElementBuilder(
 			"1",
@@ -80,8 +78,8 @@ func TestDeserializeBars(t *testing.T) {
 	)
 
 	var (
-		elOne = (*elements)[0]
-		elTwo = (*elements)[1]
+		elOne, _ = DeserializeBar(lines[0], data, ReaderOptions{ShouldIncludeOwnWeight: true})
+		elTwo, _ = DeserializeBar(lines[1], data, ReaderOptions{ShouldIncludeOwnWeight: true})
 	)
 
 	t.Run("Elements read", func(t *testing.T) {

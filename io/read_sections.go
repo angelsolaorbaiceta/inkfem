@@ -1,7 +1,6 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 
@@ -10,19 +9,19 @@ import (
 
 // '<name>' -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
 var sectionDefinitionRegex = regexp.MustCompile(
-	"^" + nameGrpExpr + arrowExpr +
-		floatGroupExpr("area") + spaceExpr +
-		floatGroupExpr("istrong") + spaceExpr +
-		floatGroupExpr("iweak") + spaceExpr +
-		floatGroupExpr("sstrong") + spaceExpr +
-		floatGroupExpr("sweak") + optionalSpaceExpr + "$")
+	"^" + NameGrpExpr + ArrowExpr +
+		FloatGroupExpr("area") + SpaceExpr +
+		FloatGroupExpr("istrong") + SpaceExpr +
+		FloatGroupExpr("iweak") + SpaceExpr +
+		FloatGroupExpr("sstrong") + SpaceExpr +
+		FloatGroupExpr("sweak") + OptionalSpaceExpr + "$")
 
-func readSections(scanner *bufio.Scanner, count int) *map[string]*structure.Section {
-	lines := definitionLines(scanner, count)
+func ReadSections(linesReader *LinesReader, count int) map[string]*structure.Section {
+	lines := linesReader.GetNextLines(count)
 	return deserializeSectionsByName(lines)
 }
 
-func deserializeSectionsByName(lines []string) *map[string]*structure.Section {
+func deserializeSectionsByName(lines []string) map[string]*structure.Section {
 	var (
 		section  *structure.Section
 		sections = make(map[string]*structure.Section)
@@ -33,7 +32,7 @@ func deserializeSectionsByName(lines []string) *map[string]*structure.Section {
 		sections[section.Name] = section
 	}
 
-	return &sections
+	return sections
 }
 
 func deserializeSection(definition string) *structure.Section {
@@ -44,11 +43,11 @@ func deserializeSection(definition string) *structure.Section {
 	groups := sectionDefinitionRegex.FindStringSubmatch(definition)
 
 	name := groups[1]
-	area := ensureParseFloat(groups[2], "section area")
-	iStrong := ensureParseFloat(groups[3], "section iStrong")
-	iWeak := ensureParseFloat(groups[4], "section iWeak")
-	sStrong := ensureParseFloat(groups[5], "section sStrong")
-	sWeak := ensureParseFloat(groups[6], "section sWeak")
+	area := EnsureParseFloat(groups[2], "section area")
+	iStrong := EnsureParseFloat(groups[3], "section iStrong")
+	iWeak := EnsureParseFloat(groups[4], "section iWeak")
+	sStrong := EnsureParseFloat(groups[5], "section sStrong")
+	sWeak := EnsureParseFloat(groups[6], "section sWeak")
 
 	return &structure.Section{
 		Name:    name,

@@ -1,6 +1,10 @@
 package structure
 
-import "github.com/angelsolaorbaiceta/inkmath/nums"
+import (
+	"fmt"
+
+	"github.com/angelsolaorbaiceta/inkmath/nums"
+)
 
 // A Section of a resistant element.
 type Section struct {
@@ -27,12 +31,25 @@ func MakeSection(name string, area, iStrong, iWeak, sStrong, sWeak float64) *Sec
 	}
 }
 
-/*
-Equals tests whether this and other sections are equal.
+// String representation of the section.
+// This method is used for serialization, thus if the format is changed, the definition,
+// preprocessed and solution file formats are affected.
+func (s *Section) String() string {
+	return fmt.Sprintf(
+		"'%s' -> %f %f %f %f %f",
+		s.Name,
+		s.Area,
+		s.IStrong,
+		s.IWeak,
+		s.SStrong,
+		s.SWeak,
+	)
+}
 
-Sections are equal if all its numerical properties are equal. the name isn't considered for the
-equality check.
-*/
+// Equals tests whether this and other sections are equal.
+//
+// Sections are equal if all its numerical properties are equal. the name isn't considered for the
+// equality check.
 func (s *Section) Equals(other *Section) bool {
 	return nums.FuzzyEqual(s.Area, other.Area) &&
 		nums.FuzzyEqual(s.IStrong, other.IStrong) &&

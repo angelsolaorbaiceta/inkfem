@@ -1,118 +1,99 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
-	"regexp"
-	"strconv"
-	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-)
-
-var (
-	versionRegex         = regexp.MustCompile(`(?:inkfem\s+v)(\d+)(?:[.])(\d+)`)
-	nodesHeaderRegex     = regexp.MustCompile(`(?:\|nodes\|\s*)(\d+)`)
-	materialsHeaderRegex = regexp.MustCompile(`(?:\|materials\|\s*)(\d+)`)
-	sectionsHeaderRegex  = regexp.MustCompile(`(?:\|sections\|\s*)(\d+)`)
-	loadsHeaderRegex     = regexp.MustCompile(`(?:\|loads\|\s*)(\d+)`)
-	barsHeaderRegex      = regexp.MustCompile(`(?:\|bars\|\s*)(\d+)`)
 )
 
 // StructureFromFile Reads the given .inkfem file and tries to parse a structure from the data defined.
 //
 // The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm' are the major and
 // minor version numbers of inkfem used to produce the file or required to compute the structure.
+//
+// TODO: pass in a reader io.Reader instead of a file path
 func StructureFromFile(filePath string, options ReaderOptions) *structure.Structure {
-	file, error := os.Open(filePath)
-	if error != nil {
-		log.Fatal(error)
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Fatal(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	return parseStructure(scanner, options)
+	linesReader := MakeLinesReader(file)
+	return parseStructure(linesReader, options)
 }
 
-func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.Structure {
+func parseStructure(linesReader *LinesReader, options ReaderOptions) *structure.Structure {
 	var (
-		nodesDefined               = false
-		materialsDefined           = false
-		sectionsDefined            = false
-		loadsDefined               = false
-		majorVersion, minorVersion int
-		nodes                      *map[contracts.StrID]*structure.Node
-		materials                  *MaterialsByName
-		sections                   *SectionsByName
-		concentratedLoads          ConcLoadsById
-		distributedLoads           DistLoadsById
-		elements                   *[]*structure.Element
+		line              string
+		nodesDefined      = false
+		materialsDefined  = false
+		sectionsDefined   = false
+		loadsDefined      = false
+		nodes             map[contracts.StrID]*structure.Node
+		materials         structure.MaterialsByName
+		sections          structure.SectionsByName
+		concentratedLoads structure.ConcLoadsById
+		distributedLoads  structure.DistLoadsById
+		bars              []*structure.Element
 	)
 
 	// First line must be "inkfem vM.m"
-	scanner.Scan()
-	majorVersion, minorVersion = parseVersionNumbers(scanner.Text())
+	metadata := ParseMetadata(linesReader)
 
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-
-		if lineIsComment(line) || lineIsEmpty(line) {
-			continue
-		}
+	for linesReader.ReadNext() {
+		line = linesReader.GetNextLine()
 
 		switch {
-		case nodesHeaderRegex.MatchString(line):
+		case IsNodesHeader(line):
 			{
-				nodesCount, _ := strconv.Atoi(nodesHeaderRegex.FindStringSubmatch(line)[1])
-				nodes = readNodes(scanner, nodesCount)
+				nodesCount := ExtractNodesCount(line)
+				nodes = ReadNodes(linesReader, nodesCount)
 				nodesDefined = true
 			}
 
-		case materialsHeaderRegex.MatchString(line):
+		case IsMaterialsHeader(line):
 			{
-				materialsCount, _ := strconv.Atoi(materialsHeaderRegex.FindStringSubmatch(line)[1])
-				materials = readMaterials(scanner, materialsCount)
+				materialsCount := ExtractMaterialsCount(line)
+				materials = ReadMaterials(linesReader, materialsCount)
 				materialsDefined = true
 			}
 
-		case sectionsHeaderRegex.MatchString(line):
+		case IsSectionsHeader(line):
 			{
-				sectionsCount, _ := strconv.Atoi(sectionsHeaderRegex.FindStringSubmatch(line)[1])
-				sections = readSections(scanner, sectionsCount)
+				sectionsCount := ExtractSectionsCount(line)
+				sections = ReadSections(linesReader, sectionsCount)
 				sectionsDefined = true
 			}
 
-		case loadsHeaderRegex.MatchString(line):
+		case IsLoadsHeader(line):
 			{
-				loadsCount, _ := strconv.Atoi(loadsHeaderRegex.FindStringSubmatch(line)[1])
-				concentratedLoads, distributedLoads = readLoads(scanner, loadsCount)
+				loadsCount := ExtractLoadsCount(line)
+				concentratedLoads, distributedLoads = readLoads(linesReader, loadsCount)
 				loadsDefined = true
 			}
 
-		case barsHeaderRegex.MatchString(line):
+		case IsBarsHeader(line):
 			{
 				if !(nodesDefined && materialsDefined && sectionsDefined && loadsDefined) {
 					panic(
-						"Can't' define elements if some of the following not already defined: " +
+						"Can't' parse the bars if any of the following isn't already parsed: " +
 							"nodes, materials, sections and loads",
 					)
 				}
 
-				elementsCount, _ := strconv.Atoi(barsHeaderRegex.FindStringSubmatch(line)[1])
-				elements = readElements(
-					scanner,
-					elementsCount,
-					nodes,
-					materials,
-					sections,
-					&concentratedLoads,
-					&distributedLoads,
-					options,
-				)
+				barsCount := ExtractBarsCount(line)
+				data := &structure.StructureData{
+					Nodes:             nodes,
+					Materials:         materials,
+					Sections:          sections,
+					ConcentratedLoads: concentratedLoads,
+					DistributedLoads:  distributedLoads,
+				}
+				bars = readBars(linesReader, barsCount, data, options)
 			}
 
 		default:
@@ -121,31 +102,10 @@ func parseStructure(scanner *bufio.Scanner, options ReaderOptions) *structure.St
 
 	}
 
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
+	// TODO: lines reader error handling?
+	// if err := scanner.Err(); err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	return structure.Make(
-		structure.StrMetadata{
-			MajorVersion: majorVersion,
-			MinorVersion: minorVersion,
-		},
-		*nodes,
-		*elements,
-	)
-}
-
-func parseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {
-	if foundMatch := versionRegex.MatchString(firstLine); !foundMatch {
-		panic(
-			"Could not parse major and minor version numbers." +
-				"Are you missing 'inkfem vM.m' in your file's first line?",
-		)
-	}
-
-	versions := versionRegex.FindStringSubmatch(firstLine)
-	majorVersion, _ = strconv.Atoi(versions[1])
-	minorVersion, _ = strconv.Atoi(versions[2])
-
-	return
+	return structure.Make(metadata, nodes, bars)
 }

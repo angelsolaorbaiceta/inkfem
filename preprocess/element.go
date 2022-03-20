@@ -89,26 +89,17 @@ func (element *Element) addTermsToLoadVector(sysVector vec.MutableVector) {
 	}
 }
 
-// ByGeometryPos implements sort.Interface for []Element based on the position of the
-// original geometry.
-type ByGeometryPos []*Element
-
-func (a ByGeometryPos) Len() int {
-	return len(a)
-}
-
-func (a ByGeometryPos) Swap(i, j int) {
-	a[i], a[j] = a[j], a[i]
-}
-
-func (a ByGeometryPos) Less(i, j int) bool {
-	iStart := a[i].StartPoint()
-	jStart := a[j].StartPoint()
-	if pos := iStart.Compare(jStart); pos != 0 {
-		return pos < 0
+// Equals compares this bar with another one and returns true if both have the same nodes.
+func (e *Element) Equals(other *Element) bool {
+	if e.NodesCount() != other.NodesCount() {
+		return false
 	}
 
-	iEnd := a[i].EndPoint()
-	jEnd := a[j].EndPoint()
-	return iEnd.Compare(jEnd) < 0
+	for i, node := range e.nodes {
+		if !node.Equals(other.NodeAt(i)) {
+			return false
+		}
+	}
+
+	return true
 }

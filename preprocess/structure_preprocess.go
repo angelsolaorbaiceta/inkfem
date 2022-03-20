@@ -12,7 +12,7 @@ func StructureModel(str *structure.Structure) *Structure {
 		slicedElements []*Element
 	)
 
-	for _, element := range str.Elements {
+	for _, element := range str.Elements() {
 		go sliceElement(element, channel)
 	}
 
@@ -21,5 +21,5 @@ func StructureModel(str *structure.Structure) *Structure {
 	}
 	close(channel)
 
-	return MakeStructure(str.Metadata, str.NodesById, slicedElements)
+	return MakeStructure(str.Metadata, str.NodesById, slicedElements).AssignDof()
 }

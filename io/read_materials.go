@@ -1,7 +1,6 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 
@@ -10,20 +9,20 @@ import (
 
 // '<name>' -> <density> <young> <shear> <poisson> <yield> <ultimate>
 var materialDefinitionRegex = regexp.MustCompile(
-	"^" + nameGrpExpr + arrowExpr +
-		floatGroupExpr("density") + spaceExpr +
-		floatGroupExpr("young") + spaceExpr +
-		floatGroupExpr("shear") + spaceExpr +
-		floatGroupExpr("poisson") + spaceExpr +
-		floatGroupExpr("yield") + spaceExpr +
-		floatGroupExpr("ultimate") + optionalSpaceExpr + "$")
+	"^" + NameGrpExpr + ArrowExpr +
+		FloatGroupExpr("density") + SpaceExpr +
+		FloatGroupExpr("young") + SpaceExpr +
+		FloatGroupExpr("shear") + SpaceExpr +
+		FloatGroupExpr("poisson") + SpaceExpr +
+		FloatGroupExpr("yield") + SpaceExpr +
+		FloatGroupExpr("ultimate") + OptionalSpaceExpr + "$")
 
-func readMaterials(scanner *bufio.Scanner, count int) *map[string]*structure.Material {
-	lines := definitionLines(scanner, count)
+func ReadMaterials(linesReader *LinesReader, count int) map[string]*structure.Material {
+	lines := linesReader.GetNextLines(count)
 	return deserializeMaterialsByName(lines)
 }
 
-func deserializeMaterialsByName(lines []string) *map[string]*structure.Material {
+func deserializeMaterialsByName(lines []string) map[string]*structure.Material {
 	var (
 		material  *structure.Material
 		materials = make(map[string]*structure.Material)
@@ -34,7 +33,7 @@ func deserializeMaterialsByName(lines []string) *map[string]*structure.Material 
 		materials[material.Name] = material
 	}
 
-	return &materials
+	return materials
 }
 
 func deserializeMaterial(definition string) *structure.Material {
@@ -45,12 +44,12 @@ func deserializeMaterial(definition string) *structure.Material {
 	groups := materialDefinitionRegex.FindStringSubmatch(definition)
 
 	name := groups[1]
-	density := ensureParseFloat(groups[2], "material density")
-	youngMod := ensureParseFloat(groups[3], "material Young modulus")
-	shearMod := ensureParseFloat(groups[4], "material shear modulus")
-	possonRatio := ensureParseFloat(groups[5], "material poisson ratio")
-	yieldStrength := ensureParseFloat(groups[6], "material yield strength")
-	ultimateStrength := ensureParseFloat(groups[7], "material ultimate strength")
+	density := EnsureParseFloat(groups[2], "material density")
+	youngMod := EnsureParseFloat(groups[3], "material Young modulus")
+	shearMod := EnsureParseFloat(groups[4], "material shear modulus")
+	possonRatio := EnsureParseFloat(groups[5], "material poisson ratio")
+	yieldStrength := EnsureParseFloat(groups[6], "material yield strength")
+	ultimateStrength := EnsureParseFloat(groups[7], "material ultimate strength")
 
 	return &structure.Material{
 		Name:             name,

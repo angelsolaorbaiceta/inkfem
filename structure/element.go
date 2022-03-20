@@ -10,17 +10,15 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/mat"
 )
 
-/*
-An Element represents a resistant element defined between two structural nodes, a section and
-a material.
-
-An Element can have distributed and concentrated loads applied to it.
-
-To create an element, use the `ElementBuilder`.
-
-TODO: choose the bending axis
-TODO: buckling analysis
-*/
+// An Element represents a resistant element defined between two structural nodes, a section and
+// a material.
+//
+// An Element can have distributed and concentrated loads applied to it.
+//
+// To create an element, use the `ElementBuilder`.
+//
+// TODO: choose the bending axis
+// TODO: buckling analysis
 type Element struct {
 	id, startNodeID, endNodeID contracts.StrID
 	geometry                   *g2d.Segment
@@ -86,29 +84,28 @@ func (e Element) EndLink() *Constraint {
 	return e.endLink
 }
 
-// Material returns the material for the element.
+// Material returns the elements's material.
 func (e Element) Material() *Material {
 	return e.material
 }
 
-// Section returns the section for the element.
+// Section returns the element's section.
 func (e Element) Section() *Section {
 	return e.section
 }
 
-// HasLoadsApplied returns true if any load of any type is applied to the element.
+// HasLoadsApplied returns true if any load, either concentrated of distributed,
+// is applied to the element.
 func (e Element) HasLoadsApplied() bool {
 	return len(e.ConcentratedLoads) > 0 || len(e.DistributedLoads) > 0
 }
 
-/*
-IsAxialMember returns true if this element is pinned in both ends and, in case of having loads
-applied, they are always in the end positions of the directrix and does not include moments about Z,
-but just forces in X and Y directions.
-
-FIXME: is axial member a good name? a distributed Fx load would mean this is not an axiam member,
-which seems weird...
-*/
+// IsAxialMember returns true if this element is pinned in both ends and, in case of having
+// loads applied, they are always in the end positions of the directrix and does not include
+// moments about Z, but just forces in X and Y directions.
+//
+// FIXME: is axial member a good name? a distributed Fx load would make this bar not an
+// axial member, which seems weird...
 func (e Element) IsAxialMember() bool {
 	if len(e.DistributedLoads) > 0 {
 		return false
@@ -123,12 +120,10 @@ func (e Element) IsAxialMember() bool {
 	return e.startLink.AllowsRotation() && e.endLink.AllowsRotation()
 }
 
-/*
-StiffnessGlobalMat generates the local stiffness matrix for the element and applies the rotation
-defined by the elements' geometry reference frame.
-
-It returns the element's stiffness matrix in the global reference frame.
-*/
+// StiffnessGlobalMat generates the local stiffness matrix for the element and applies the rotation
+// defined by the elements' geometry reference frame.
+//
+// It returns the element's stiffness matrix in the global reference frame.
 func (e Element) StiffnessGlobalMat(startT, endT nums.TParam) mat.ReadOnlyMatrix {
 	var (
 		l    = e.geometry.LengthBetween(startT, endT)
@@ -198,7 +193,7 @@ func (e Element) StiffnessGlobalMat(startT, endT nums.TParam) mat.ReadOnlyMatrix
 }
 
 // Equals tests whether this element is equal to other.
-// Loads aren't compared, two bars with different set of loads can be equal.
+// Loads aren't compared, two bars with different set of loads might therefore be equal.
 func (e *Element) Equals(other *Element) bool {
 	return e.startNodeID == other.startNodeID &&
 		e.endNodeID == other.endNodeID &&
@@ -208,6 +203,9 @@ func (e *Element) Equals(other *Element) bool {
 		e.section.Name == other.section.Name
 }
 
+// String representation of the bar.
+// This method is used for serialization, thus if the format is changed, the definition,
+// file format could be affected.
 func (e Element) String() string {
 	return fmt.Sprintf(
 		"%s -> %s %s %s %s '%s' '%s'",

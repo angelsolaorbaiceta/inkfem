@@ -10,25 +10,29 @@ import (
 
 // Structure result of preprocessing original structure, ready to be solved.
 // The elements of a preprocessed structure are already sliced.
+//
+// A preprocessed structure can be created using the MakeStructure function. The created
+// structure doesn't have the degrees of freedom assigned. For that, the following function
+// must be called:
+//	structure.AssignDof()
 type Structure struct {
 	Metadata structure.StrMetadata
 	structure.NodesById
-	Elements  []*Element
+	ElementsSeq
 	dofsCount int
 }
 
-// MakeStructure creates a preprocessed structure with the degrees of freedom numbers set.
+// MakeStructure creates a preprocessed structure.
 func MakeStructure(
 	metadata structure.StrMetadata,
 	nodesById structure.NodesById,
 	elements []*Element,
 ) *Structure {
 	str := &Structure{
-		Metadata:  metadata,
-		NodesById: nodesById,
-		Elements:  elements,
+		Metadata:    metadata,
+		NodesById:   nodesById,
+		ElementsSeq: ElementsSeq{elements: elements},
 	}
-	str.assignDof()
 
 	return str
 }
@@ -38,23 +42,26 @@ func (s *Structure) GetElementNodes(element *Element) (*structure.Node, *structu
 	return s.GetNodeById(element.StartNodeID()), s.GetNodeById(element.EndNodeID())
 }
 
-// ElementsCount returns the number of elements in the original structure.
-func (s *Structure) ElementsCount() int {
-	return len(s.Elements)
-}
-
 // DofsCount is the number of degrees of freedom in the preprocessed structure.
 func (s *Structure) DofsCount() int {
 	return s.dofsCount
 }
 
-// Assings degrees of freedom numbers to all nodes on sliced elements.
+// SetDofsCount sets the number of degrees of freedom the preprocessed structure has.
+// This method is to be used when the structure is read from a file where the DOFs are
+// already assigned.
+func (s *Structure) SetDofsCount(dofsCount int) *Structure {
+	s.dofsCount = dofsCount
+	return s
+}
+
+// AssignDof assigns degrees of freedom numbers to all nodes on sliced elements.
 //
 // Structural nodes are given degrees of freedom to help in the correct assignment of DOF numbers
 // to the elements that meet in the node. Structural elements are first sorted by their geometry
 // positions, so the degrees of freedom numbers follow a logical sequence.
-func (str *Structure) assignDof() {
-	sort.Sort(ByGeometryPos(str.Elements))
+func (str *Structure) AssignDof() *Structure {
+	sort.Sort(ByGeometryPos(str.Elements()))
 
 	var (
 		startNode, endNode *structure.Node
@@ -98,7 +105,7 @@ func (str *Structure) assignDof() {
 		return
 	}
 
-	for _, element := range str.Elements {
+	for _, element := range str.Elements() {
 		startNode, endNode = str.GetElementNodes(element)
 		startLink = element.StartLink()
 		endLink = element.EndLink()
@@ -124,6 +131,8 @@ func (str *Structure) assignDof() {
 	}
 
 	str.dofsCount = dof
+
+	return str
 }
 
 // MakeSystemOfEquations generates the system of equations matrix and vector from the
@@ -137,7 +146,7 @@ func (str *Structure) MakeSystemOfEquations() (mat.ReadOnlyMatrix, vec.ReadOnlyV
 		sysVector = vec.Make(str.DofsCount())
 	)
 
-	for _, element := range str.Elements {
+	for _, element := range str.Elements() {
 		element.setEquationTerms(sysMatrix, sysVector)
 	}
 

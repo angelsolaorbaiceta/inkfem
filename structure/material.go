@@ -1,17 +1,19 @@
 package structure
 
-import "github.com/angelsolaorbaiceta/inkmath/nums"
+import (
+	"fmt"
 
-/*
-Material represents a the substance from which resistant elements are made of.
-Materials have the properties of:
-	- Density
-	- Young Modulus
-	- Shear Modulus
-	- Poisson Ratio
-	- Yield Strength
-	- Ultimate Strength
-*/
+	"github.com/angelsolaorbaiceta/inkmath/nums"
+)
+
+// Material represents a the substance from which resistant elements are made of.
+// Materials have the properties of:
+// - Density
+// - Young Modulus
+// - Shear Modulus
+// - Poisson Ratio
+// - Yield Strength
+// - Ultimate Strength
 type Material struct {
 	Name                             string
 	Density                          float64
@@ -37,12 +39,26 @@ func MakeUnitMaterial() *Material {
 	return &Material{"unit_material", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0}
 }
 
-/*
-Equals tests whether this and other materials are equal.
+// String representation of the material.
+// This method is used for serialization, thus if the format is changed, the definition,
+// preprocessed and solution file formats are affected.
+func (m *Material) String() string {
+	return fmt.Sprintf(
+		"'%s' -> %f %f %f %f %f %f",
+		m.Name,
+		m.Density,
+		m.YoungMod,
+		m.ShearMod,
+		m.PoissonRatio,
+		m.YieldStrength,
+		m.UltimateStrength,
+	)
+}
 
-Materials are equal if all its numerical properties are equal. the name isn't considered for the
-equality check.
-*/
+// Equals tests whether this and other materials are equal.
+//
+// Materials are equal if all its numerical properties are equal. the name isn't considered for the
+// equality check.
 func (m *Material) Equals(other *Material) bool {
 	return nums.FuzzyEqual(m.Density, other.Density) &&
 		nums.FuzzyEqual(m.YoungMod, other.YoungMod) &&

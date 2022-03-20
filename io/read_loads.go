@@ -1,11 +1,11 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
+	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
@@ -13,38 +13,35 @@ import (
 var (
 	// <term> <reference-type> <elementId> <tStart> <valueStart> <tEnd> <valueEnd>
 	distLoadDefinitionRegex = regexp.MustCompile(
-		"^" + loadTermExpr + distributedLoadRefExpr +
-			loadElementID +
-			floatGroupExpr("t_start") + spaceExpr +
-			floatGroupExpr("val_start") + spaceExpr +
-			floatGroupExpr("t_end") + spaceExpr +
-			floatGroupExpr("val_end") + optionalSpaceExpr + "$",
+		"^" + LoadTermExpr + DistributedLoadRefExpr +
+			LoadElementID +
+			FloatGroupExpr("t_start") + SpaceExpr +
+			FloatGroupExpr("val_start") + SpaceExpr +
+			FloatGroupExpr("t_end") + SpaceExpr +
+			FloatGroupExpr("val_end") + OptionalSpaceExpr + "$",
 	)
 
 	// <term> <reference> <elementId> <t> <value>
 	concLoadDefinitionRegex = regexp.MustCompile(
-		"^" + loadTermExpr + concentratedLoadRefExpr +
-			loadElementID +
-			floatGroupExpr("t") + spaceExpr +
-			floatGroupExpr("val") + optionalSpaceExpr + "$",
+		"^" + LoadTermExpr + ConcentratedLoadRefExpr +
+			LoadElementID +
+			FloatGroupExpr("t") + SpaceExpr +
+			FloatGroupExpr("val") + OptionalSpaceExpr + "$",
 	)
 )
 
-type ConcLoadsById = map[contracts.StrID][]*load.ConcentratedLoad
-type DistLoadsById = map[contracts.StrID][]*load.DistributedLoad
-
-func readLoads(scanner *bufio.Scanner, count int) (ConcLoadsById, DistLoadsById) {
-	lines := definitionLines(scanner, count)
+func readLoads(linesReader *LinesReader, count int) (structure.ConcLoadsById, structure.DistLoadsById) {
+	lines := linesReader.GetNextLines(count)
 	return deserializeLoadsByElementID(lines)
 }
 
-func deserializeLoadsByElementID(lines []string) (ConcLoadsById, DistLoadsById) {
+func deserializeLoadsByElementID(lines []string) (structure.ConcLoadsById, structure.DistLoadsById) {
 	var (
 		elementID        contracts.StrID
 		concentratedLoad *load.ConcentratedLoad
 		distributedLoad  *load.DistributedLoad
-		concentrated     = make(ConcLoadsById)
-		distributed      = make(DistLoadsById)
+		concentrated     = make(structure.ConcLoadsById)
+		distributed      = make(structure.DistLoadsById)
 	)
 
 	for _, line := range lines {
@@ -77,10 +74,10 @@ func deserializeDistributedLoad(line string) (contracts.StrID, *load.Distributed
 
 	isInLocalCoords := groups[2] == "l"
 	elementID := groups[3]
-	tStart := ensureParseFloat(groups[4], "distributed load start T")
-	valStart := ensureParseFloat(groups[5], "distributed load start value")
-	tEnd := ensureParseFloat(groups[6], "distributed load end T")
-	valEnd := ensureParseFloat(groups[7], "distributed load end value")
+	tStart := EnsureParseFloat(groups[4], "distributed load start T")
+	valStart := EnsureParseFloat(groups[5], "distributed load start value")
+	tEnd := EnsureParseFloat(groups[6], "distributed load end T")
+	valEnd := EnsureParseFloat(groups[7], "distributed load end value")
 
 	return elementID,
 		load.MakeDistributed(
@@ -101,8 +98,8 @@ func deserializeConcentratedLoad(line string) (contracts.StrID, *load.Concentrat
 
 	isInLocalCoords := groups[2] == "l"
 	elementID := groups[3]
-	t := ensureParseFloat(groups[4], "concentrated load T")
-	val := ensureParseFloat(groups[5], "concentrated load value")
+	t := EnsureParseFloat(groups[4], "concentrated load T")
+	val := EnsureParseFloat(groups[5], "concentrated load value")
 
 	return elementID, load.MakeConcentrated(term, isInLocalCoords, nums.MakeTParam(t), val)
 }

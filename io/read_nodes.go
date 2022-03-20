@@ -1,28 +1,35 @@
 package io
 
 import (
-	"bufio"
 	"fmt"
 	"regexp"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
-	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
-// <id> -> <xCoord> <yCoord> {[dx dy rz]}
-var nodeDefinitionRegex = regexp.MustCompile(
-	"^" + idGrpExpr + arrowExpr +
-		floatGroupExpr("x") + spaceExpr +
-		floatGroupExpr("y") + spaceExpr +
-		constraintGroupExpr("constraints") + optionalSpaceExpr + "$")
+const (
+	xPosGroupName        = "x"
+	yPosGroupName        = "y"
+	constraintsGroupName = "constraints"
+)
 
-func readNodes(scanner *bufio.Scanner, count int) *map[contracts.StrID]*structure.Node {
-	lines := definitionLines(scanner, count)
+// <id> -> <xCoord> <yCoord> {[dx dy rz]} [| DOF: [0 1 2]]
+var nodeDefinitionRegex = regexp.MustCompile(
+	"^" + IdGrpExpr + ArrowExpr +
+		FloatGroupExpr(xPosGroupName) + SpaceExpr +
+		FloatGroupExpr(yPosGroupName) + SpaceExpr +
+		ConstraintGroupExpr(constraintsGroupName) + OptionalSpaceExpr +
+		`(?:\|` + OptionalSpaceExpr + DofGrpExpr + OptionalSpaceExpr + `)?` + "$",
+)
+
+// ReadNodes reads and parses "count" nodes from the lines in the lines reader.
+func ReadNodes(linesReader *LinesReader, count int) map[contracts.StrID]*structure.Node {
+	lines := linesReader.GetNextLines(count)
 	return deserializeNodesByID(lines)
 }
 
-func deserializeNodesByID(lines []string) *map[contracts.StrID]*structure.Node {
+func deserializeNodesByID(lines []string) map[contracts.StrID]*structure.Node {
 	var (
 		node  *structure.Node
 		nodes = make(map[contracts.StrID]*structure.Node)
@@ -33,7 +40,7 @@ func deserializeNodesByID(lines []string) *map[contracts.StrID]*structure.Node {
 		nodes[node.GetID()] = node
 	}
 
-	return &nodes
+	return nodes
 }
 
 func deserializeNode(definition string) *structure.Node {
@@ -41,16 +48,25 @@ func deserializeNode(definition string) *structure.Node {
 		panic(fmt.Sprintf("Found node with wrong format: '%s'", definition))
 	}
 
-	groups := nodeDefinitionRegex.FindStringSubmatch(definition)
+	var (
+		groups = ExtractNamedGroups(nodeDefinitionRegex, definition)
 
-	id := groups[1]
-	x := ensureParseFloat(groups[2], "node x position")
-	y := ensureParseFloat(groups[3], "node y position")
-	externalConstraint := groups[4]
+		id                 = groups["id"]
+		x                  = EnsureParseFloat(groups[xPosGroupName], "node x position")
+		y                  = EnsureParseFloat(groups[yPosGroupName], "node y position")
+		externalConstraint = groups[constraintsGroupName]
 
-	return structure.MakeNode(
-		id,
-		g2d.MakePoint(x, y),
-		constraintFromString(externalConstraint),
+		node = structure.MakeNodeAtPosition(
+			id,
+			x, y,
+			constraintFromString(externalConstraint),
+		)
 	)
+
+	if dofString, hasDof := groups[DofGrpName]; hasDof {
+		dof1, dof2, dof3 := EnsureParseDOF(dofString, "node")
+		node.SetDegreesOfFreedomNum(dof1, dof2, dof3)
+	}
+
+	return node
 }

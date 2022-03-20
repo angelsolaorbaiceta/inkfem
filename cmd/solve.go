@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
+	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/process"
@@ -72,7 +73,7 @@ func solveStructure(cmd *cobra.Command, args []string) {
 		go (func() {
 			file := io.CreateFile(outPath + io.PreFileExt)
 			defer file.Close()
-			io.WritePreprocessedStructure(preStructure, file)
+			iopre.Write(preStructure, file)
 		})()
 	}
 

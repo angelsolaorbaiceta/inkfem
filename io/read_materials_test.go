@@ -48,10 +48,10 @@ func TestDeserializeMaterials(t *testing.T) {
 		wantMatTwo = structure.MakeMaterial(matTwoName, 10.1, 20.2, 30.3, 40.4, 50.5, 60.6)
 	)
 
-	if got := (*materialsByName)[matOneName]; !got.Equals(wantMatOne) {
+	if got := materialsByName[matOneName]; !got.Equals(wantMatOne) {
 		t.Errorf("Want material %v, got %v", wantMatOne, got)
 	}
-	if got := (*materialsByName)[matTwoName]; !got.Equals(wantMatTwo) {
+	if got := materialsByName[matTwoName]; !got.Equals(wantMatTwo) {
 		t.Errorf("Want material %v, got %v", wantMatTwo, got)
 	}
 }

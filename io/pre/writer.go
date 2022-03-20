@@ -1,4 +1,4 @@
-package io
+package pre
 
 import (
 	"bufio"
@@ -9,11 +9,11 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 )
 
-//go:embed templates/preprocess.template.txt
+//go:embed preprocess.template.txt
 var preprocessTemplateBytes []byte
 
-// WritePreprocessedStructure Writes the given preprocessed structure to the passed in writer.
-func WritePreprocessedStructure(structure *preprocess.Structure, writer io.Writer) {
+// Write Writes the given preprocessed structure to the passed in writer.
+func Write(structure *preprocess.Structure, writer io.Writer) {
 	var (
 		tmpl       = template.Must(template.New("preprocess").Parse(string(preprocessTemplateBytes)))
 		buffWriter = bufio.NewWriter(writer)
