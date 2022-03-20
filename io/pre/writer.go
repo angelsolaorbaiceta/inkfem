@@ -12,7 +12,7 @@ import (
 //go:embed preprocess.template.txt
 var preprocessTemplateBytes []byte
 
-// Write Writes the given preprocessed structure to the passed in writer.
+// Write writes the given preprocessed structure to the passed in writer.
 func Write(structure *preprocess.Structure, writer io.Writer) {
 	var (
 		tmpl       = template.Must(template.New("preprocess").Parse(string(preprocessTemplateBytes)))

@@ -3,13 +3,14 @@ package pre
 import (
 	"testing"
 
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
 func TestReadPreprocessModel(t *testing.T) {
 	var (
-		wantStr            = makeTestPreprocessedStructure()
-		preprocessedReader = makePreprocessedReader()
+		wantStr            = inkio.MakeTestPreprocessedStructure()
+		preprocessedReader = inkio.MakePreprocessedReader()
 		str                = Read(preprocessedReader)
 	)
 

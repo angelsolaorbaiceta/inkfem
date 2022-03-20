@@ -1,0 +1,1 @@
+inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}

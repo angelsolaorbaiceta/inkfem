@@ -1,4 +1,4 @@
-package pre
+package io
 
 import (
 	"io"
@@ -10,7 +10,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
-func makeTestOriginalStructure() *structure.Structure {
+func MakeTestOriginalStructure() *structure.Structure {
 	var (
 		metadata = structure.StrMetadata{
 			MajorVersion: 2,
@@ -33,9 +33,9 @@ func makeTestOriginalStructure() *structure.Structure {
 	return structure.Make(metadata, nodesById, []*structure.Element{element})
 }
 
-func makeTestPreprocessedStructure() *preprocess.Structure {
+func MakeTestPreprocessedStructure() *preprocess.Structure {
 	var (
-		original        = makeTestOriginalStructure()
+		original        = MakeTestOriginalStructure()
 		originalElement = original.Elements()[0]
 		preNodes        = []*preprocess.Node{
 			preprocess.MakeNode(nums.MinT, originalElement.StartPoint(), 10, 20, 30),
@@ -58,7 +58,7 @@ func makeTestPreprocessedStructure() *preprocess.Structure {
 		AssignDof()
 }
 
-func makePreprocessedReader() io.Reader {
+func MakePreprocessedReader() io.Reader {
 	return strings.NewReader(`inkfem v2.3
 	
 	dof_count: 9

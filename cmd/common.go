@@ -21,7 +21,7 @@ func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *str
 	file := io.OpenFile(filePath)
 	defer file.Close()
 
-	structure := iodef.ReadStructure(file, readerOptions)
+	structure := iodef.Read(file, readerOptions)
 	log.EndReadFile(io.DefinitionFileExt, structure.NodesCount(), structure.ElementsCount())
 
 	return structure

@@ -6,11 +6,13 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 )
 
 func TestWritePreprocessedStructure(t *testing.T) {
 	var (
-		str            = makeTestPreprocessedStructure()
+		str            = inkio.MakeTestPreprocessedStructure()
 		writer         bytes.Buffer
 		nodesOffset    = 2
 		materiasOffset = nodesOffset + 3
