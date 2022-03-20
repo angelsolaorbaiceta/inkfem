@@ -1,10 +1,11 @@
-package io
+package def
 
 import (
 	"fmt"
 	"regexp"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
@@ -13,24 +14,24 @@ import (
 var (
 	// <term> <reference-type> <elementId> <tStart> <valueStart> <tEnd> <valueEnd>
 	distLoadDefinitionRegex = regexp.MustCompile(
-		"^" + LoadTermExpr + DistributedLoadRefExpr +
-			LoadElementID +
-			FloatGroupExpr("t_start") + SpaceExpr +
-			FloatGroupExpr("val_start") + SpaceExpr +
-			FloatGroupExpr("t_end") + SpaceExpr +
-			FloatGroupExpr("val_end") + OptionalSpaceExpr + "$",
+		"^" + inkio.LoadTermExpr + inkio.DistributedLoadRefExpr +
+			inkio.LoadElementID +
+			inkio.FloatGroupExpr("t_start") + inkio.SpaceExpr +
+			inkio.FloatGroupExpr("val_start") + inkio.SpaceExpr +
+			inkio.FloatGroupExpr("t_end") + inkio.SpaceExpr +
+			inkio.FloatGroupExpr("val_end") + inkio.OptionalSpaceExpr + "$",
 	)
 
 	// <term> <reference> <elementId> <t> <value>
 	concLoadDefinitionRegex = regexp.MustCompile(
-		"^" + LoadTermExpr + ConcentratedLoadRefExpr +
-			LoadElementID +
-			FloatGroupExpr("t") + SpaceExpr +
-			FloatGroupExpr("val") + OptionalSpaceExpr + "$",
+		"^" + inkio.LoadTermExpr + inkio.ConcentratedLoadRefExpr +
+			inkio.LoadElementID +
+			inkio.FloatGroupExpr("t") + inkio.SpaceExpr +
+			inkio.FloatGroupExpr("val") + inkio.OptionalSpaceExpr + "$",
 	)
 )
 
-func readLoads(linesReader *LinesReader, count int) (structure.ConcLoadsById, structure.DistLoadsById) {
+func readLoads(linesReader *inkio.LinesReader, count int) (structure.ConcLoadsById, structure.DistLoadsById) {
 	lines := linesReader.GetNextLines(count)
 	return deserializeLoadsByElementID(lines)
 }
@@ -74,10 +75,10 @@ func deserializeDistributedLoad(line string) (contracts.StrID, *load.Distributed
 
 	isInLocalCoords := groups[2] == "l"
 	elementID := groups[3]
-	tStart := EnsureParseFloat(groups[4], "distributed load start T")
-	valStart := EnsureParseFloat(groups[5], "distributed load start value")
-	tEnd := EnsureParseFloat(groups[6], "distributed load end T")
-	valEnd := EnsureParseFloat(groups[7], "distributed load end value")
+	tStart := inkio.EnsureParseFloat(groups[4], "distributed load start T")
+	valStart := inkio.EnsureParseFloat(groups[5], "distributed load start value")
+	tEnd := inkio.EnsureParseFloat(groups[6], "distributed load end T")
+	valEnd := inkio.EnsureParseFloat(groups[7], "distributed load end value")
 
 	return elementID,
 		load.MakeDistributed(
@@ -98,8 +99,8 @@ func deserializeConcentratedLoad(line string) (contracts.StrID, *load.Concentrat
 
 	isInLocalCoords := groups[2] == "l"
 	elementID := groups[3]
-	t := EnsureParseFloat(groups[4], "concentrated load T")
-	val := EnsureParseFloat(groups[5], "concentrated load value")
+	t := inkio.EnsureParseFloat(groups[4], "concentrated load T")
+	val := inkio.EnsureParseFloat(groups[5], "concentrated load value")
 
 	return elementID, load.MakeConcentrated(term, isInLocalCoords, nums.MakeTParam(t), val)
 }

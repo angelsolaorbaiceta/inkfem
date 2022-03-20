@@ -1,15 +1,16 @@
-package io
+package def
 
 import (
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
-// TODO: test preprocessed ndoes
+// TODO: test preprocessed nodes
 func TestDeserializeBars(t *testing.T) {
 	var (
 		lines = []string{
@@ -78,8 +79,8 @@ func TestDeserializeBars(t *testing.T) {
 	)
 
 	var (
-		elOne, _ = DeserializeBar(lines[0], data, ReaderOptions{ShouldIncludeOwnWeight: true})
-		elTwo, _ = DeserializeBar(lines[1], data, ReaderOptions{ShouldIncludeOwnWeight: true})
+		elOne, _ = DeserializeBar(lines[0], data, inkio.ReaderOptions{ShouldIncludeOwnWeight: true})
+		elTwo, _ = DeserializeBar(lines[1], data, inkio.ReaderOptions{ShouldIncludeOwnWeight: true})
 	)
 
 	t.Run("Elements read", func(t *testing.T) {

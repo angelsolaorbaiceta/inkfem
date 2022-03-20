@@ -6,6 +6,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
 	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
+	iosol "github.com/angelsolaorbaiceta/inkfem/io/sol"
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/process"
@@ -93,7 +94,7 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	}
 
 	solution := process.Solve(preStructure, solveOptions)
-	io.StructureSolutionToFile(solution, outPath+io.SolFileExt)
+	iosol.StructureSolutionToFile(solution, outPath+io.SolFileExt)
 
 	log.Result()
 }

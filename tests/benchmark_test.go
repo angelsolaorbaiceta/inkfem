@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
+	iodef "github.com/angelsolaorbaiceta/inkfem/io/def"
 	"github.com/angelsolaorbaiceta/inkfem/process"
 )
 
@@ -13,7 +14,7 @@ func BenchmarkSolveStructure(b *testing.B) {
 	var (
 		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: true}
 		file          = io.OpenFile("./retic_10x5.inkfem")
-		str           = io.ReadStructure(file, readerOptions)
+		str           = iodef.ReadStructure(file, readerOptions)
 	)
 	defer file.Close()
 

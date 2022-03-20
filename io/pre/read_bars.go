@@ -4,6 +4,7 @@ import (
 	"regexp"
 
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
+	iodef "github.com/angelsolaorbaiceta/inkfem/io/def"
 	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -78,7 +79,7 @@ func deserializeBar(
 
 	var (
 		readOps                 = inkio.ReaderOptions{ShouldIncludeOwnWeight: false}
-		originalElement, nNodes = inkio.DeserializeBar(linesReader.GetNextLine(), data, readOps)
+		originalElement, nNodes = iodef.DeserializeBar(linesReader.GetNextLine(), data, readOps)
 		nLines                  = nNodes * linesPerNode
 		lines                   = linesReader.GetNextLines(nLines)
 		nodes                   = deserializeBarNodes(nNodes, lines)

@@ -8,6 +8,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
+	iodef "github.com/angelsolaorbaiceta/inkfem/io/def"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
@@ -44,21 +45,21 @@ func Read(reader io.Reader) *preprocess.Structure {
 		case inkio.IsNodesHeader(line):
 			{
 				nodesCount := inkio.ExtractNodesCount(line)
-				nodes = inkio.ReadNodes(linesReader, nodesCount)
+				nodes = iodef.ReadNodes(linesReader, nodesCount)
 				nodesDefined = true
 			}
 
 		case inkio.IsMaterialsHeader(line):
 			{
 				materialsCount := inkio.ExtractMaterialsCount(line)
-				materials = inkio.ReadMaterials(linesReader, materialsCount)
+				materials = iodef.ReadMaterials(linesReader, materialsCount)
 				materialsDefined = true
 			}
 
 		case inkio.IsSectionsHeader(line):
 			{
 				sectionsCount := inkio.ExtractSectionsCount(line)
-				sections = inkio.ReadSections(linesReader, sectionsCount)
+				sections = iodef.ReadSections(linesReader, sectionsCount)
 				sectionsDefined = true
 			}
 

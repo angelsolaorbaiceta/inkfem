@@ -1,22 +1,23 @@
-package io
+package def
 
 import (
 	"fmt"
 	"regexp"
 
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
 // '<name>' -> <area> <iStrong> <iWeak> <sStrong> <sWeak>
 var sectionDefinitionRegex = regexp.MustCompile(
-	"^" + NameGrpExpr + ArrowExpr +
-		FloatGroupExpr("area") + SpaceExpr +
-		FloatGroupExpr("istrong") + SpaceExpr +
-		FloatGroupExpr("iweak") + SpaceExpr +
-		FloatGroupExpr("sstrong") + SpaceExpr +
-		FloatGroupExpr("sweak") + OptionalSpaceExpr + "$")
+	"^" + inkio.NameGrpExpr + inkio.ArrowExpr +
+		inkio.FloatGroupExpr("area") + inkio.SpaceExpr +
+		inkio.FloatGroupExpr("istrong") + inkio.SpaceExpr +
+		inkio.FloatGroupExpr("iweak") + inkio.SpaceExpr +
+		inkio.FloatGroupExpr("sstrong") + inkio.SpaceExpr +
+		inkio.FloatGroupExpr("sweak") + inkio.OptionalSpaceExpr + "$")
 
-func ReadSections(linesReader *LinesReader, count int) map[string]*structure.Section {
+func ReadSections(linesReader *inkio.LinesReader, count int) map[string]*structure.Section {
 	lines := linesReader.GetNextLines(count)
 	return deserializeSectionsByName(lines)
 }
@@ -43,11 +44,11 @@ func deserializeSection(definition string) *structure.Section {
 	groups := sectionDefinitionRegex.FindStringSubmatch(definition)
 
 	name := groups[1]
-	area := EnsureParseFloat(groups[2], "section area")
-	iStrong := EnsureParseFloat(groups[3], "section iStrong")
-	iWeak := EnsureParseFloat(groups[4], "section iWeak")
-	sStrong := EnsureParseFloat(groups[5], "section sStrong")
-	sWeak := EnsureParseFloat(groups[6], "section sWeak")
+	area := inkio.EnsureParseFloat(groups[2], "section area")
+	iStrong := inkio.EnsureParseFloat(groups[3], "section iStrong")
+	iWeak := inkio.EnsureParseFloat(groups[4], "section iWeak")
+	sStrong := inkio.EnsureParseFloat(groups[5], "section sStrong")
+	sWeak := inkio.EnsureParseFloat(groups[6], "section sWeak")
 
 	return &structure.Section{
 		Name:    name,
