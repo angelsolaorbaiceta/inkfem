@@ -1,1 +1,17 @@
 inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
+
+|nodes| {{.NodesCount}}{{range .GetAllNodes}}
+{{.String}}{{end}}
+
+|materials| {{.MaterialsCount}}{{range $key, $material := .GetMaterialsByName}}
+{{$material}}{{end}}
+
+|sections| {{.SectionsCount}}{{range $key, $section := .GetSectionsByName}}
+{{$section}}{{end}}
+
+|loads| 1
+fx ld 1 0.0 400.0 1.0 0.0 
+
+|bars| {{.ElementsCount}}{{range .Elements}}
+{{.String}}
+{{end}}

@@ -98,11 +98,19 @@ func (n Node) GetID() contracts.StrID {
 	return n.id
 }
 
+// String representation of the node.
+// This method is used for serialization, thus if the format is changed, the definition,
+// preprocessed and solution file formats are affected.
 func (n Node) String() string {
-	return fmt.Sprintf(
-		"%s -> %f %f %s | %v",
+	str := fmt.Sprintf(
+		"%s -> %f %f %s",
 		n.id, n.Position.X(), n.Position.Y(),
 		n.ExternalConstraint.String(),
-		n.DegreesOfFreedomNum(),
 	)
+
+	if n.HasDegreesOfFreedomNum() {
+		str += fmt.Sprintf(" | %v", n.DegreesOfFreedomNum())
+	}
+
+	return str
 }
