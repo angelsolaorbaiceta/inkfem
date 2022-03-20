@@ -7,13 +7,11 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
-/*
-A Torsor is a force-moment tuple: {fx, fy, mz}, where {fx, fy} are the x and y components
-of the force and mz is the moment around z.
-
-The moment can be represented as the result of a pair of parallel forces separated
-a given distance.
-*/
+// A Torsor is a force-moment tuple: {fx, fy, mz}, where {fx, fy} are the x and y components
+// of the force and mz is the moment around z.
+//
+// The moment can be represented as the result of a pair of parallel forces separated
+// a given distance.
 type Torsor struct {
 	fx, fy, mz float64
 }
@@ -72,19 +70,15 @@ func (minuend *Torsor) Minus(subtrahend *Torsor) *Torsor {
 	)
 }
 
-/*
-ProjectedToGlobal creates a new torsor with the values projected to the global reference frame
-assuming it was originally projected in the passed in reference frame.
-*/
+// ProjectedToGlobal creates a new torsor with the values projected to the global reference frame
+// assuming it was originally projected in the passed in reference frame.
 func (torsor *Torsor) ProjectedToGlobal(refFrame *g2d.RefFrame) *Torsor {
 	projectedForces := refFrame.ProjectionsToGlobal(torsor.fx, torsor.fy)
 	return MakeTorsor(projectedForces.X(), projectedForces.Y(), torsor.mz)
 }
 
-/*
-ProjectedTo creates a new torsor with the values projected to the passed in reference frame
-assuming it was originally projected in the global reference frame.
-*/
+// ProjectedTo creates a new torsor with the values projected to the passed in reference frame
+// assuming it was originally projected in the global reference frame.
 func (torsor *Torsor) ProjectedTo(refFrame *g2d.RefFrame) *Torsor {
 	projectedForces := refFrame.ProjectProjections(torsor.fx, torsor.fy)
 	return MakeTorsor(projectedForces.X(), projectedForces.Y(), torsor.mz)
@@ -97,6 +91,7 @@ func (torsor *Torsor) Equals(other *Torsor) bool {
 		nums.FloatsEqual(torsor.mz, other.mz)
 }
 
+// String representation of the torsor.
 func (torsor *Torsor) String() string {
-	return fmt.Sprintf("%f %f %f", torsor.fx, torsor.fy, torsor.mz)
+	return fmt.Sprintf("{%f %f %f}", torsor.fx, torsor.fy, torsor.mz)
 }

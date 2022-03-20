@@ -12,13 +12,13 @@ const unsetDOF = -1
 
 // A Node represents an intermediate point in a sliced element.
 //
-// This point has a T Parameter associated, loads applied and degrees of freedom numbering for
-// the global system.
+// This point has a T Parameter associated, external loads applied and degrees of freedom
+// numbering for the global system.
 //
-// The `leftLocalLoad` is the equivalent load, in local coordinates, from the finite element located
+// The "leftLocalLoad" is the equivalent load, in local coordinates, from the finite element located
 // to the left of the node.
 //
-// The `rightLocalLoad` is the equivalent load, in local coordinates, from the finite element located
+// The "rightLocalLoad" is the equivalent load, in local coordinates, from the finite element located
 // to the right of the node.
 type Node struct {
 	T                 nums.TParam
@@ -58,7 +58,13 @@ func MakeUnloadedNode(t nums.TParam, position *g2d.Point) *Node {
 	}
 }
 
-// NetLocalFx returns the magnitude of the local force in X.
+// NetLocalTorsor returns the resulting torsor of adding the external loads and the loads added
+// by the left and right finite elements, all projected in local coordinates.
+func (n Node) NetLocalTorsor() *math.Torsor {
+	return n.externalLocalLoad.Plus(n.leftLocalLoad).Plus(n.rightLocalLoad)
+}
+
+// NetLocalFx returns the magnitude of the net force in X, projected in local coordinates.
 func (n Node) NetLocalFx() float64 {
 	return n.externalLocalLoad.Fx() + n.leftLocalLoad.Fx() + n.rightLocalLoad.Fx()
 }
@@ -71,7 +77,7 @@ func (n Node) LocalRightFx() float64 {
 	return n.rightLocalLoad.Fx()
 }
 
-// NetLocalFy returns the magnitude of the net local force in Y.
+// NetLocalFy returns the magnitude of the net force in Y, projected in local coordinates.
 func (n Node) NetLocalFy() float64 {
 	return n.externalLocalLoad.Fy() + n.LocalLeftFy() + n.LocalRightFy()
 }
@@ -84,7 +90,7 @@ func (n Node) LocalRightFy() float64 {
 	return n.rightLocalLoad.Fy()
 }
 
-// NetLocalMz returns the magnitude of the local moment about Z.
+// NetLocalMz returns the magnitude of the net moment about Z, projected in local coordinates.
 func (n Node) NetLocalMz() float64 {
 	return n.externalLocalLoad.Mz() + n.LocalLeftMz() + n.LocalRightMz()
 }
@@ -97,7 +103,8 @@ func (n Node) LocalRightMz() float64 {
 	return n.rightLocalLoad.Mz()
 }
 
-// NetLocalLoadTorsor returns the array of net local load values {Fx, Fy, Mz}.
+// NetLocalLoadTorsor returns the torsor of net load values {Fx, Fy, Mz} projected in
+// local coordinates.
 func (n Node) NetLocalLoadTorsor() *math.Torsor {
 	return math.MakeTorsor(
 		n.NetLocalFx(),
@@ -133,7 +140,7 @@ func (n *Node) DistanceTo(other *Node) float64 {
 	return n.Position.DistanceTo(other.Position)
 }
 
-// AddLocalExternalLoad adds the given load values to the load applied from the left finite element.
+// AddLocalExternalLoad adds the given load values to the externally applied load.
 func (n *Node) AddLocalExternalLoad(loadTorsor *math.Torsor) {
 	n.externalLocalLoad = n.externalLocalLoad.Plus(loadTorsor)
 }
@@ -150,21 +157,31 @@ func (n *Node) AddLocalRightLoad(fx, fy, mz float64) {
 	n.rightLocalLoad = n.rightLocalLoad.PlusComponents(fx, fy, mz)
 }
 
-func (n Node) String() string {
-	var (
-		leftLoads  = fmt.Sprintf("{%f %f %f}", n.LocalLeftFx(), n.LocalLeftFy(), n.LocalLeftMz())
-		rightLoads = fmt.Sprintf("{%f %f %f}", n.LocalRightFx(), n.LocalRightFy(), n.LocalRightMz())
-		loads      = fmt.Sprintf("{%f %f %f}", n.NetLocalFx(), n.NetLocalFy(), n.NetLocalMz())
-	)
+// Equals returns true if this and the other node equal.
+func (n *Node) Equals(other *Node) bool {
+	return n.T.Equals(other.T) &&
+		n.Position.Equals(other.Position) &&
+		n.externalLocalLoad.Equals(other.externalLocalLoad) &&
+		n.leftLocalLoad.Equals(other.leftLocalLoad) &&
+		n.rightLocalLoad.Equals(other.rightLocalLoad) &&
+		n.dofs[0] == other.dofs[0] &&
+		n.dofs[1] == other.dofs[1] &&
+		n.dofs[2] == other.dofs[2]
+}
 
+// String representation of the node.
+// This method is used for serialization, thus if the format is changed, the preprocessed
+// file format might be affected.
+func (n Node) String() string {
 	return fmt.Sprintf(
-		"%f : %f %f \n\t left  : %s \n\t right : %s \n\t net   : %s \n\t dof   : %v",
+		"%f : %f %f\n\text   : %s\n\tleft  : %s\n\tright : %s\n\tnet   : %s\n\tdof   : %v",
 		n.T.Value(),
 		n.Position.X(),
 		n.Position.Y(),
-		leftLoads,
-		rightLoads,
-		loads,
+		n.externalLocalLoad,
+		n.leftLocalLoad,
+		n.rightLocalLoad,
+		n.NetLocalLoadTorsor(),
 		n.DegreesOfFreedomNum(),
 	)
 }

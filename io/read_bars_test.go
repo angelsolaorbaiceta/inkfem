@@ -9,6 +9,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
+// TODO: test preprocessed ndoes
 func TestDeserializeBars(t *testing.T) {
 	var (
 		lines = []string{
@@ -77,8 +78,8 @@ func TestDeserializeBars(t *testing.T) {
 	)
 
 	var (
-		elOne = DeserializeBar(lines[0], data, ReaderOptions{ShouldIncludeOwnWeight: true})
-		elTwo = DeserializeBar(lines[1], data, ReaderOptions{ShouldIncludeOwnWeight: true})
+		elOne, _ = DeserializeBar(lines[0], data, ReaderOptions{ShouldIncludeOwnWeight: true})
+		elTwo, _ = DeserializeBar(lines[1], data, ReaderOptions{ShouldIncludeOwnWeight: true})
 	)
 
 	t.Run("Elements read", func(t *testing.T) {

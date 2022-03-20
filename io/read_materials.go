@@ -44,12 +44,12 @@ func deserializeMaterial(definition string) *structure.Material {
 	groups := materialDefinitionRegex.FindStringSubmatch(definition)
 
 	name := groups[1]
-	density := ensureParseFloat(groups[2], "material density")
-	youngMod := ensureParseFloat(groups[3], "material Young modulus")
-	shearMod := ensureParseFloat(groups[4], "material shear modulus")
-	possonRatio := ensureParseFloat(groups[5], "material poisson ratio")
-	yieldStrength := ensureParseFloat(groups[6], "material yield strength")
-	ultimateStrength := ensureParseFloat(groups[7], "material ultimate strength")
+	density := EnsureParseFloat(groups[2], "material density")
+	youngMod := EnsureParseFloat(groups[3], "material Young modulus")
+	shearMod := EnsureParseFloat(groups[4], "material shear modulus")
+	possonRatio := EnsureParseFloat(groups[5], "material poisson ratio")
+	yieldStrength := EnsureParseFloat(groups[6], "material yield strength")
+	ultimateStrength := EnsureParseFloat(groups[7], "material ultimate strength")
 
 	return &structure.Material{
 		Name:             name,

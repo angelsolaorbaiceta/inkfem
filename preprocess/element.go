@@ -91,6 +91,15 @@ func (element *Element) addTermsToLoadVector(sysVector vec.MutableVector) {
 
 // Equals compares this bar with another one and returns true if both have the same nodes.
 func (e *Element) Equals(other *Element) bool {
-	// TODO: implement me
+	if e.NodesCount() != other.NodesCount() {
+		return false
+	}
+
+	for i, node := range e.nodes {
+		if !node.Equals(other.NodeAt(i)) {
+			return false
+		}
+	}
+
 	return true
 }

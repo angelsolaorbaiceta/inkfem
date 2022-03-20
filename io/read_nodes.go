@@ -15,7 +15,7 @@ const (
 	constraintsGroupName = "constraints"
 )
 
-// <id> -> <xCoord> <yCoord> {[dx dy rz]} <| DOF: [0 1 2]>
+// <id> -> <xCoord> <yCoord> {[dx dy rz]} [| DOF: [0 1 2]]
 var nodeDefinitionRegex = regexp.MustCompile(
 	"^" + IdGrpExpr + ArrowExpr +
 		FloatGroupExpr(xPosGroupName) + SpaceExpr +
@@ -53,8 +53,8 @@ func deserializeNode(definition string) *structure.Node {
 		groups = ExtractNamedGroups(nodeDefinitionRegex, definition)
 
 		id                 = groups["id"]
-		x                  = ensureParseFloat(groups[xPosGroupName], "node x position")
-		y                  = ensureParseFloat(groups[yPosGroupName], "node y position")
+		x                  = EnsureParseFloat(groups[xPosGroupName], "node x position")
+		y                  = EnsureParseFloat(groups[yPosGroupName], "node y position")
 		externalConstraint = groups[constraintsGroupName]
 
 		node = structure.MakeNodeAtPosition(

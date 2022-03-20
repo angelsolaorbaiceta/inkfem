@@ -16,7 +16,7 @@ const (
 	numNodesGroupName  = "n_nodes"
 )
 
-// <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section>
+// <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section> [>> <n_pre_nodes>]
 var elementDefinitionRegex = regexp.MustCompile(
 	"^" + IdGrpExpr + ArrowExpr +
 		IdGroupExpr(startNodeGroupName) + OptionalSpaceExpr +
@@ -42,7 +42,7 @@ func readBars(
 	)
 
 	for i, line := range lines {
-		bars[i] = DeserializeBar(line, data, readerOptions)
+		bars[i], _ = DeserializeBar(line, data, readerOptions)
 	}
 
 	return bars
@@ -51,20 +51,24 @@ func readBars(
 // DeserializeBar parses a bar from the definition line and given the nodes, material, section
 // and loads to use for its creation.
 // Using the reader options, the bar can be added loads for its own weight.
+//
+// If the bar has the preprocess format, it also reads the number of nodes of the sliced bar
+// and returns the number as the second argument.
 func DeserializeBar(
 	line string,
 	data *structure.StructureData,
 	readerOptions ReaderOptions,
-) *structure.Element {
+) (*structure.Element, int) {
 	var (
-		groups    = ExtractNamedGroups(elementDefinitionRegex, line)
-		id        = groups[IdGrpName]
-		startNode = data.Nodes[groups[startNodeGroupName]]
-		startLink = constraintFromString(groups[startLinkGroupName])
-		endNode   = data.Nodes[groups[endNodeGroupName]]
-		endLink   = constraintFromString(groups[endLinkGroupName])
-		material  = data.Materials[groups[materialGroupName]]
-		section   = data.Sections[groups[sectionGroupName]]
+		groups        = ExtractNamedGroups(elementDefinitionRegex, line)
+		id            = groups[IdGrpName]
+		startNode     = data.Nodes[groups[startNodeGroupName]]
+		startLink     = constraintFromString(groups[startLinkGroupName])
+		endNode       = data.Nodes[groups[endNodeGroupName]]
+		endLink       = constraintFromString(groups[endLinkGroupName])
+		material      = data.Materials[groups[materialGroupName]]
+		section       = data.Sections[groups[sectionGroupName]]
+		numberOfNodes = 2
 	)
 
 	builder := structure.MakeElementBuilder(id).
@@ -79,5 +83,9 @@ func DeserializeBar(
 		builder.IncludeOwnWeightLoad()
 	}
 
-	return builder.Build()
+	if nNodesString, isPreprocessed := groups[numNodesGroupName]; isPreprocessed {
+		numberOfNodes = ensureParseInt(nNodesString, "bar")
+	}
+
+	return builder.Build(), numberOfNodes
 }

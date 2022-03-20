@@ -74,10 +74,10 @@ func deserializeDistributedLoad(line string) (contracts.StrID, *load.Distributed
 
 	isInLocalCoords := groups[2] == "l"
 	elementID := groups[3]
-	tStart := ensureParseFloat(groups[4], "distributed load start T")
-	valStart := ensureParseFloat(groups[5], "distributed load start value")
-	tEnd := ensureParseFloat(groups[6], "distributed load end T")
-	valEnd := ensureParseFloat(groups[7], "distributed load end value")
+	tStart := EnsureParseFloat(groups[4], "distributed load start T")
+	valStart := EnsureParseFloat(groups[5], "distributed load start value")
+	tEnd := EnsureParseFloat(groups[6], "distributed load end T")
+	valEnd := EnsureParseFloat(groups[7], "distributed load end value")
 
 	return elementID,
 		load.MakeDistributed(
@@ -98,8 +98,8 @@ func deserializeConcentratedLoad(line string) (contracts.StrID, *load.Concentrat
 
 	isInLocalCoords := groups[2] == "l"
 	elementID := groups[3]
-	t := ensureParseFloat(groups[4], "concentrated load T")
-	val := ensureParseFloat(groups[5], "concentrated load value")
+	t := EnsureParseFloat(groups[4], "concentrated load T")
+	val := EnsureParseFloat(groups[5], "concentrated load value")
 
 	return elementID, load.MakeConcentrated(term, isInLocalCoords, nums.MakeTParam(t), val)
 }

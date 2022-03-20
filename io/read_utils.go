@@ -50,7 +50,7 @@ func ExtractNamedGroups(re *regexp.Regexp, str string) map[string]string {
 	return result
 }
 
-func ensureParseFloat(stringValue string, context string) float64 {
+func EnsureParseFloat(stringValue string, context string) float64 {
 	value, err := strconv.ParseFloat(stringValue, 64)
 	if err != nil {
 		panic(

@@ -43,11 +43,11 @@ func deserializeSection(definition string) *structure.Section {
 	groups := sectionDefinitionRegex.FindStringSubmatch(definition)
 
 	name := groups[1]
-	area := ensureParseFloat(groups[2], "section area")
-	iStrong := ensureParseFloat(groups[3], "section iStrong")
-	iWeak := ensureParseFloat(groups[4], "section iWeak")
-	sStrong := ensureParseFloat(groups[5], "section sStrong")
-	sWeak := ensureParseFloat(groups[6], "section sWeak")
+	area := EnsureParseFloat(groups[2], "section area")
+	iStrong := EnsureParseFloat(groups[3], "section iStrong")
+	iWeak := EnsureParseFloat(groups[4], "section iWeak")
+	sStrong := EnsureParseFloat(groups[5], "section sStrong")
+	sWeak := EnsureParseFloat(groups[6], "section sWeak")
 
 	return &structure.Section{
 		Name:    name,
