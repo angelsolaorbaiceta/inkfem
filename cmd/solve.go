@@ -22,8 +22,8 @@ var (
 
 	solveCommand = &cobra.Command{
 		Use:   "solve <inkfem|inkfempre file path>",
-		Short: "solves the structure",
-		Long:  "solves the structure given in an .inkfem or preprocessed .inkfempre file and saves the result in an .inkfemsol file.",
+		Short: "Solves the structure",
+		Long:  "Solves the structure given in an .inkfem or preprocessed .inkfempre file and saves the result in an .inkfemsol file.",
 		Args:  cobra.ExactArgs(1),
 		Run:   solveStructure,
 	}

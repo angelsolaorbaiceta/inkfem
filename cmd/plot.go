@@ -15,8 +15,8 @@ var (
 
 	plotCommand = &cobra.Command{
 		Use:   "plot <inkfem file path>",
-		Short: "plots the structure to one or multiple SVG files",
-		Long:  "plots the structure to one of multiple SVG files.",
+		Short: "Plots the structure to one or multiple SVG files",
+		Long:  "Plots the structure to one of multiple SVG files.",
 		Args:  cobra.ExactArgs(1),
 		Run:   plotStructure,
 	}
