@@ -29,7 +29,7 @@ func init() {
 
 	plotCommand.
 		Flags().
-		BoolVarP(&plotIncludeOwnWeight, "weight", "w", false, "include the weight of each bars as a distributed load")
+		BoolVarP(&plotIncludeOwnWeight, "weight", "w", false, "include the weight of each barsas a distributed load")
 
 	plotCommand.
 		Flags().

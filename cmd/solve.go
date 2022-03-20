@@ -6,9 +6,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/io"
 	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
 	"github.com/angelsolaorbaiceta/inkfem/log"
-	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/process"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +14,7 @@ var (
 	solveIncludeOwnWeight bool
 	solveDispMaxError     float64
 	solveUseVerbose       bool
-	SolvePreprocessToFile bool
+	solvePreprocessToFile bool
 	solveSysMatrixToPng   bool
 	solveSafeChecks       bool
 
@@ -44,7 +42,7 @@ func init() {
 
 	solveCommand.
 		Flags().
-		BoolVarP(&SolvePreprocessToFile, "preprocess", "p", false, "dump preprocessed structure to file")
+		BoolVarP(&solvePreprocessToFile, "preprocess", "p", false, "dump preprocessed structure to file")
 
 	solveCommand.
 		Flags().
@@ -69,7 +67,7 @@ func solveStructure(cmd *cobra.Command, args []string) {
 		preStructure  = preprocessStructure(structure)
 	)
 
-	if SolvePreprocessToFile {
+	if solvePreprocessToFile {
 		go (func() {
 			file := io.CreateFile(outPath + io.PreFileExt)
 			defer file.Close()
@@ -88,20 +86,4 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	io.StructureSolutionToFile(solution, outPath+io.SolFileExt)
 
 	log.Result()
-}
-
-func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *structure.Structure {
-	log.StartReadFile()
-	structure := io.StructureFromFile(filePath, readerOptions)
-	log.EndReadFile(structure.NodesCount(), structure.ElementsCount())
-
-	return structure
-}
-
-func preprocessStructure(structure *structure.Structure) *preprocess.Structure {
-	log.StartPreprocess()
-	preprocessedStructure := preprocess.StructureModel(structure)
-	log.EndPreprocess()
-
-	return preprocessedStructure
 }
