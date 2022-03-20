@@ -40,7 +40,7 @@ func preStructure(cmd *cobra.Command, args []string) {
 
 	var (
 		inputFilePath = args[0]
-		outPath       = strings.TrimSuffix(inputFilePath, io.InputFileExt)
+		outPath       = strings.TrimSuffix(inputFilePath, io.DefinitionFileExt)
 		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: solveIncludeOwnWeight}
 		structure     = readStructureFromFile(inputFilePath, readerOptions)
 		preStructure  = preprocessStructure(structure)

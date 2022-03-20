@@ -53,7 +53,7 @@ func EndReadFile(nodesCount, elementsCount int) {
 	if isVerbose {
 		readFileElapsedTime = time.Since(readFileStartTime)
 		message := fmt.Sprintf(
-			"read input file (%d nodes and %d bars)", nodesCount, elementsCount,
+			"read structure file (%d nodes and %d bars)", nodesCount, elementsCount,
 		)
 		writeDone(message, readFileElapsedTime)
 	}

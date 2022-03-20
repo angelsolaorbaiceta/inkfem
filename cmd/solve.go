@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
 	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
 	"github.com/angelsolaorbaiceta/inkfem/log"
+	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/process"
 	"github.com/spf13/cobra"
 )
@@ -19,9 +21,9 @@ var (
 	solveSafeChecks       bool
 
 	solveCommand = &cobra.Command{
-		Use:   "solve <inkfem file path>",
+		Use:   "solve <inkfem|inkfempre file path>",
 		Short: "solves the structure",
-		Long:  "solves the structure given in an .inkfem file and saves the result in an .inkfemsol file.",
+		Long:  "solves the structure given in an .inkfem or preprocessed .inkfempre file and saves the result in an .inkfemsol file.",
 		Args:  cobra.ExactArgs(1),
 		Run:   solveStructure,
 	}
@@ -30,7 +32,7 @@ var (
 func init() {
 	solveCommand.
 		Flags().
-		BoolVarP(&solveIncludeOwnWeight, "weight", "w", false, "include the weight of each bars as a distributed load")
+		BoolVarP(&solveIncludeOwnWeight, "weight", "w", false, "include the weight of each bar as a distributed load")
 
 	solveCommand.
 		Flags().
@@ -61,18 +63,26 @@ func solveStructure(cmd *cobra.Command, args []string) {
 
 	var (
 		inputFilePath = args[0]
-		outPath       = strings.TrimSuffix(inputFilePath, io.InputFileExt)
+		outPath       = strings.TrimSuffix(inputFilePath, io.DefinitionFileExt)
 		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: solveIncludeOwnWeight}
-		structure     = readStructureFromFile(inputFilePath, readerOptions)
-		preStructure  = preprocessStructure(structure)
+		preStructure  *preprocess.Structure
 	)
 
-	if solvePreprocessToFile {
-		go (func() {
-			file := io.CreateFile(outPath + io.PreFileExt)
-			defer file.Close()
-			iopre.Write(preStructure, file)
-		})()
+	if io.IsDefinitionFile(inputFilePath) {
+		structure := readStructureFromFile(inputFilePath, readerOptions)
+		preStructure = preprocessStructure(structure)
+
+		if solvePreprocessToFile {
+			go (func() {
+				file := io.CreateFile(outPath + io.PreFileExt)
+				defer file.Close()
+				iopre.Write(preStructure, file)
+			})()
+		}
+	} else if io.IsPreprocessedFile(inputFilePath) {
+		preStructure = readPreprocessedStructureFromFile(inputFilePath)
+	} else {
+		panic(fmt.Sprintf("Unsuported file type: %s", inputFilePath))
 	}
 
 	solveOptions := process.SolveOptions{
