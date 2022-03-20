@@ -3,7 +3,6 @@ package io
 import (
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -65,13 +64,7 @@ func deserializeNode(definition string) *structure.Node {
 	)
 
 	if dofString, hasDof := groups[DofGrpName]; hasDof {
-		var (
-			dofs = strings.Fields(dofString)
-			dof1 = EnsureParseInt(dofs[0], "node dx DOF")
-			dof2 = EnsureParseInt(dofs[1], "node dy DOF")
-			dof3 = EnsureParseInt(dofs[2], "node rz DOF")
-		)
-
+		dof1, dof2, dof3 := EnsureParseDOF(dofString, "node")
 		node.SetDegreesOfFreedomNum(dof1, dof2, dof3)
 	}
 

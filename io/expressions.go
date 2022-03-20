@@ -22,7 +22,7 @@ const (
 	DistributedLoadRefExpr  = `(?P<ref>[lg]{1})d\s+`
 	ConcentratedLoadRefExpr = `(?P<ref>[lg]{1})c\s+`
 	DofGrpName              = "dof"
-	DofGrpExpr              = `\[(?P<` + DofGrpName + `>\d+ \d+ \d+)\]`
+	DofGrpExpr              = `(?P<` + DofGrpName + `>\[\d+ \d+ \d+\])`
 )
 
 func FloatGroupExpr(groupName string) string {

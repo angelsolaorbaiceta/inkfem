@@ -2,7 +2,6 @@ package pre
 
 import (
 	"regexp"
-	"strings"
 
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/math"
@@ -104,12 +103,6 @@ func deserializeBarNodes(nNodes int, lines []string) []*preprocess.Node {
 }
 
 func deserializeNode(lines []string) *preprocess.Node {
-	// 0.000000 : 0.000000 0.000000
-	//  ext   : {}
-	//  left  : {0.000000 -970.000000 -1600.000000}
-	//  right : {0.000000 0.000000 0.000000}
-	//  net   : {0.000000 -970.000000 -1600.000000}
-	//  dof   : [0 1 2]
 	var (
 		t, pos           = parsePosition(lines[0])
 		extLoad          = parseExternalLoad(lines[1])
@@ -165,11 +158,8 @@ func parseNetLoad(line string) *math.Torsor {
 
 func parseDof(line string) (int, int, int) {
 	var (
-		groups = inkio.ExtractNamedGroups(dofPattern, line)
-		dof    = strings.Fields(groups[inkio.DofGrpName])
-		dof1   = inkio.EnsureParseInt(dof[0], "dof 1")
-		dof2   = inkio.EnsureParseInt(dof[1], "dof 2")
-		dof3   = inkio.EnsureParseInt(dof[2], "dof 3")
+		groups           = inkio.ExtractNamedGroups(dofPattern, line)
+		dof1, dof2, dof3 = inkio.EnsureParseDOF(groups[inkio.DofGrpName], "node")
 	)
 
 	return dof1, dof2, dof3

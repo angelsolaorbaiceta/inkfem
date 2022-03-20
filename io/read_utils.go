@@ -105,3 +105,23 @@ func EnsureParseTorsor(torsorString string, context string) *math.Torsor {
 		EnsureParseFloat(nums[2], context+" (Mz)"),
 	)
 }
+
+// EnsureParseDOF attempts to parse three degrees of freedom given the format: [%d %d %d].
+// Panics if the operation fails. The "context" is used as part of the panic message and it
+// refers to the name of the number being parsed.
+func EnsureParseDOF(dofString string, context string) (int, int, int) {
+	dofs := strings.Fields(strings.Trim(dofString, " []"))
+	if len(dofs) != 3 {
+		panic(
+			fmt.Sprintf("Error reading %s: can't parse DOF from %s", context, dofString),
+		)
+	}
+
+	var (
+		dof1 = EnsureParseInt(dofs[0], context+" (dx DOF)")
+		dof2 = EnsureParseInt(dofs[1], context+" (dy DOF)")
+		dof3 = EnsureParseInt(dofs[2], context+" (rz DOF)")
+	)
+
+	return dof1, dof2, dof3
+}
