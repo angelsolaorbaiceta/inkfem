@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
@@ -8,7 +9,6 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/process"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/spf13/cobra"
 )
 
@@ -16,14 +16,14 @@ var (
 	solveIncludeOwnWeight bool
 	solveDispMaxError     float64
 	solveUseVerbose       bool
-	SolvePreprocessToFile bool
+	solvePreprocessToFile bool
 	solveSysMatrixToPng   bool
 	solveSafeChecks       bool
 
 	solveCommand = &cobra.Command{
-		Use:   "solve <inkfem file path>",
+		Use:   "solve <inkfem|inkfempre file path>",
 		Short: "solves the structure",
-		Long:  "solves the structure given in an .inkfem file and saves the result in an .inkfemsol file.",
+		Long:  "solves the structure given in an .inkfem or preprocessed .inkfempre file and saves the result in an .inkfemsol file.",
 		Args:  cobra.ExactArgs(1),
 		Run:   solveStructure,
 	}
@@ -32,7 +32,7 @@ var (
 func init() {
 	solveCommand.
 		Flags().
-		BoolVarP(&solveIncludeOwnWeight, "weight", "w", false, "include the weight of each bars as a distributed load")
+		BoolVarP(&solveIncludeOwnWeight, "weight", "w", false, "include the weight of each bar as a distributed load")
 
 	solveCommand.
 		Flags().
@@ -44,7 +44,7 @@ func init() {
 
 	solveCommand.
 		Flags().
-		BoolVarP(&SolvePreprocessToFile, "preprocess", "p", false, "dump preprocessed structure to file")
+		BoolVarP(&solvePreprocessToFile, "preprocess", "p", false, "dump preprocessed structure to file")
 
 	solveCommand.
 		Flags().
@@ -63,18 +63,26 @@ func solveStructure(cmd *cobra.Command, args []string) {
 
 	var (
 		inputFilePath = args[0]
-		outPath       = strings.TrimSuffix(inputFilePath, io.InputFileExt)
+		outPath       = strings.TrimSuffix(inputFilePath, io.DefinitionFileExt)
 		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: solveIncludeOwnWeight}
-		structure     = readStructureFromFile(inputFilePath, readerOptions)
-		preStructure  = preprocessStructure(structure)
+		preStructure  *preprocess.Structure
 	)
 
-	if SolvePreprocessToFile {
-		go (func() {
-			file := io.CreateFile(outPath + io.PreFileExt)
-			defer file.Close()
-			iopre.Write(preStructure, file)
-		})()
+	if io.IsDefinitionFile(inputFilePath) {
+		structure := readStructureFromFile(inputFilePath, readerOptions)
+		preStructure = preprocessStructure(structure)
+
+		if solvePreprocessToFile {
+			go (func() {
+				file := io.CreateFile(outPath + io.PreFileExt)
+				defer file.Close()
+				iopre.Write(preStructure, file)
+			})()
+		}
+	} else if io.IsPreprocessedFile(inputFilePath) {
+		preStructure = readPreprocessedStructureFromFile(inputFilePath)
+	} else {
+		panic(fmt.Sprintf("Unsuported file type: %s", inputFilePath))
 	}
 
 	solveOptions := process.SolveOptions{
@@ -88,20 +96,4 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	io.StructureSolutionToFile(solution, outPath+io.SolFileExt)
 
 	log.Result()
-}
-
-func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *structure.Structure {
-	log.StartReadFile()
-	structure := io.StructureFromFile(filePath, readerOptions)
-	log.EndReadFile(structure.NodesCount(), structure.ElementsCount())
-
-	return structure
-}
-
-func preprocessStructure(structure *structure.Structure) *preprocess.Structure {
-	log.StartPreprocess()
-	preprocessedStructure := preprocess.StructureModel(structure)
-	log.EndPreprocess()
-
-	return preprocessedStructure
 }

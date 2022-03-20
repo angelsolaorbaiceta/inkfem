@@ -29,7 +29,7 @@ func init() {
 
 	plotCommand.
 		Flags().
-		BoolVarP(&plotIncludeOwnWeight, "weight", "w", false, "include the weight of each bars as a distributed load")
+		BoolVarP(&plotIncludeOwnWeight, "weight", "w", false, "include the weight of each bar as a distributed load")
 
 	plotCommand.
 		Flags().
@@ -43,7 +43,7 @@ func plotStructure(cmd *cobra.Command, args []string) {
 		inputFilePath         = args[0]
 		structurePlotFilePath = inputFilePath + ".svg"
 		readerOptions         = io.ReaderOptions{ShouldIncludeOwnWeight: plotIncludeOwnWeight}
-		structure             = io.StructureFromFile(inputFilePath, readerOptions)
+		structure             = readStructureFromFile(inputFilePath, readerOptions)
 		strPlotOptions        = plot.StructurePlotOps{
 			Scale:     plotScale,
 			MinMargin: 100,
