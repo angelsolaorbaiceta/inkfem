@@ -84,7 +84,7 @@ func DeserializeBar(
 	}
 
 	if nNodesString, isPreprocessed := groups[numNodesGroupName]; isPreprocessed {
-		numberOfNodes = ensureParseInt(nNodesString, "bar")
+		numberOfNodes = EnsureParseInt(nNodesString, "bar")
 	}
 
 	return builder.Build(), numberOfNodes

@@ -5,6 +5,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/angelsolaorbaiceta/inkfem/math"
 )
 
 const commentDeclaration = "#"
@@ -50,6 +52,9 @@ func ExtractNamedGroups(re *regexp.Regexp, str string) map[string]string {
 	return result
 }
 
+// EnsureParseFloat attempts to parse a floating point number from the given string and panics
+// if the operation fails. The "context" is used as part of the panic message and it refers
+// to the name of the number being parsed.
 func EnsureParseFloat(stringValue string, context string) float64 {
 	value, err := strconv.ParseFloat(stringValue, 64)
 	if err != nil {
@@ -65,7 +70,10 @@ func EnsureParseFloat(stringValue string, context string) float64 {
 	return value
 }
 
-func ensureParseInt(stringValue string, context string) int {
+// EnsureParseInt attempts to parse a floating point number from the given string and panics
+// if the operation fails. The "context" is used as part of the panic message and it refers
+// to the name of the number being parsed.
+func EnsureParseInt(stringValue string, context string) int {
 	value, err := strconv.Atoi(stringValue)
 	if err != nil {
 		panic(
@@ -78,4 +86,22 @@ func ensureParseInt(stringValue string, context string) int {
 	}
 
 	return value
+}
+
+// EnsureParseTorsor attempts to parse a torsor given it's string form: {%f %f %f}.
+// Panics if the operation fails. The "context" is used as part of the panic message and it
+// refers to the name of the number being parsed.
+func EnsureParseTorsor(torsorString string, context string) *math.Torsor {
+	nums := strings.Fields(strings.Trim(torsorString, " {}"))
+	if len(nums) != 3 {
+		panic(
+			fmt.Sprintf("Error reading %s: can't parse torsor from %s", context, torsorString),
+		)
+	}
+
+	return math.MakeTorsor(
+		EnsureParseFloat(nums[0], context+" (Fx)"),
+		EnsureParseFloat(nums[1], context+" (Fy)"),
+		EnsureParseFloat(nums[2], context+" (Mz)"),
+	)
 }

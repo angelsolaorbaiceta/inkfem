@@ -21,7 +21,7 @@ var nodeDefinitionRegex = regexp.MustCompile(
 		FloatGroupExpr(xPosGroupName) + SpaceExpr +
 		FloatGroupExpr(yPosGroupName) + SpaceExpr +
 		ConstraintGroupExpr(constraintsGroupName) + OptionalSpaceExpr +
-		DofGrpExpr + OptionalSpaceExpr + "$",
+		`(?:\|` + OptionalSpaceExpr + DofGrpExpr + OptionalSpaceExpr + `)?` + "$",
 )
 
 // ReadNodes reads and parses "count" nodes from the lines in the lines reader.
@@ -67,9 +67,9 @@ func deserializeNode(definition string) *structure.Node {
 	if dofString, hasDof := groups[DofGrpName]; hasDof {
 		var (
 			dofs = strings.Fields(dofString)
-			dof1 = ensureParseInt(dofs[0], "node dx DOF")
-			dof2 = ensureParseInt(dofs[1], "node dy DOF")
-			dof3 = ensureParseInt(dofs[2], "node rz DOF")
+			dof1 = EnsureParseInt(dofs[0], "node dx DOF")
+			dof2 = EnsureParseInt(dofs[1], "node dy DOF")
+			dof3 = EnsureParseInt(dofs[2], "node rz DOF")
 		)
 
 		node.SetDegreesOfFreedomNum(dof1, dof2, dof3)

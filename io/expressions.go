@@ -22,7 +22,7 @@ const (
 	DistributedLoadRefExpr  = `(?P<ref>[lg]{1})d\s+`
 	ConcentratedLoadRefExpr = `(?P<ref>[lg]{1})c\s+`
 	DofGrpName              = "dof"
-	DofGrpExpr              = `(?:\| \[(?P<` + DofGrpName + `>\d+ \d+ \d+)\])?`
+	DofGrpExpr              = `\[(?P<` + DofGrpName + `>\d+ \d+ \d+)\]`
 )
 
 func FloatGroupExpr(groupName string) string {
@@ -39,4 +39,8 @@ func NameGroupExpr(groupName string) string {
 
 func ConstraintGroupExpr(groupName string) string {
 	return fmt.Sprintf(`(?P<%s>%s)`, groupName, constraintExpr)
+}
+
+func TorsorGroupExpr(groupName string) string {
+	return fmt.Sprintf(`(?P<%s>{%s %s %s})`, groupName, floatExpr, floatExpr, floatExpr)
 }
