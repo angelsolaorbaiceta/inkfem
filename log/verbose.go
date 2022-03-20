@@ -49,11 +49,11 @@ func StartReadFile() {
 
 // EndReadFile should be called when the process of reading and parsing the input structure
 // has been completed successfully.
-func EndReadFile(nodesCount, elementsCount int) {
+func EndReadFile(fileType string, nodesCount, elementsCount int) {
 	if isVerbose {
 		readFileElapsedTime = time.Since(readFileStartTime)
 		message := fmt.Sprintf(
-			"read structure file (%d nodes and %d bars)", nodesCount, elementsCount,
+			"read '%s' file (%d nodes and %d bars)", fileType, nodesCount, elementsCount,
 		)
 		writeDone(message, readFileElapsedTime)
 	}

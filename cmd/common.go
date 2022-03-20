@@ -20,8 +20,8 @@ func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *str
 	file := io.OpenFile(filePath)
 	defer file.Close()
 
-	structure := io.StructureFromFile(file, readerOptions)
-	log.EndReadFile(structure.NodesCount(), structure.ElementsCount())
+	structure := io.ReadStructure(file, readerOptions)
+	log.EndReadFile(io.DefinitionFileExt, structure.NodesCount(), structure.ElementsCount())
 
 	return structure
 }
@@ -37,7 +37,7 @@ func readPreprocessedStructureFromFile(filePath string) *preprocess.Structure {
 	defer file.Close()
 
 	preStructure := iopre.Read(file)
-	log.EndReadFile(preStructure.NodesCount(), preStructure.ElementsCount())
+	log.EndReadFile(io.PreFileExt, preStructure.NodesCount(), preStructure.ElementsCount())
 
 	return preStructure
 }
