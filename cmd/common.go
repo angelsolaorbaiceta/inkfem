@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
@@ -11,6 +12,10 @@ import (
 )
 
 func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *structure.Structure {
+	if !io.IsDefinitionFile(filePath) {
+		panic(fmt.Sprintf("Expected %s file: %s", io.DefinitionFileExt, filePath))
+	}
+
 	log.StartReadFile()
 	structure := io.StructureFromFile(filePath, readerOptions)
 	log.EndReadFile(structure.NodesCount(), structure.ElementsCount())
@@ -19,6 +24,10 @@ func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *str
 }
 
 func readPreprocessedStructureFromFile(filePath string) *preprocess.Structure {
+	if !io.IsPreprocessedFile(filePath) {
+		panic(fmt.Sprintf("Expected %s file: %s", io.PreFileExt, filePath))
+	}
+
 	log.StartReadFile()
 
 	file, err := os.Open(filePath)
