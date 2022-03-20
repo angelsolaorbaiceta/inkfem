@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
 	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
@@ -17,7 +16,11 @@ func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *str
 	}
 
 	log.StartReadFile()
-	structure := io.StructureFromFile(filePath, readerOptions)
+
+	file := io.OpenFile(filePath)
+	defer file.Close()
+
+	structure := io.StructureFromFile(file, readerOptions)
 	log.EndReadFile(structure.NodesCount(), structure.ElementsCount())
 
 	return structure
@@ -30,10 +33,7 @@ func readPreprocessedStructureFromFile(filePath string) *preprocess.Structure {
 
 	log.StartReadFile()
 
-	file, err := os.Open(filePath)
-	if err != nil {
-		panic(err)
-	}
+	file := io.OpenFile(filePath)
 	defer file.Close()
 
 	preStructure := iopre.Read(file)

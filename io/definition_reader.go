@@ -2,8 +2,7 @@ package io
 
 import (
 	"fmt"
-	"log"
-	"os"
+	"io"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -15,14 +14,8 @@ import (
 // minor version numbers of inkfem used to produce the file or required to compute the structure.
 //
 // TODO: pass in a reader io.Reader instead of a file path
-func StructureFromFile(filePath string, options ReaderOptions) *structure.Structure {
-	file, err := os.Open(filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	linesReader := MakeLinesReader(file)
+func StructureFromFile(reader io.Reader, options ReaderOptions) *structure.Structure {
+	linesReader := MakeLinesReader(reader)
 	return parseStructure(linesReader, options)
 }
 

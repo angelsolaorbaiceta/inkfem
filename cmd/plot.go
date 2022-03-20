@@ -43,7 +43,7 @@ func plotStructure(cmd *cobra.Command, args []string) {
 		inputFilePath         = args[0]
 		structurePlotFilePath = inputFilePath + ".svg"
 		readerOptions         = io.ReaderOptions{ShouldIncludeOwnWeight: plotIncludeOwnWeight}
-		structure             = io.StructureFromFile(inputFilePath, readerOptions)
+		structure             = readStructureFromFile(inputFilePath, readerOptions)
 		strPlotOptions        = plot.StructurePlotOps{
 			Scale:     plotScale,
 			MinMargin: 100,
