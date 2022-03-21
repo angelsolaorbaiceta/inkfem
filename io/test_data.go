@@ -7,6 +7,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
+	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
@@ -22,12 +23,16 @@ func MakeTestOriginalStructure() *structure.Structure {
 			nodeOne.GetID(): nodeOne,
 			nodeTwo.GetID(): nodeTwo,
 		}
-		element = structure.MakeElementBuilder("b1").
-			WithStartNode(nodeOne, &structure.FullConstraint).
-			WithEndNode(nodeTwo, &structure.FullConstraint).
-			WithSection(structure.MakeUnitSection()).
-			WithMaterial(structure.MakeUnitMaterial()).
-			Build()
+		concLoad = load.MakeConcentrated(load.FX, true, nums.HalfT, -50.6)
+		distLoad = load.MakeDistributed(load.FY, false, nums.MinT, 20.4, nums.MaxT, 40.5)
+		element  = structure.MakeElementBuilder("b1").
+				WithStartNode(nodeOne, &structure.FullConstraint).
+				WithEndNode(nodeTwo, &structure.FullConstraint).
+				WithSection(structure.MakeUnitSection()).
+				WithMaterial(structure.MakeUnitMaterial()).
+				AddConcentratedLoad(concLoad).
+				AddDistributedLoad(distLoad).
+				Build()
 	)
 
 	return structure.Make(metadata, nodesById, []*structure.Element{element})

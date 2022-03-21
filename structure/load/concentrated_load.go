@@ -1,6 +1,4 @@
-/*
-Package load contains definition of loads applied to structural members.
-*/
+// Package load contains definition of loads applied to structural members.
 package load
 
 import (
@@ -17,12 +15,10 @@ type ConcentratedLoad struct {
 	Value           float64
 }
 
-/*
-MakeConcentrated creates a concentrated load for the given term (FX, FY or MZ) which may be defined
-locally to the element it will be applied to or referenced in global coordinates.
-
-Concentrated loads are defined by a position - value tuple.
-*/
+// MakeConcentrated creates a concentrated load for the given term (FX, FY or MZ) which may be defined
+// localy to the element it will be applied to or referenced in global coordinates.
+//
+// Concentrated loads are defined by a position - value tuple.
 func MakeConcentrated(
 	term Term,
 	isInLocalCoords bool,
@@ -32,11 +28,8 @@ func MakeConcentrated(
 	return &ConcentratedLoad{term, isInLocalCoords, t, value}
 }
 
-/*
-IsNodal returns true if the load is applied in extreme values of T.
-
-When `true`, this means that the load applied to an element is acting on one of its end nodes.
-*/
+// IsNodal returns true if the load is applied in extreme values of T.
+// When `true`, this means that the load applied to an element is acting on one of its end nodes.
 func (load *ConcentratedLoad) IsNodal() bool {
 	return load.T.IsMin() || load.T.IsMax()
 }
