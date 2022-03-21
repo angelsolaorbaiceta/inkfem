@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
-	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 )
 
 type ElementsSeq struct {
@@ -86,16 +85,4 @@ func (el *ElementsSeq) LoadsCount() int {
 	}
 
 	return count
-}
-
-// GetAllConcentratedLoads returns a slice containing all the concentrated loads applied
-// to the elements.
-func (el *ElementsSeq) GetAllConcentratedLoads() []*load.ConcentratedLoad {
-	var loads []*load.ConcentratedLoad
-
-	for _, element := range el.elements {
-		loads = append(loads, element.ConcentratedLoads...)
-	}
-
-	return loads
 }
