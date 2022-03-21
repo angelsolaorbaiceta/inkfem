@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
+	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 )
 
 type ElementsSeq struct {
@@ -74,4 +75,27 @@ func (el *ElementsSeq) GetSectionsByName() map[string]*Section {
 	}
 
 	return el.sectionsByName
+}
+
+// LoadsCount is the total number of concentrated and distributed loads applied to all elements.
+func (el *ElementsSeq) LoadsCount() int {
+	count := 0
+
+	for _, element := range el.elements {
+		count += element.LoadsCount()
+	}
+
+	return count
+}
+
+// GetAllConcentratedLoads returns a slice containing all the concentrated loads applied
+// to the elements.
+func (el *ElementsSeq) GetAllConcentratedLoads() []*load.ConcentratedLoad {
+	var loads []*load.ConcentratedLoad
+
+	for _, element := range el.elements {
+		loads = append(loads, element.ConcentratedLoads...)
+	}
+
+	return loads
 }

@@ -9,8 +9,8 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 |sections| {{.SectionsCount}}{{range $key, $section := .GetSectionsByName}}
 {{$section}}{{end}}
 
-|loads| 1
-fx ld 1 0.0 400.0 1.0 0.0 
+|loads| {{.LoadsCount}}{{range .GetAllConcentratedLoads}}
+{{.String}}{{end}}
 
 |bars| {{.ElementsCount}}{{range .Elements}}
 {{.String}}
