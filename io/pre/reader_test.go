@@ -58,7 +58,7 @@ func TestReadPreprocessModel(t *testing.T) {
 	})
 
 	t.Run("parses the sections", func(t *testing.T) {
-		wantSection := structure.MakeUnitSection()
+		wantSection := wantStr.GetSectionsByName()["sec_xy"]
 
 		if str.SectionsCount() != 1 {
 			t.Error("Want one section")

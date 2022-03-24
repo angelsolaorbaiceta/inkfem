@@ -46,8 +46,8 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	t.Run("then go the original nodes", func(t *testing.T) {
 		var (
 			wantHeader         = "|nodes| 2"
-			wantNodeOnePattern = "n1 -> 0(\\.[0]+)? 0(\\.[0]+)? { } | \\[6 7 8\\]"
-			wantNodeTwoPattern = "n2 -> 200(\\.[0]+)? 0(\\.[0]+)? { dx dy rz } | \\[0 1 2\\]"
+			wantNodeOnePattern = `n1 -> 0(\.[0]+)? 0(\.[0]+)? { } | \[6 7 8\]`
+			wantNodeTwoPattern = `n2 -> 200(\.[0]+)? 0(\.[0]+)? { dx dy rz } | \[0 1 2\]`
 		)
 
 		if got := gotLines[nodesOffset]; got != wantHeader {
@@ -68,7 +68,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	t.Run("then go the materials", func(t *testing.T) {
 		var (
 			wantHeader          = "|materials| 1"
-			wantMaterialPattern = "'unit_material' -> 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+"
+			wantMaterialPattern = `'unit_material' -> 1\.[0]+ 1\.[0]+ 1\.[0]+ 1\.[0]+ 1\.[0]+ 1\.[0]+`
 		)
 
 		if got := gotLines[materiasOffset]; got != wantHeader {
@@ -82,7 +82,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	t.Run("then go the sections", func(t *testing.T) {
 		var (
 			wantHeader         = "|sections| 1"
-			wantSectionPattern = "'unit_section' -> 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+"
+			wantSectionPattern = `'sec_xy' -> 1\.[0]+ 2\.[0]+ 3\.[0]+ 4\.[0]+ 5\.[0]+`
 		)
 
 		if got := gotLines[sectionsOffset]; got != wantHeader {
@@ -96,7 +96,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 	t.Run("lastly go the bars", func(t *testing.T) {
 		var (
 			wantHeader = "|bars| 1"
-			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'unit_material' 'unit_section' >> 3"
+			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'unit_material' 'sec_xy' >> 3"
 		)
 
 		if got := gotLines[barsOffset]; got != wantHeader {
