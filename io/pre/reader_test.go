@@ -46,7 +46,7 @@ func TestReadPreprocessModel(t *testing.T) {
 	})
 
 	t.Run("parses the materials", func(t *testing.T) {
-		wantMaterial := structure.MakeUnitMaterial()
+		wantMaterial := wantStr.GetMaterialsByName()["mat_yz"]
 
 		if str.MaterialsCount() != 1 {
 			t.Error("Want one material")

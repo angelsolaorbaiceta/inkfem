@@ -24,13 +24,14 @@ func MakeTestOriginalStructure() *structure.Structure {
 			nodeTwo.GetID(): nodeTwo,
 		}
 		section  = structure.MakeSection("sec_xy", 1, 2, 3, 4, 5)
+		material = structure.MakeMaterial("mat_yz", 1, 2, 3, 4, 5, 6)
 		concLoad = load.MakeConcentrated(load.FX, true, nums.HalfT, -50.6)
 		distLoad = load.MakeDistributed(load.FY, false, nums.MinT, 20.4, nums.MaxT, 40.5)
 		element  = structure.MakeElementBuilder("b1").
 				WithStartNode(nodeOne, &structure.FullConstraint).
 				WithEndNode(nodeTwo, &structure.FullConstraint).
 				WithSection(section).
-				WithMaterial(structure.MakeUnitMaterial()).
+				WithMaterial(material).
 				AddConcentratedLoad(concLoad).
 				AddDistributedLoad(distLoad).
 				Build()
@@ -74,13 +75,13 @@ func MakePreprocessedReader() io.Reader {
 	n2 -> 200.000000 0.000000 { } | [6 7 8]
 
 	|materials| 1
-	'unit_material' -> 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+	'mat_yz' -> 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000
 
 	|sections| 1
 	'sec_xy' -> 1.000000 2.000000 3.000000 4.000000 5.000000
 	
 	|bars| 1
-	b1 -> n1 { dx dy rz } n2 { dx dy rz } 'unit_material' 'sec_xy' >> 3
+	b1 -> n1 { dx dy rz } n2 { dx dy rz } 'mat_yz' 'sec_xy' >> 3
 	0.000000 : 0.000000 0.000000
 					ext   : {10.000000 20.000000 30.000000}
 					left  : {5.000000 10.000000 15.000000}

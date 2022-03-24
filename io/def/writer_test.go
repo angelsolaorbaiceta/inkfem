@@ -61,7 +61,7 @@ func TestWriteDefinition(t *testing.T) {
 	t.Run("then go the materials", func(t *testing.T) {
 		var (
 			wantHeader          = "|materials| 1"
-			wantMaterialPattern = "'unit_material' -> 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+"
+			wantMaterialPattern = `'mat_yz' -> 1\.[0]+ 2\.[0]+ 3\.[0]+ 4\.[0]+ 5\.[0]+ 6\.[0]+`
 		)
 
 		if got := gotLines[materiasOffset]; got != wantHeader {
@@ -107,7 +107,7 @@ func TestWriteDefinition(t *testing.T) {
 	t.Run("lastly go the bars", func(t *testing.T) {
 		var (
 			wantHeader = "|bars| 1"
-			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'unit_material' 'sec_xy'"
+			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'mat_yz' 'sec_xy'"
 		)
 
 		if got := gotLines[barsOffset]; got != wantHeader {
