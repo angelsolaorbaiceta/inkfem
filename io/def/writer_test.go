@@ -17,6 +17,7 @@ func TestWriteDefinition(t *testing.T) {
 		nodesOffset    = 1
 		materiasOffset = nodesOffset + 3
 		sectionsOffset = materiasOffset + 2
+		loadsOffset    = sectionsOffset + 2
 		// barsOffset     = sectionsOffset + 2
 	)
 
@@ -68,21 +69,35 @@ func TestWriteDefinition(t *testing.T) {
 			t.Errorf("want '%s', got '%s'", wantHeader, got)
 		}
 		if matches, _ := regexp.MatchString(wantMaterialPattern, gotLines[materiasOffset+1]); !matches {
-			t.Errorf("Want material: %s", gotLines[materiasOffset+1])
+			t.Errorf("Want material, got: %s", gotLines[materiasOffset+1])
 		}
 	})
 
 	t.Run("then go the sections", func(t *testing.T) {
 		var (
 			wantHeader         = "|sections| 1"
-			wantSectionPattern = "'unit_section' -> 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+ 1\\.[0]+"
+			wantSectionPattern = `'unit_section' -> 1\.[0]+ 1\.[0]+ 1\.[0]+ 1\.[0]+ 1\.[0]+`
 		)
 
 		if got := gotLines[sectionsOffset]; got != wantHeader {
 			t.Errorf("want '%s', got '%s'", wantHeader, got)
 		}
 		if matches, _ := regexp.MatchString(wantSectionPattern, gotLines[sectionsOffset+1]); !matches {
-			t.Errorf("Want section: %s", gotLines[sectionsOffset+1])
+			t.Errorf("Want section, got: %s", gotLines[sectionsOffset+1])
+		}
+	})
+
+	t.Run("then go the loads", func(t *testing.T) {
+		var (
+			wantHeader          = "|loads| 2"
+			wantConcLoadPattern = `fx lc b1 0.5[0]* -50.6[0]*`
+		)
+
+		if got := gotLines[loadsOffset]; got != wantHeader {
+			t.Errorf("want '%s', got '%s'", wantHeader, got)
+		}
+		if matches, _ := regexp.MatchString(wantConcLoadPattern, gotLines[loadsOffset+1]); !matches {
+			t.Errorf("Want load, got: %s", gotLines[loadsOffset+1])
 		}
 	})
 }
