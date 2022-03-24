@@ -91,13 +91,17 @@ func TestWriteDefinition(t *testing.T) {
 		var (
 			wantHeader          = "|loads| 2"
 			wantConcLoadPattern = `fx lc b1 0.5[0]* -50.6[0]*`
+			wantDistLoadPattern = `fy gd b1 0(\.[0]+)? 20.4[0]* 1(\.[0]+)? 40.5[0]*`
 		)
 
 		if got := gotLines[loadsOffset]; got != wantHeader {
 			t.Errorf("want '%s', got '%s'", wantHeader, got)
 		}
 		if matches, _ := regexp.MatchString(wantConcLoadPattern, gotLines[loadsOffset+1]); !matches {
-			t.Errorf("Want load, got: %s", gotLines[loadsOffset+1])
+			t.Errorf("Want concentrated load, got: %s", gotLines[loadsOffset+1])
+		}
+		if matches, _ := regexp.MatchString(wantDistLoadPattern, gotLines[loadsOffset+2]); !matches {
+			t.Errorf("Want distributed load, got %s", gotLines[loadsOffset+2])
 		}
 	})
 }
