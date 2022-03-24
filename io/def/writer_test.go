@@ -18,11 +18,10 @@ func TestWriteDefinition(t *testing.T) {
 		materiasOffset = nodesOffset + 3
 		sectionsOffset = materiasOffset + 2
 		loadsOffset    = sectionsOffset + 2
-		// barsOffset     = sectionsOffset + 2
+		barsOffset     = loadsOffset + 3
 	)
 
 	Write(str, &writer)
-	fmt.Println(writer.String())
 	var gotLines []string
 	for _, line := range strings.Split(writer.String(), "\n") {
 		if line != "" {
@@ -33,7 +32,7 @@ func TestWriteDefinition(t *testing.T) {
 	t.Run("first line is always the header with the version", func(t *testing.T) {
 		want := fmt.Sprintf("inkfem v%d.%d", str.Metadata.MajorVersion, str.Metadata.MinorVersion)
 		if got := gotLines[0]; got != want {
-			t.Errorf("Want '%s', got '%s'", want, got)
+			t.Errorf("want %s, got %s", want, got)
 		}
 	})
 
@@ -45,17 +44,17 @@ func TestWriteDefinition(t *testing.T) {
 		)
 
 		if got := gotLines[nodesOffset]; got != wantHeader {
-			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+			t.Errorf("want %s, got %s", wantHeader, got)
 		}
 
 		// Order in which the nodes appear isn't guaranteed
 		nodeLines := gotLines[nodesOffset+1] + " " + gotLines[nodesOffset+2]
 
 		if match, _ := regexp.MatchString(wantNodeOnePattern, nodeLines); !match {
-			t.Error("Want node one")
+			t.Error("want node one")
 		}
 		if match, _ := regexp.MatchString(wantNodeTwoPattern, nodeLines); !match {
-			t.Error("Want node two")
+			t.Error("want node two")
 		}
 	})
 
@@ -66,10 +65,10 @@ func TestWriteDefinition(t *testing.T) {
 		)
 
 		if got := gotLines[materiasOffset]; got != wantHeader {
-			t.Errorf("want '%s', got '%s'", wantHeader, got)
+			t.Errorf("want %s, got %s", wantHeader, got)
 		}
 		if matches, _ := regexp.MatchString(wantMaterialPattern, gotLines[materiasOffset+1]); !matches {
-			t.Errorf("Want material, got: %s", gotLines[materiasOffset+1])
+			t.Errorf("want material, got: %s", gotLines[materiasOffset+1])
 		}
 	})
 
@@ -80,10 +79,10 @@ func TestWriteDefinition(t *testing.T) {
 		)
 
 		if got := gotLines[sectionsOffset]; got != wantHeader {
-			t.Errorf("want '%s', got '%s'", wantHeader, got)
+			t.Errorf("want %s, got %s", wantHeader, got)
 		}
 		if matches, _ := regexp.MatchString(wantSectionPattern, gotLines[sectionsOffset+1]); !matches {
-			t.Errorf("Want section, got: %s", gotLines[sectionsOffset+1])
+			t.Errorf("want section, got: %s", gotLines[sectionsOffset+1])
 		}
 	})
 
@@ -95,13 +94,27 @@ func TestWriteDefinition(t *testing.T) {
 		)
 
 		if got := gotLines[loadsOffset]; got != wantHeader {
-			t.Errorf("want '%s', got '%s'", wantHeader, got)
+			t.Errorf("want %s, got %s", wantHeader, got)
 		}
 		if matches, _ := regexp.MatchString(wantConcLoadPattern, gotLines[loadsOffset+1]); !matches {
-			t.Errorf("Want concentrated load, got: %s", gotLines[loadsOffset+1])
+			t.Errorf("want concentrated load, got: %s", gotLines[loadsOffset+1])
 		}
 		if matches, _ := regexp.MatchString(wantDistLoadPattern, gotLines[loadsOffset+2]); !matches {
-			t.Errorf("Want distributed load, got %s", gotLines[loadsOffset+2])
+			t.Errorf("want distributed load, got %s", gotLines[loadsOffset+2])
+		}
+	})
+
+	t.Run("lastly go the bars", func(t *testing.T) {
+		var (
+			wantHeader = "|bars| 1"
+			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'unit_material' 'unit_section'"
+		)
+
+		if got := gotLines[barsOffset]; got != wantHeader {
+			t.Errorf("want %s, got %s", wantHeader, got)
+		}
+		if got := gotLines[barsOffset+1]; got != wantBar {
+			t.Errorf("want bar, got %s", got)
 		}
 	})
 }
