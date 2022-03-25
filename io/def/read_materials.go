@@ -1,23 +1,24 @@
-package io
+package def
 
 import (
 	"fmt"
 	"regexp"
 
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
 // '<name>' -> <density> <young> <shear> <poisson> <yield> <ultimate>
 var materialDefinitionRegex = regexp.MustCompile(
-	"^" + NameGrpExpr + ArrowExpr +
-		FloatGroupExpr("density") + SpaceExpr +
-		FloatGroupExpr("young") + SpaceExpr +
-		FloatGroupExpr("shear") + SpaceExpr +
-		FloatGroupExpr("poisson") + SpaceExpr +
-		FloatGroupExpr("yield") + SpaceExpr +
-		FloatGroupExpr("ultimate") + OptionalSpaceExpr + "$")
+	"^" + inkio.NameGrpExpr + inkio.ArrowExpr +
+		inkio.FloatGroupExpr("density") + inkio.SpaceExpr +
+		inkio.FloatGroupExpr("young") + inkio.SpaceExpr +
+		inkio.FloatGroupExpr("shear") + inkio.SpaceExpr +
+		inkio.FloatGroupExpr("poisson") + inkio.SpaceExpr +
+		inkio.FloatGroupExpr("yield") + inkio.SpaceExpr +
+		inkio.FloatGroupExpr("ultimate") + inkio.OptionalSpaceExpr + "$")
 
-func ReadMaterials(linesReader *LinesReader, count int) map[string]*structure.Material {
+func ReadMaterials(linesReader *inkio.LinesReader, count int) map[string]*structure.Material {
 	lines := linesReader.GetNextLines(count)
 	return deserializeMaterialsByName(lines)
 }
@@ -44,12 +45,12 @@ func deserializeMaterial(definition string) *structure.Material {
 	groups := materialDefinitionRegex.FindStringSubmatch(definition)
 
 	name := groups[1]
-	density := EnsureParseFloat(groups[2], "material density")
-	youngMod := EnsureParseFloat(groups[3], "material Young modulus")
-	shearMod := EnsureParseFloat(groups[4], "material shear modulus")
-	possonRatio := EnsureParseFloat(groups[5], "material poisson ratio")
-	yieldStrength := EnsureParseFloat(groups[6], "material yield strength")
-	ultimateStrength := EnsureParseFloat(groups[7], "material ultimate strength")
+	density := inkio.EnsureParseFloat(groups[2], "material density")
+	youngMod := inkio.EnsureParseFloat(groups[3], "material Young modulus")
+	shearMod := inkio.EnsureParseFloat(groups[4], "material shear modulus")
+	possonRatio := inkio.EnsureParseFloat(groups[5], "material poisson ratio")
+	yieldStrength := inkio.EnsureParseFloat(groups[6], "material yield strength")
+	ultimateStrength := inkio.EnsureParseFloat(groups[7], "material ultimate strength")
 
 	return &structure.Material{
 		Name:             name,

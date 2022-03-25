@@ -3,15 +3,15 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 dof_count: {{.DofsCount}}
 
 |nodes| {{.NodesCount}}{{range .GetAllNodes}}
-{{.String}}{{end}}
+{{.GetID}} -> {{.Position.X}} {{.Position.Y}} {{.ExternalConstraint}} | {{.DegreesOfFreedomNum}}{{end}}
 
-|materials| {{.MaterialsCount}}{{range $key, $material := .GetMaterialsByName}}
-{{$material}}{{end}}
+|materials| {{.MaterialsCount}}{{range .GetMaterialsByName}}
+'{{.Name}}' -> {{.Density}} {{.YoungMod}} {{.ShearMod}} {{.PoissonRatio}} {{.YieldStrength}} {{.UltimateStrength}}{{end}}
 
-|sections| {{.SectionsCount}}{{range $key, $section := .GetSectionsByName}}
-{{$section}}{{end}}
+|sections| {{.SectionsCount}}{{range .GetSectionsByName}}
+'{{.Name}}' -> {{.Area}} {{.IStrong}} {{.IWeak}} {{.SStrong}} {{.SWeak}}{{end}}
 
 |bars| {{.ElementsCount}}{{range .Elements}}
-{{.String}} >> {{.NodesCount}}{{range .Nodes}}
+{{.GetID}} -> {{.StartNodeID}} {{.StartLink}} {{.EndNodeID}} {{.EndLink}} '{{.Material.Name}}' '{{.Section.Name}}' >> {{.NodesCount}}{{range .Nodes}}
 {{.String}}{{end}}
 {{end}}

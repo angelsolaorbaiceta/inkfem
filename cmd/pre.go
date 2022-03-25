@@ -15,8 +15,8 @@ var (
 
 	preCommand = &cobra.Command{
 		Use:   "pre <inkfem file path>",
-		Short: "preprocess structure",
-		Long:  "preprocesses the structure definition (.inkfem file) and saves it as a .inkfempre file.",
+		Short: "Preprocess structure",
+		Long:  "Preprocesses the structure definition (.inkfem file) and saves it as a .inkfempre file.",
 		Args:  cobra.ExactArgs(1),
 		Run:   preStructure,
 	}

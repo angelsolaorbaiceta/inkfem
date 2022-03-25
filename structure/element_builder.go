@@ -71,6 +71,11 @@ func (builder *ElementBuilder) AddConcentratedLoads(loads []*load.ConcentratedLo
 	return builder
 }
 
+func (builder *ElementBuilder) AddConcentratedLoad(load *load.ConcentratedLoad) *ElementBuilder {
+	builder.concentratedLoads = append(builder.concentratedLoads, load)
+	return builder
+}
+
 func (builder *ElementBuilder) AddDistributedLoads(loads []*load.DistributedLoad) *ElementBuilder {
 	builder.distributedLoads = append(builder.distributedLoads, loads...)
 	return builder

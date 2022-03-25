@@ -1,4 +1,4 @@
-package pre
+package io
 
 import (
 	"io"
@@ -7,10 +7,11 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
+	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
-func makeTestOriginalStructure() *structure.Structure {
+func MakeTestOriginalStructure() *structure.Structure {
 	var (
 		metadata = structure.StrMetadata{
 			MajorVersion: 2,
@@ -22,20 +23,26 @@ func makeTestOriginalStructure() *structure.Structure {
 			nodeOne.GetID(): nodeOne,
 			nodeTwo.GetID(): nodeTwo,
 		}
-		element = structure.MakeElementBuilder("b1").
-			WithStartNode(nodeOne, &structure.FullConstraint).
-			WithEndNode(nodeTwo, &structure.FullConstraint).
-			WithSection(structure.MakeUnitSection()).
-			WithMaterial(structure.MakeUnitMaterial()).
-			Build()
+		section  = structure.MakeSection("sec_xy", 1, 2, 3, 4, 5)
+		material = structure.MakeMaterial("mat_yz", 1, 2, 3, 4, 5, 6)
+		concLoad = load.MakeConcentrated(load.FX, true, nums.HalfT, -50.6)
+		distLoad = load.MakeDistributed(load.FY, false, nums.MinT, 20.4, nums.MaxT, 40.5)
+		element  = structure.MakeElementBuilder("b1").
+				WithStartNode(nodeOne, &structure.FullConstraint).
+				WithEndNode(nodeTwo, &structure.FullConstraint).
+				WithSection(section).
+				WithMaterial(material).
+				AddConcentratedLoad(concLoad).
+				AddDistributedLoad(distLoad).
+				Build()
 	)
 
 	return structure.Make(metadata, nodesById, []*structure.Element{element})
 }
 
-func makeTestPreprocessedStructure() *preprocess.Structure {
+func MakeTestPreprocessedStructure() *preprocess.Structure {
 	var (
-		original        = makeTestOriginalStructure()
+		original        = MakeTestOriginalStructure()
 		originalElement = original.Elements()[0]
 		preNodes        = []*preprocess.Node{
 			preprocess.MakeNode(nums.MinT, originalElement.StartPoint(), 10, 20, 30),
@@ -58,7 +65,7 @@ func makeTestPreprocessedStructure() *preprocess.Structure {
 		AssignDof()
 }
 
-func makePreprocessedReader() io.Reader {
+func MakePreprocessedReader() io.Reader {
 	return strings.NewReader(`inkfem v2.3
 	
 	dof_count: 9
@@ -68,13 +75,13 @@ func makePreprocessedReader() io.Reader {
 	n2 -> 200.000000 0.000000 { } | [6 7 8]
 
 	|materials| 1
-	'unit_material' -> 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000
+	'mat_yz' -> 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000
 
 	|sections| 1
-	'unit_section' -> 1.000000 1.000000 1.000000 1.000000 1.000000
+	'sec_xy' -> 1.000000 2.000000 3.000000 4.000000 5.000000
 	
 	|bars| 1
-	b1 -> n1 { dx dy rz } n2 { dx dy rz } 'unit_material' 'unit_section' >> 3
+	b1 -> n1 { dx dy rz } n2 { dx dy rz } 'mat_yz' 'sec_xy' >> 3
 	0.000000 : 0.000000 0.000000
 					ext   : {10.000000 20.000000 30.000000}
 					left  : {5.000000 10.000000 15.000000}

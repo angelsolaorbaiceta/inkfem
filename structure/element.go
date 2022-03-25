@@ -94,10 +94,15 @@ func (e Element) Section() *Section {
 	return e.section
 }
 
+// LoadsCount is the total number of concentrated and distributed loads applied to the element.
+func (e Element) LoadsCount() int {
+	return len(e.ConcentratedLoads) + len(e.DistributedLoads)
+}
+
 // HasLoadsApplied returns true if any load, either concentrated of distributed,
 // is applied to the element.
 func (e Element) HasLoadsApplied() bool {
-	return len(e.ConcentratedLoads) > 0 || len(e.DistributedLoads) > 0
+	return e.LoadsCount() > 0
 }
 
 // IsAxialMember returns true if this element is pinned in both ends and, in case of having
@@ -204,11 +209,9 @@ func (e *Element) Equals(other *Element) bool {
 }
 
 // String representation of the bar.
-// This method is used for serialization, thus if the format is changed, the definition,
-// file format could be affected.
 func (e Element) String() string {
 	return fmt.Sprintf(
-		"%s -> %s %s %s %s '%s' '%s'",
+		"%s: %s %s %s %s '%s' '%s'",
 		e.id,
 		e.startNodeID,
 		e.startLink.String(),

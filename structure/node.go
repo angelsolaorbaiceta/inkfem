@@ -45,10 +45,8 @@ func MakeNodeAtPosition(
 	}
 }
 
-/*
-MakeFreeNodeAtPosition creates a new node without external constraint, with the given id and
-position by coordinates.
-*/
+// MakeFreeNodeAtPosition creates a new node without external constraint, with the given id and
+// position by coordinates.
 func MakeFreeNodeAtPosition(id contracts.StrID, x, y float64) *Node {
 	return &Node{
 		id,
@@ -98,11 +96,19 @@ func (n Node) GetID() contracts.StrID {
 	return n.id
 }
 
+// String representation of the node.
+// This method is used for serialization, thus if the format is changed, the definition,
+// preprocessed and solution file formats are affected.
 func (n Node) String() string {
-	return fmt.Sprintf(
-		"%s -> %f %f %s | %v",
+	str := fmt.Sprintf(
+		"%s -> %f %f %s",
 		n.id, n.Position.X(), n.Position.Y(),
 		n.ExternalConstraint.String(),
-		n.DegreesOfFreedomNum(),
 	)
+
+	if n.HasDegreesOfFreedomNum() {
+		str += fmt.Sprintf(" | %v", n.DegreesOfFreedomNum())
+	}
+
+	return str
 }

@@ -1,8 +1,9 @@
-package io
+package def
 
 import (
 	"regexp"
 
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
@@ -18,23 +19,23 @@ const (
 
 // <id> -> <s_node> {[dx dy rz]} <e_node> {[dx dy rz]} <material> <section> [>> <n_pre_nodes>]
 var elementDefinitionRegex = regexp.MustCompile(
-	"^" + IdGrpExpr + ArrowExpr +
-		IdGroupExpr(startNodeGroupName) + OptionalSpaceExpr +
-		ConstraintGroupExpr(startLinkGroupName) + SpaceExpr +
-		IdGroupExpr(endNodeGroupName) + OptionalSpaceExpr +
-		ConstraintGroupExpr(endLinkGroupName) + SpaceExpr +
-		NameGroupExpr(materialGroupName) + SpaceExpr +
-		NameGroupExpr(sectionGroupName) + OptionalSpaceExpr +
-		`(?:>>` + OptionalSpaceExpr +
+	"^" + inkio.IdGrpExpr + inkio.ArrowExpr +
+		inkio.IdGroupExpr(startNodeGroupName) + inkio.OptionalSpaceExpr +
+		inkio.ConstraintGroupExpr(startLinkGroupName) + inkio.SpaceExpr +
+		inkio.IdGroupExpr(endNodeGroupName) + inkio.OptionalSpaceExpr +
+		inkio.ConstraintGroupExpr(endLinkGroupName) + inkio.SpaceExpr +
+		inkio.NameGroupExpr(materialGroupName) + inkio.SpaceExpr +
+		inkio.NameGroupExpr(sectionGroupName) + inkio.OptionalSpaceExpr +
+		`(?:>>` + inkio.OptionalSpaceExpr +
 		`(?P<` + numNodesGroupName + `>\d+))?` +
 		"$",
 )
 
 func readBars(
-	linesReader *LinesReader,
+	linesReader *inkio.LinesReader,
 	count int,
 	data *structure.StructureData,
-	readerOptions ReaderOptions,
+	readerOptions inkio.ReaderOptions,
 ) []*structure.Element {
 	var (
 		lines = linesReader.GetNextLines(count)
@@ -57,11 +58,11 @@ func readBars(
 func DeserializeBar(
 	line string,
 	data *structure.StructureData,
-	readerOptions ReaderOptions,
+	readerOptions inkio.ReaderOptions,
 ) (*structure.Element, int) {
 	var (
-		groups        = ExtractNamedGroups(elementDefinitionRegex, line)
-		id            = groups[IdGrpName]
+		groups        = inkio.ExtractNamedGroups(elementDefinitionRegex, line)
+		id            = groups[inkio.IdGrpName]
 		startNode     = data.Nodes[groups[startNodeGroupName]]
 		startLink     = constraintFromString(groups[startLinkGroupName])
 		endNode       = data.Nodes[groups[endNodeGroupName]]
@@ -84,7 +85,7 @@ func DeserializeBar(
 	}
 
 	if nNodesString, isPreprocessed := groups[numNodesGroupName]; isPreprocessed {
-		numberOfNodes = EnsureParseInt(nNodesString, "bar")
+		numberOfNodes = inkio.EnsureParseInt(nNodesString, "bar")
 	}
 
 	return builder.Build(), numberOfNodes

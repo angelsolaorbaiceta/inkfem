@@ -3,13 +3,14 @@ package pre
 import (
 	"testing"
 
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
 func TestReadPreprocessModel(t *testing.T) {
 	var (
-		wantStr            = makeTestPreprocessedStructure()
-		preprocessedReader = makePreprocessedReader()
+		wantStr            = inkio.MakeTestPreprocessedStructure()
+		preprocessedReader = inkio.MakePreprocessedReader()
 		str                = Read(preprocessedReader)
 	)
 
@@ -45,7 +46,7 @@ func TestReadPreprocessModel(t *testing.T) {
 	})
 
 	t.Run("parses the materials", func(t *testing.T) {
-		wantMaterial := structure.MakeUnitMaterial()
+		wantMaterial := wantStr.GetMaterialsByName()["mat_yz"]
 
 		if str.MaterialsCount() != 1 {
 			t.Error("Want one material")
@@ -57,7 +58,7 @@ func TestReadPreprocessModel(t *testing.T) {
 	})
 
 	t.Run("parses the sections", func(t *testing.T) {
-		wantSection := structure.MakeUnitSection()
+		wantSection := wantStr.GetSectionsByName()["sec_xy"]
 
 		if str.SectionsCount() != 1 {
 			t.Error("Want one section")

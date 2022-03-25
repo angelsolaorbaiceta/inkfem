@@ -1,0 +1,17 @@
+inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
+
+|nodes| {{.NodesCount}}{{range .GetAllNodes}}
+{{.GetID}} -> {{.Position.X}} {{.Position.Y}} {{.ExternalConstraint}}{{end}}
+
+|materials| {{.MaterialsCount}}{{range .GetMaterialsByName}}
+'{{.Name}}' -> {{.Density}} {{.YoungMod}} {{.ShearMod}} {{.PoissonRatio}} {{.YieldStrength}} {{.UltimateStrength}}{{end}}
+
+|sections| {{.SectionsCount}}{{range .GetSectionsByName}}
+'{{.Name}}' -> {{.Area}} {{.IStrong}} {{.IWeak}} {{.SStrong}} {{.SWeak}}{{end}}
+
+|loads| {{.LoadsCount}}{{range $el := .Elements}}{{range $load := $el.ConcentratedLoads}}
+{{$load.Term}} {{if $load.IsInLocalCoords}}l{{else}}g{{end}}c {{$el.GetID}} {{$load.T.Value}} {{$load.Value}}{{end}}{{range $load := $el.DistributedLoads}}
+{{$load.Term}} {{if $load.IsInLocalCoords}}l{{else}}g{{end}}d {{$el.GetID}} {{$load.StartT.Value}} {{$load.StartValue}} {{$load.EndT.Value}} {{$load.EndValue}}{{end}}{{end}}
+
+|bars| {{.ElementsCount}}{{range .Elements}}
+{{.GetID}} -> {{.StartNodeID}} {{.StartLink}} {{.EndNodeID}} {{.EndLink}} '{{.Material.Name}}' '{{.Section.Name}}'{{end}}

@@ -1,10 +1,11 @@
-package io
+package def
 
 import (
 	"fmt"
 	"regexp"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
@@ -16,15 +17,15 @@ const (
 
 // <id> -> <xCoord> <yCoord> {[dx dy rz]} [| DOF: [0 1 2]]
 var nodeDefinitionRegex = regexp.MustCompile(
-	"^" + IdGrpExpr + ArrowExpr +
-		FloatGroupExpr(xPosGroupName) + SpaceExpr +
-		FloatGroupExpr(yPosGroupName) + SpaceExpr +
-		ConstraintGroupExpr(constraintsGroupName) + OptionalSpaceExpr +
-		`(?:\|` + OptionalSpaceExpr + DofGrpExpr + OptionalSpaceExpr + `)?` + "$",
+	"^" + inkio.IdGrpExpr + inkio.ArrowExpr +
+		inkio.FloatGroupExpr(xPosGroupName) + inkio.SpaceExpr +
+		inkio.FloatGroupExpr(yPosGroupName) + inkio.SpaceExpr +
+		inkio.ConstraintGroupExpr(constraintsGroupName) + inkio.OptionalSpaceExpr +
+		`(?:\|` + inkio.OptionalSpaceExpr + inkio.DofGrpExpr + inkio.OptionalSpaceExpr + `)?` + "$",
 )
 
 // ReadNodes reads and parses "count" nodes from the lines in the lines reader.
-func ReadNodes(linesReader *LinesReader, count int) map[contracts.StrID]*structure.Node {
+func ReadNodes(linesReader *inkio.LinesReader, count int) map[contracts.StrID]*structure.Node {
 	lines := linesReader.GetNextLines(count)
 	return deserializeNodesByID(lines)
 }
@@ -49,11 +50,11 @@ func deserializeNode(definition string) *structure.Node {
 	}
 
 	var (
-		groups = ExtractNamedGroups(nodeDefinitionRegex, definition)
+		groups = inkio.ExtractNamedGroups(nodeDefinitionRegex, definition)
 
 		id                 = groups["id"]
-		x                  = EnsureParseFloat(groups[xPosGroupName], "node x position")
-		y                  = EnsureParseFloat(groups[yPosGroupName], "node y position")
+		x                  = inkio.EnsureParseFloat(groups[xPosGroupName], "node x position")
+		y                  = inkio.EnsureParseFloat(groups[yPosGroupName], "node y position")
 		externalConstraint = groups[constraintsGroupName]
 
 		node = structure.MakeNodeAtPosition(
@@ -63,8 +64,8 @@ func deserializeNode(definition string) *structure.Node {
 		)
 	)
 
-	if dofString, hasDof := groups[DofGrpName]; hasDof {
-		dof1, dof2, dof3 := EnsureParseDOF(dofString, "node")
+	if dofString, hasDof := groups[inkio.DofGrpName]; hasDof {
+		dof1, dof2, dof3 := inkio.EnsureParseDOF(dofString, "node")
 		node.SetDegreesOfFreedomNum(dof1, dof2, dof3)
 	}
 

@@ -2,12 +2,10 @@ package load
 
 import "fmt"
 
-/*
-Term represents the available terms for which loads can exist:
-    - Force in X
-    - Force in Y
-    - Moment about Z
-*/
+// Term represents the available terms for which loads can exist:
+// - Force in X
+// - Force in Y
+// - Moment about Z
 type Term string
 
 const (

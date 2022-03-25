@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
+	iodef "github.com/angelsolaorbaiceta/inkfem/io/def"
 	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
@@ -20,7 +21,7 @@ func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *str
 	file := io.OpenFile(filePath)
 	defer file.Close()
 
-	structure := io.ReadStructure(file, readerOptions)
+	structure := iodef.Read(file, readerOptions)
 	log.EndReadFile(io.DefinitionFileExt, structure.NodesCount(), structure.ElementsCount())
 
 	return structure

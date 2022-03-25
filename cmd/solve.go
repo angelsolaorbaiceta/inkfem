@@ -6,6 +6,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/io"
 	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
+	iosol "github.com/angelsolaorbaiceta/inkfem/io/sol"
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkfem/process"
@@ -22,8 +23,8 @@ var (
 
 	solveCommand = &cobra.Command{
 		Use:   "solve <inkfem|inkfempre file path>",
-		Short: "solves the structure",
-		Long:  "solves the structure given in an .inkfem or preprocessed .inkfempre file and saves the result in an .inkfemsol file.",
+		Short: "Solves the structure",
+		Long:  "Solves the structure given in an .inkfem or preprocessed .inkfempre file and saves the result in an .inkfemsol file.",
 		Args:  cobra.ExactArgs(1),
 		Run:   solveStructure,
 	}
@@ -93,7 +94,7 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	}
 
 	solution := process.Solve(preStructure, solveOptions)
-	io.StructureSolutionToFile(solution, outPath+io.SolFileExt)
+	iosol.StructureSolutionToFile(solution, outPath+io.SolFileExt)
 
 	log.Result()
 }
