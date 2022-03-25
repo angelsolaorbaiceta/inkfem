@@ -6,8 +6,8 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 |materials| {{.MaterialsCount}}{{range $key, $material := .GetMaterialsByName}}
 {{$material}}{{end}}
 
-|sections| {{.SectionsCount}}{{range $key, $section := .GetSectionsByName}}
-{{$section}}{{end}}
+|sections| {{.SectionsCount}}{{range .GetSectionsByName}}
+'{{.Name}}' -> {{.Area}} {{.IStrong}} {{.IWeak}} {{.SStrong}} {{.SWeak}} {{end}}
 
 |loads| {{.LoadsCount}}{{range $el := .Elements}}{{range $load := $el.ConcentratedLoads}}
 {{$load.Term}} {{if $load.IsInLocalCoords}}l{{else}}g{{end}}c {{$el.GetID}} {{$load.T.Value}} {{$load.Value}}{{end}}{{range $load := $el.DistributedLoads}}

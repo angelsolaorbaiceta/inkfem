@@ -75,7 +75,7 @@ func TestWriteDefinition(t *testing.T) {
 	t.Run("then go the sections", func(t *testing.T) {
 		var (
 			wantHeader         = "|sections| 1"
-			wantSectionPattern = `'sec_xy' -> 1\.[0]+ 2\.[0]+ 3\.[0]+ 4\.[0]+ 5\.[0]+`
+			wantSectionPattern = `'sec_xy' -> 1(\.[0]*)? 2(\.[0]*)? 3(\.[0]*)? 4(\.[0]*)? 5(\.[0]*)?`
 		)
 
 		if got := gotLines[sectionsOffset]; got != wantHeader {
