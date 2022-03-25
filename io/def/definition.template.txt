@@ -3,11 +3,11 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 |nodes| {{.NodesCount}}{{range .GetAllNodes}}
 {{.String}}{{end}}
 
-|materials| {{.MaterialsCount}}{{range $key, $material := .GetMaterialsByName}}
-{{$material}}{{end}}
+|materials| {{.MaterialsCount}}{{range .GetMaterialsByName}}
+'{{.Name}}' -> {{.Density}} {{.YoungMod}} {{.ShearMod}} {{.PoissonRatio}} {{.YieldStrength}} {{.UltimateStrength}}{{end}}
 
 |sections| {{.SectionsCount}}{{range .GetSectionsByName}}
-'{{.Name}}' -> {{.Area}} {{.IStrong}} {{.IWeak}} {{.SStrong}} {{.SWeak}} {{end}}
+'{{.Name}}' -> {{.Area}} {{.IStrong}} {{.IWeak}} {{.SStrong}} {{.SWeak}}{{end}}
 
 |loads| {{.LoadsCount}}{{range $el := .Elements}}{{range $load := $el.ConcentratedLoads}}
 {{$load.Term}} {{if $load.IsInLocalCoords}}l{{else}}g{{end}}c {{$el.GetID}} {{$load.T.Value}} {{$load.Value}}{{end}}{{range $load := $el.DistributedLoads}}

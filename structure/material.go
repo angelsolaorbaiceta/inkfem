@@ -40,11 +40,9 @@ func MakeUnitMaterial() *Material {
 }
 
 // String representation of the material.
-// This method is used for serialization, thus if the format is changed, the definition,
-// preprocessed and solution file formats are affected.
 func (m *Material) String() string {
 	return fmt.Sprintf(
-		"'%s' -> %f %f %f %f %f %f",
+		"'%s': %f %f %f %f %f %f",
 		m.Name,
 		m.Density,
 		m.YoungMod,

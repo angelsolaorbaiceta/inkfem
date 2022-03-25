@@ -61,7 +61,7 @@ func TestWriteDefinition(t *testing.T) {
 	t.Run("then go the materials", func(t *testing.T) {
 		var (
 			wantHeader          = "|materials| 1"
-			wantMaterialPattern = `'mat_yz' -> 1\.[0]+ 2\.[0]+ 3\.[0]+ 4\.[0]+ 5\.[0]+ 6\.[0]+`
+			wantMaterialPattern = `'mat_yz' -> 1(\.[0]*)? 2(\.[0]*)? 3(\.[0]*)? 4(\.[0]*)? 5(\.[0]*)? 6(\.[0]*)?`
 		)
 
 		if got := gotLines[materiasOffset]; got != wantHeader {
