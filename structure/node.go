@@ -45,10 +45,8 @@ func MakeNodeAtPosition(
 	}
 }
 
-/*
-MakeFreeNodeAtPosition creates a new node without external constraint, with the given id and
-position by coordinates.
-*/
+// MakeFreeNodeAtPosition creates a new node without external constraint, with the given id and
+// position by coordinates.
 func MakeFreeNodeAtPosition(id contracts.StrID, x, y float64) *Node {
 	return &Node{
 		id,

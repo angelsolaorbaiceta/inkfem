@@ -3,7 +3,7 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 dof_count: {{.DofsCount}}
 
 |nodes| {{.NodesCount}}{{range .GetAllNodes}}
-{{.String}}{{end}}
+{{.GetID}} -> {{.Position.X}} {{.Position.Y}} {{.ExternalConstraint}} | {{.DegreesOfFreedomNum}}{{end}}
 
 |materials| {{.MaterialsCount}}{{range .GetMaterialsByName}}
 '{{.Name}}' -> {{.Density}} {{.YoungMod}} {{.ShearMod}} {{.PoissonRatio}} {{.YieldStrength}} {{.UltimateStrength}}{{end}}

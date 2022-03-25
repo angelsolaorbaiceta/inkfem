@@ -1,7 +1,7 @@
 inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 
 |nodes| {{.NodesCount}}{{range .GetAllNodes}}
-{{.String}}{{end}}
+{{.GetID}} -> {{.Position.X}} {{.Position.Y}} {{.ExternalConstraint}}{{end}}
 
 |materials| {{.MaterialsCount}}{{range .GetMaterialsByName}}
 '{{.Name}}' -> {{.Density}} {{.YoungMod}} {{.ShearMod}} {{.PoissonRatio}} {{.YieldStrength}} {{.UltimateStrength}}{{end}}

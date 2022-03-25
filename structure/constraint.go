@@ -13,12 +13,10 @@ var (
 	FullConstraint = Constraint{true, true, true}
 )
 
-/*
- A Constraint represents a condition on displacements and rotations.
-
- Constraints are immutable, and therefore can be shared amont the elements that use them.
- Use the `MakeConstraint` factory function to get an existing instance of a constraint.
-*/
+//  A Constraint represents a condition on displacements and rotations.
+//
+//  Constraints are immutable, and therefore can be shared amont the elements that use them.
+//  Use the `MakeConstraint` factory function to get an existing instance of a constraint.
 type Constraint struct {
 	isDxConstr, isDyConstr, isRzConst bool
 }
@@ -62,8 +60,8 @@ func (c *Constraint) Equals(other *Constraint) bool {
 		c.isRzConst == other.isRzConst
 }
 
-/* <-- Stringer --> */
-
+// String representation of the constraint.
+// Used in the serialization format.
 func (c Constraint) String() string {
 	var buffer bytes.Buffer
 	buffer.WriteString("{ ")
@@ -79,5 +77,6 @@ func (c Constraint) String() string {
 	}
 
 	buffer.WriteString("}")
+
 	return buffer.String()
 }

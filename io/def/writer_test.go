@@ -51,10 +51,10 @@ func TestWriteDefinition(t *testing.T) {
 		nodeLines := gotLines[nodesOffset+1] + " " + gotLines[nodesOffset+2]
 
 		if match, _ := regexp.MatchString(wantNodeOnePattern, nodeLines); !match {
-			t.Error("want node one")
+			t.Errorf("want node one: %s", nodeLines)
 		}
 		if match, _ := regexp.MatchString(wantNodeTwoPattern, nodeLines); !match {
-			t.Error("want node two")
+			t.Errorf("want node two: %s", nodeLines)
 		}
 	})
 
