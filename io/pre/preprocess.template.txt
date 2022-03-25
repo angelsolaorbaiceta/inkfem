@@ -12,6 +12,6 @@ dof_count: {{.DofsCount}}
 '{{.Name}}' -> {{.Area}} {{.IStrong}} {{.IWeak}} {{.SStrong}} {{.SWeak}}{{end}}
 
 |bars| {{.ElementsCount}}{{range .Elements}}
-{{.String}} >> {{.NodesCount}}{{range .Nodes}}
+{{.GetID}} -> {{.StartNodeID}} {{.StartLink}} {{.EndNodeID}} {{.EndLink}} '{{.Material.Name}}' '{{.Section.Name}}' >> {{.NodesCount}}{{range .Nodes}}
 {{.String}}{{end}}
 {{end}}

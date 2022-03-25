@@ -209,11 +209,9 @@ func (e *Element) Equals(other *Element) bool {
 }
 
 // String representation of the bar.
-// This method is used for serialization, thus if the format is changed, the definition,
-// file format could be affected.
 func (e Element) String() string {
 	return fmt.Sprintf(
-		"%s -> %s %s %s %s '%s' '%s'",
+		"%s: %s %s %s %s '%s' '%s'",
 		e.id,
 		e.startNodeID,
 		e.startLink.String(),

@@ -14,4 +14,4 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 {{$load.Term}} {{if $load.IsInLocalCoords}}l{{else}}g{{end}}d {{$el.GetID}} {{$load.StartT.Value}} {{$load.StartValue}} {{$load.EndT.Value}} {{$load.EndValue}}{{end}}{{end}}
 
 |bars| {{.ElementsCount}}{{range .Elements}}
-{{.String}}{{end}}
+{{.GetID}} -> {{.StartNodeID}} {{.StartLink}} {{.EndNodeID}} {{.EndLink}} '{{.Material.Name}}' '{{.Section.Name}}'{{end}}
