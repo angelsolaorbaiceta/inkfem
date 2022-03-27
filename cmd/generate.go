@@ -21,6 +21,7 @@ var (
 	generateSpanLength  float64
 	generateLevels      int
 	generateLevelHeight float64
+	generateloadValue   float64
 
 	generateCommand = &cobra.Command{
 		Use:   "generate --type=<type>",
@@ -52,6 +53,10 @@ func init() {
 		Flags().
 		Float64VarP(&generateLevelHeight, "level", "e", 300.0, "the height of each level")
 
+	generateCommand.
+		Flags().
+		Float64VarP(&generateloadValue, "load", "o", 50.0, "the value of the vertical load (distributed or concentrated)")
+
 	rootCmd.AddCommand(generateCommand)
 }
 
@@ -64,7 +69,7 @@ func generateStructure(cmd *cobra.Command, args []string) {
 				Span:          generateSpanLength,
 				Levels:        generateLevels,
 				Height:        generateLevelHeight,
-				LoadDistValue: 50.0,
+				LoadDistValue: generateloadValue,
 				Section:       structure.MakeSection("sec", 1.0, 1.0, 1.0, 1, 0),
 				Material:      structure.MakeMaterial("mat", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
 			})
