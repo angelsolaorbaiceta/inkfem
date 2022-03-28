@@ -1,0 +1,854 @@
+inkfem v1.0
+
+|nodes| 231
+27 -> 2000 300 { }
+71 -> 2800 900 { }
+73 -> 3600 900 { }
+16 -> 6000 0 { dx dy rz }
+35 -> 5200 300 { }
+168 -> 8000 2100 { }
+24 -> 800 300 { }
+83 -> 7600 900 { }
+138 -> 4400 1800 { }
+159 -> 4400 2100 { }
+19 -> 7200 0 { dx dy rz }
+39 -> 6800 300 { }
+191 -> 400 2700 { }
+17 -> 6400 0 { dx dy rz }
+28 -> 2400 300 { }
+48 -> 2000 600 { }
+94 -> 3600 1200 { }
+187 -> 7200 2400 { }
+79 -> 6000 900 { }
+10 -> 3600 0 { dx dy rz }
+119 -> 5200 1500 { }
+117 -> 4400 1500 { }
+118 -> 4800 1500 { }
+189 -> 8000 2400 { }
+174 -> 2000 2400 { }
+9 -> 3200 0 { dx dy rz }
+45 -> 800 600 { }
+88 -> 1200 1200 { }
+152 -> 1600 2100 { }
+176 -> 2800 2400 { }
+3 -> 800 0 { dx dy rz }
+44 -> 400 600 { }
+76 -> 4800 900 { }
+87 -> 800 1200 { }
+140 -> 5200 1800 { }
+14 -> 5200 0 { dx dy rz }
+66 -> 800 900 { }
+80 -> 6400 900 { }
+107 -> 400 1500 { }
+137 -> 4000 1800 { }
+171 -> 800 2400 { }
+186 -> 6800 2400 { }
+50 -> 2800 600 { }
+220 -> 3600 3000 { }
+229 -> 7200 3000 { }
+231 -> 8000 3000 { }
+36 -> 5600 300 { }
+93 -> 3200 1200 { }
+205 -> 6000 2700 { }
+223 -> 4800 3000 { }
+226 -> 6000 3000 { }
+54 -> 4400 600 { }
+142 -> 6000 1800 { }
+161 -> 5200 2100 { }
+203 -> 5200 2700 { }
+134 -> 2800 1800 { }
+201 -> 4400 2700 { }
+210 -> 8000 2700 { }
+224 -> 5200 3000 { }
+101 -> 6400 1200 { }
+109 -> 1200 1500 { }
+133 -> 2400 1800 { }
+202 -> 4800 2700 { }
+179 -> 4000 2400 { }
+78 -> 5600 900 { }
+106 -> 0 1500 { }
+139 -> 4800 1800 { }
+154 -> 2400 2100 { }
+12 -> 4400 0 { dx dy rz }
+30 -> 3200 300 { }
+59 -> 6400 600 { }
+153 -> 2000 2100 { }
+105 -> 8000 1200 { }
+172 -> 1200 2400 { }
+29 -> 2800 300 { }
+33 -> 4400 300 { }
+192 -> 800 2700 { }
+156 -> 3200 2100 { }
+31 -> 3600 300 { }
+37 -> 6000 300 { }
+129 -> 800 1800 { }
+150 -> 800 2100 { }
+43 -> 0 600 { }
+60 -> 6800 600 { }
+8 -> 2800 0 { dx dy rz }
+160 -> 4800 2100 { }
+195 -> 2000 2700 { }
+218 -> 2800 3000 { }
+4 -> 1200 0 { dx dy rz }
+141 -> 5600 1800 { }
+181 -> 4800 2400 { }
+185 -> 6400 2400 { }
+25 -> 1200 300 { }
+91 -> 2400 1200 { }
+128 -> 400 1800 { }
+151 -> 1200 2100 { }
+132 -> 2000 1800 { }
+135 -> 3200 1800 { }
+125 -> 7600 1500 { }
+188 -> 7600 2400 { }
+163 -> 6000 2100 { }
+212 -> 400 3000 { }
+217 -> 2400 3000 { }
+11 -> 4000 0 { dx dy rz }
+32 -> 4000 300 { }
+41 -> 7600 300 { }
+47 -> 1600 600 { }
+162 -> 5600 2100 { }
+7 -> 2400 0 { dx dy rz }
+51 -> 3200 600 { }
+90 -> 2000 1200 { }
+145 -> 7200 1800 { }
+170 -> 400 2400 { }
+6 -> 2000 0 { dx dy rz }
+49 -> 2400 600 { }
+110 -> 1600 1500 { }
+122 -> 6400 1500 { }
+177 -> 3200 2400 { }
+209 -> 7600 2700 { }
+146 -> 7600 1800 { }
+166 -> 7200 2100 { }
+175 -> 2400 2400 { }
+206 -> 6400 2700 { }
+23 -> 400 300 { }
+55 -> 4800 600 { }
+61 -> 7200 600 { }
+67 -> 1200 900 { }
+222 -> 4400 3000 { }
+52 -> 3600 600 { }
+62 -> 7600 600 { }
+164 -> 6400 2100 { }
+102 -> 6800 1200 { }
+167 -> 7600 2100 { }
+200 -> 4000 2700 { }
+230 -> 7600 3000 { }
+34 -> 4800 300 { }
+69 -> 2000 900 { }
+70 -> 2400 900 { }
+81 -> 6800 900 { }
+2 -> 400 0 { dx dy rz }
+42 -> 8000 300 { }
+116 -> 4000 1500 { }
+198 -> 3200 2700 { }
+20 -> 7600 0 { dx dy rz }
+98 -> 5200 1200 { }
+112 -> 2400 1500 { }
+173 -> 1600 2400 { }
+126 -> 8000 1500 { }
+75 -> 4400 900 { }
+121 -> 6000 1500 { }
+123 -> 6800 1500 { }
+38 -> 6400 300 { }
+111 -> 2000 1500 { }
+120 -> 5600 1500 { }
+127 -> 0 1800 { }
+21 -> 8000 0 { dx dy rz }
+197 -> 2800 2700 { }
+5 -> 1600 0 { dx dy rz }
+194 -> 1600 2700 { }
+204 -> 5600 2700 { }
+26 -> 1600 300 { }
+147 -> 8000 1800 { }
+158 -> 4000 2100 { }
+183 -> 5600 2400 { }
+46 -> 1200 600 { }
+53 -> 4000 600 { }
+124 -> 7200 1500 { }
+165 -> 6800 2100 { }
+114 -> 3200 1500 { }
+182 -> 5200 2400 { }
+68 -> 1600 900 { }
+72 -> 3200 900 { }
+89 -> 1600 1200 { }
+65 -> 400 900 { }
+99 -> 5600 1200 { }
+213 -> 800 3000 { }
+1 -> 0 0 { dx dy rz }
+115 -> 3600 1500 { }
+143 -> 6400 1800 { }
+193 -> 1200 2700 { }
+178 -> 3600 2400 { }
+196 -> 2400 2700 { }
+57 -> 5600 600 { }
+77 -> 5200 900 { }
+103 -> 7200 1200 { }
+108 -> 800 1500 { }
+56 -> 5200 600 { }
+131 -> 1600 1800 { }
+149 -> 400 2100 { }
+40 -> 7200 300 { }
+85 -> 0 1200 { }
+92 -> 2800 1200 { }
+219 -> 3200 3000 { }
+148 -> 0 2100 { }
+199 -> 3600 2700 { }
+130 -> 1200 1800 { }
+157 -> 3600 2100 { }
+221 -> 4000 3000 { }
+63 -> 8000 600 { }
+15 -> 5600 0 { dx dy rz }
+74 -> 4000 900 { }
+180 -> 4400 2400 { }
+190 -> 0 2700 { }
+18 -> 6800 0 { dx dy rz }
+84 -> 8000 900 { }
+96 -> 4400 1200 { }
+97 -> 4800 1200 { }
+155 -> 2800 2100 { }
+184 -> 6000 2400 { }
+214 -> 1200 3000 { }
+227 -> 6400 3000 { }
+58 -> 6000 600 { }
+208 -> 7200 2700 { }
+211 -> 0 3000 { }
+225 -> 5600 3000 { }
+95 -> 4000 1200 { }
+228 -> 6800 3000 { }
+22 -> 0 300 { }
+100 -> 6000 1200 { }
+136 -> 3600 1800 { }
+144 -> 6800 1800 { }
+86 -> 400 1200 { }
+113 -> 2800 1500 { }
+215 -> 1600 3000 { }
+216 -> 2000 3000 { }
+64 -> 0 900 { }
+207 -> 6800 2700 { }
+13 -> 4800 0 { dx dy rz }
+82 -> 7200 900 { }
+104 -> 7600 1200 { }
+169 -> 0 2400 { }
+
+|materials| 1
+'mat' -> 7.85e-06 2.1e+07 8.1e+06 0.3 27500 43000
+
+|sections| 1
+'sec' -> 10.3 171 15.92 34.2 5.79
+
+|loads| 200
+fy ld 22 0 -50 1 -50
+fy ld 24 0 -50 1 -50
+fy ld 26 0 -50 1 -50
+fy ld 28 0 -50 1 -50
+fy ld 30 0 -50 1 -50
+fy ld 32 0 -50 1 -50
+fy ld 34 0 -50 1 -50
+fy ld 36 0 -50 1 -50
+fy ld 38 0 -50 1 -50
+fy ld 40 0 -50 1 -50
+fy ld 42 0 -50 1 -50
+fy ld 44 0 -50 1 -50
+fy ld 46 0 -50 1 -50
+fy ld 48 0 -50 1 -50
+fy ld 50 0 -50 1 -50
+fy ld 52 0 -50 1 -50
+fy ld 54 0 -50 1 -50
+fy ld 56 0 -50 1 -50
+fy ld 58 0 -50 1 -50
+fy ld 60 0 -50 1 -50
+fy ld 63 0 -50 1 -50
+fy ld 65 0 -50 1 -50
+fy ld 67 0 -50 1 -50
+fy ld 69 0 -50 1 -50
+fy ld 71 0 -50 1 -50
+fy ld 73 0 -50 1 -50
+fy ld 75 0 -50 1 -50
+fy ld 77 0 -50 1 -50
+fy ld 79 0 -50 1 -50
+fy ld 81 0 -50 1 -50
+fy ld 83 0 -50 1 -50
+fy ld 85 0 -50 1 -50
+fy ld 87 0 -50 1 -50
+fy ld 89 0 -50 1 -50
+fy ld 91 0 -50 1 -50
+fy ld 93 0 -50 1 -50
+fy ld 95 0 -50 1 -50
+fy ld 97 0 -50 1 -50
+fy ld 99 0 -50 1 -50
+fy ld 101 0 -50 1 -50
+fy ld 104 0 -50 1 -50
+fy ld 106 0 -50 1 -50
+fy ld 108 0 -50 1 -50
+fy ld 110 0 -50 1 -50
+fy ld 112 0 -50 1 -50
+fy ld 114 0 -50 1 -50
+fy ld 116 0 -50 1 -50
+fy ld 118 0 -50 1 -50
+fy ld 120 0 -50 1 -50
+fy ld 122 0 -50 1 -50
+fy ld 124 0 -50 1 -50
+fy ld 126 0 -50 1 -50
+fy ld 128 0 -50 1 -50
+fy ld 130 0 -50 1 -50
+fy ld 132 0 -50 1 -50
+fy ld 134 0 -50 1 -50
+fy ld 136 0 -50 1 -50
+fy ld 138 0 -50 1 -50
+fy ld 140 0 -50 1 -50
+fy ld 142 0 -50 1 -50
+fy ld 145 0 -50 1 -50
+fy ld 147 0 -50 1 -50
+fy ld 149 0 -50 1 -50
+fy ld 151 0 -50 1 -50
+fy ld 153 0 -50 1 -50
+fy ld 155 0 -50 1 -50
+fy ld 157 0 -50 1 -50
+fy ld 159 0 -50 1 -50
+fy ld 161 0 -50 1 -50
+fy ld 163 0 -50 1 -50
+fy ld 165 0 -50 1 -50
+fy ld 167 0 -50 1 -50
+fy ld 169 0 -50 1 -50
+fy ld 171 0 -50 1 -50
+fy ld 173 0 -50 1 -50
+fy ld 175 0 -50 1 -50
+fy ld 177 0 -50 1 -50
+fy ld 179 0 -50 1 -50
+fy ld 181 0 -50 1 -50
+fy ld 183 0 -50 1 -50
+fy ld 186 0 -50 1 -50
+fy ld 188 0 -50 1 -50
+fy ld 190 0 -50 1 -50
+fy ld 192 0 -50 1 -50
+fy ld 194 0 -50 1 -50
+fy ld 196 0 -50 1 -50
+fy ld 198 0 -50 1 -50
+fy ld 200 0 -50 1 -50
+fy ld 202 0 -50 1 -50
+fy ld 204 0 -50 1 -50
+fy ld 206 0 -50 1 -50
+fy ld 208 0 -50 1 -50
+fy ld 210 0 -50 1 -50
+fy ld 212 0 -50 1 -50
+fy ld 214 0 -50 1 -50
+fy ld 216 0 -50 1 -50
+fy ld 218 0 -50 1 -50
+fy ld 220 0 -50 1 -50
+fy ld 222 0 -50 1 -50
+fy ld 224 0 -50 1 -50
+fy ld 227 0 -50 1 -50
+fy ld 229 0 -50 1 -50
+fy ld 231 0 -50 1 -50
+fy ld 233 0 -50 1 -50
+fy ld 235 0 -50 1 -50
+fy ld 237 0 -50 1 -50
+fy ld 239 0 -50 1 -50
+fy ld 241 0 -50 1 -50
+fy ld 243 0 -50 1 -50
+fy ld 245 0 -50 1 -50
+fy ld 247 0 -50 1 -50
+fy ld 249 0 -50 1 -50
+fy ld 251 0 -50 1 -50
+fy ld 253 0 -50 1 -50
+fy ld 255 0 -50 1 -50
+fy ld 257 0 -50 1 -50
+fy ld 259 0 -50 1 -50
+fy ld 261 0 -50 1 -50
+fy ld 263 0 -50 1 -50
+fy ld 265 0 -50 1 -50
+fy ld 268 0 -50 1 -50
+fy ld 270 0 -50 1 -50
+fy ld 272 0 -50 1 -50
+fy ld 274 0 -50 1 -50
+fy ld 276 0 -50 1 -50
+fy ld 278 0 -50 1 -50
+fy ld 280 0 -50 1 -50
+fy ld 282 0 -50 1 -50
+fy ld 284 0 -50 1 -50
+fy ld 286 0 -50 1 -50
+fy ld 288 0 -50 1 -50
+fy ld 290 0 -50 1 -50
+fy ld 292 0 -50 1 -50
+fy ld 294 0 -50 1 -50
+fy ld 296 0 -50 1 -50
+fy ld 298 0 -50 1 -50
+fy ld 300 0 -50 1 -50
+fy ld 302 0 -50 1 -50
+fy ld 304 0 -50 1 -50
+fy ld 306 0 -50 1 -50
+fy ld 309 0 -50 1 -50
+fy ld 311 0 -50 1 -50
+fy ld 313 0 -50 1 -50
+fy ld 315 0 -50 1 -50
+fy ld 317 0 -50 1 -50
+fy ld 319 0 -50 1 -50
+fy ld 321 0 -50 1 -50
+fy ld 323 0 -50 1 -50
+fy ld 325 0 -50 1 -50
+fy ld 327 0 -50 1 -50
+fy ld 329 0 -50 1 -50
+fy ld 331 0 -50 1 -50
+fy ld 333 0 -50 1 -50
+fy ld 335 0 -50 1 -50
+fy ld 337 0 -50 1 -50
+fy ld 339 0 -50 1 -50
+fy ld 341 0 -50 1 -50
+fy ld 343 0 -50 1 -50
+fy ld 345 0 -50 1 -50
+fy ld 347 0 -50 1 -50
+fy ld 350 0 -50 1 -50
+fy ld 352 0 -50 1 -50
+fy ld 354 0 -50 1 -50
+fy ld 356 0 -50 1 -50
+fy ld 358 0 -50 1 -50
+fy ld 360 0 -50 1 -50
+fy ld 362 0 -50 1 -50
+fy ld 364 0 -50 1 -50
+fy ld 366 0 -50 1 -50
+fy ld 368 0 -50 1 -50
+fy ld 370 0 -50 1 -50
+fy ld 372 0 -50 1 -50
+fy ld 374 0 -50 1 -50
+fy ld 376 0 -50 1 -50
+fy ld 378 0 -50 1 -50
+fy ld 380 0 -50 1 -50
+fy ld 382 0 -50 1 -50
+fy ld 384 0 -50 1 -50
+fy ld 386 0 -50 1 -50
+fy ld 388 0 -50 1 -50
+fy ld 391 0 -50 1 -50
+fy ld 392 0 -50 1 -50
+fy ld 393 0 -50 1 -50
+fy ld 394 0 -50 1 -50
+fy ld 395 0 -50 1 -50
+fy ld 396 0 -50 1 -50
+fy ld 397 0 -50 1 -50
+fy ld 398 0 -50 1 -50
+fy ld 399 0 -50 1 -50
+fy ld 400 0 -50 1 -50
+fy ld 401 0 -50 1 -50
+fy ld 402 0 -50 1 -50
+fy ld 403 0 -50 1 -50
+fy ld 404 0 -50 1 -50
+fy ld 405 0 -50 1 -50
+fy ld 406 0 -50 1 -50
+fy ld 407 0 -50 1 -50
+fy ld 408 0 -50 1 -50
+fy ld 409 0 -50 1 -50
+fy ld 410 0 -50 1 -50
+
+|bars| 410
+1 -> 1 { dx dy rz } 22 { dx dy rz } 'mat' 'sec'
+2 -> 2 { dx dy rz } 23 { dx dy rz } 'mat' 'sec'
+3 -> 3 { dx dy rz } 24 { dx dy rz } 'mat' 'sec'
+4 -> 4 { dx dy rz } 25 { dx dy rz } 'mat' 'sec'
+5 -> 5 { dx dy rz } 26 { dx dy rz } 'mat' 'sec'
+6 -> 6 { dx dy rz } 27 { dx dy rz } 'mat' 'sec'
+7 -> 7 { dx dy rz } 28 { dx dy rz } 'mat' 'sec'
+8 -> 8 { dx dy rz } 29 { dx dy rz } 'mat' 'sec'
+9 -> 9 { dx dy rz } 30 { dx dy rz } 'mat' 'sec'
+10 -> 10 { dx dy rz } 31 { dx dy rz } 'mat' 'sec'
+11 -> 11 { dx dy rz } 32 { dx dy rz } 'mat' 'sec'
+12 -> 12 { dx dy rz } 33 { dx dy rz } 'mat' 'sec'
+13 -> 13 { dx dy rz } 34 { dx dy rz } 'mat' 'sec'
+14 -> 14 { dx dy rz } 35 { dx dy rz } 'mat' 'sec'
+15 -> 15 { dx dy rz } 36 { dx dy rz } 'mat' 'sec'
+16 -> 16 { dx dy rz } 37 { dx dy rz } 'mat' 'sec'
+17 -> 17 { dx dy rz } 38 { dx dy rz } 'mat' 'sec'
+18 -> 18 { dx dy rz } 39 { dx dy rz } 'mat' 'sec'
+19 -> 19 { dx dy rz } 40 { dx dy rz } 'mat' 'sec'
+20 -> 20 { dx dy rz } 41 { dx dy rz } 'mat' 'sec'
+21 -> 21 { dx dy rz } 42 { dx dy rz } 'mat' 'sec'
+22 -> 22 { dx dy rz } 23 { dx dy rz } 'mat' 'sec'
+23 -> 22 { dx dy rz } 43 { dx dy rz } 'mat' 'sec'
+24 -> 23 { dx dy rz } 24 { dx dy rz } 'mat' 'sec'
+25 -> 23 { dx dy rz } 44 { dx dy rz } 'mat' 'sec'
+26 -> 24 { dx dy rz } 25 { dx dy rz } 'mat' 'sec'
+27 -> 24 { dx dy rz } 45 { dx dy rz } 'mat' 'sec'
+28 -> 25 { dx dy rz } 26 { dx dy rz } 'mat' 'sec'
+29 -> 25 { dx dy rz } 46 { dx dy rz } 'mat' 'sec'
+30 -> 26 { dx dy rz } 27 { dx dy rz } 'mat' 'sec'
+31 -> 26 { dx dy rz } 47 { dx dy rz } 'mat' 'sec'
+32 -> 27 { dx dy rz } 28 { dx dy rz } 'mat' 'sec'
+33 -> 27 { dx dy rz } 48 { dx dy rz } 'mat' 'sec'
+34 -> 28 { dx dy rz } 29 { dx dy rz } 'mat' 'sec'
+35 -> 28 { dx dy rz } 49 { dx dy rz } 'mat' 'sec'
+36 -> 29 { dx dy rz } 30 { dx dy rz } 'mat' 'sec'
+37 -> 29 { dx dy rz } 50 { dx dy rz } 'mat' 'sec'
+38 -> 30 { dx dy rz } 31 { dx dy rz } 'mat' 'sec'
+39 -> 30 { dx dy rz } 51 { dx dy rz } 'mat' 'sec'
+40 -> 31 { dx dy rz } 32 { dx dy rz } 'mat' 'sec'
+41 -> 31 { dx dy rz } 52 { dx dy rz } 'mat' 'sec'
+42 -> 32 { dx dy rz } 33 { dx dy rz } 'mat' 'sec'
+43 -> 32 { dx dy rz } 53 { dx dy rz } 'mat' 'sec'
+44 -> 33 { dx dy rz } 34 { dx dy rz } 'mat' 'sec'
+45 -> 33 { dx dy rz } 54 { dx dy rz } 'mat' 'sec'
+46 -> 34 { dx dy rz } 35 { dx dy rz } 'mat' 'sec'
+47 -> 34 { dx dy rz } 55 { dx dy rz } 'mat' 'sec'
+48 -> 35 { dx dy rz } 36 { dx dy rz } 'mat' 'sec'
+49 -> 35 { dx dy rz } 56 { dx dy rz } 'mat' 'sec'
+50 -> 36 { dx dy rz } 37 { dx dy rz } 'mat' 'sec'
+51 -> 36 { dx dy rz } 57 { dx dy rz } 'mat' 'sec'
+52 -> 37 { dx dy rz } 38 { dx dy rz } 'mat' 'sec'
+53 -> 37 { dx dy rz } 58 { dx dy rz } 'mat' 'sec'
+54 -> 38 { dx dy rz } 39 { dx dy rz } 'mat' 'sec'
+55 -> 38 { dx dy rz } 59 { dx dy rz } 'mat' 'sec'
+56 -> 39 { dx dy rz } 40 { dx dy rz } 'mat' 'sec'
+57 -> 39 { dx dy rz } 60 { dx dy rz } 'mat' 'sec'
+58 -> 40 { dx dy rz } 41 { dx dy rz } 'mat' 'sec'
+59 -> 40 { dx dy rz } 61 { dx dy rz } 'mat' 'sec'
+60 -> 41 { dx dy rz } 42 { dx dy rz } 'mat' 'sec'
+61 -> 41 { dx dy rz } 62 { dx dy rz } 'mat' 'sec'
+62 -> 42 { dx dy rz } 63 { dx dy rz } 'mat' 'sec'
+63 -> 43 { dx dy rz } 44 { dx dy rz } 'mat' 'sec'
+64 -> 43 { dx dy rz } 64 { dx dy rz } 'mat' 'sec'
+65 -> 44 { dx dy rz } 45 { dx dy rz } 'mat' 'sec'
+66 -> 44 { dx dy rz } 65 { dx dy rz } 'mat' 'sec'
+67 -> 45 { dx dy rz } 46 { dx dy rz } 'mat' 'sec'
+68 -> 45 { dx dy rz } 66 { dx dy rz } 'mat' 'sec'
+69 -> 46 { dx dy rz } 47 { dx dy rz } 'mat' 'sec'
+70 -> 46 { dx dy rz } 67 { dx dy rz } 'mat' 'sec'
+71 -> 47 { dx dy rz } 48 { dx dy rz } 'mat' 'sec'
+72 -> 47 { dx dy rz } 68 { dx dy rz } 'mat' 'sec'
+73 -> 48 { dx dy rz } 49 { dx dy rz } 'mat' 'sec'
+74 -> 48 { dx dy rz } 69 { dx dy rz } 'mat' 'sec'
+75 -> 49 { dx dy rz } 50 { dx dy rz } 'mat' 'sec'
+76 -> 49 { dx dy rz } 70 { dx dy rz } 'mat' 'sec'
+77 -> 50 { dx dy rz } 51 { dx dy rz } 'mat' 'sec'
+78 -> 50 { dx dy rz } 71 { dx dy rz } 'mat' 'sec'
+79 -> 51 { dx dy rz } 52 { dx dy rz } 'mat' 'sec'
+80 -> 51 { dx dy rz } 72 { dx dy rz } 'mat' 'sec'
+81 -> 52 { dx dy rz } 53 { dx dy rz } 'mat' 'sec'
+82 -> 52 { dx dy rz } 73 { dx dy rz } 'mat' 'sec'
+83 -> 53 { dx dy rz } 54 { dx dy rz } 'mat' 'sec'
+84 -> 53 { dx dy rz } 74 { dx dy rz } 'mat' 'sec'
+85 -> 54 { dx dy rz } 55 { dx dy rz } 'mat' 'sec'
+86 -> 54 { dx dy rz } 75 { dx dy rz } 'mat' 'sec'
+87 -> 55 { dx dy rz } 56 { dx dy rz } 'mat' 'sec'
+88 -> 55 { dx dy rz } 76 { dx dy rz } 'mat' 'sec'
+89 -> 56 { dx dy rz } 57 { dx dy rz } 'mat' 'sec'
+90 -> 56 { dx dy rz } 77 { dx dy rz } 'mat' 'sec'
+91 -> 57 { dx dy rz } 58 { dx dy rz } 'mat' 'sec'
+92 -> 57 { dx dy rz } 78 { dx dy rz } 'mat' 'sec'
+93 -> 58 { dx dy rz } 59 { dx dy rz } 'mat' 'sec'
+94 -> 58 { dx dy rz } 79 { dx dy rz } 'mat' 'sec'
+95 -> 59 { dx dy rz } 60 { dx dy rz } 'mat' 'sec'
+96 -> 59 { dx dy rz } 80 { dx dy rz } 'mat' 'sec'
+97 -> 60 { dx dy rz } 61 { dx dy rz } 'mat' 'sec'
+98 -> 60 { dx dy rz } 81 { dx dy rz } 'mat' 'sec'
+99 -> 61 { dx dy rz } 62 { dx dy rz } 'mat' 'sec'
+100 -> 61 { dx dy rz } 82 { dx dy rz } 'mat' 'sec'
+101 -> 62 { dx dy rz } 63 { dx dy rz } 'mat' 'sec'
+102 -> 62 { dx dy rz } 83 { dx dy rz } 'mat' 'sec'
+103 -> 63 { dx dy rz } 84 { dx dy rz } 'mat' 'sec'
+104 -> 64 { dx dy rz } 65 { dx dy rz } 'mat' 'sec'
+105 -> 64 { dx dy rz } 85 { dx dy rz } 'mat' 'sec'
+106 -> 65 { dx dy rz } 66 { dx dy rz } 'mat' 'sec'
+107 -> 65 { dx dy rz } 86 { dx dy rz } 'mat' 'sec'
+108 -> 66 { dx dy rz } 67 { dx dy rz } 'mat' 'sec'
+109 -> 66 { dx dy rz } 87 { dx dy rz } 'mat' 'sec'
+110 -> 67 { dx dy rz } 68 { dx dy rz } 'mat' 'sec'
+111 -> 67 { dx dy rz } 88 { dx dy rz } 'mat' 'sec'
+112 -> 68 { dx dy rz } 69 { dx dy rz } 'mat' 'sec'
+113 -> 68 { dx dy rz } 89 { dx dy rz } 'mat' 'sec'
+114 -> 69 { dx dy rz } 70 { dx dy rz } 'mat' 'sec'
+115 -> 69 { dx dy rz } 90 { dx dy rz } 'mat' 'sec'
+116 -> 70 { dx dy rz } 71 { dx dy rz } 'mat' 'sec'
+117 -> 70 { dx dy rz } 91 { dx dy rz } 'mat' 'sec'
+118 -> 71 { dx dy rz } 72 { dx dy rz } 'mat' 'sec'
+119 -> 71 { dx dy rz } 92 { dx dy rz } 'mat' 'sec'
+120 -> 72 { dx dy rz } 73 { dx dy rz } 'mat' 'sec'
+121 -> 72 { dx dy rz } 93 { dx dy rz } 'mat' 'sec'
+122 -> 73 { dx dy rz } 74 { dx dy rz } 'mat' 'sec'
+123 -> 73 { dx dy rz } 94 { dx dy rz } 'mat' 'sec'
+124 -> 74 { dx dy rz } 75 { dx dy rz } 'mat' 'sec'
+125 -> 74 { dx dy rz } 95 { dx dy rz } 'mat' 'sec'
+126 -> 75 { dx dy rz } 76 { dx dy rz } 'mat' 'sec'
+127 -> 75 { dx dy rz } 96 { dx dy rz } 'mat' 'sec'
+128 -> 76 { dx dy rz } 77 { dx dy rz } 'mat' 'sec'
+129 -> 76 { dx dy rz } 97 { dx dy rz } 'mat' 'sec'
+130 -> 77 { dx dy rz } 78 { dx dy rz } 'mat' 'sec'
+131 -> 77 { dx dy rz } 98 { dx dy rz } 'mat' 'sec'
+132 -> 78 { dx dy rz } 79 { dx dy rz } 'mat' 'sec'
+133 -> 78 { dx dy rz } 99 { dx dy rz } 'mat' 'sec'
+134 -> 79 { dx dy rz } 80 { dx dy rz } 'mat' 'sec'
+135 -> 79 { dx dy rz } 100 { dx dy rz } 'mat' 'sec'
+136 -> 80 { dx dy rz } 81 { dx dy rz } 'mat' 'sec'
+137 -> 80 { dx dy rz } 101 { dx dy rz } 'mat' 'sec'
+138 -> 81 { dx dy rz } 82 { dx dy rz } 'mat' 'sec'
+139 -> 81 { dx dy rz } 102 { dx dy rz } 'mat' 'sec'
+140 -> 82 { dx dy rz } 83 { dx dy rz } 'mat' 'sec'
+141 -> 82 { dx dy rz } 103 { dx dy rz } 'mat' 'sec'
+142 -> 83 { dx dy rz } 84 { dx dy rz } 'mat' 'sec'
+143 -> 83 { dx dy rz } 104 { dx dy rz } 'mat' 'sec'
+144 -> 84 { dx dy rz } 105 { dx dy rz } 'mat' 'sec'
+145 -> 85 { dx dy rz } 86 { dx dy rz } 'mat' 'sec'
+146 -> 85 { dx dy rz } 106 { dx dy rz } 'mat' 'sec'
+147 -> 86 { dx dy rz } 87 { dx dy rz } 'mat' 'sec'
+148 -> 86 { dx dy rz } 107 { dx dy rz } 'mat' 'sec'
+149 -> 87 { dx dy rz } 88 { dx dy rz } 'mat' 'sec'
+150 -> 87 { dx dy rz } 108 { dx dy rz } 'mat' 'sec'
+151 -> 88 { dx dy rz } 89 { dx dy rz } 'mat' 'sec'
+152 -> 88 { dx dy rz } 109 { dx dy rz } 'mat' 'sec'
+153 -> 89 { dx dy rz } 90 { dx dy rz } 'mat' 'sec'
+154 -> 89 { dx dy rz } 110 { dx dy rz } 'mat' 'sec'
+155 -> 90 { dx dy rz } 91 { dx dy rz } 'mat' 'sec'
+156 -> 90 { dx dy rz } 111 { dx dy rz } 'mat' 'sec'
+157 -> 91 { dx dy rz } 92 { dx dy rz } 'mat' 'sec'
+158 -> 91 { dx dy rz } 112 { dx dy rz } 'mat' 'sec'
+159 -> 92 { dx dy rz } 93 { dx dy rz } 'mat' 'sec'
+160 -> 92 { dx dy rz } 113 { dx dy rz } 'mat' 'sec'
+161 -> 93 { dx dy rz } 94 { dx dy rz } 'mat' 'sec'
+162 -> 93 { dx dy rz } 114 { dx dy rz } 'mat' 'sec'
+163 -> 94 { dx dy rz } 95 { dx dy rz } 'mat' 'sec'
+164 -> 94 { dx dy rz } 115 { dx dy rz } 'mat' 'sec'
+165 -> 95 { dx dy rz } 96 { dx dy rz } 'mat' 'sec'
+166 -> 95 { dx dy rz } 116 { dx dy rz } 'mat' 'sec'
+167 -> 96 { dx dy rz } 97 { dx dy rz } 'mat' 'sec'
+168 -> 96 { dx dy rz } 117 { dx dy rz } 'mat' 'sec'
+169 -> 97 { dx dy rz } 98 { dx dy rz } 'mat' 'sec'
+170 -> 97 { dx dy rz } 118 { dx dy rz } 'mat' 'sec'
+171 -> 98 { dx dy rz } 99 { dx dy rz } 'mat' 'sec'
+172 -> 98 { dx dy rz } 119 { dx dy rz } 'mat' 'sec'
+173 -> 99 { dx dy rz } 100 { dx dy rz } 'mat' 'sec'
+174 -> 99 { dx dy rz } 120 { dx dy rz } 'mat' 'sec'
+175 -> 100 { dx dy rz } 101 { dx dy rz } 'mat' 'sec'
+176 -> 100 { dx dy rz } 121 { dx dy rz } 'mat' 'sec'
+177 -> 101 { dx dy rz } 102 { dx dy rz } 'mat' 'sec'
+178 -> 101 { dx dy rz } 122 { dx dy rz } 'mat' 'sec'
+179 -> 102 { dx dy rz } 103 { dx dy rz } 'mat' 'sec'
+180 -> 102 { dx dy rz } 123 { dx dy rz } 'mat' 'sec'
+181 -> 103 { dx dy rz } 104 { dx dy rz } 'mat' 'sec'
+182 -> 103 { dx dy rz } 124 { dx dy rz } 'mat' 'sec'
+183 -> 104 { dx dy rz } 105 { dx dy rz } 'mat' 'sec'
+184 -> 104 { dx dy rz } 125 { dx dy rz } 'mat' 'sec'
+185 -> 105 { dx dy rz } 126 { dx dy rz } 'mat' 'sec'
+186 -> 106 { dx dy rz } 107 { dx dy rz } 'mat' 'sec'
+187 -> 106 { dx dy rz } 127 { dx dy rz } 'mat' 'sec'
+188 -> 107 { dx dy rz } 108 { dx dy rz } 'mat' 'sec'
+189 -> 107 { dx dy rz } 128 { dx dy rz } 'mat' 'sec'
+190 -> 108 { dx dy rz } 109 { dx dy rz } 'mat' 'sec'
+191 -> 108 { dx dy rz } 129 { dx dy rz } 'mat' 'sec'
+192 -> 109 { dx dy rz } 110 { dx dy rz } 'mat' 'sec'
+193 -> 109 { dx dy rz } 130 { dx dy rz } 'mat' 'sec'
+194 -> 110 { dx dy rz } 111 { dx dy rz } 'mat' 'sec'
+195 -> 110 { dx dy rz } 131 { dx dy rz } 'mat' 'sec'
+196 -> 111 { dx dy rz } 112 { dx dy rz } 'mat' 'sec'
+197 -> 111 { dx dy rz } 132 { dx dy rz } 'mat' 'sec'
+198 -> 112 { dx dy rz } 113 { dx dy rz } 'mat' 'sec'
+199 -> 112 { dx dy rz } 133 { dx dy rz } 'mat' 'sec'
+200 -> 113 { dx dy rz } 114 { dx dy rz } 'mat' 'sec'
+201 -> 113 { dx dy rz } 134 { dx dy rz } 'mat' 'sec'
+202 -> 114 { dx dy rz } 115 { dx dy rz } 'mat' 'sec'
+203 -> 114 { dx dy rz } 135 { dx dy rz } 'mat' 'sec'
+204 -> 115 { dx dy rz } 116 { dx dy rz } 'mat' 'sec'
+205 -> 115 { dx dy rz } 136 { dx dy rz } 'mat' 'sec'
+206 -> 116 { dx dy rz } 117 { dx dy rz } 'mat' 'sec'
+207 -> 116 { dx dy rz } 137 { dx dy rz } 'mat' 'sec'
+208 -> 117 { dx dy rz } 118 { dx dy rz } 'mat' 'sec'
+209 -> 117 { dx dy rz } 138 { dx dy rz } 'mat' 'sec'
+210 -> 118 { dx dy rz } 119 { dx dy rz } 'mat' 'sec'
+211 -> 118 { dx dy rz } 139 { dx dy rz } 'mat' 'sec'
+212 -> 119 { dx dy rz } 120 { dx dy rz } 'mat' 'sec'
+213 -> 119 { dx dy rz } 140 { dx dy rz } 'mat' 'sec'
+214 -> 120 { dx dy rz } 121 { dx dy rz } 'mat' 'sec'
+215 -> 120 { dx dy rz } 141 { dx dy rz } 'mat' 'sec'
+216 -> 121 { dx dy rz } 122 { dx dy rz } 'mat' 'sec'
+217 -> 121 { dx dy rz } 142 { dx dy rz } 'mat' 'sec'
+218 -> 122 { dx dy rz } 123 { dx dy rz } 'mat' 'sec'
+219 -> 122 { dx dy rz } 143 { dx dy rz } 'mat' 'sec'
+220 -> 123 { dx dy rz } 124 { dx dy rz } 'mat' 'sec'
+221 -> 123 { dx dy rz } 144 { dx dy rz } 'mat' 'sec'
+222 -> 124 { dx dy rz } 125 { dx dy rz } 'mat' 'sec'
+223 -> 124 { dx dy rz } 145 { dx dy rz } 'mat' 'sec'
+224 -> 125 { dx dy rz } 126 { dx dy rz } 'mat' 'sec'
+225 -> 125 { dx dy rz } 146 { dx dy rz } 'mat' 'sec'
+226 -> 126 { dx dy rz } 147 { dx dy rz } 'mat' 'sec'
+227 -> 127 { dx dy rz } 128 { dx dy rz } 'mat' 'sec'
+228 -> 127 { dx dy rz } 148 { dx dy rz } 'mat' 'sec'
+229 -> 128 { dx dy rz } 129 { dx dy rz } 'mat' 'sec'
+230 -> 128 { dx dy rz } 149 { dx dy rz } 'mat' 'sec'
+231 -> 129 { dx dy rz } 130 { dx dy rz } 'mat' 'sec'
+232 -> 129 { dx dy rz } 150 { dx dy rz } 'mat' 'sec'
+233 -> 130 { dx dy rz } 131 { dx dy rz } 'mat' 'sec'
+234 -> 130 { dx dy rz } 151 { dx dy rz } 'mat' 'sec'
+235 -> 131 { dx dy rz } 132 { dx dy rz } 'mat' 'sec'
+236 -> 131 { dx dy rz } 152 { dx dy rz } 'mat' 'sec'
+237 -> 132 { dx dy rz } 133 { dx dy rz } 'mat' 'sec'
+238 -> 132 { dx dy rz } 153 { dx dy rz } 'mat' 'sec'
+239 -> 133 { dx dy rz } 134 { dx dy rz } 'mat' 'sec'
+240 -> 133 { dx dy rz } 154 { dx dy rz } 'mat' 'sec'
+241 -> 134 { dx dy rz } 135 { dx dy rz } 'mat' 'sec'
+242 -> 134 { dx dy rz } 155 { dx dy rz } 'mat' 'sec'
+243 -> 135 { dx dy rz } 136 { dx dy rz } 'mat' 'sec'
+244 -> 135 { dx dy rz } 156 { dx dy rz } 'mat' 'sec'
+245 -> 136 { dx dy rz } 137 { dx dy rz } 'mat' 'sec'
+246 -> 136 { dx dy rz } 157 { dx dy rz } 'mat' 'sec'
+247 -> 137 { dx dy rz } 138 { dx dy rz } 'mat' 'sec'
+248 -> 137 { dx dy rz } 158 { dx dy rz } 'mat' 'sec'
+249 -> 138 { dx dy rz } 139 { dx dy rz } 'mat' 'sec'
+250 -> 138 { dx dy rz } 159 { dx dy rz } 'mat' 'sec'
+251 -> 139 { dx dy rz } 140 { dx dy rz } 'mat' 'sec'
+252 -> 139 { dx dy rz } 160 { dx dy rz } 'mat' 'sec'
+253 -> 140 { dx dy rz } 141 { dx dy rz } 'mat' 'sec'
+254 -> 140 { dx dy rz } 161 { dx dy rz } 'mat' 'sec'
+255 -> 141 { dx dy rz } 142 { dx dy rz } 'mat' 'sec'
+256 -> 141 { dx dy rz } 162 { dx dy rz } 'mat' 'sec'
+257 -> 142 { dx dy rz } 143 { dx dy rz } 'mat' 'sec'
+258 -> 142 { dx dy rz } 163 { dx dy rz } 'mat' 'sec'
+259 -> 143 { dx dy rz } 144 { dx dy rz } 'mat' 'sec'
+260 -> 143 { dx dy rz } 164 { dx dy rz } 'mat' 'sec'
+261 -> 144 { dx dy rz } 145 { dx dy rz } 'mat' 'sec'
+262 -> 144 { dx dy rz } 165 { dx dy rz } 'mat' 'sec'
+263 -> 145 { dx dy rz } 146 { dx dy rz } 'mat' 'sec'
+264 -> 145 { dx dy rz } 166 { dx dy rz } 'mat' 'sec'
+265 -> 146 { dx dy rz } 147 { dx dy rz } 'mat' 'sec'
+266 -> 146 { dx dy rz } 167 { dx dy rz } 'mat' 'sec'
+267 -> 147 { dx dy rz } 168 { dx dy rz } 'mat' 'sec'
+268 -> 148 { dx dy rz } 149 { dx dy rz } 'mat' 'sec'
+269 -> 148 { dx dy rz } 169 { dx dy rz } 'mat' 'sec'
+270 -> 149 { dx dy rz } 150 { dx dy rz } 'mat' 'sec'
+271 -> 149 { dx dy rz } 170 { dx dy rz } 'mat' 'sec'
+272 -> 150 { dx dy rz } 151 { dx dy rz } 'mat' 'sec'
+273 -> 150 { dx dy rz } 171 { dx dy rz } 'mat' 'sec'
+274 -> 151 { dx dy rz } 152 { dx dy rz } 'mat' 'sec'
+275 -> 151 { dx dy rz } 172 { dx dy rz } 'mat' 'sec'
+276 -> 152 { dx dy rz } 153 { dx dy rz } 'mat' 'sec'
+277 -> 152 { dx dy rz } 173 { dx dy rz } 'mat' 'sec'
+278 -> 153 { dx dy rz } 154 { dx dy rz } 'mat' 'sec'
+279 -> 153 { dx dy rz } 174 { dx dy rz } 'mat' 'sec'
+280 -> 154 { dx dy rz } 155 { dx dy rz } 'mat' 'sec'
+281 -> 154 { dx dy rz } 175 { dx dy rz } 'mat' 'sec'
+282 -> 155 { dx dy rz } 156 { dx dy rz } 'mat' 'sec'
+283 -> 155 { dx dy rz } 176 { dx dy rz } 'mat' 'sec'
+284 -> 156 { dx dy rz } 157 { dx dy rz } 'mat' 'sec'
+285 -> 156 { dx dy rz } 177 { dx dy rz } 'mat' 'sec'
+286 -> 157 { dx dy rz } 158 { dx dy rz } 'mat' 'sec'
+287 -> 157 { dx dy rz } 178 { dx dy rz } 'mat' 'sec'
+288 -> 158 { dx dy rz } 159 { dx dy rz } 'mat' 'sec'
+289 -> 158 { dx dy rz } 179 { dx dy rz } 'mat' 'sec'
+290 -> 159 { dx dy rz } 160 { dx dy rz } 'mat' 'sec'
+291 -> 159 { dx dy rz } 180 { dx dy rz } 'mat' 'sec'
+292 -> 160 { dx dy rz } 161 { dx dy rz } 'mat' 'sec'
+293 -> 160 { dx dy rz } 181 { dx dy rz } 'mat' 'sec'
+294 -> 161 { dx dy rz } 162 { dx dy rz } 'mat' 'sec'
+295 -> 161 { dx dy rz } 182 { dx dy rz } 'mat' 'sec'
+296 -> 162 { dx dy rz } 163 { dx dy rz } 'mat' 'sec'
+297 -> 162 { dx dy rz } 183 { dx dy rz } 'mat' 'sec'
+298 -> 163 { dx dy rz } 164 { dx dy rz } 'mat' 'sec'
+299 -> 163 { dx dy rz } 184 { dx dy rz } 'mat' 'sec'
+300 -> 164 { dx dy rz } 165 { dx dy rz } 'mat' 'sec'
+301 -> 164 { dx dy rz } 185 { dx dy rz } 'mat' 'sec'
+302 -> 165 { dx dy rz } 166 { dx dy rz } 'mat' 'sec'
+303 -> 165 { dx dy rz } 186 { dx dy rz } 'mat' 'sec'
+304 -> 166 { dx dy rz } 167 { dx dy rz } 'mat' 'sec'
+305 -> 166 { dx dy rz } 187 { dx dy rz } 'mat' 'sec'
+306 -> 167 { dx dy rz } 168 { dx dy rz } 'mat' 'sec'
+307 -> 167 { dx dy rz } 188 { dx dy rz } 'mat' 'sec'
+308 -> 168 { dx dy rz } 189 { dx dy rz } 'mat' 'sec'
+309 -> 169 { dx dy rz } 170 { dx dy rz } 'mat' 'sec'
+310 -> 169 { dx dy rz } 190 { dx dy rz } 'mat' 'sec'
+311 -> 170 { dx dy rz } 171 { dx dy rz } 'mat' 'sec'
+312 -> 170 { dx dy rz } 191 { dx dy rz } 'mat' 'sec'
+313 -> 171 { dx dy rz } 172 { dx dy rz } 'mat' 'sec'
+314 -> 171 { dx dy rz } 192 { dx dy rz } 'mat' 'sec'
+315 -> 172 { dx dy rz } 173 { dx dy rz } 'mat' 'sec'
+316 -> 172 { dx dy rz } 193 { dx dy rz } 'mat' 'sec'
+317 -> 173 { dx dy rz } 174 { dx dy rz } 'mat' 'sec'
+318 -> 173 { dx dy rz } 194 { dx dy rz } 'mat' 'sec'
+319 -> 174 { dx dy rz } 175 { dx dy rz } 'mat' 'sec'
+320 -> 174 { dx dy rz } 195 { dx dy rz } 'mat' 'sec'
+321 -> 175 { dx dy rz } 176 { dx dy rz } 'mat' 'sec'
+322 -> 175 { dx dy rz } 196 { dx dy rz } 'mat' 'sec'
+323 -> 176 { dx dy rz } 177 { dx dy rz } 'mat' 'sec'
+324 -> 176 { dx dy rz } 197 { dx dy rz } 'mat' 'sec'
+325 -> 177 { dx dy rz } 178 { dx dy rz } 'mat' 'sec'
+326 -> 177 { dx dy rz } 198 { dx dy rz } 'mat' 'sec'
+327 -> 178 { dx dy rz } 179 { dx dy rz } 'mat' 'sec'
+328 -> 178 { dx dy rz } 199 { dx dy rz } 'mat' 'sec'
+329 -> 179 { dx dy rz } 180 { dx dy rz } 'mat' 'sec'
+330 -> 179 { dx dy rz } 200 { dx dy rz } 'mat' 'sec'
+331 -> 180 { dx dy rz } 181 { dx dy rz } 'mat' 'sec'
+332 -> 180 { dx dy rz } 201 { dx dy rz } 'mat' 'sec'
+333 -> 181 { dx dy rz } 182 { dx dy rz } 'mat' 'sec'
+334 -> 181 { dx dy rz } 202 { dx dy rz } 'mat' 'sec'
+335 -> 182 { dx dy rz } 183 { dx dy rz } 'mat' 'sec'
+336 -> 182 { dx dy rz } 203 { dx dy rz } 'mat' 'sec'
+337 -> 183 { dx dy rz } 184 { dx dy rz } 'mat' 'sec'
+338 -> 183 { dx dy rz } 204 { dx dy rz } 'mat' 'sec'
+339 -> 184 { dx dy rz } 185 { dx dy rz } 'mat' 'sec'
+340 -> 184 { dx dy rz } 205 { dx dy rz } 'mat' 'sec'
+341 -> 185 { dx dy rz } 186 { dx dy rz } 'mat' 'sec'
+342 -> 185 { dx dy rz } 206 { dx dy rz } 'mat' 'sec'
+343 -> 186 { dx dy rz } 187 { dx dy rz } 'mat' 'sec'
+344 -> 186 { dx dy rz } 207 { dx dy rz } 'mat' 'sec'
+345 -> 187 { dx dy rz } 188 { dx dy rz } 'mat' 'sec'
+346 -> 187 { dx dy rz } 208 { dx dy rz } 'mat' 'sec'
+347 -> 188 { dx dy rz } 189 { dx dy rz } 'mat' 'sec'
+348 -> 188 { dx dy rz } 209 { dx dy rz } 'mat' 'sec'
+349 -> 189 { dx dy rz } 210 { dx dy rz } 'mat' 'sec'
+350 -> 190 { dx dy rz } 191 { dx dy rz } 'mat' 'sec'
+351 -> 190 { dx dy rz } 211 { dx dy rz } 'mat' 'sec'
+352 -> 191 { dx dy rz } 192 { dx dy rz } 'mat' 'sec'
+353 -> 191 { dx dy rz } 212 { dx dy rz } 'mat' 'sec'
+354 -> 192 { dx dy rz } 193 { dx dy rz } 'mat' 'sec'
+355 -> 192 { dx dy rz } 213 { dx dy rz } 'mat' 'sec'
+356 -> 193 { dx dy rz } 194 { dx dy rz } 'mat' 'sec'
+357 -> 193 { dx dy rz } 214 { dx dy rz } 'mat' 'sec'
+358 -> 194 { dx dy rz } 195 { dx dy rz } 'mat' 'sec'
+359 -> 194 { dx dy rz } 215 { dx dy rz } 'mat' 'sec'
+360 -> 195 { dx dy rz } 196 { dx dy rz } 'mat' 'sec'
+361 -> 195 { dx dy rz } 216 { dx dy rz } 'mat' 'sec'
+362 -> 196 { dx dy rz } 197 { dx dy rz } 'mat' 'sec'
+363 -> 196 { dx dy rz } 217 { dx dy rz } 'mat' 'sec'
+364 -> 197 { dx dy rz } 198 { dx dy rz } 'mat' 'sec'
+365 -> 197 { dx dy rz } 218 { dx dy rz } 'mat' 'sec'
+366 -> 198 { dx dy rz } 199 { dx dy rz } 'mat' 'sec'
+367 -> 198 { dx dy rz } 219 { dx dy rz } 'mat' 'sec'
+368 -> 199 { dx dy rz } 200 { dx dy rz } 'mat' 'sec'
+369 -> 199 { dx dy rz } 220 { dx dy rz } 'mat' 'sec'
+370 -> 200 { dx dy rz } 201 { dx dy rz } 'mat' 'sec'
+371 -> 200 { dx dy rz } 221 { dx dy rz } 'mat' 'sec'
+372 -> 201 { dx dy rz } 202 { dx dy rz } 'mat' 'sec'
+373 -> 201 { dx dy rz } 222 { dx dy rz } 'mat' 'sec'
+374 -> 202 { dx dy rz } 203 { dx dy rz } 'mat' 'sec'
+375 -> 202 { dx dy rz } 223 { dx dy rz } 'mat' 'sec'
+376 -> 203 { dx dy rz } 204 { dx dy rz } 'mat' 'sec'
+377 -> 203 { dx dy rz } 224 { dx dy rz } 'mat' 'sec'
+378 -> 204 { dx dy rz } 205 { dx dy rz } 'mat' 'sec'
+379 -> 204 { dx dy rz } 225 { dx dy rz } 'mat' 'sec'
+380 -> 205 { dx dy rz } 206 { dx dy rz } 'mat' 'sec'
+381 -> 205 { dx dy rz } 226 { dx dy rz } 'mat' 'sec'
+382 -> 206 { dx dy rz } 207 { dx dy rz } 'mat' 'sec'
+383 -> 206 { dx dy rz } 227 { dx dy rz } 'mat' 'sec'
+384 -> 207 { dx dy rz } 208 { dx dy rz } 'mat' 'sec'
+385 -> 207 { dx dy rz } 228 { dx dy rz } 'mat' 'sec'
+386 -> 208 { dx dy rz } 209 { dx dy rz } 'mat' 'sec'
+387 -> 208 { dx dy rz } 229 { dx dy rz } 'mat' 'sec'
+388 -> 209 { dx dy rz } 210 { dx dy rz } 'mat' 'sec'
+389 -> 209 { dx dy rz } 230 { dx dy rz } 'mat' 'sec'
+390 -> 210 { dx dy rz } 231 { dx dy rz } 'mat' 'sec'
+391 -> 211 { dx dy rz } 212 { dx dy rz } 'mat' 'sec'
+392 -> 212 { dx dy rz } 213 { dx dy rz } 'mat' 'sec'
+393 -> 213 { dx dy rz } 214 { dx dy rz } 'mat' 'sec'
+394 -> 214 { dx dy rz } 215 { dx dy rz } 'mat' 'sec'
+395 -> 215 { dx dy rz } 216 { dx dy rz } 'mat' 'sec'
+396 -> 216 { dx dy rz } 217 { dx dy rz } 'mat' 'sec'
+397 -> 217 { dx dy rz } 218 { dx dy rz } 'mat' 'sec'
+398 -> 218 { dx dy rz } 219 { dx dy rz } 'mat' 'sec'
+399 -> 219 { dx dy rz } 220 { dx dy rz } 'mat' 'sec'
+400 -> 220 { dx dy rz } 221 { dx dy rz } 'mat' 'sec'
+401 -> 221 { dx dy rz } 222 { dx dy rz } 'mat' 'sec'
+402 -> 222 { dx dy rz } 223 { dx dy rz } 'mat' 'sec'
+403 -> 223 { dx dy rz } 224 { dx dy rz } 'mat' 'sec'
+404 -> 224 { dx dy rz } 225 { dx dy rz } 'mat' 'sec'
+405 -> 225 { dx dy rz } 226 { dx dy rz } 'mat' 'sec'
+406 -> 226 { dx dy rz } 227 { dx dy rz } 'mat' 'sec'
+407 -> 227 { dx dy rz } 228 { dx dy rz } 'mat' 'sec'
+408 -> 228 { dx dy rz } 229 { dx dy rz } 'mat' 'sec'
+409 -> 229 { dx dy rz } 230 { dx dy rz } 'mat' 'sec'
+410 -> 230 { dx dy rz } 231 { dx dy rz } 'mat' 'sec'
