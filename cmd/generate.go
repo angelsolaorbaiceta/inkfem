@@ -61,6 +61,11 @@ func init() {
 }
 
 func generateStructure(cmd *cobra.Command, args []string) {
+	var (
+		ipe100Section     = structure.MakeSection("sec", 10.3, 171.0, 15.92, 34.2, 5.79)
+		steelS275Material = structure.MakeMaterial("mat", 0.00000785, 21000000, 8100000, 0.3, 27500, 43000)
+	)
+
 	switch generateType {
 	case reticType, reticLongType:
 		{
@@ -70,8 +75,8 @@ func generateStructure(cmd *cobra.Command, args []string) {
 				Levels:        generateLevels,
 				Height:        generateLevelHeight,
 				LoadDistValue: generateloadValue,
-				Section:       structure.MakeSection("sec", 1.0, 1.0, 1.0, 1, 0),
-				Material:      structure.MakeMaterial("mat", 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+				Section:       ipe100Section,
+				Material:      steelS275Material,
 			})
 			iodef.Write(str, os.Stdout)
 		}
