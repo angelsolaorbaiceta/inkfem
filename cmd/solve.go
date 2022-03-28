@@ -94,7 +94,7 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	}
 
 	solution := process.Solve(preStructure, solveOptions)
-	iosol.StructureSolutionToFile(solution, outPath+io.SolFileExt)
+	iosol.Write(solution, outPath+io.SolFileExt)
 
 	log.Result()
 }

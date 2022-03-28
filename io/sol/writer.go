@@ -12,8 +12,8 @@ import (
 //go:embed solution.template.txt
 var solutionTemplateBytes []byte
 
-// StructureSolutionToFile writes the solution of a structure to a file with the given path.
-func StructureSolutionToFile(solution *process.Solution, filePath string) {
+// Write writes the solution of a structure to a file with the given path.
+func Write(solution *process.Solution, filePath string) {
 	var (
 		file   = io.CreateFile(filePath)
 		tmpl   = template.Must(template.New("solution").Parse(string(solutionTemplateBytes)))
