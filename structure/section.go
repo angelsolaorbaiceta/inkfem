@@ -49,9 +49,9 @@ func (s *Section) String() string {
 // Sections are equal if all its numerical properties are equal. the name isn't considered for the
 // equality check.
 func (s *Section) Equals(other *Section) bool {
-	return nums.FuzzyEqual(s.Area, other.Area) &&
-		nums.FuzzyEqual(s.IStrong, other.IStrong) &&
-		nums.FuzzyEqual(s.IWeak, other.IWeak) &&
-		nums.FuzzyEqual(s.SStrong, other.SStrong) &&
-		nums.FuzzyEqual(s.SWeak, other.SWeak)
+	return nums.FloatsEqual(s.Area, other.Area) &&
+		nums.FloatsEqual(s.IStrong, other.IStrong) &&
+		nums.FloatsEqual(s.IWeak, other.IWeak) &&
+		nums.FloatsEqual(s.SStrong, other.SStrong) &&
+		nums.FloatsEqual(s.SWeak, other.SWeak)
 }

@@ -58,10 +58,10 @@ func (m *Material) String() string {
 // Materials are equal if all its numerical properties are equal. the name isn't considered for the
 // equality check.
 func (m *Material) Equals(other *Material) bool {
-	return nums.FuzzyEqual(m.Density, other.Density) &&
-		nums.FuzzyEqual(m.YoungMod, other.YoungMod) &&
-		nums.FuzzyEqual(m.ShearMod, other.ShearMod) &&
-		nums.FuzzyEqual(m.PoissonRatio, other.PoissonRatio) &&
-		nums.FuzzyEqual(m.YieldStrength, other.YieldStrength) &&
-		nums.FuzzyEqual(m.UltimateStrength, other.UltimateStrength)
+	return nums.FloatsEqual(m.Density, other.Density) &&
+		nums.FloatsEqual(m.YoungMod, other.YoungMod) &&
+		nums.FloatsEqual(m.ShearMod, other.ShearMod) &&
+		nums.FloatsEqual(m.PoissonRatio, other.PoissonRatio) &&
+		nums.FloatsEqual(m.YieldStrength, other.YieldStrength) &&
+		nums.FloatsEqual(m.UltimateStrength, other.UltimateStrength)
 }
