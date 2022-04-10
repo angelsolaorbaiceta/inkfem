@@ -24,14 +24,13 @@ This will generate an additional file with the _.inkfempre_ extension containing
 
 ### Available Flags
 
-| Flag      | Type    | Description                                                            | Required | Default |
-| --------- | ------- | ---------------------------------------------------------------------- | -------- | ------- |
-| `-v`      | `bool`  | use verbose output, including elapsed times                            | no       | `false` |
-| `-p`      | `bool`  | save the preprocessed structure into a `.inkfempre` file               | no       | `false` |
-| `-mat`    | `bool`  | save the system of equation's matrix as _.png_ image                   | no       | `false` |
-| `-safe`   | `bool`  | perform some extra safety checks before proceeding with the resolution | no       | `false` |
-| `-error`  | `float` | maximum displacement error allowed in the resolution                   | no       | `1e-5`  |
-| `-weight` | `bool`  | include the own weight of the bars                                     | no       | `false` |
+| Flag                 | Type    | Description                                                            | Required | Default |
+| -------------------- | ------- | ---------------------------------------------------------------------- | -------- | ------- |
+| `verbose` or `-v`    | `bool`  | use verbose output, including elapsed times                            | no       | `false` |
+| `preprocess` or `-p` | `bool`  | save the preprocessed structure into a `.inkfempre` file               | no       | `false` |
+| `safe` or `-s`       | `bool`  | perform some extra safety checks before proceeding with the resolution | no       | `false` |
+| `error` or `-e`      | `float` | maximum displacement error allowed in the resolution                   | no       | `1e-5`  |
+| `weight` or `-w`     | `bool`  | include the own weight of the bars                                     | no       | `false` |
 
 ## Build & Test
 

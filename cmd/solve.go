@@ -18,7 +18,6 @@ var (
 	solveDispMaxError     float64
 	solveUseVerbose       bool
 	solvePreprocessToFile bool
-	solveSysMatrixToPng   bool
 	solveSafeChecks       bool
 
 	solveCommand = &cobra.Command{
@@ -46,10 +45,6 @@ func init() {
 	solveCommand.
 		Flags().
 		BoolVarP(&solvePreprocessToFile, "preprocess", "p", false, "dump preprocessed structure to file")
-
-	solveCommand.
-		Flags().
-		BoolVarP(&solveSysMatrixToPng, "matrix", "m", false, "save system matrix as a PNG image")
 
 	solveCommand.
 		Flags().
@@ -87,7 +82,6 @@ func solveStructure(cmd *cobra.Command, args []string) {
 	}
 
 	solveOptions := process.SolveOptions{
-		SaveSysMatrixImage:    solveSysMatrixToPng,
 		OutputPath:            outPath,
 		SafeChecks:            solveSafeChecks,
 		MaxDisplacementsError: solveDispMaxError,

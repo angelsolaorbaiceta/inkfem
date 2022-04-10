@@ -21,10 +21,6 @@ func computeGlobalDisplacements(
 	sysMatrix, sysVector := structure.MakeSystemOfEquations()
 	log.EndAssembleSysEqs(sysVector.Length())
 
-	if options.SaveSysMatrixImage {
-		go mat.ToImage(sysMatrix, options.OutputPath)
-	}
-
 	log.StartSolveSysEqs()
 
 	var (
