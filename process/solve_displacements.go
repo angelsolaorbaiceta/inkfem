@@ -26,16 +26,30 @@ func computeGlobalDisplacements(
 	}
 
 	log.StartSolveSysEqs()
-	solver := lineq.PreconditionedConjugateGradientSolver{
-		MaxError:       options.MaxDisplacementsError,
-		MaxIter:        sysVector.Length(),
-		Preconditioner: computePreconditioner(sysMatrix),
-	}
+
+	var (
+		progressChan = make(chan lineq.IterativeSolverProgress)
+		solutionChan = make(chan *lineq.Solution)
+		solver       = lineq.PreconditionedConjugateGradientSolver{
+			MaxError:       options.MaxDisplacementsError,
+			MaxIter:        sysVector.Length(),
+			Preconditioner: computePreconditioner(sysMatrix),
+			ProgressChan:   progressChan,
+		}
+	)
+
 	if options.SafeChecks && !solver.CanSolve(sysMatrix, sysVector) {
-		panic("Solver cannot solve system!")
+		panic("Solver can't solve system!")
 	}
 
-	globalDispSolution := solver.Solve(sysMatrix, sysVector)
+	go func() {
+		solutionChan <- solver.Solve(sysMatrix, sysVector)
+		close(solutionChan)
+	}()
+
+	logProgress(progressChan)
+	globalDispSolution := <-solutionChan
+
 	log.EndSolveSysEqs(globalDispSolution.IterCount, globalDispSolution.MinError)
 
 	return globalDispSolution.Solution
@@ -48,4 +62,10 @@ func computePreconditioner(m mat.ReadOnlyMatrix) mat.ReadOnlyMatrix {
 	}
 
 	return precond
+}
+
+func logProgress(ch <-chan lineq.IterativeSolverProgress) {
+	for progress := range ch {
+		log.SolveSysProgress(progress)
+	}
 }

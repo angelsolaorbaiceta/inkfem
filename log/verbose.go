@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/angelsolaorbaiceta/inkmath/lineq"
 )
 
 var (
@@ -97,6 +99,19 @@ func EndAssembleSysEqs(sysSize int) {
 func StartSolveSysEqs() {
 	if isVerbose {
 		solveSystemStartTime = time.Now()
+	}
+}
+
+var lastProgressPercentage = -1
+
+// SolveSysProgress should be called at each iteration of the solving process.
+func SolveSysProgress(progress lineq.IterativeSolverProgress) {
+	if isVerbose && progress.ProgressPercentage%5 == 0 && progress.ProgressPercentage > lastProgressPercentage {
+		lastProgressPercentage = progress.ProgressPercentage
+		log.Printf(
+			"[solver] %3d%%, %d iterations, error ~ %f\n",
+			progress.ProgressPercentage, progress.IterCount, progress.Error,
+		)
 	}
 }
 
