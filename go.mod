@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/ajstarks/svgo v0.0.0-20211024235047-1546f124cd8b
 	github.com/angelsolaorbaiceta/inkgeom v0.1.4
-	github.com/angelsolaorbaiceta/inkmath v0.2.2
+	github.com/angelsolaorbaiceta/inkmath v0.2.5
 	github.com/spf13/cobra v1.4.0
 )
 

@@ -66,6 +66,12 @@ github.com/angelsolaorbaiceta/inkmath v0.2.1 h1:qS+aZBESITDse85/2njp0funJN5RkpPg
 github.com/angelsolaorbaiceta/inkmath v0.2.1/go.mod h1:FXvzjVSjQ48n1RPHsuWSjEI3jFA2sB0Jo+Ae/ay930E=
 github.com/angelsolaorbaiceta/inkmath v0.2.2 h1:unC4YOqbJluicjCVi7Q5J/8MOrNSD2m9Ou5ARIN31Wo=
 github.com/angelsolaorbaiceta/inkmath v0.2.2/go.mod h1:FXvzjVSjQ48n1RPHsuWSjEI3jFA2sB0Jo+Ae/ay930E=
+github.com/angelsolaorbaiceta/inkmath v0.2.3 h1:n6EcvNIHx6AVzUiNmGjmqSqVrQ9uvCHspWuOhDWpDcE=
+github.com/angelsolaorbaiceta/inkmath v0.2.3/go.mod h1:FXvzjVSjQ48n1RPHsuWSjEI3jFA2sB0Jo+Ae/ay930E=
+github.com/angelsolaorbaiceta/inkmath v0.2.4 h1:OK+ps3/cS+hO6m6A5kmdRgpRrGXqW0a18jVj79KM8gM=
+github.com/angelsolaorbaiceta/inkmath v0.2.4/go.mod h1:FXvzjVSjQ48n1RPHsuWSjEI3jFA2sB0Jo+Ae/ay930E=
+github.com/angelsolaorbaiceta/inkmath v0.2.5 h1:kxGbEMeDJvMl9CTKDK0h/OcFLp6cHgtBk/3zJQ6u568=
+github.com/angelsolaorbaiceta/inkmath v0.2.5/go.mod h1:FXvzjVSjQ48n1RPHsuWSjEI3jFA2sB0Jo+Ae/ay930E=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
 github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da/go.mod h1:Q73ZrmVTwzkszR9V5SSuryQ31EELlFMUz1kKyl939pY=
