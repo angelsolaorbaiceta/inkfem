@@ -109,7 +109,7 @@ func SolveSysProgress(progress lineq.IterativeSolverProgress) {
 	if isVerbose && progress.ProgressPercentage%5 == 0 && progress.ProgressPercentage > lastProgressPercentage {
 		lastProgressPercentage = progress.ProgressPercentage
 		log.Printf(
-			"[solver] %3d%%, %d iterations, error ~ %f\n",
+			"[solver] %3d%%, %6d iterations, error ~ %f\n",
 			progress.ProgressPercentage, progress.IterCount, progress.Error,
 		)
 	}
