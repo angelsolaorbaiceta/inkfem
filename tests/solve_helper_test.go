@@ -36,7 +36,6 @@ var (
 
 func solveStructure(str *structure.Structure) *process.Solution {
 	solveOptions := process.SolveOptions{
-		SaveSysMatrixImage:    false,
 		OutputPath:            "",
 		SafeChecks:            true,
 		MaxDisplacementsError: displError,
