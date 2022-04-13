@@ -20,6 +20,9 @@ func TestWriteSolution(t *testing.T) {
 		gdxOffset       = barsOffset + 2
 		gdyOffset       = gdxOffset + 4
 		grzOffset       = gdyOffset + 4
+		ldxOffset       = grzOffset + 4
+		ldyOffset       = ldxOffset + 4
+		lrzOffset       = ldyOffset + 4
 	)
 
 	Write(sol, &writer)
@@ -29,8 +32,6 @@ func TestWriteSolution(t *testing.T) {
 			gotLines = append(gotLines, line)
 		}
 	}
-
-	fmt.Println(gotLines)
 
 	t.Run("first line is always the header with the version", func(t *testing.T) {
 		var (
@@ -135,6 +136,72 @@ func TestWriteSolution(t *testing.T) {
 		}
 		if got := gotLines[grzOffset+3]; got != wantGrz3 {
 			t.Errorf("Want '%s', got '%s'", wantGrz3, got)
+		}
+	})
+
+	t.Run("each bar has local X displacements", func(t *testing.T) {
+		var (
+			wantHeader = "__ldx__"
+			wantLdx1   = "0.000000 : 0.000000"
+			wantLdx2   = "0.500000 : 1.000000"
+			wantLdx3   = "1.000000 : 3.000000"
+		)
+
+		if got := gotLines[ldxOffset]; got != wantHeader {
+			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+		}
+		if got := gotLines[ldxOffset+1]; got != wantLdx1 {
+			t.Errorf("Want '%s', got '%s'", wantLdx1, got)
+		}
+		if got := gotLines[ldxOffset+2]; got != wantLdx2 {
+			t.Errorf("Want '%s', got '%s'", wantLdx2, got)
+		}
+		if got := gotLines[ldxOffset+3]; got != wantLdx3 {
+			t.Errorf("Want '%s', got '%s'", wantLdx3, got)
+		}
+	})
+
+	t.Run("each bar has local Y displacements", func(t *testing.T) {
+		var (
+			wantHeader = "__ldy__"
+			wantLdy1   = "0.000000 : 0.000000"
+			wantLdy2   = "0.500000 : 2.000000"
+			wantLdy3   = "1.000000 : 4.000000"
+		)
+
+		if got := gotLines[ldyOffset]; got != wantHeader {
+			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+		}
+		if got := gotLines[ldyOffset+1]; got != wantLdy1 {
+			t.Errorf("Want '%s', got '%s'", wantLdy1, got)
+		}
+		if got := gotLines[ldyOffset+2]; got != wantLdy2 {
+			t.Errorf("Want '%s', got '%s'", wantLdy2, got)
+		}
+		if got := gotLines[ldyOffset+3]; got != wantLdy3 {
+			t.Errorf("Want '%s', got '%s'", wantLdy3, got)
+		}
+	})
+
+	t.Run("each bar has local Z rotations", func(t *testing.T) {
+		var (
+			wantHeader = "__lrz__"
+			wantLrz1   = "0.000000 : 0.000000"
+			wantLrz2   = "0.500000 : 0.500000"
+			wantLrz3   = "1.000000 : 0.700000"
+		)
+
+		if got := gotLines[lrzOffset]; got != wantHeader {
+			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+		}
+		if got := gotLines[lrzOffset+1]; got != wantLrz1 {
+			t.Errorf("Want '%s', got '%s'", wantLrz1, got)
+		}
+		if got := gotLines[lrzOffset+2]; got != wantLrz2 {
+			t.Errorf("Want '%s', got '%s'", wantLrz2, got)
+		}
+		if got := gotLines[lrzOffset+3]; got != wantLrz3 {
+			t.Errorf("Want '%s', got '%s'", wantLrz3, got)
 		}
 	})
 }
