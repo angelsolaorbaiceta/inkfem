@@ -3,24 +3,22 @@ package sol
 import (
 	"bufio"
 	_ "embed"
+	"io"
 	"text/template"
 
-	"github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/process"
 )
 
 //go:embed solution.template.txt
 var solutionTemplateBytes []byte
 
-// Write writes the solution of a structure to a file with the given path.
-func Write(solution *process.Solution, filePath string) {
+// Write writes the solution of a structure to the passed in writer.
+func Write(solution *process.Solution, writer io.Writer) {
 	var (
-		file   = io.CreateFile(filePath)
-		tmpl   = template.Must(template.New("solution").Parse(string(solutionTemplateBytes)))
-		writer = bufio.NewWriter(file)
+		tmpl       = template.Must(template.New("solution").Parse(string(solutionTemplateBytes)))
+		buffWriter = bufio.NewWriter(writer)
 	)
-	defer file.Close()
 
-	tmpl.Execute(writer, solution)
-	writer.Flush()
+	tmpl.Execute(buffWriter, solution)
+	buffWriter.Flush()
 }

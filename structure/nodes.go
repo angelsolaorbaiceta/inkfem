@@ -21,6 +21,19 @@ func (n *NodesById) NodesCount() int {
 	return len(n.nodes)
 }
 
+// ConstrainedNodesCount is the number of nodes with an external constraint.
+func (n *NodesById) ConstrainedNodesCount() int {
+	count := 0
+
+	for _, node := range n.nodes {
+		if node.IsExternallyConstrained() {
+			count++
+		}
+	}
+
+	return count
+}
+
 // GetNodeById returns the node with the given id.
 // Panics if the node is doesn't exist in the structure.
 func (n *NodesById) GetNodeById(id contracts.StrID) *Node {

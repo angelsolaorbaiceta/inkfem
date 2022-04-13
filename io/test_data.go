@@ -6,9 +6,11 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
+	"github.com/angelsolaorbaiceta/inkfem/process"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
+	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
 func MakeTestOriginalStructure() *structure.Structure {
@@ -63,6 +65,28 @@ func MakeTestPreprocessedStructure() *preprocess.Structure {
 	return preprocess.
 		MakeStructure(original.Metadata, original.NodesById, elements).
 		AssignDof()
+}
+
+func MakeTestSolution() *process.Solution {
+	var (
+		preStructure  = MakeTestPreprocessedStructure()
+		preElement    = preStructure.GetElementById("b1")
+		displacements = vec.MakeWithValues([]float64{
+			0.0, 0.0, 0.0, // First node is fixed
+			1.0, 2.0, 0.5, // Second node
+			3.0, 4.0, 0.7, // Third node
+		})
+		solElement = process.MakeElementSolution(preElement, displacements)
+	)
+
+	return process.MakeSolution(
+		structure.StrMetadata{
+			MajorVersion: 2,
+			MinorVersion: 3,
+		},
+		preStructure.NodesById,
+		[]*process.ElementSolution{solElement},
+	)
 }
 
 func MakePreprocessedReader() io.Reader {
