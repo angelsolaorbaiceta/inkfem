@@ -9,8 +9,8 @@ import (
 
 // ElementSolution is the displacements and stresses for a given preprocessed element.
 //
-// Displacements are stored in both local and global coordinates. Stresses, forces and moments are
-// referred only to the local reference frame.
+// Displacements are stored in both local and global coordinates. Stresses, forces
+// and moments are referred only to the local reference frame.
 type ElementSolution struct {
 	*preprocess.Element
 
@@ -30,12 +30,17 @@ type ElementSolution struct {
 	BendingMomentTopFiberAxialStress []PointSolutionValue
 }
 
-// MakeElementSolution creates a solution element with all solution values for the preprocessed element.
+// MakeElementSolution creates a solution element with all solution values for the
+// preprocessed element.
 //
 // It sets the element's global and local displacements given the structure's
-// system of equations solution vector (the global node displacements) and computes the axial stress,
-// shear force and bending moment in each of the slices of the preprocessed element.
-func MakeElementSolution(element *preprocess.Element, globalDisp vec.ReadOnlyVector) *ElementSolution {
+// system of equations solution vector (the global node displacements) and computes
+// the axial stress, shear force and bending moment in each of the slices of the
+// preprocessed element.
+func MakeElementSolution(
+	element *preprocess.Element,
+	globalDisp vec.ReadOnlyVector,
+) *ElementSolution {
 	var (
 		nOfNodes          = element.NodesCount()
 		nOfSolutionValues = 2*nOfNodes - 2
