@@ -18,6 +18,8 @@ func TestWriteSolution(t *testing.T) {
 		reactionsOffset = 1
 		barsOffset      = reactionsOffset + 2
 		gdxOffset       = barsOffset + 2
+		gdyOffset       = gdxOffset + 4
+		grzOffset       = gdyOffset + 4
 	)
 
 	Write(sol, &writer)
@@ -89,6 +91,50 @@ func TestWriteSolution(t *testing.T) {
 		}
 		if got := gotLines[gdxOffset+3]; got != wantGdx3 {
 			t.Errorf("Want '%s', got '%s'", wantGdx3, got)
+		}
+	})
+
+	t.Run("each bar has global Y displacements", func(t *testing.T) {
+		var (
+			wantHeader = "__gdy__"
+			wantGdy1   = "0.000000 : 0.000000"
+			wantGdy2   = "0.500000 : 2.000000"
+			wantGdy3   = "1.000000 : 4.000000"
+		)
+
+		if got := gotLines[gdyOffset]; got != wantHeader {
+			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+		}
+		if got := gotLines[gdyOffset+1]; got != wantGdy1 {
+			t.Errorf("Want '%s', got '%s'", wantGdy1, got)
+		}
+		if got := gotLines[gdyOffset+2]; got != wantGdy2 {
+			t.Errorf("Want '%s', got '%s'", wantGdy2, got)
+		}
+		if got := gotLines[gdyOffset+3]; got != wantGdy3 {
+			t.Errorf("Want '%s', got '%s'", wantGdy3, got)
+		}
+	})
+
+	t.Run("each bar has global Z rotations", func(t *testing.T) {
+		var (
+			wantHeader = "__grz__"
+			wantGrz1   = "0.000000 : 0.000000"
+			wantGrz2   = "0.500000 : 0.500000"
+			wantGrz3   = "1.000000 : 0.700000"
+		)
+
+		if got := gotLines[grzOffset]; got != wantHeader {
+			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+		}
+		if got := gotLines[grzOffset+1]; got != wantGrz1 {
+			t.Errorf("Want '%s', got '%s'", wantGrz1, got)
+		}
+		if got := gotLines[grzOffset+2]; got != wantGrz2 {
+			t.Errorf("Want '%s', got '%s'", wantGrz2, got)
+		}
+		if got := gotLines[grzOffset+3]; got != wantGrz3 {
+			t.Errorf("Want '%s', got '%s'", wantGrz3, got)
 		}
 	})
 }
