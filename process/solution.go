@@ -13,6 +13,19 @@ type Solution struct {
 	Elements []*ElementSolution
 }
 
+// MakeSolution creates a new solution with the given structure metadata, nodes and elements.
+func MakeSolution(
+	metadata structure.StrMetadata,
+	nodesById structure.NodesById,
+	elements []*ElementSolution,
+) *Solution {
+	return &Solution{
+		Metadata:  metadata,
+		NodesById: nodesById,
+		Elements:  elements,
+	}
+}
+
 // ElementCount returns the number of total bars in the structure's solution, which is the same number
 // as in the original definition of the structure.
 func (solution *Solution) ElementCount() int {
