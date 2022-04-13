@@ -17,6 +17,7 @@ func TestWriteSolution(t *testing.T) {
 
 		reactionsOffset = 1
 		barsOffset      = reactionsOffset + 2
+		gdxOffset       = barsOffset + 2
 	)
 
 	Write(sol, &writer)
@@ -66,6 +67,28 @@ func TestWriteSolution(t *testing.T) {
 		}
 		if got := gotLines[barsOffset+1]; got != wantBar {
 			t.Errorf("Want '%s', got '%s'", wantBar, got)
+		}
+	})
+
+	t.Run("each bar has global X displacements", func(t *testing.T) {
+		var (
+			wantHeader = "__gdx__"
+			wantGdx1   = "0.000000 : 0.000000"
+			wantGdx2   = "0.500000 : 1.000000"
+			wantGdx3   = "1.000000 : 3.000000"
+		)
+
+		if got := gotLines[gdxOffset]; got != wantHeader {
+			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+		}
+		if got := gotLines[gdxOffset+1]; got != wantGdx1 {
+			t.Errorf("Want '%s', got '%s'", wantGdx1, got)
+		}
+		if got := gotLines[gdxOffset+2]; got != wantGdx2 {
+			t.Errorf("Want '%s', got '%s'", wantGdx2, got)
+		}
+		if got := gotLines[gdxOffset+3]; got != wantGdx3 {
+			t.Errorf("Want '%s', got '%s'", wantGdx3, got)
 		}
 	})
 }
