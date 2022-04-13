@@ -3,6 +3,7 @@ package sol
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -13,6 +14,9 @@ func TestWriteSolution(t *testing.T) {
 	var (
 		sol    = inkio.MakeTestSolution()
 		writer bytes.Buffer
+
+		reactionsOffset = 1
+		barsOffset      = reactionsOffset + 2
 	)
 
 	Write(sol, &writer)
@@ -33,6 +37,35 @@ func TestWriteSolution(t *testing.T) {
 
 		if got != want {
 			t.Errorf("Want '%s', got '%s'", want, got)
+		}
+	})
+
+	t.Run("then go the node reactions", func(t *testing.T) {
+		var (
+			wantHeader       = "|reactions| 1"
+			wantReactPattern = `n1 -> -?[\d\.]+ -?[\d\.]+ -?[\d\.]+`
+			gotReaction      = gotLines[reactionsOffset+1]
+		)
+
+		if got := gotLines[reactionsOffset]; got != wantHeader {
+			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+		}
+		if match, _ := regexp.MatchString(wantReactPattern, gotReaction); !match {
+			t.Errorf("Want '%s', got '%s'", wantReactPattern, gotReaction)
+		}
+	})
+
+	t.Run("then goes the bars", func(t *testing.T) {
+		var (
+			wantHeader = "|bars| 1"
+			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'mat_yz' 'sec_xy'"
+		)
+
+		if got := gotLines[barsOffset]; got != wantHeader {
+			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+		}
+		if got := gotLines[barsOffset+1]; got != wantBar {
+			t.Errorf("Want '%s', got '%s'", wantBar, got)
 		}
 	})
 }
