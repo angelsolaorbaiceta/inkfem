@@ -15,14 +15,18 @@ func TestWriteSolution(t *testing.T) {
 		sol    = inkio.MakeTestSolution()
 		writer bytes.Buffer
 
-		reactionsOffset = 1
-		barsOffset      = reactionsOffset + 2
-		gdxOffset       = barsOffset + 2
-		gdyOffset       = gdxOffset + 4
-		grzOffset       = gdyOffset + 4
-		ldxOffset       = grzOffset + 4
-		ldyOffset       = ldxOffset + 4
-		lrzOffset       = ldyOffset + 4
+		reactionsOffset  = 1
+		barsOffset       = reactionsOffset + 2
+		gdxOffset        = barsOffset + 2
+		gdyOffset        = gdxOffset + 4
+		grzOffset        = gdyOffset + 4
+		ldxOffset        = grzOffset + 4
+		ldyOffset        = ldxOffset + 4
+		lrzOffset        = ldyOffset + 4
+		axialOffset      = lrzOffset + 4
+		shearOffset      = axialOffset + 5
+		bendingOffset    = shearOffset + 5
+		bendStressOffset = bendingOffset + 5
 	)
 
 	Write(sol, &writer)
@@ -74,134 +78,156 @@ func TestWriteSolution(t *testing.T) {
 	})
 
 	t.Run("each bar has global X displacements", func(t *testing.T) {
-		var (
-			wantHeader = "__gdx__"
-			wantGdx1   = "0.000000 : 0.000000"
-			wantGdx2   = "0.500000 : 1.000000"
-			wantGdx3   = "1.000000 : 3.000000"
-		)
+		wantGdx := []string{
+			"__gdx__",
+			"0.000000 : 0.000000",
+			"0.500000 : 1.000000",
+			"1.000000 : 3.000000",
+		}
 
-		if got := gotLines[gdxOffset]; got != wantHeader {
-			t.Errorf("Want '%s', got '%s'", wantHeader, got)
-		}
-		if got := gotLines[gdxOffset+1]; got != wantGdx1 {
-			t.Errorf("Want '%s', got '%s'", wantGdx1, got)
-		}
-		if got := gotLines[gdxOffset+2]; got != wantGdx2 {
-			t.Errorf("Want '%s', got '%s'", wantGdx2, got)
-		}
-		if got := gotLines[gdxOffset+3]; got != wantGdx3 {
-			t.Errorf("Want '%s', got '%s'", wantGdx3, got)
+		for i := 0; i < len(wantGdx); i++ {
+			if got := gotLines[gdxOffset+i]; got != wantGdx[i] {
+				t.Errorf("Want '%s', got '%s'", wantGdx[i], got)
+			}
 		}
 	})
 
 	t.Run("each bar has global Y displacements", func(t *testing.T) {
-		var (
-			wantHeader = "__gdy__"
-			wantGdy1   = "0.000000 : 0.000000"
-			wantGdy2   = "0.500000 : 2.000000"
-			wantGdy3   = "1.000000 : 4.000000"
-		)
+		wantGdy := []string{
+			"__gdy__",
+			"0.000000 : 0.000000",
+			"0.500000 : 2.000000",
+			"1.000000 : 4.000000",
+		}
 
-		if got := gotLines[gdyOffset]; got != wantHeader {
-			t.Errorf("Want '%s', got '%s'", wantHeader, got)
-		}
-		if got := gotLines[gdyOffset+1]; got != wantGdy1 {
-			t.Errorf("Want '%s', got '%s'", wantGdy1, got)
-		}
-		if got := gotLines[gdyOffset+2]; got != wantGdy2 {
-			t.Errorf("Want '%s', got '%s'", wantGdy2, got)
-		}
-		if got := gotLines[gdyOffset+3]; got != wantGdy3 {
-			t.Errorf("Want '%s', got '%s'", wantGdy3, got)
+		for i := 0; i < len(wantGdy); i++ {
+			if got := gotLines[gdyOffset+i]; got != wantGdy[i] {
+				t.Errorf("Want '%s', got '%s'", wantGdy[i], got)
+			}
 		}
 	})
 
 	t.Run("each bar has global Z rotations", func(t *testing.T) {
-		var (
-			wantHeader = "__grz__"
-			wantGrz1   = "0.000000 : 0.000000"
-			wantGrz2   = "0.500000 : 0.500000"
-			wantGrz3   = "1.000000 : 0.700000"
-		)
+		wantGrz := []string{
+			"__grz__",
+			"0.000000 : 0.000000",
+			"0.500000 : 0.500000",
+			"1.000000 : 0.700000",
+		}
 
-		if got := gotLines[grzOffset]; got != wantHeader {
-			t.Errorf("Want '%s', got '%s'", wantHeader, got)
-		}
-		if got := gotLines[grzOffset+1]; got != wantGrz1 {
-			t.Errorf("Want '%s', got '%s'", wantGrz1, got)
-		}
-		if got := gotLines[grzOffset+2]; got != wantGrz2 {
-			t.Errorf("Want '%s', got '%s'", wantGrz2, got)
-		}
-		if got := gotLines[grzOffset+3]; got != wantGrz3 {
-			t.Errorf("Want '%s', got '%s'", wantGrz3, got)
+		for i := 0; i < len(wantGrz); i++ {
+			if got := gotLines[grzOffset+i]; got != wantGrz[i] {
+				t.Errorf("Want '%s', got '%s'", wantGrz[i], got)
+			}
 		}
 	})
 
 	t.Run("each bar has local X displacements", func(t *testing.T) {
-		var (
-			wantHeader = "__ldx__"
-			wantLdx1   = "0.000000 : 0.000000"
-			wantLdx2   = "0.500000 : 1.000000"
-			wantLdx3   = "1.000000 : 3.000000"
-		)
+		wantLdx := []string{
+			"__ldx__",
+			"0.000000 : 0.000000",
+			"0.500000 : 1.000000",
+			"1.000000 : 3.000000",
+		}
 
-		if got := gotLines[ldxOffset]; got != wantHeader {
-			t.Errorf("Want '%s', got '%s'", wantHeader, got)
-		}
-		if got := gotLines[ldxOffset+1]; got != wantLdx1 {
-			t.Errorf("Want '%s', got '%s'", wantLdx1, got)
-		}
-		if got := gotLines[ldxOffset+2]; got != wantLdx2 {
-			t.Errorf("Want '%s', got '%s'", wantLdx2, got)
-		}
-		if got := gotLines[ldxOffset+3]; got != wantLdx3 {
-			t.Errorf("Want '%s', got '%s'", wantLdx3, got)
+		for i := 0; i < len(wantLdx); i++ {
+			if got := gotLines[ldxOffset+i]; got != wantLdx[i] {
+				t.Errorf("Want '%s', got '%s'", wantLdx[i], got)
+			}
 		}
 	})
 
 	t.Run("each bar has local Y displacements", func(t *testing.T) {
-		var (
-			wantHeader = "__ldy__"
-			wantLdy1   = "0.000000 : 0.000000"
-			wantLdy2   = "0.500000 : 2.000000"
-			wantLdy3   = "1.000000 : 4.000000"
-		)
+		wantLdy := []string{
+			"__ldy__",
+			"0.000000 : 0.000000",
+			"0.500000 : 2.000000",
+			"1.000000 : 4.000000",
+		}
 
-		if got := gotLines[ldyOffset]; got != wantHeader {
-			t.Errorf("Want '%s', got '%s'", wantHeader, got)
-		}
-		if got := gotLines[ldyOffset+1]; got != wantLdy1 {
-			t.Errorf("Want '%s', got '%s'", wantLdy1, got)
-		}
-		if got := gotLines[ldyOffset+2]; got != wantLdy2 {
-			t.Errorf("Want '%s', got '%s'", wantLdy2, got)
-		}
-		if got := gotLines[ldyOffset+3]; got != wantLdy3 {
-			t.Errorf("Want '%s', got '%s'", wantLdy3, got)
+		for i := 0; i < len(wantLdy); i++ {
+			if got := gotLines[ldyOffset+i]; got != wantLdy[i] {
+				t.Errorf("Want '%s', got '%s'", wantLdy[i], got)
+			}
 		}
 	})
 
 	t.Run("each bar has local Z rotations", func(t *testing.T) {
-		var (
-			wantHeader = "__lrz__"
-			wantLrz1   = "0.000000 : 0.000000"
-			wantLrz2   = "0.500000 : 0.500000"
-			wantLrz3   = "1.000000 : 0.700000"
-		)
+		wantLrz := []string{
+			"__lrz__",
+			"0.000000 : 0.000000",
+			"0.500000 : 0.500000",
+			"1.000000 : 0.700000",
+		}
 
-		if got := gotLines[lrzOffset]; got != wantHeader {
-			t.Errorf("Want '%s', got '%s'", wantHeader, got)
+		for i := 0; i < len(wantLrz); i++ {
+			if got := gotLines[lrzOffset+i]; got != wantLrz[i] {
+				t.Errorf("Want '%s', got '%s'", wantLrz[i], got)
+			}
 		}
-		if got := gotLines[lrzOffset+1]; got != wantLrz1 {
-			t.Errorf("Want '%s', got '%s'", wantLrz1, got)
+	})
+
+	t.Run("each bar has local axial forces", func(t *testing.T) {
+		wantAxial := []string{
+			"__axial__",
+			"0.000000 : 5.020000",
+			"0.500000 : 0.020000",
+			"0.500000 : 0.040000",
+			"1.000000 : 5.040000",
 		}
-		if got := gotLines[lrzOffset+2]; got != wantLrz2 {
-			t.Errorf("Want '%s', got '%s'", wantLrz2, got)
+
+		for i := 0; i < len(wantAxial); i++ {
+			if got := gotLines[axialOffset+i]; got != wantAxial[i] {
+				t.Errorf("Want '%s', got '%s'", wantAxial[i], got)
+			}
 		}
-		if got := gotLines[lrzOffset+3]; got != wantLrz3 {
-			t.Errorf("Want '%s', got '%s'", wantLrz3, got)
+	})
+
+	t.Run("each bar has local shear forces", func(t *testing.T) {
+		wantShear := []string{
+			"__shear__",
+			"0.000000 : -9.998896",
+			"0.500000 : 0.001104",
+			"0.500000 : 0.002784",
+			"1.000000 : -9.997216",
+		}
+
+		for i := 0; i < 5; i++ {
+			if got := gotLines[shearOffset+i]; got != wantShear[i] {
+				t.Errorf("Want '%s', got '%s'", wantShear[i], got)
+			}
+		}
+	})
+
+	t.Run("each bar has local bending moments", func(t *testing.T) {
+		wantBending := []string{
+			"__bend__",
+			"0.000000 : 14.964800",
+			"0.500000 : 0.075200",
+			"0.500000 : -0.131200",
+			"1.000000 : 15.147200",
+		}
+
+		for i := 0; i < len(wantBending); i++ {
+			if got := gotLines[bendingOffset+i]; got != wantBending[i] {
+				t.Errorf("Want '%s', got '%s'", wantBending[i], got)
+			}
+		}
+	})
+
+	t.Run("each bar has axial stresses associated to the bending moments", func(t *testing.T) {
+		wantBendStress := []string{
+			"__bend_axial_stress__",
+			"0.000000 : 3.741200",
+			"0.500000 : 0.018800",
+			"0.500000 : -0.032800",
+			"1.000000 : 3.786800",
+		}
+
+		for i := 0; i < len(wantBendStress); i++ {
+			if got := gotLines[bendStressOffset+i]; got != wantBendStress[i] {
+				t.Errorf("Want '%s', got '%s'", wantBendStress[i], got)
+			}
 		}
 	})
 }
