@@ -87,8 +87,13 @@ func solveStructure(cmd *cobra.Command, args []string) {
 		MaxDisplacementsError: solveDispMaxError,
 	}
 
-	solution := process.Solve(preStructure, solveOptions)
-	iosol.Write(solution, outPath+io.SolFileExt)
+	var (
+		solution = process.Solve(preStructure, solveOptions)
+		solFile  = io.CreateFile(outPath + io.SolFileExt)
+	)
+	defer solFile.Close()
+
+	iosol.Write(solution, solFile)
 
 	log.Result()
 }
