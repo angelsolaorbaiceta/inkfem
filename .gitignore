@@ -1,5 +1,6 @@
-# Ignore compiled binary
+# Ignore compiled binaries
 inkfem
+bin/
 
 # Ignore sliced structure files & matrix images
 examples/*.inkfempre
