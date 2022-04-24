@@ -1,13 +1,23 @@
 # Builds the CLI for all operating systems
+
 rm -rf bin/
 
 build_for_os() {
   echo Building for $1 OS, with $2 arch
   
-  FILE_PATH=bin/inkfem_$1_$2
+  if [ $1 = "windows" ]; then
+    FILE_PATH=bin/inkfem.exe
+  else
+    FILE_PATH=bin/inkfem
+  fi
+
+  SHASUM_PATH=bin/$1_$2_sha256sum.txt
+  ZIP_PATH=bin/$1_$2.gz
+
   GOOS=$1 GOARCH=$2 go build -ldflags "-s -w" -o $FILE_PATH inkfem.go
-  shasum -a 256 $FILE_PATH >> bin/sha256sums.txt
-  gzip -9 $FILE_PATH
+  shasum -a 256 $FILE_PATH > $SHASUM_PATH
+  gzip -9c $FILE_PATH > $ZIP_PATH
+  rm $FILE_PATH
 }
 
 # Linux
