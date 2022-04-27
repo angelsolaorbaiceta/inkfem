@@ -10,7 +10,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "inkfem",
 	Short: "Solves a structure",
-	Long:  "Finite Element Method CLI to solve linear two-dimensional structures defined as .inkfem files.",
+	Long:  "Finite Element Method CLI to solve linear two-dimensional structures defined as .inkfem or .inkfempre files.",
 }
 
 // Execute adds all child commands to the root command and sets flags appropiately.

@@ -40,11 +40,11 @@ func init() {
 
 	solveCommand.
 		Flags().
-		BoolVarP(&solveUseVerbose, "verbose", "v", false, "use verbose output")
+		BoolVarP(&solveUseVerbose, "verbose", "v", false, "use verbose output; logs the progress of the resolution")
 
 	solveCommand.
 		Flags().
-		BoolVarP(&solvePreprocessToFile, "preprocess", "p", false, "dump preprocessed structure to file")
+		BoolVarP(&solvePreprocessToFile, "preprocess", "p", false, "dump the preprocessed structure to an .inkfempre file")
 
 	solveCommand.
 		Flags().
