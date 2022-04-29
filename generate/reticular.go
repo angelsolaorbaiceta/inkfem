@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
@@ -26,15 +27,15 @@ type ReticStructureParams struct {
 // mean the load is in the opposite direction of gravity.
 func Reticular(params ReticStructureParams) *structure.Structure {
 	var (
-		nodes = generateNodes(params)
-		bars  = generateBars(params, nodes)
+		nodes        = generateNodes(params)
+		bars         = generateBars(params, nodes)
+		major, minor = inkio.GetBinaryVersion()
 	)
 
 	return structure.Make(
-		// TODO: read from version file
 		structure.StrMetadata{
-			MajorVersion: 1,
-			MinorVersion: 0,
+			MajorVersion: major,
+			MinorVersion: minor,
 		},
 		nodes,
 		bars,
