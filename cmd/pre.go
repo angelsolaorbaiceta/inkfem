@@ -35,9 +35,8 @@ func init() {
 }
 
 func preStructure(cmd *cobra.Command, args []string) {
-	major, minor := inkio.GetBinaryVersion()
 	log.SetVerbosity(preUseVerbose)
-	log.StartProcess(major, minor)
+	log.StartProcess()
 
 	var (
 		inputFilePath = args[0]

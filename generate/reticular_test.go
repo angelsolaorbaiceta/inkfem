@@ -3,14 +3,17 @@ package generate
 import (
 	"testing"
 
-	inkio "github.com/angelsolaorbaiceta/inkfem/io"
+	"github.com/angelsolaorbaiceta/inkfem/build"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestGenerateReticularStructure(t *testing.T) {
-	inkio.SetBinaryVersion("inkfem v3.2")
+	build.Info = &build.BuildInfo{
+		MajorVersion: 3,
+		MinorVersion: 2,
+	}
 
 	var (
 		params = ReticStructureParams{

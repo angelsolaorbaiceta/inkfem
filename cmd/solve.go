@@ -55,9 +55,8 @@ func init() {
 }
 
 func solveStructure(cmd *cobra.Command, args []string) {
-	major, minor := inkio.GetBinaryVersion()
 	log.SetVerbosity(solveUseVerbose)
-	log.StartProcess(major, minor)
+	log.StartProcess()
 
 	var (
 		inputFilePath = args[0]
