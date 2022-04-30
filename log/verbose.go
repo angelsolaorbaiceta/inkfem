@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	// inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkmath/lineq"
 )
 
@@ -34,10 +35,9 @@ func SetVerbosity(verbose bool) {
 }
 
 // StartProcess should be called when the solving process starts.
-func StartProcess() {
+func StartProcess(majorVersion, minorVersion int) {
 	if isVerbose {
-		// TODO: read version from file
-		log.Printf("---------- [ inkfem v1.0 ] ----------\n")
+		log.Printf("---------- [ inkfem v%d.%d ] ----------\n", majorVersion, minorVersion)
 	}
 }
 
