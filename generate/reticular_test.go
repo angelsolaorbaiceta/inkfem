@@ -3,12 +3,15 @@ package generate
 import (
 	"testing"
 
+	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestGenerateReticularStructure(t *testing.T) {
+	inkio.SetBinaryVersion("inkfem v3.2")
+
 	var (
 		params = ReticStructureParams{
 			Spans:         1,
@@ -72,6 +75,15 @@ func TestGenerateReticularStructure(t *testing.T) {
 			nums.MaxT, -params.LoadDistValue,
 		)
 	)
+
+	t.Run("uses the binary's version", func(t *testing.T) {
+		if got := str.Metadata.MajorVersion; got != 3 {
+			t.Errorf("got %v, want %v", got, 3)
+		}
+		if got := str.Metadata.MinorVersion; got != 2 {
+			t.Errorf("got %v, want %v", got, 2)
+		}
+	})
 
 	t.Run("generates the nodes", func(t *testing.T) {
 		if got := str.NodesCount(); got != 6 {
