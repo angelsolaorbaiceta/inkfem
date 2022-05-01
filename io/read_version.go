@@ -1,6 +1,7 @@
 package io
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 
@@ -9,19 +10,17 @@ import (
 
 var versionRegex = regexp.MustCompile(`(?:inkfem\s+v)(\d+)(?:[.])(\d+)`)
 
-// parseVersionNumbers expectes the passed in first line to follow the format "inkfem vM.m"
-// where "M" and "m" are the major and minor versions of the application that created
-// the parsed file. It returns these two version numbers or panics if the line couldn't
-// be matched.
-func ParseVersionNumbers(firstLine string) (majorVersion, minorVersion int) {
-	if foundMatch := versionRegex.MatchString(firstLine); !foundMatch {
+// ParseVersionNumbers expectes the passed in string to follow the format "inkfem vM.m"
+// where "M" and "m" are the major and minor versions of the application.
+// It returns these two version numbers or panics if the line couldn't be matched.
+func ParseVersionNumbers(versionString string) (majorVersion, minorVersion int) {
+	if foundMatch := versionRegex.MatchString(versionString); !foundMatch {
 		panic(
-			"Could not parse major and minor version numbers." +
-				"Are you missing 'inkfem vM.m' in your file's first line?",
+			fmt.Sprintf("Could not parse version string '%s' (expected inkfem vM.m)", versionString),
 		)
 	}
 
-	versions := versionRegex.FindStringSubmatch(firstLine)
+	versions := versionRegex.FindStringSubmatch(versionString)
 	majorVersion, _ = strconv.Atoi(versions[1])
 	minorVersion, _ = strconv.Atoi(versions[2])
 

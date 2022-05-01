@@ -1,6 +1,7 @@
 package preprocess
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/build"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
@@ -10,6 +11,10 @@ func StructureModel(str *structure.Structure) *Structure {
 	var (
 		channel        = make(chan *Element, str.ElementsCount())
 		slicedElements []*Element
+		metadata       = structure.StrMetadata{
+			MajorVersion: build.Info.MajorVersion,
+			MinorVersion: build.Info.MinorVersion,
+		}
 	)
 
 	for _, element := range str.Elements() {
@@ -21,5 +26,5 @@ func StructureModel(str *structure.Structure) *Structure {
 	}
 	close(channel)
 
-	return MakeStructure(str.Metadata, str.NodesById, slicedElements).AssignDof()
+	return MakeStructure(metadata, str.NodesById, slicedElements).AssignDof()
 }

@@ -3,6 +3,7 @@ package generate
 import (
 	"fmt"
 
+	"github.com/angelsolaorbaiceta/inkfem/build"
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
@@ -31,10 +32,9 @@ func Reticular(params ReticStructureParams) *structure.Structure {
 	)
 
 	return structure.Make(
-		// TODO: read from version file
 		structure.StrMetadata{
-			MajorVersion: 1,
-			MinorVersion: 0,
+			MajorVersion: build.Info.MajorVersion,
+			MinorVersion: build.Info.MinorVersion,
 		},
 		nodes,
 		bars,

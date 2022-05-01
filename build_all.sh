@@ -1,6 +1,30 @@
 # Builds the CLI for all operating systems
+# If a version, such as 2.3, is passed as argument, it'll create a new tag with that version,
+# create a release commit and update the VERSION file.
 
 rm -rf bin/
+mkdir bin/
+
+create_release() {
+  last_tag=$(git tag -l --sort=committerdate | tail -1)
+  touch bin/CHANGELOG
+  git log --pretty=format:"%h %ad | %s" HEAD...$last_tag --date=short > bin/CHANGELOG
+
+  echo $version > build/VERSION
+  git add -A
+  git commit -m "release: $version"
+  git tag -a "$version" -m "Release $version"
+}
+
+# Determine the version of the app. Commit the version tag if necessary.
+if [ -n "$1" ]; then
+  version="v$1"
+  create_release
+else
+  version=$(<build/VERSION)
+fi
+
+echo "Building inkfem $version"
 
 build_for_os() {
   echo Building for $1 OS, with $2 arch

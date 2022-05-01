@@ -4,12 +4,15 @@ import (
 	"math"
 	"testing"
 
+	"github.com/angelsolaorbaiceta/inkfem/build"
 	strmath "github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestAxialMemberWithConcentratedLoad(t *testing.T) {
+	build.Info = &build.BuildInfo{MajorVersion: 3, MinorVersion: 2}
+
 	var (
 		l               = load.MakeConcentrated(load.FX, true, nums.MaxT, 4000.0)
 		str             = makeAxialElementStructure([]*load.ConcentratedLoad{l}, noDistLoads)
@@ -87,6 +90,8 @@ func TestAxialMemberWithConcentratedLoad(t *testing.T) {
 }
 
 func TestAxialMemberWithConstantDistributedLoad(t *testing.T) {
+	build.Info = &build.BuildInfo{MajorVersion: 3, MinorVersion: 2}
+
 	var (
 		l               = load.MakeDistributed(load.FX, true, nums.MinT, 400.0, nums.MaxT, 400.0)
 		str             = makeAxialElementStructure(noConcLoads, []*load.DistributedLoad{l})
