@@ -1,8 +1,10 @@
 package process
 
 import (
+	"github.com/angelsolaorbaiceta/inkfem/build"
 	"github.com/angelsolaorbaiceta/inkfem/log"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
+	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
 // Solve assembles the system of equations for the structure and solves it using the Preconditioned
@@ -13,6 +15,10 @@ func Solve(str *preprocess.Structure, options SolveOptions) *Solution {
 	var (
 		globalDisplacements = computeGlobalDisplacements(str, options)
 		elementSolutions    = make([]*ElementSolution, str.ElementsCount())
+		metadata            = structure.StrMetadata{
+			MajorVersion: build.Info.MajorVersion,
+			MinorVersion: build.Info.MinorVersion,
+		}
 	)
 
 	log.StartComputeStresses()
@@ -21,5 +27,5 @@ func Solve(str *preprocess.Structure, options SolveOptions) *Solution {
 	}
 	log.EndComputeStresses()
 
-	return MakeSolution(str.Metadata, str.NodesById, elementSolutions)
+	return MakeSolution(metadata, str.NodesById, elementSolutions)
 }
