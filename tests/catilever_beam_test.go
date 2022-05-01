@@ -4,12 +4,15 @@ import (
 	"math"
 	"testing"
 
+	"github.com/angelsolaorbaiceta/inkfem/build"
 	strmath "github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
+	build.Info = &build.BuildInfo{MajorVersion: 3, MinorVersion: 2}
+
 	var (
 		l               = load.MakeConcentrated(load.FY, true, nums.MaxT, -2000)
 		str             = makeCantileverBeamStructure([]*load.ConcentratedLoad{l}, noDistLoads)
@@ -133,6 +136,8 @@ func TestCantileverBeamWithConcentratedVerticalLoadAtEnd(t *testing.T) {
 }
 
 func TestCantileverBeamWithDistributedVerticalLoad(t *testing.T) {
+	build.Info = &build.BuildInfo{MajorVersion: 3, MinorVersion: 2}
+
 	var (
 		l               = load.MakeDistributed(load.FY, true, nums.MinT, -200.0, nums.MaxT, 0.0)
 		str             = makeCantileverBeamStructure(noConcLoads, []*load.DistributedLoad{l})
