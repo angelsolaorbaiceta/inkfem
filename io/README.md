@@ -1,7 +1,7 @@
 # Input File Format
 
 The structure input file defines the structure to be analyzed.
-Since the calculation engine is unit-agnostic, the units defined used as input are also the output units.
+The calculation engine is unit-agnostic, so the units used as input are also the output units.
 Units need, nevertheless, to be congruent.
 
 The input file should be a plain-text file with the `.inkfem` extension.
@@ -20,13 +20,13 @@ inkfem v1.0
 
 Then go the definition sections:
 
-- `nodes`: define the structure nodes, referred by id
-- `sections`: define the element's sections, referred by name
-- `materials`: define the element's materials, referred by name
-- `loads`: define the loads applied to the nodes and elements
-- `elements`: define the structure elements, referred by id
+- `nodes`: the structure nodes, referred by id
+- `sections`: the element's sections, referred by name
+- `materials`: the element's materials, referred by name
+- `loads`: the loads applied to the nodes and elements
+- `bars`: the structure bars (linear resistant elements), referred by id
 
-The only order restriction is that the `elements` section must appear last.
+The only order restriction is that the `bars` section must appear last.
 The other three sections can appear in any order.
 
 ## The Nodes
@@ -49,7 +49,7 @@ where:
 - _id_: the node's unique id
 - _xCoord_: the node's position x-coordinate
 - _yCoord_: the node's position y-coordinate
-- _{dx dy rx}_: set of externally constrained degrees of freedom
+- _{dx dy rz}_: set of externally constrained degrees of freedom
 
 ### Examples
 
