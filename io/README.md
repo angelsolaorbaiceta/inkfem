@@ -86,7 +86,7 @@ where:
 - _density_: the material's density
 - _young_: the material's Young or elasticity modulus
 - _shear_: the material's shear modulus
-- _posson_: the material's poisson ratio
+- _poisson_: the material's poisson ratio
 - _yield_: the material's yield strength
 - _ultimate_: the material's ultimate strength
 
@@ -118,7 +118,7 @@ where:
 - _name_: the section's unique name
 - _area_: the section's cross section area
 - _iStrong_: the strong axis' moment of inertia
-- _iWeak_: the weak axis' moment of intertia
+- _iWeak_: the weak axis' moment of inertia
 - _sStrong_: the strong axis' section modulus
 - _sWeak_: the weak axis' section modulus
 
@@ -144,13 +144,13 @@ There are two types of loads:
 - Distributed
 - Concentrated
 
-Both types are always applied to elements.
-To define a concentrated load on a node, choose an element wich contains the node, and add the concentrated load to that element at position `t = 0` (start node) or `t = 1` (end node).
+Both types are applied to bars.
+To define a concentrated load on a node, choose a bar which contains the node, and add the concentrated load to that bar at position `t = 0` (start node) or `t = 1` (end node).
 
 **Distributed** loads are defined following the format:
 
 ```
-<term> <reference-type> <elementId> <tStart> <valueStart> <tEnd> <valueEnd>
+<term> <reference><type> <barId> <tStart> <valueStart> <tEnd> <valueEnd>
 ```
 
 where:
@@ -160,13 +160,13 @@ where:
   - `fy`: force in the y-axis direction
   - `mz`: moment about the z-axis
 - _reference_: the reference frame in which the load is defined. Can be:
-  - `l`: reference frame **local** to the element
+  - `l`: reference frame **local** to the bar
   - `g`: **global** reference frame
 - _type_: must be `d` to signify this is a distributed load
-- _elementId_: The element id where the load is applied
-- _tStart_: the load start position in the element's directrix (`0 <= t <= 1`)
+- _barId_: The id of the bar where the load is applied
+- _tStart_: the load start position in the bar's directrix (`0 <= t <= 1`)
 - _valueStart_: the value for the load at `tStart`
-- _tEnd_: the load end position in the element's directrix (`tStart <= t <= 1`)
+- _tEnd_: the load end position in the bar's directrix (`tStart <= t <= 1`)
 - _valueEnd_: the value for the load at `tEnd`
 
 Distributed loads are always linear: they have a start and end value, and those values are linearly interpolated.
@@ -174,13 +174,13 @@ The current implementation doesn't allow any other kind of distributed load inte
 
 ### Examples (Distributed)
 
-A distributed force in the element's local y-axis direction applied to an element with id 4, starting at `t = 0` with value `-50` and ending at `t = 1` with value `-75`.
+A distributed force in the bar's local y-axis direction, applied to a bar with id 4, starting at `t = 0` with value `-50` and ending at `t = 1` with value `-75`.
 
 ```
 fy ld 4 0.0 -50.0 1.0 -75.0
 ```
 
-A distributed moment about the global z-axis applied to an element with id 12, starting at `t = 0.25` with value `100` and ending at `t = 0.75` with value `200`.
+A distributed moment about the global z-axis, applied to a bar with id 12, starting at `t = 0.25` with value `100` and ending at `t = 0.75` with value `200`.
 
 ```
 mz gd 12 0.25 100 0.75 200
@@ -189,7 +189,7 @@ mz gd 12 0.25 100 0.75 200
 **Concentrated** loads are defined following the format:
 
 ```
-<term> <reference> <elementId> <t> <value>
+<term> <reference><type> <elementId> <t> <value>
 ```
 
 where:
@@ -199,10 +199,11 @@ where:
   - `fy`: force in the y-axis direction
   - `mz`: moment about the z-axis
 - _reference_: the reference frame in which the load is defined. Can be:
-  - `l`: reference frame **local** to the element
+  - `l`: reference frame **local** to the bar
   - `g`: **global** reference frame
-- _elementId_: The element id where the load is applied
-- t: the load position in the element's directrix (`0 <= t <= 1`)
+- _type_: must be `c` to signify this is a concentrated load
+- _elementId_: The if of the bar where the load is applied
+- _t_: the load position in the bar's directrix (`0 <= t <= 1`)
 - _value_: the load's value
 
 ### Examples (Concentrated)
@@ -210,7 +211,7 @@ where:
 A concentrated force in the element with id 11 local y-axis direction, at position `t = 0` (applied in the start node), with value `-70`.
 
 ```
-fy l 11 0.0 -70.0
+fy lc 11 0.0 -70.0
 ```
 
 ## The Bars
