@@ -42,6 +42,27 @@ func MakeTestOriginalStructure() *structure.Structure {
 	return structure.Make(metadata, nodesById, []*structure.Element{element})
 }
 
+func MakeTestDefinitionReader() io.Reader {
+	return strings.NewReader(`inkfem v2.3
+	 |nodes| 2
+	 n1 -> 0 0 {dx dy rz}
+	 n2 -> 200 0 {}
+
+	 |sections| 1
+	 'sec_xy' -> 1 2 3 4 5
+
+	 |materials| 1
+	 'mat_yz' -> 1 2 3 4 5 6
+
+	 |loads| 2
+	 fx lc b1 0.5 -50.6
+	 fy gd b1 0 20.4 1 40.5
+
+	 |bars| 1
+	 b1 -> n1 {dx dy rz} n2{dx dy rz} 'mat_yz' 'sec_xy'
+	 `)
+}
+
 func MakeTestPreprocessedStructure() *preprocess.Structure {
 	var (
 		original        = MakeTestOriginalStructure()
