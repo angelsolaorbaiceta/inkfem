@@ -1,11 +1,9 @@
 inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 
-|reactions| {{.ConstrainedNodesCount}}
-{{range $nodeId, $reaction := .NodeReactions}}
+|reactions|{{range $nodeId, $reaction := .NodeReactions}}
 {{$nodeId}} -> {{$reaction.Fx}} {{$reaction.Fy}} {{$reaction.Mz}}{{end}}
 
-|bars| {{.ElementCount}}
-{{range .Elements}}
+|bars|{{range .Elements}}
 {{.GetID}} -> {{.StartNodeID}} {{.StartLink}} {{.EndNodeID}} {{.EndLink}} '{{.Material.Name}}' '{{.Section.Name}}'
 __gdx__{{range .GlobalXDispl}}
 {{.String}}{{end}}

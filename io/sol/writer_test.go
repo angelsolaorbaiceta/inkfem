@@ -50,7 +50,7 @@ func TestWriteSolution(t *testing.T) {
 
 	t.Run("then go the node reactions", func(t *testing.T) {
 		var (
-			wantHeader       = "|reactions| 1"
+			wantHeader       = "|reactions|"
 			wantReactPattern = `n1 -> -?[\d\.]+ -?[\d\.]+ -?[\d\.]+`
 			gotReaction      = gotLines[reactionsOffset+1]
 		)
@@ -65,7 +65,7 @@ func TestWriteSolution(t *testing.T) {
 
 	t.Run("then goes the bars", func(t *testing.T) {
 		var (
-			wantHeader = "|bars| 1"
+			wantHeader = "|bars|"
 			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'mat_yz' 'sec_xy'"
 		)
 
