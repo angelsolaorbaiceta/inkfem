@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	genericSectionHeaderRegex = regexp.MustCompile(`^\|([\w-_]+)\|$`)
+	genericSectionHeaderRegex = regexp.MustCompile(`^\|([\w-_]+)\|(\s*\d+)?$`)
 	NodesHeader               = "nodes"
 	MaterialsHeader           = "materials"
 	SectionsHeader            = "sections"
