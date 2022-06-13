@@ -2,16 +2,16 @@ inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 
 dof_count: {{.DofsCount}}
 
-|nodes| {{.NodesCount}}{{range .GetAllNodes}}
+|nodes|{{range .GetAllNodes}}
 {{.GetID}} -> {{.Position.X}} {{.Position.Y}} {{.ExternalConstraint}} | {{.DegreesOfFreedomNum}}{{end}}
 
-|materials| {{.MaterialsCount}}{{range .GetMaterialsByName}}
+|materials|{{range .GetMaterialsByName}}
 '{{.Name}}' -> {{.Density}} {{.YoungMod}} {{.ShearMod}} {{.PoissonRatio}} {{.YieldStrength}} {{.UltimateStrength}}{{end}}
 
-|sections| {{.SectionsCount}}{{range .GetSectionsByName}}
+|sections|{{range .GetSectionsByName}}
 '{{.Name}}' -> {{.Area}} {{.IStrong}} {{.IWeak}} {{.SStrong}} {{.SWeak}}{{end}}
 
-|bars| {{.ElementsCount}}{{range .Elements}}
+|bars|{{range .Elements}}
 {{.GetID}} -> {{.StartNodeID}} {{.StartLink}} {{.EndNodeID}} {{.EndLink}} '{{.Material.Name}}' '{{.Section.Name}}' >> {{.NodesCount}}{{range .Nodes}}
 {{.String}}{{end}}
 {{end}}

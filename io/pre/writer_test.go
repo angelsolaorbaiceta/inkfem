@@ -45,7 +45,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 
 	t.Run("then go the original nodes", func(t *testing.T) {
 		var (
-			wantHeader         = "|nodes| 2"
+			wantHeader         = "|nodes|"
 			wantNodeOnePattern = `n1 -> 0(\.[0]+)? 0(\.[0]+)? { } | \[6 7 8\]`
 			wantNodeTwoPattern = `n2 -> 200(\.[0]+)? 0(\.[0]+)? { dx dy rz } | \[0 1 2\]`
 		)
@@ -67,7 +67,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 
 	t.Run("then go the materials", func(t *testing.T) {
 		var (
-			wantHeader          = "|materials| 1"
+			wantHeader          = "|materials|"
 			wantMaterialPattern = `'mat_yz' -> 1(\.[0]*)? 2(\.[0]*)? 3(\.[0]*)? 4(\.[0]*)? 5(\.[0]*)? 6(\.[0]*)?`
 		)
 
@@ -81,7 +81,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 
 	t.Run("then go the sections", func(t *testing.T) {
 		var (
-			wantHeader         = "|sections| 1"
+			wantHeader         = "|sections|"
 			wantSectionPattern = `'sec_xy' -> 1(\.[0]*)? 2(\.[0]*)? 3(\.[0]*)? 4(\.[0]*)? 5(\.[0]*)?`
 		)
 
@@ -95,7 +95,7 @@ func TestWritePreprocessedStructure(t *testing.T) {
 
 	t.Run("lastly go the bars", func(t *testing.T) {
 		var (
-			wantHeader = "|bars| 1"
+			wantHeader = "|bars|"
 			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'mat_yz' 'sec_xy' >> 3"
 		)
 

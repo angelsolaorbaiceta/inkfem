@@ -38,7 +38,7 @@ func TestWriteDefinition(t *testing.T) {
 
 	t.Run("then go the nodes", func(t *testing.T) {
 		var (
-			wantHeader         = "|nodes| 2"
+			wantHeader         = "|nodes|"
 			wantNodeOnePattern = `n1 -> 0(\.[0]+)? 0(\.[0]+)? { dx dy rz }`
 			wantNodeTwoPattern = `n2 -> 200(\.[0]+)? 0(\.[0]+)? { }`
 		)
@@ -60,7 +60,7 @@ func TestWriteDefinition(t *testing.T) {
 
 	t.Run("then go the materials", func(t *testing.T) {
 		var (
-			wantHeader          = "|materials| 1"
+			wantHeader          = "|materials|"
 			wantMaterialPattern = `'mat_yz' -> 1(\.[0]*)? 2(\.[0]*)? 3(\.[0]*)? 4(\.[0]*)? 5(\.[0]*)? 6(\.[0]*)?`
 		)
 
@@ -74,7 +74,7 @@ func TestWriteDefinition(t *testing.T) {
 
 	t.Run("then go the sections", func(t *testing.T) {
 		var (
-			wantHeader         = "|sections| 1"
+			wantHeader         = "|sections|"
 			wantSectionPattern = `'sec_xy' -> 1(\.[0]*)? 2(\.[0]*)? 3(\.[0]*)? 4(\.[0]*)? 5(\.[0]*)?`
 		)
 
@@ -88,7 +88,7 @@ func TestWriteDefinition(t *testing.T) {
 
 	t.Run("then go the loads", func(t *testing.T) {
 		var (
-			wantHeader          = "|loads| 2"
+			wantHeader          = "|loads|"
 			wantConcLoadPattern = `fx lc b1 0.5[0]* -50.6[0]*`
 			wantDistLoadPattern = `fy gd b1 0(\.[0]+)? 20.4[0]* 1(\.[0]+)? 40.5[0]*`
 		)
@@ -106,7 +106,7 @@ func TestWriteDefinition(t *testing.T) {
 
 	t.Run("lastly go the bars", func(t *testing.T) {
 		var (
-			wantHeader = "|bars| 1"
+			wantHeader = "|bars|"
 			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'mat_yz' 'sec_xy'"
 		)
 

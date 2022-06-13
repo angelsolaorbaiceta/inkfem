@@ -110,7 +110,7 @@ func MakeTestSolution() *process.Solution {
 	)
 }
 
-func MakePreprocessedReader() io.Reader {
+func MakeTestPreprocessedReader() io.Reader {
 	return strings.NewReader(`inkfem v2.3
 	
 	dof_count: 9

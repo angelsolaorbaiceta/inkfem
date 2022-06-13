@@ -10,7 +10,7 @@ import (
 func TestReadPreprocessModel(t *testing.T) {
 	var (
 		wantStr            = inkio.MakeTestPreprocessedStructure()
-		preprocessedReader = inkio.MakePreprocessedReader()
+		preprocessedReader = inkio.MakeTestPreprocessedReader()
 		str                = Read(preprocessedReader)
 	)
 
