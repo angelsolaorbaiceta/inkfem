@@ -62,14 +62,15 @@ func DeserializeBar(
 	data *structure.StructureData,
 ) *preprocess.Element {
 	var (
-		readOps                 = inkio.ReaderOptions{ShouldIncludeOwnWeight: false}
-		originalElement, nNodes = iodef.DeserializeBar(linesReader.GetNextLine(), data, readOps)
-		nLines                  = nNodes * linesPerNode
-		lines                   = linesReader.GetNextLines(nLines)
-		nodes                   = deserializeBarNodes(nNodes, lines)
+		readOps                = inkio.ReaderOptions{ShouldIncludeOwnWeight: false}
+		originalBarDTO, nNodes = iodef.DeserializeBar(linesReader.GetNextLine())
+		originalBar            = iodef.BarFromDeserialization(originalBarDTO, data, readOps)
+		nLines                 = nNodes * linesPerNode
+		lines                  = linesReader.GetNextLines(nLines)
+		nodes                  = deserializeBarNodes(nNodes, lines)
 	)
 
-	return preprocess.MakeElement(originalElement, nodes)
+	return preprocess.MakeElement(originalBar, nodes)
 }
 
 func deserializeBarNodes(nNodes int, lines []string) []*preprocess.Node {

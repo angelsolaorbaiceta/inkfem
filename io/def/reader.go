@@ -24,16 +24,12 @@ func parseStructure(
 ) *structure.Structure {
 	var (
 		line              string
-		nodesDefined      = false
-		materialsDefined  = false
-		sectionsDefined   = false
-		loadsDefined      = false
 		nodes             = make(map[contracts.StrID]*structure.Node)
 		materials         = make(structure.MaterialsByName)
 		sections          = make(structure.SectionsByName)
 		concentratedLoads = make(structure.ConcLoadsById)
 		distributedLoads  = make(structure.DistLoadsById)
-		bars              = make([]*structure.Element, 0)
+		deserializedBars  = make([]*DeserializeBarDTO, 0)
 		currentSection    string
 	)
 
@@ -51,21 +47,18 @@ func parseStructure(
 				{
 					node := DeserializeNode(line)
 					nodes[node.GetID()] = node
-					nodesDefined = true
 				}
 
 			case inkio.MaterialsHeader:
 				{
 					material := DeserializeMaterial(line)
 					materials[material.Name] = material
-					materialsDefined = true
 				}
 
 			case inkio.SectionsHeader:
 				{
 					section := DeserializeSection(line)
 					sections[section.Name] = section
-					sectionsDefined = true
 				}
 
 			case inkio.LoadsHeader:
@@ -77,27 +70,12 @@ func parseStructure(
 					if concLoad != nil {
 						concentratedLoads[barId] = append(concentratedLoads[barId], concLoad)
 					}
-					loadsDefined = true
 				}
 
 			case inkio.BarsHeader:
 				{
-					if !(nodesDefined && materialsDefined && sectionsDefined && loadsDefined) {
-						panic(
-							"Can't' parse the bars if any of the following isn't already parsed: " +
-								"nodes, materials, sections and loads",
-						)
-					}
-
-					data := &structure.StructureData{
-						Nodes:             nodes,
-						Materials:         materials,
-						Sections:          sections,
-						ConcentratedLoads: concentratedLoads,
-						DistributedLoads:  distributedLoads,
-					}
-					bar, _ := DeserializeBar(line, data, options)
-					bars = append(bars, bar)
+					bar, _ := DeserializeBar(line)
+					deserializedBars = append(deserializedBars, bar)
 				}
 
 			default:
@@ -105,6 +83,15 @@ func parseStructure(
 			}
 		}
 	}
+
+	data := &structure.StructureData{
+		Nodes:             nodes,
+		Materials:         materials,
+		Sections:          sections,
+		ConcentratedLoads: concentratedLoads,
+		DistributedLoads:  distributedLoads,
+	}
+	bars := BarsFromDeserialization(deserializedBars, data, options)
 
 	// TODO: lines reader error handling?
 	// if err := scanner.Err(); err != nil {

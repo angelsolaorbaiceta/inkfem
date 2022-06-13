@@ -85,3 +85,25 @@ func TestReadDefinition(t *testing.T) {
 		}
 	})
 }
+
+func TestReadDefinitionInverseOrder(t *testing.T) {
+	var (
+		wantStr = inkio.MakeTestOriginalStructure()
+		reader  = inkio.MakeTestDefinitionReaderInverseOrder()
+		str     = Read(reader, inkio.ReaderOptions{ShouldIncludeOwnWeight: false})
+	)
+
+	t.Run("parses the nodes", func(t *testing.T) {
+		var (
+			wantN1 = wantStr.GetNodeById("n1")
+			wantN2 = wantStr.GetNodeById("n2")
+		)
+
+		if got := str.GetNodeById("n1"); !got.Equals(wantN1) {
+			t.Errorf("Want %v, got %v", wantN1, got)
+		}
+		if got := str.GetNodeById("n2"); !got.Equals(wantN2) {
+			t.Errorf("Want %v, got %v", wantN2, got)
+		}
+	})
+}

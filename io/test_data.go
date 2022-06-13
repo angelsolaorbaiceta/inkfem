@@ -63,6 +63,27 @@ func MakeTestDefinitionReader() io.Reader {
 	 `)
 }
 
+func MakeTestDefinitionReaderInverseOrder() io.Reader {
+	return strings.NewReader(`inkfem v2.3
+	 |bars|
+	 b1 -> n1 {dx dy rz} n2{dx dy rz} 'mat_yz' 'sec_xy'
+
+	 |loads|
+	 fy gd b1 0 20.4 1 40.5
+	 fx lc b1 0.5 -50.6
+
+	 |materials|
+	 'mat_yz' -> 1 2 3 4 5 6
+
+	 |sections|
+	 'sec_xy' -> 1 2 3 4 5
+
+	 |nodes|
+	 n2 -> 200 0 {}
+	 n1 -> 0 0 {dx dy rz}
+	 `)
+}
+
 func MakeTestPreprocessedStructure() *preprocess.Structure {
 	var (
 		original        = MakeTestOriginalStructure()
