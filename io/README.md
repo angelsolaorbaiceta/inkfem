@@ -12,7 +12,7 @@ inkfem vM.m
 ```
 
 where `M` and `m` are the major and minor versions of the binary used to compute the structure.
-The current version is `1.0`:
+The current version is `1.1`:
 
 ```
 inkfem v1.0
@@ -26,18 +26,16 @@ Then go the definition sections:
 - `loads`: the loads applied to the nodes and elements
 - `bars`: the structure bars (linear resistant elements), referred by id
 
-The only order restriction is that the `bars` section must appear last.
-The other three sections can appear in any order.
+The sections can appear in any order.
 
 ## The Nodes
 
 The nodes are defined under the header:
 
 ```
-|nodes| n
+|nodes|
 ```
 
-where `n` is the number of nodes that follow, each defined in its own line.
 Each node is defined following the format:
 
 ```
@@ -70,10 +68,9 @@ Node with id 48, at position `(300, 50)` and the displacement in the x and y dir
 The materials are defined under the header:
 
 ```
-|materials| n
+|materials|
 ```
 
-where `n` is the number of materials that follow, each defined in its own line.
 Each material is defined following the format:
 
 ```
@@ -103,10 +100,9 @@ Standard steel 275:
 The sections are defined under the header:
 
 ```
-|sections| n
+|sections|
 ```
 
-where `n` is the number of sections that follow, each defined in its own line.
 Each section is defined following the format:
 
 ```
@@ -135,10 +131,9 @@ Standard European IPE-100 section:
 The loads are defined under the header:
 
 ```
-|loads| n
+|loads|
 ```
 
-where `n` is the number of loads that follow, each defined in its own line.
 There are two types of loads:
 
 - Distributed
@@ -219,10 +214,9 @@ fy lc 11 0.0 -70.0
 The bars are defined under the header:
 
 ```
-|bars| n
+|bars|
 ```
 
-where `n` is the number of bars that follow, each defined in its own line.
 Each bar is defined following the format:
 
 ## Input File Example
@@ -232,28 +226,23 @@ Here's a complete input file example:
 ```
 inkfem v1.0
 
-|nodes| 5
-
+|nodes|
 1 -> 0 0 {dx dy}
 2 -> 200 300 {}
 3 -> 400 0 {}
 4 -> 600 300 {}
 5 -> 800 0 {dx dy}
 
-|materials| 1
-
+|materials|
 'mat_A' -> 1.0 1.0 1.0 1.0 1.0 1.0
 
-|sections| 1
-
+|sections|
 'sec_A' -> 1.0 1.0 1.0 1.0 1.0
 
-|loads| 1
-
+|loads|
 fy ld 4 0.0 -50.0 1.0 -75.0
 
-|bars| 7
-
+|bars|
 1 -> 1{dx dy rz} 2{dx dy rz} 'mat_A' 'sec_A'
 2 -> 1{dx dy rz} 3{dx dy rz} 'mat_A' 'sec_A'
 3 -> 2{dx dy rz} 3{dx dy rz} 'mat_A' 'sec_A'
