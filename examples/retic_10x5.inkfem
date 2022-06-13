@@ -1,12 +1,12 @@
 inkfem v1.0
 
-|materials| 1
+|materials|
 'steel_275' -> 0.00000785 21000000.0 8100000.0 0.3 27500.0 43000.0
 
-|sections| 1
+|sections|
 'ipe_100' -> 10.3 171.0 15.92 34.2 5.79
 
-|nodes| 66
+|nodes|
 1 -> 0 0 {dx dy rz}
 2 -> 700 0 {dx dy rz}
 3 -> 1400 0 {dx dy rz}
@@ -74,7 +74,7 @@ inkfem v1.0
 65 -> 6300 1500 {}
 66 -> 7000 1500 {}
 
-|loads| 25
+|loads|
 fy ld 56 0.0 -50.0 1.0 -50.0
 fy ld 58 0.0 -50.0 1.0 -50.0
 fy ld 60 0.0 -50.0 1.0 -50.0
@@ -101,7 +101,7 @@ fy ld 100 0.0 -50.0 1.0 -50.0
 fy ld 102 0.0 -50.0 1.0 -50.0
 fy ld 104 0.0 -50.0 1.0 -50.0
 
-|bars| 105
+|bars|
 # columns
 1 -> 1 {dx dy rz} 12 {dx dy rz} 'steel_275' 'ipe_100'
 2 -> 2 {dx dy rz} 13 {dx dy rz} 'steel_275' 'ipe_100'

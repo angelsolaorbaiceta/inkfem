@@ -1,22 +1,22 @@
 inkfem v1.0
 
-|nodes| 5
+|nodes|
 1 -> 0 0 {dx dy}
 2 -> 200 300 {}
 3 -> 400 0 {}
 4 -> 600 300 {}
 5 -> 800 0 {dx dy}
 
-|materials| 1
+|materials|
 'mat_A' -> 1.0 1.0 1.0 1.0 1.0 1.0
 
-|sections| 1
+|sections|
 'sec_A' -> 1.0 1.0 1.0 1.0 1.0
 
-|loads| 1
+|loads|
 fy ld 4 0.0 -50.0 1.0 -75.0
 
-|bars| 7
+|bars|
 1 -> 1{dx dy rz} 2{dx dy rz} 'mat_A' 'sec_A'
 2 -> 1{dx dy rz} 3{dx dy rz} 'mat_A' 'sec_A'
 3 -> 2{dx dy rz} 3{dx dy rz} 'mat_A' 'sec_A'

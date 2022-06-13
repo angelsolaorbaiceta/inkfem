@@ -1,18 +1,18 @@
 inkfem v1.0
 # deflection = 14.0977
 
-|nodes| 2
+|nodes|
 1 -> 0.0 0.0 {dx dy rz}
 2 -> 300.0 0.0 {}
 
-|materials| 1
+|materials|
 'steel_275' -> 0.00000785 21000000.0 8100000.0 0.3 27500.0 43000.0
 
-|sections| 1
+|sections|
 'ipe_100' -> 10.3 171.0 15.92 34.2 5.79
 
-|loads| 1
+|loads|
 fy ld 1 0.0 -50.0 1.0 -50.0 # distrubuted load
 
-|bars| 1
+|bars|
 1 -> 1{dx dy rz} 2{dx dy rz} 'steel_275' 'ipe_100'
