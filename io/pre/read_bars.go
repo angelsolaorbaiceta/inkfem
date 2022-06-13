@@ -57,26 +57,10 @@ var (
 	)
 )
 
-func readBars(
-	linesReader *inkio.LinesReader,
-	count int,
-	data *structure.StructureData,
-) []*preprocess.Element {
-	bars := make([]*preprocess.Element, count)
-
-	for i := 0; i < count; i++ {
-		bars[i] = deserializeBar(linesReader, data)
-	}
-
-	return bars
-}
-
-func deserializeBar(
+func DeserializeBar(
 	linesReader *inkio.LinesReader,
 	data *structure.StructureData,
 ) *preprocess.Element {
-	linesReader.ReadNext()
-
 	var (
 		readOps                 = inkio.ReaderOptions{ShouldIncludeOwnWeight: false}
 		originalElement, nNodes = iodef.DeserializeBar(linesReader.GetNextLine(), data, readOps)

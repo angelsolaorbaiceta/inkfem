@@ -28,12 +28,13 @@ func parseStructure(
 		materialsDefined  = false
 		sectionsDefined   = false
 		loadsDefined      = false
-		nodes             map[contracts.StrID]*structure.Node
-		materials         structure.MaterialsByName
-		sections          structure.SectionsByName
-		concentratedLoads structure.ConcLoadsById
-		distributedLoads  structure.DistLoadsById
-		bars              []*structure.Element
+		nodes             = make(map[contracts.StrID]*structure.Node)
+		materials         = make(structure.MaterialsByName)
+		sections          = make(structure.SectionsByName)
+		concentratedLoads = make(structure.ConcLoadsById)
+		distributedLoads  = make(structure.DistLoadsById)
+		bars              = make([]*structure.Element, 0)
+		currentSection    string
 	)
 
 	// First line must be "inkfem vM.m"
@@ -42,59 +43,67 @@ func parseStructure(
 	for linesReader.ReadNext() {
 		line = linesReader.GetNextLine()
 
-		switch {
-		case inkio.IsNodesHeader(line):
-			{
-				nodesCount := inkio.ExtractNodesCount(line)
-				nodes = ReadNodes(linesReader, nodesCount)
-				nodesDefined = true
-			}
-
-		case inkio.IsMaterialsHeader(line):
-			{
-				materialsCount := inkio.ExtractMaterialsCount(line)
-				materials = ReadMaterials(linesReader, materialsCount)
-				materialsDefined = true
-			}
-
-		case inkio.IsSectionsHeader(line):
-			{
-				sectionsCount := inkio.ExtractSectionsCount(line)
-				sections = ReadSections(linesReader, sectionsCount)
-				sectionsDefined = true
-			}
-
-		case inkio.IsLoadsHeader(line):
-			{
-				loadsCount := inkio.ExtractLoadsCount(line)
-				concentratedLoads, distributedLoads = readLoads(linesReader, loadsCount)
-				loadsDefined = true
-			}
-
-		case inkio.IsBarsHeader(line):
-			{
-				if !(nodesDefined && materialsDefined && sectionsDefined && loadsDefined) {
-					panic(
-						"Can't' parse the bars if any of the following isn't already parsed: " +
-							"nodes, materials, sections and loads",
-					)
+		if inkio.IsSectionHeaderLine(line) {
+			currentSection = inkio.ParseSectionHeader(line)
+		} else {
+			switch currentSection {
+			case inkio.NodesHeader:
+				{
+					node := DeserializeNode(line)
+					nodes[node.GetID()] = node
+					nodesDefined = true
 				}
 
-				barsCount := inkio.ExtractBarsCount(line)
-				data := &structure.StructureData{
-					Nodes:             nodes,
-					Materials:         materials,
-					Sections:          sections,
-					ConcentratedLoads: concentratedLoads,
-					DistributedLoads:  distributedLoads,
+			case inkio.MaterialsHeader:
+				{
+					material := DeserializeMaterial(line)
+					materials[material.Name] = material
+					materialsDefined = true
 				}
-				bars = readBars(linesReader, barsCount, data, options)
-			}
 
-		default:
-			panic(fmt.Sprintf("Unknown header in file: '%s'", line))
+			case inkio.SectionsHeader:
+				{
+					section := DeserializeSection(line)
+					sections[section.Name] = section
+					sectionsDefined = true
+				}
+
+			case inkio.LoadsHeader:
+				{
+					barId, distLoad, concLoad := DeserializeLoad(line)
+					if distLoad != nil {
+						distributedLoads[barId] = append(distributedLoads[barId], distLoad)
+					}
+					if concLoad != nil {
+						concentratedLoads[barId] = append(concentratedLoads[barId], concLoad)
+					}
+					loadsDefined = true
+				}
+
+			case inkio.BarsHeader:
+				{
+					if !(nodesDefined && materialsDefined && sectionsDefined && loadsDefined) {
+						panic(
+							"Can't' parse the bars if any of the following isn't already parsed: " +
+								"nodes, materials, sections and loads",
+						)
+					}
+
+					data := &structure.StructureData{
+						Nodes:             nodes,
+						Materials:         materials,
+						Sections:          sections,
+						ConcentratedLoads: concentratedLoads,
+						DistributedLoads:  distributedLoads,
+					}
+					bar, _ := DeserializeBar(line, data, options)
+					bars = append(bars, bar)
+				}
+
+			default:
+				panic(fmt.Sprintf("Unknown header in file: '%s'", line))
+			}
 		}
-
 	}
 
 	// TODO: lines reader error handling?

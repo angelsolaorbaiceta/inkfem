@@ -18,26 +18,7 @@ var materialDefinitionRegex = regexp.MustCompile(
 		inkio.FloatGroupExpr("yield") + inkio.SpaceExpr +
 		inkio.FloatGroupExpr("ultimate") + inkio.OptionalSpaceExpr + "$")
 
-func ReadMaterials(linesReader *inkio.LinesReader, count int) map[string]*structure.Material {
-	lines := linesReader.GetNextLines(count)
-	return deserializeMaterialsByName(lines)
-}
-
-func deserializeMaterialsByName(lines []string) map[string]*structure.Material {
-	var (
-		material  *structure.Material
-		materials = make(map[string]*structure.Material)
-	)
-
-	for _, line := range lines {
-		material = deserializeMaterial(line)
-		materials[material.Name] = material
-	}
-
-	return materials
-}
-
-func deserializeMaterial(definition string) *structure.Material {
+func DeserializeMaterial(definition string) *structure.Material {
 	if !materialDefinitionRegex.MatchString(definition) {
 		panic(fmt.Sprintf("Found material with wrong format: '%s'", definition))
 	}

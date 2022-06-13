@@ -31,24 +31,6 @@ var elementDefinitionRegex = regexp.MustCompile(
 		"$",
 )
 
-func readBars(
-	linesReader *inkio.LinesReader,
-	count int,
-	data *structure.StructureData,
-	readerOptions inkio.ReaderOptions,
-) []*structure.Element {
-	var (
-		lines = linesReader.GetNextLines(count)
-		bars  = make([]*structure.Element, count)
-	)
-
-	for i, line := range lines {
-		bars[i], _ = DeserializeBar(line, data, readerOptions)
-	}
-
-	return bars
-}
-
 // DeserializeBar parses a bar from the definition line and given the nodes, material, section
 // and loads to use for its creation.
 // Using the reader options, the bar can be added loads for its own weight.

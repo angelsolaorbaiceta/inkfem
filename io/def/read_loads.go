@@ -6,7 +6,6 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
@@ -31,40 +30,23 @@ var (
 	)
 )
 
-func readLoads(linesReader *inkio.LinesReader, count int) (structure.ConcLoadsById, structure.DistLoadsById) {
-	lines := linesReader.GetNextLines(count)
-	return deserializeLoadsByElementID(lines)
-}
-
-func deserializeLoadsByElementID(lines []string) (structure.ConcLoadsById, structure.DistLoadsById) {
+func DeserializeLoad(line string) (contracts.StrID, *load.DistributedLoad, *load.ConcentratedLoad) {
 	var (
-		elementID        contracts.StrID
-		concentratedLoad *load.ConcentratedLoad
-		distributedLoad  *load.DistributedLoad
-		concentrated     = make(structure.ConcLoadsById)
-		distributed      = make(structure.DistLoadsById)
+		matchesDistributed  = distLoadDefinitionRegex.MatchString(line)
+		matchesConcentrated = concLoadDefinitionRegex.MatchString(line)
 	)
 
-	for _, line := range lines {
-		var (
-			matchesDistributed  = distLoadDefinitionRegex.MatchString(line)
-			matchesConcentrated = concLoadDefinitionRegex.MatchString(line)
-		)
-
-		if !(matchesDistributed || matchesConcentrated) {
-			panic(fmt.Sprintf("Found load with wrong format: '%s'", line))
-		}
-
-		if matchesDistributed {
-			elementID, distributedLoad = deserializeDistributedLoad(line)
-			distributed[elementID] = append(distributed[elementID], distributedLoad)
-		} else if matchesConcentrated {
-			elementID, concentratedLoad = deserializeConcentratedLoad(line)
-			concentrated[elementID] = append(concentrated[elementID], concentratedLoad)
-		}
+	if matchesDistributed {
+		elementID, distributedLoad := deserializeDistributedLoad(line)
+		return elementID, distributedLoad, nil
 	}
 
-	return concentrated, distributed
+	if matchesConcentrated {
+		elementID, concentratedLoad := deserializeConcentratedLoad(line)
+		return elementID, nil, concentratedLoad
+	}
+
+	panic(fmt.Sprintf("Found load with wrong format: '%s'", line))
 }
 
 func deserializeDistributedLoad(line string) (contracts.StrID, *load.DistributedLoad) {

@@ -17,26 +17,7 @@ var sectionDefinitionRegex = regexp.MustCompile(
 		inkio.FloatGroupExpr("sstrong") + inkio.SpaceExpr +
 		inkio.FloatGroupExpr("sweak") + inkio.OptionalSpaceExpr + "$")
 
-func ReadSections(linesReader *inkio.LinesReader, count int) map[string]*structure.Section {
-	lines := linesReader.GetNextLines(count)
-	return deserializeSectionsByName(lines)
-}
-
-func deserializeSectionsByName(lines []string) map[string]*structure.Section {
-	var (
-		section  *structure.Section
-		sections = make(map[string]*structure.Section)
-	)
-
-	for _, line := range lines {
-		section = deserializeSection(line)
-		sections[section.Name] = section
-	}
-
-	return sections
-}
-
-func deserializeSection(definition string) *structure.Section {
+func DeserializeSection(definition string) *structure.Section {
 	if !sectionDefinitionRegex.MatchString(definition) {
 		panic(fmt.Sprintf("Found section with wrong format: '%s'", definition))
 	}

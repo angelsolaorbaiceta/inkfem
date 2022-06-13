@@ -44,21 +44,21 @@ func MakeTestOriginalStructure() *structure.Structure {
 
 func MakeTestDefinitionReader() io.Reader {
 	return strings.NewReader(`inkfem v2.3
-	 |nodes| 2
+	 |nodes|
 	 n1 -> 0 0 {dx dy rz}
 	 n2 -> 200 0 {}
 
-	 |sections| 1
+	 |sections|
 	 'sec_xy' -> 1 2 3 4 5
 
-	 |materials| 1
+	 |materials|
 	 'mat_yz' -> 1 2 3 4 5 6
 
-	 |loads| 2
+	 |loads|
 	 fx lc b1 0.5 -50.6
 	 fy gd b1 0 20.4 1 40.5
 
-	 |bars| 1
+	 |bars|
 	 b1 -> n1 {dx dy rz} n2{dx dy rz} 'mat_yz' 'sec_xy'
 	 `)
 }
@@ -115,17 +115,17 @@ func MakePreprocessedReader() io.Reader {
 	
 	dof_count: 9
 	
-	|nodes| 2
+	|nodes|
 	n1 -> 0.000000 0.000000 { dx dy rz } | [0 1 2]
 	n2 -> 200.000000 0.000000 { } | [6 7 8]
 
-	|materials| 1
+	|materials|
 	'mat_yz' -> 1.000000 2.000000 3.000000 4.000000 5.000000 6.000000
 
-	|sections| 1
+	|sections|
 	'sec_xy' -> 1.000000 2.000000 3.000000 4.000000 5.000000
 	
-	|bars| 1
+	|bars|
 	b1 -> n1 { dx dy rz } n2 { dx dy rz } 'mat_yz' 'sec_xy' >> 3
 	0.000000 : 0.000000 0.000000
 					ext   : {10.000000 20.000000 30.000000}

@@ -24,66 +24,69 @@ func Read(reader io.Reader) *preprocess.Structure {
 	var (
 		metadata         = inkio.ParseMetadata(linesReader)
 		numberOfDof      = extractNumberOfDof(linesReader)
-		nodes            map[contracts.StrID]*structure.Node
-		materials        structure.MaterialsByName
-		sections         structure.SectionsByName
-		bars             []*preprocess.Element
+		nodes            = make(map[contracts.StrID]*structure.Node)
+		materials        = make(structure.MaterialsByName)
+		sections         = make(structure.SectionsByName)
+		bars             = make([]*preprocess.Element, 0)
 		nodesDefined     = false
 		materialsDefined = false
 		sectionsDefined  = false
 		line             string
+		currentSection   string
 	)
 
 	for linesReader.ReadNext() {
 		line = linesReader.GetNextLine()
 
-		if inkio.ShouldIgnoreLine(line) {
-			continue
-		}
-
-		switch {
-		case inkio.IsNodesHeader(line):
-			{
-				nodesCount := inkio.ExtractNodesCount(line)
-				nodes = iodef.ReadNodes(linesReader, nodesCount)
-				nodesDefined = true
-			}
-
-		case inkio.IsMaterialsHeader(line):
-			{
-				materialsCount := inkio.ExtractMaterialsCount(line)
-				materials = iodef.ReadMaterials(linesReader, materialsCount)
-				materialsDefined = true
-			}
-
-		case inkio.IsSectionsHeader(line):
-			{
-				sectionsCount := inkio.ExtractSectionsCount(line)
-				sections = iodef.ReadSections(linesReader, sectionsCount)
-				sectionsDefined = true
-			}
-
-		case inkio.IsBarsHeader(line):
-			{
-				if !(nodesDefined && materialsDefined && sectionsDefined) {
-					panic(
-						"Can't' parse the bars if some of the following isn't already parsed: " +
-							"nodes, materials and sections",
-					)
+		if inkio.IsSectionHeaderLine(line) {
+			currentSection = inkio.ParseSectionHeader(line)
+		} else {
+			switch currentSection {
+			case inkio.NodesHeader:
+				{
+					node := iodef.DeserializeNode(line)
+					nodes[node.GetID()] = node
+					nodesDefined = true
 				}
 
-				barsCount := inkio.ExtractBarsCount(line)
-				data := &structure.StructureData{
-					Nodes:             nodes,
-					Materials:         materials,
-					Sections:          sections,
-					ConcentratedLoads: structure.ConcLoadsById{},
-					DistributedLoads:  structure.DistLoadsById{},
+			case inkio.MaterialsHeader:
+				{
+					material := iodef.DeserializeMaterial(line)
+					materials[material.Name] = material
+					materialsDefined = true
 				}
-				bars = readBars(linesReader, barsCount, data)
+
+			case inkio.SectionsHeader:
+				{
+					section := iodef.DeserializeSection(line)
+					sections[section.Name] = section
+					sectionsDefined = true
+				}
+
+			case inkio.BarsHeader:
+				{
+					if !(nodesDefined && materialsDefined && sectionsDefined) {
+						panic(
+							"Can't' parse the bars if some of the following isn't already parsed: " +
+								"nodes, materials and sections",
+						)
+					}
+
+					data := &structure.StructureData{
+						Nodes:             nodes,
+						Materials:         materials,
+						Sections:          sections,
+						ConcentratedLoads: structure.ConcLoadsById{},
+						DistributedLoads:  structure.DistLoadsById{},
+					}
+					bar := DeserializeBar(linesReader, data)
+					bars = append(bars, bar)
+				}
+
+			default:
+				panic(fmt.Sprintf("Unknown header in file: '%s'", line))
 			}
 		}
-
 	}
 
 	return preprocess.MakeStructure(
