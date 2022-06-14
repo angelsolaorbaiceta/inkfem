@@ -15,7 +15,7 @@ where `M` and `m` are the major and minor versions of the binary used to compute
 The current version is `1.1`:
 
 ```
-inkfem v1.0
+inkfem v1.1
 ```
 
 Then go the definition sections:
@@ -224,7 +224,7 @@ Each bar is defined following the format:
 Here's a complete input file example:
 
 ```
-inkfem v1.0
+inkfem v1.1
 
 |nodes|
 1 -> 0 0 {dx dy}
