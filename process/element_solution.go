@@ -4,6 +4,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
@@ -59,8 +60,8 @@ func MakeElementSolution(
 		LocalYDispl: make([]PointSolutionValue, nOfNodes),
 		LocalZRot:   make([]PointSolutionValue, nOfNodes),
 
-		AxialStress:                      make([]PointSolutionValue, nOfSolutionValues),
-		ShearForce:                       make([]PointSolutionValue, nOfSolutionValues),
+		AxialStress:                      make([]PointSolutionValue, 0, nOfSolutionValues),
+		ShearForce:                       make([]PointSolutionValue, 0, nOfSolutionValues),
 		BendingMoment:                    make([]PointSolutionValue, nOfSolutionValues),
 		BendingMomentTopFiberAxialStress: make([]PointSolutionValue, nOfSolutionValues),
 	}
@@ -127,21 +128,27 @@ func (es *ElementSolution) setDisplacements(globalDisp vec.ReadOnlyVector) {
 // computeStresses use the displacements to compute the stress in each of the slices
 // of the preprocessed structure.
 //
-// This method should be called after setDisplacements, as it depends on the displacements.
+// This method should be called after setDisplacements, as it requires the displacements
+// to compute the corresponding stresses and forces.
 func (es *ElementSolution) computeStresses() {
 	var (
-		trailNode, leadNode                               *preprocess.Node
-		youngMod                                          = es.Element.Material().YoungMod
-		iStrong                                           = es.Element.Section().IStrong
-		sStrong                                           = es.Element.Section().SStrong
-		section                                           = es.Section().Area
-		ei                                                = youngMod * iStrong
+		trailNode, leadNode *preprocess.Node
+		youngMod            = es.Element.Material().YoungMod
+		iStrong             = es.Element.Section().IStrong
+		sStrong             = es.Element.Section().SStrong
+		section             = es.Section().Area
+		ei                  = youngMod * iStrong
+		nodesCount          = es.Element.NodesCount()
+		lastNodeIndex       = nodesCount - 1
+
+		isLastNode                                        bool
 		trailDx, leadDx, trailDy, leadDy, trailRz, leadRz float64
 		length, length2, length3, eil, eil2, eil3         float64
 		j                                                 int
 	)
 
-	for i := 1; i < es.Element.NodesCount(); i++ {
+	for i := 1; i < nodesCount; i++ {
+		isLastNode = i == lastNodeIndex
 		j = 2 * (i - 1)
 		trailNode, leadNode = es.Element.NodeAt(i-1), es.Element.NodeAt(i)
 		length = es.Element.LengthBetween(trailNode.T, leadNode.T)
@@ -163,8 +170,10 @@ func (es *ElementSolution) computeStresses() {
 			trailAxial = axial + (trailNode.LocalLeftFx() / section)
 			leadAxial  = axial - (leadNode.LocalRightFx() / section)
 		)
-		es.AxialStress[j] = PointSolutionValue{trailNode.T, trailAxial}
-		es.AxialStress[j+1] = PointSolutionValue{leadNode.T, leadAxial}
+		es.AxialStress = append(es.AxialStress, PointSolutionValue{trailNode.T, trailAxial})
+		if isLastNode || !nums.FloatsEqual(trailAxial, leadAxial) {
+			es.AxialStress = append(es.AxialStress, PointSolutionValue{leadNode.T, leadAxial})
+		}
 
 		/* <-- Shear --> */
 		var (
@@ -174,8 +183,10 @@ func (es *ElementSolution) computeStresses() {
 			trailShear    = shear - trailNode.LocalLeftFy()
 			leadShear     = shear + leadNode.LocalRightFy()
 		)
-		es.ShearForce[j] = PointSolutionValue{trailNode.T, trailShear}
-		es.ShearForce[j+1] = PointSolutionValue{leadNode.T, leadShear}
+		es.ShearForce = append(es.ShearForce, PointSolutionValue{trailNode.T, trailShear})
+		if isLastNode || !nums.FloatsEqual(trailShear, leadShear) {
+			es.ShearForce = append(es.ShearForce, PointSolutionValue{leadNode.T, leadShear})
+		}
 
 		/* <-- Bending --> */
 		var (
