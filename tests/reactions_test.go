@@ -4,10 +4,13 @@ import (
 	"math"
 	"testing"
 
+	"github.com/angelsolaorbaiceta/inkfem/build"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
 func TestTwoElementsCantileverReactions(t *testing.T) {
+	build.ReadBuildInfo()
+
 	var (
 		qyValue           = -200.0
 		fyValue           = -4000.0

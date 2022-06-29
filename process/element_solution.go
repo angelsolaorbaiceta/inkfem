@@ -228,11 +228,15 @@ func (es *ElementSolution) GlobalStartTorsor() *math.Torsor {
 // - a positive shear force yields a negative force value
 // - a positive bending moment yields a positive moment value
 func (es *ElementSolution) GlobalEndTorsor() *math.Torsor {
-	index := es.nOfSolutionValues - 1
+	var (
+		axialIndex   = len(es.AxialStress) - 1
+		shearIndex   = len(es.ShearForce) - 1
+		bendingIndex = len(es.BendingMoment) - 1
+	)
 
 	return math.MakeTorsor(
-		es.AxialStress[index].Value*es.Section().Area,
-		-es.ShearForce[index].Value,
-		es.BendingMoment[index].Value,
+		es.AxialStress[axialIndex].Value*es.Section().Area,
+		-es.ShearForce[shearIndex].Value,
+		es.BendingMoment[bendingIndex].Value,
 	).ProjectedToGlobal(es.RefFrame())
 }
