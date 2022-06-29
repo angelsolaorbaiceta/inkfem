@@ -13,9 +13,9 @@ import (
 // The local element stresses are computed using the displacements obtained in the first step.
 func Solve(str *preprocess.Structure, options SolveOptions) *Solution {
 	var (
-		globalDisplacements = computeGlobalDisplacements(str, options)
-		elementSolutions    = make([]*ElementSolution, str.ElementsCount())
-		metadata            = structure.StrMetadata{
+		globalDispl      = computeGlobalDisplacements(str, options)
+		elementSolutions = make([]*ElementSolution, str.ElementsCount())
+		metadata         = structure.StrMetadata{
 			MajorVersion: build.Info.MajorVersion,
 			MinorVersion: build.Info.MinorVersion,
 		}
@@ -23,7 +23,7 @@ func Solve(str *preprocess.Structure, options SolveOptions) *Solution {
 
 	log.StartComputeStresses()
 	for i, element := range str.Elements() {
-		elementSolutions[i] = MakeElementSolution(element, globalDisplacements, options.MaxDisplacementsError)
+		elementSolutions[i] = MakeElementSolution(element, globalDispl, options.MaxDisplacementsError)
 	}
 	log.EndComputeStresses()
 

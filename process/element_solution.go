@@ -14,8 +14,6 @@ import (
 type ElementSolution struct {
 	*preprocess.Element
 
-	nOfSolutionValues int
-
 	GlobalXDispl []PointSolutionValue
 	GlobalYDispl []PointSolutionValue
 	GlobalZRot   []PointSolutionValue
@@ -54,8 +52,6 @@ func MakeElementSolution(
 	solution := &ElementSolution{
 		Element: element,
 
-		nOfSolutionValues: nOfSolutionValues,
-
 		GlobalXDispl: make([]PointSolutionValue, nOfNodes),
 		GlobalYDispl: make([]PointSolutionValue, nOfNodes),
 		GlobalZRot:   make([]PointSolutionValue, nOfNodes),
@@ -66,8 +62,8 @@ func MakeElementSolution(
 
 		AxialStress:                      make([]PointSolutionValue, 0, nOfSolutionValues),
 		ShearForce:                       make([]PointSolutionValue, 0, nOfSolutionValues),
-		BendingMoment:                    make([]PointSolutionValue, nOfSolutionValues),
-		BendingMomentTopFiberAxialStress: make([]PointSolutionValue, nOfSolutionValues),
+		BendingMoment:                    make([]PointSolutionValue, 0, nOfSolutionValues),
+		BendingMomentTopFiberAxialStress: make([]PointSolutionValue, 0, nOfSolutionValues),
 	}
 
 	solution.setDisplacements(globalDisp)
@@ -146,11 +142,9 @@ func (es *ElementSolution) computeStresses(maxDispError float64) {
 
 		trailDx, leadDx, trailDy, leadDy, trailRz, leadRz float64
 		length, length2, length3, eil, eil2, eil3         float64
-		j                                                 int
 	)
 
 	for i := 1; i < nodesCount; i++ {
-		j = 2 * (i - 1)
 		trailNode, leadNode = es.Element.NodeAt(i-1), es.Element.NodeAt(i)
 		length = es.Element.LengthBetween(trailNode.T, leadNode.T)
 		length2 = length * length
@@ -171,7 +165,11 @@ func (es *ElementSolution) computeStresses(maxDispError float64) {
 			trailAxial = axial + (trailNode.LocalLeftFx() / section)
 			leadAxial  = axial - (leadNode.LocalRightFx() / section)
 		)
-		es.AxialStress = appendIfNotSameAsLast(es.AxialStress, PointSolutionValue{trailNode.T, trailAxial}, maxDispError)
+		es.AxialStress = appendIfNotSameAsLast(
+			es.AxialStress,
+			PointSolutionValue{trailNode.T, trailAxial},
+			maxDispError,
+		)
 		es.AxialStress = append(es.AxialStress, PointSolutionValue{leadNode.T, leadAxial})
 
 		/* <-- Shear --> */
@@ -182,7 +180,11 @@ func (es *ElementSolution) computeStresses(maxDispError float64) {
 			trailShear    = shear - trailNode.LocalLeftFy()
 			leadShear     = shear + leadNode.LocalRightFy()
 		)
-		es.ShearForce = appendIfNotSameAsLast(es.ShearForce, PointSolutionValue{trailNode.T, trailShear}, maxDispError)
+		es.ShearForce = appendIfNotSameAsLast(
+			es.ShearForce,
+			PointSolutionValue{trailNode.T, trailShear},
+			maxDispError,
+		)
 		es.ShearForce = append(es.ShearForce, PointSolutionValue{leadNode.T, leadShear})
 
 		/* <-- Bending --> */
@@ -194,11 +196,21 @@ func (es *ElementSolution) computeStresses(maxDispError float64) {
 			trailBending      = bendStartDispTerm - bendStartRotTerm + trailNode.LocalLeftMz()
 			leadBending       = bendEndDispTerm + bendEndRotTerm - leadNode.LocalRightMz()
 		)
-		es.BendingMoment[j] = PointSolutionValue{trailNode.T, trailBending}
-		es.BendingMomentTopFiberAxialStress[j] = PointSolutionValue{trailNode.T, trailBending / sStrong}
-
-		es.BendingMoment[j+1] = PointSolutionValue{leadNode.T, leadBending}
-		es.BendingMomentTopFiberAxialStress[j+1] = PointSolutionValue{leadNode.T, leadBending / sStrong}
+		es.BendingMoment = appendIfNotSameAsLast(
+			es.BendingMoment,
+			PointSolutionValue{trailNode.T, trailBending},
+			maxDispError,
+		)
+		es.BendingMomentTopFiberAxialStress = appendIfNotSameAsLast(
+			es.BendingMomentTopFiberAxialStress,
+			PointSolutionValue{trailNode.T, trailBending / sStrong},
+			maxDispError,
+		)
+		es.BendingMoment = append(es.BendingMoment, PointSolutionValue{leadNode.T, leadBending})
+		es.BendingMomentTopFiberAxialStress = append(
+			es.BendingMomentTopFiberAxialStress,
+			PointSolutionValue{leadNode.T, leadBending / sStrong},
+		)
 	}
 }
 
