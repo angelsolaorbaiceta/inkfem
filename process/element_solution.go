@@ -37,9 +37,14 @@ type ElementSolution struct {
 // system of equations solution vector (the global node displacements) and computes
 // the axial stress, shear force and bending moment in each of the slices of the
 // preprocessed element.
+//
+// To compare whether two stresses or forces are the same, it is necessary to
+// compare the values of the solution values using the maximum displacement error
+// used for the displacements calculation.
 func MakeElementSolution(
 	element *preprocess.Element,
 	globalDisp vec.ReadOnlyVector,
+	maxDispError float64,
 ) *ElementSolution {
 	var (
 		nOfNodes          = element.NodesCount()
@@ -66,7 +71,7 @@ func MakeElementSolution(
 	}
 
 	solution.setDisplacements(globalDisp)
-	solution.computeStresses()
+	solution.computeStresses(maxDispError)
 
 	return solution
 }
@@ -129,7 +134,7 @@ func (es *ElementSolution) setDisplacements(globalDisp vec.ReadOnlyVector) {
 //
 // This method should be called after setDisplacements, as it requires the displacements
 // to compute the corresponding stresses and forces.
-func (es *ElementSolution) computeStresses() {
+func (es *ElementSolution) computeStresses(maxDispError float64) {
 	var (
 		trailNode, leadNode *preprocess.Node
 		youngMod            = es.Element.Material().YoungMod
@@ -166,7 +171,7 @@ func (es *ElementSolution) computeStresses() {
 			trailAxial = axial + (trailNode.LocalLeftFx() / section)
 			leadAxial  = axial - (leadNode.LocalRightFx() / section)
 		)
-		es.AxialStress = appendIfNotSameAsLast(es.AxialStress, PointSolutionValue{trailNode.T, trailAxial})
+		es.AxialStress = appendIfNotSameAsLast(es.AxialStress, PointSolutionValue{trailNode.T, trailAxial}, maxDispError)
 		es.AxialStress = append(es.AxialStress, PointSolutionValue{leadNode.T, leadAxial})
 
 		/* <-- Shear --> */
@@ -177,7 +182,7 @@ func (es *ElementSolution) computeStresses() {
 			trailShear    = shear - trailNode.LocalLeftFy()
 			leadShear     = shear + leadNode.LocalRightFy()
 		)
-		es.ShearForce = appendIfNotSameAsLast(es.ShearForce, PointSolutionValue{trailNode.T, trailShear})
+		es.ShearForce = appendIfNotSameAsLast(es.ShearForce, PointSolutionValue{trailNode.T, trailShear}, maxDispError)
 		es.ShearForce = append(es.ShearForce, PointSolutionValue{leadNode.T, leadShear})
 
 		/* <-- Bending --> */

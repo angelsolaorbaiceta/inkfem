@@ -17,8 +17,9 @@ import (
 // This yields a uniform axial stress on the bar: σ = E * 𝛅 / L = 100 * 5 / 200 = 2.5
 func TestAxialBarSolution(t *testing.T) {
 	var (
-		bar    = makeElementSolutionTestOriginalBar()
-		preBar = preprocess.MakeElement(
+		maxDispError = 1e-4
+		bar          = makeElementSolutionTestOriginalBar()
+		preBar       = preprocess.MakeElement(
 			bar,
 			[]*preprocess.Node{
 				preprocess.MakeNodeWithDofs(nums.MinT, g2d.MakePoint(0, 0), [3]int{0, 1, 2}),
@@ -29,6 +30,7 @@ func TestAxialBarSolution(t *testing.T) {
 		barSolution = MakeElementSolution(
 			preBar,
 			vec.MakeWithValues([]float64{0, 0, 0, 5, 0, 0, 10, 0, 0}),
+			maxDispError,
 		)
 	)
 
@@ -46,13 +48,13 @@ func TestAxialBarSolution(t *testing.T) {
 			t.Errorf("Expected 3 axial stress values, got %d", len(axial))
 		}
 
-		if !axial[0].Equals(wantAxialLeft) {
+		if !axial[0].Equals(wantAxialLeft, maxDispError) {
 			t.Errorf("Expected axial stress %f, got %f", wantAxialLeft, axial[0])
 		}
-		if !axial[1].Equals(wantAxialMid) {
+		if !axial[1].Equals(wantAxialMid, maxDispError) {
 			t.Errorf("Expected axial stress %f, got %f", wantAxialMid, axial[1])
 		}
-		if !axial[2].Equals(wantAxialRight) {
+		if !axial[2].Equals(wantAxialRight, maxDispError) {
 			t.Errorf("Expected axial stress %f, got %f", wantAxialRight, axial[2])
 		}
 	})
@@ -77,8 +79,9 @@ func TestAxialBarSolution(t *testing.T) {
 // 0.006 + (-0.012) = -0.006
 func TestShearBarSolution(t *testing.T) {
 	var (
-		bar    = makeElementSolutionTestOriginalBar()
-		preBar = preprocess.MakeElement(
+		maxDispError = 1e-4
+		bar          = makeElementSolutionTestOriginalBar()
+		preBar       = preprocess.MakeElement(
 			bar,
 			[]*preprocess.Node{
 				preprocess.MakeNodeWithDofs(nums.MinT, g2d.MakePoint(0, 0), [3]int{0, 1, 2}),
@@ -89,6 +92,7 @@ func TestShearBarSolution(t *testing.T) {
 		barSolution = MakeElementSolution(
 			preBar,
 			vec.MakeWithValues([]float64{0, 0, 0, 0, -5, -0.1, 0, -10, 0.0}),
+			maxDispError,
 		)
 	)
 
@@ -106,13 +110,13 @@ func TestShearBarSolution(t *testing.T) {
 			t.Errorf("Expected 3 shear force values, got %d", len(shear))
 		}
 
-		if !shear[0].Equals(wantShearLeft) {
+		if !shear[0].Equals(wantShearLeft, maxDispError) {
 			t.Errorf("Expected shear force %f, got %f", wantShearLeft, shear[0])
 		}
-		if !shear[1].Equals(wantShearMid) {
+		if !shear[1].Equals(wantShearMid, maxDispError) {
 			t.Errorf("Expected shear force %f, got %f", wantShearMid, shear[1])
 		}
-		if !shear[2].Equals(wantShearRight) {
+		if !shear[2].Equals(wantShearRight, maxDispError) {
 			t.Errorf("Expected shear force %f, got %f", wantShearRight, shear[2])
 		}
 	})
