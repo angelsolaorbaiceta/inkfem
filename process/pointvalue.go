@@ -15,3 +15,7 @@ type PointSolutionValue struct {
 func (psv PointSolutionValue) String() string {
 	return fmt.Sprintf("%f : %f", psv.T.Value(), psv.Value)
 }
+
+func (psv PointSolutionValue) Equals(other PointSolutionValue) bool {
+	return psv.T.Equals(other.T) && nums.FloatsEqual(psv.Value, other.Value)
+}
