@@ -46,6 +46,30 @@ func MakeNode(
 	}
 }
 
+// MakeNodeWithDofs creates a new node with given T parameter value, position and local
+// external loads {fx, fy, mz} and the given degrees of freedom numbers.
+//
+// The degrees of freedom numbers in a preprocessed nodes are typically set after the
+// node has been created, as they are assigned at the structure level; thus, it's
+// necessary to have all nodes before they are assigned degrees of freedom numbers.
+//
+// This factory function is mostly used for testing purposes.
+func MakeNodeWithDofs(
+	t nums.TParam,
+	position *g2d.Point,
+	fx, fy, mz float64,
+	dofs [3]int,
+) *Node {
+	return &Node{
+		T:                 t,
+		Position:          position,
+		externalLocalLoad: math.MakeTorsor(fx, fy, mz),
+		leftLocalLoad:     math.MakeNilTorsor(),
+		rightLocalLoad:    math.MakeNilTorsor(),
+		dofs:              dofs,
+	}
+}
+
 // MakeUnloadedNode creates a new node with given T parameter value, position, and no loads applied.
 func MakeUnloadedNode(t nums.TParam, position *g2d.Point) *Node {
 	return &Node{
@@ -123,7 +147,12 @@ func (n *Node) SetDegreesOfFreedomNum(dx, dy, rz int) {
 }
 
 // DegreesOfFreedomNum returns the degrees of freedom numbers assigned to the node.
+// Panics if the degrees of freedom haven't been set.
 func (n Node) DegreesOfFreedomNum() [3]int {
+	if n.dofs[0] == unsetDOF || n.dofs[1] == unsetDOF || n.dofs[2] == unsetDOF {
+		panic("Degrees of freedom not set for preprocessed node")
+	}
+
 	return n.dofs
 }
 
