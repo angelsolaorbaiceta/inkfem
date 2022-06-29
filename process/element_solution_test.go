@@ -21,9 +21,9 @@ func TestAxialBarSolution(t *testing.T) {
 		preBar = preprocess.MakeElement(
 			bar,
 			[]*preprocess.Node{
-				preprocess.MakeNodeWithDofs(nums.MinT, g2d.MakePoint(0, 0), 50.0, 0.0, 0.0, [3]int{0, 1, 2}),
-				preprocess.MakeNodeWithDofs(nums.HalfT, g2d.MakePoint(200, 0), 100.0, 0.0, 0.0, [3]int{3, 4, 5}),
-				preprocess.MakeNodeWithDofs(nums.MaxT, g2d.MakePoint(400, 0), 50.0, 0.0, 0.0, [3]int{6, 7, 8}),
+				preprocess.MakeNodeWithDofs(nums.MinT, g2d.MakePoint(0, 0), [3]int{0, 1, 2}),
+				preprocess.MakeNodeWithDofs(nums.HalfT, g2d.MakePoint(200, 0), [3]int{3, 4, 5}),
+				preprocess.MakeNodeWithDofs(nums.MaxT, g2d.MakePoint(400, 0), [3]int{6, 7, 8}),
 			},
 		)
 		barSolution = MakeElementSolution(
@@ -81,9 +81,9 @@ func TestShearBarSolution(t *testing.T) {
 		preBar = preprocess.MakeElement(
 			bar,
 			[]*preprocess.Node{
-				preprocess.MakeNodeWithDofs(nums.MinT, g2d.MakePoint(0, 0), 0, -50.0, 0.0, [3]int{0, 1, 2}),
-				preprocess.MakeNodeWithDofs(nums.HalfT, g2d.MakePoint(200, 0), 0.0, -100.0, 0.0, [3]int{3, 4, 5}),
-				preprocess.MakeNodeWithDofs(nums.MaxT, g2d.MakePoint(400, 0), 0.0, -50.0, 0.0, [3]int{6, 7, 8}),
+				preprocess.MakeNodeWithDofs(nums.MinT, g2d.MakePoint(0, 0), [3]int{0, 1, 2}),
+				preprocess.MakeNodeWithDofs(nums.HalfT, g2d.MakePoint(200, 0), [3]int{3, 4, 5}),
+				preprocess.MakeNodeWithDofs(nums.MaxT, g2d.MakePoint(400, 0), [3]int{6, 7, 8}),
 			},
 		)
 		barSolution = MakeElementSolution(

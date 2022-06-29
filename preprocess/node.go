@@ -46,8 +46,8 @@ func MakeNode(
 	}
 }
 
-// MakeNodeWithDofs creates a new node with given T parameter value, position and local
-// external loads {fx, fy, mz} and the given degrees of freedom numbers.
+// MakeNodeWithDofs creates a new node with given T parameter value, position and the
+// given degrees of freedom numbers.
 //
 // The degrees of freedom numbers in a preprocessed nodes are typically set after the
 // node has been created, as they are assigned at the structure level; thus, it's
@@ -57,13 +57,12 @@ func MakeNode(
 func MakeNodeWithDofs(
 	t nums.TParam,
 	position *g2d.Point,
-	fx, fy, mz float64,
 	dofs [3]int,
 ) *Node {
 	return &Node{
 		T:                 t,
 		Position:          position,
-		externalLocalLoad: math.MakeTorsor(fx, fy, mz),
+		externalLocalLoad: math.MakeNilTorsor(),
 		leftLocalLoad:     math.MakeNilTorsor(),
 		rightLocalLoad:    math.MakeNilTorsor(),
 		dofs:              dofs,
