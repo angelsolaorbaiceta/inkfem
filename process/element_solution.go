@@ -4,7 +4,6 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/angelsolaorbaiceta/inkgeom/g2d"
-	"github.com/angelsolaorbaiceta/inkgeom/nums"
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
@@ -139,16 +138,13 @@ func (es *ElementSolution) computeStresses() {
 		section             = es.Section().Area
 		ei                  = youngMod * iStrong
 		nodesCount          = es.Element.NodesCount()
-		lastNodeIndex       = nodesCount - 1
 
-		isLastNode                                        bool
 		trailDx, leadDx, trailDy, leadDy, trailRz, leadRz float64
 		length, length2, length3, eil, eil2, eil3         float64
 		j                                                 int
 	)
 
 	for i := 1; i < nodesCount; i++ {
-		isLastNode = i == lastNodeIndex
 		j = 2 * (i - 1)
 		trailNode, leadNode = es.Element.NodeAt(i-1), es.Element.NodeAt(i)
 		length = es.Element.LengthBetween(trailNode.T, leadNode.T)
@@ -170,10 +166,8 @@ func (es *ElementSolution) computeStresses() {
 			trailAxial = axial + (trailNode.LocalLeftFx() / section)
 			leadAxial  = axial - (leadNode.LocalRightFx() / section)
 		)
-		es.AxialStress = append(es.AxialStress, PointSolutionValue{trailNode.T, trailAxial})
-		if isLastNode || !nums.FloatsEqual(trailAxial, leadAxial) {
-			es.AxialStress = append(es.AxialStress, PointSolutionValue{leadNode.T, leadAxial})
-		}
+		es.AxialStress = appendIfNotSameAsLast(es.AxialStress, PointSolutionValue{trailNode.T, trailAxial})
+		es.AxialStress = append(es.AxialStress, PointSolutionValue{leadNode.T, leadAxial})
 
 		/* <-- Shear --> */
 		var (
@@ -183,10 +177,8 @@ func (es *ElementSolution) computeStresses() {
 			trailShear    = shear - trailNode.LocalLeftFy()
 			leadShear     = shear + leadNode.LocalRightFy()
 		)
-		es.ShearForce = append(es.ShearForce, PointSolutionValue{trailNode.T, trailShear})
-		if isLastNode || !nums.FloatsEqual(trailShear, leadShear) {
-			es.ShearForce = append(es.ShearForce, PointSolutionValue{leadNode.T, leadShear})
-		}
+		es.ShearForce = appendIfNotSameAsLast(es.ShearForce, PointSolutionValue{trailNode.T, trailShear})
+		es.ShearForce = append(es.ShearForce, PointSolutionValue{leadNode.T, leadShear})
 
 		/* <-- Bending --> */
 		var (
