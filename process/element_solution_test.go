@@ -18,8 +18,12 @@ import (
 func TestAxialBarSolution(t *testing.T) {
 	var (
 		maxDispError = 1e-4
-		bar          = makeElementSolutionTestOriginalBar()
-		preBar       = preprocess.MakeElement(
+		globalDispl  = &GlobalDisplacementsVector{
+			MaxError: maxDispError,
+			Vector:   vec.MakeWithValues([]float64{0, 0, 0, 5, 0, 0, 10, 0, 0}),
+		}
+		bar    = makeElementSolutionTestOriginalBar()
+		preBar = preprocess.MakeElement(
 			bar,
 			[]*preprocess.Node{
 				preprocess.MakeNodeWithDofs(nums.MinT, g2d.MakePoint(0, 0), [3]int{0, 1, 2}),
@@ -27,11 +31,7 @@ func TestAxialBarSolution(t *testing.T) {
 				preprocess.MakeNodeWithDofs(nums.MaxT, g2d.MakePoint(400, 0), [3]int{6, 7, 8}),
 			},
 		)
-		barSolution = MakeElementSolution(
-			preBar,
-			vec.MakeWithValues([]float64{0, 0, 0, 5, 0, 0, 10, 0, 0}),
-			maxDispError,
-		)
+		barSolution = MakeElementSolution(preBar, globalDispl)
 	)
 
 	t.Run("The axial stress", func(t *testing.T) {
@@ -80,8 +80,12 @@ func TestAxialBarSolution(t *testing.T) {
 func TestShearBarSolution(t *testing.T) {
 	var (
 		maxDispError = 1e-4
-		bar          = makeElementSolutionTestOriginalBar()
-		preBar       = preprocess.MakeElement(
+		globalDispl  = &GlobalDisplacementsVector{
+			MaxError: maxDispError,
+			Vector:   vec.MakeWithValues([]float64{0, 0, 0, 0, -5, -0.1, 0, -10, 0.0}),
+		}
+		bar    = makeElementSolutionTestOriginalBar()
+		preBar = preprocess.MakeElement(
 			bar,
 			[]*preprocess.Node{
 				preprocess.MakeNodeWithDofs(nums.MinT, g2d.MakePoint(0, 0), [3]int{0, 1, 2}),
@@ -89,11 +93,7 @@ func TestShearBarSolution(t *testing.T) {
 				preprocess.MakeNodeWithDofs(nums.MaxT, g2d.MakePoint(400, 0), [3]int{6, 7, 8}),
 			},
 		)
-		barSolution = MakeElementSolution(
-			preBar,
-			vec.MakeWithValues([]float64{0, 0, 0, 0, -5, -0.1, 0, -10, 0.0}),
-			maxDispError,
-		)
+		barSolution = MakeElementSolution(preBar, globalDispl)
 	)
 
 	t.Run("The shear force", func(t *testing.T) {

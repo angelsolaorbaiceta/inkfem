@@ -118,7 +118,8 @@ func MakeTestSolution() *process.Solution {
 			1.0, 2.0, 0.5, // Second node
 			3.0, 4.0, 0.7, // Third node
 		})
-		solElement = process.MakeElementSolution(preElement, displacements, 1e-5)
+		globalDispl = &process.GlobalDisplacementsVector{MaxError: 1e-5, Vector: displacements}
+		solElement  = process.MakeElementSolution(preElement, globalDispl)
 	)
 
 	return process.MakeSolution(

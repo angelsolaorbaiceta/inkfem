@@ -23,7 +23,7 @@ func Solve(str *preprocess.Structure, options SolveOptions) *Solution {
 
 	log.StartComputeStresses()
 	for i, element := range str.Elements() {
-		elementSolutions[i] = MakeElementSolution(element, globalDispl, options.MaxDisplacementsError)
+		elementSolutions[i] = MakeElementSolution(element, globalDispl)
 	}
 	log.EndComputeStresses()
 

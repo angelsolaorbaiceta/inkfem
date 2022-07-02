@@ -8,6 +8,14 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
+// A GlobalDisplacementsVector is the solution of the structure's system of equations, that yield
+// the structure's global displacements.
+// It includes the error upper bound of the displacements calculation.
+type GlobalDisplacementsVector struct {
+	MaxError float64
+	Vector   vec.ReadOnlyVector
+}
+
 // ComputeGlobalDisplacements computes the structure's global displacements given the
 // preprocessed structure.
 //
@@ -16,7 +24,7 @@ import (
 func computeGlobalDisplacements(
 	structure *preprocess.Structure,
 	options SolveOptions,
-) vec.ReadOnlyVector {
+) *GlobalDisplacementsVector {
 	log.StartAssembleSysEqs()
 	sysMatrix, sysVector := structure.MakeSystemOfEquations()
 	log.EndAssembleSysEqs(sysVector.Length())
@@ -48,7 +56,10 @@ func computeGlobalDisplacements(
 
 	log.EndSolveSysEqs(globalDispSolution.IterCount, globalDispSolution.MinError)
 
-	return globalDispSolution.Solution
+	return &GlobalDisplacementsVector{
+		Vector:   globalDispSolution.Solution,
+		MaxError: options.MaxDisplacementsError,
+	}
 }
 
 func computePreconditioner(m mat.ReadOnlyMatrix) mat.ReadOnlyMatrix {

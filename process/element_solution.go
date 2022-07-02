@@ -7,10 +7,11 @@ import (
 	"github.com/angelsolaorbaiceta/inkmath/vec"
 )
 
-// ElementSolution is the displacements and stresses for a given preprocessed element.
+// ElementSolution is the displacements, stresses, forces and moments for a given
+// preprocessed element.
 //
-// Displacements are stored in both local and global coordinates. Stresses, forces
-// and moments are referred only to the local reference frame.
+// The displacements are stored in both local and global coordinates. Stresses, forces
+// and moments are referred only to the local reference frame of the bar.
 type ElementSolution struct {
 	*preprocess.Element
 
@@ -36,13 +37,13 @@ type ElementSolution struct {
 // the axial stress, shear force and bending moment in each of the slices of the
 // preprocessed element.
 //
-// To compare whether two stresses or forces are the same, it is necessary to
-// compare the values of the solution values using the maximum displacement error
-// used for the displacements calculation.
+// To compare whether two stresses or forces are the same in both sides of a node,
+// it is necessary to compare the values of the solution values using the maximum
+// displacement error used for the displacements calculation. In case a node has the
+// same values in both sides (at the same T position), only one is kept.
 func MakeElementSolution(
 	element *preprocess.Element,
-	globalDisp vec.ReadOnlyVector,
-	maxDispError float64,
+	globalDisp *GlobalDisplacementsVector,
 ) *ElementSolution {
 	var (
 		nOfNodes          = element.NodesCount()
@@ -66,8 +67,8 @@ func MakeElementSolution(
 		BendingMomentTopFiberAxialStress: make([]PointSolutionValue, 0, nOfSolutionValues),
 	}
 
-	solution.setDisplacements(globalDisp)
-	solution.computeStresses(maxDispError)
+	solution.setDisplacements(globalDisp.Vector)
+	solution.computeStresses(globalDisp.MaxError)
 
 	return solution
 }
@@ -130,6 +131,10 @@ func (es *ElementSolution) setDisplacements(globalDisp vec.ReadOnlyVector) {
 //
 // This method should be called after setDisplacements, as it requires the displacements
 // to compute the corresponding stresses and forces.
+//
+// It uses the maximum displacement error used for the displacements calculation to
+// compare the values of the solution values and avoid having the same force/stress value
+// in both sides of the node.
 func (es *ElementSolution) computeStresses(maxDispError float64) {
 	var (
 		trailNode, leadNode *preprocess.Node
