@@ -7,10 +7,9 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-// Solve assembles the system of equations for the structure and solves it using the Preconditioned
-// Conjugate Gradient numerical procedure.
-//
-// The local element stresses are computed using the displacements obtained in the first step.
+// Solve assembles the system of equations for the structure and solves it using the
+// Preconditioned Conjugate Gradient numerical procedure and sets the bars local stresses,
+// forces and moments.
 func Solve(str *preprocess.Structure, options SolveOptions) *Solution {
 	var (
 		globalDispl      = computeGlobalDisplacements(str, options)

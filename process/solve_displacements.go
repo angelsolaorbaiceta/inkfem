@@ -16,7 +16,7 @@ type GlobalDisplacementsVector struct {
 	Vector   vec.ReadOnlyVector
 }
 
-// ComputeGlobalDisplacements computes the structure's global displacements given the
+// computeGlobalDisplacements computes the structure's global displacements given the
 // preprocessed structure.
 //
 // The process involves generating the structure's system of equations and solving it using the
@@ -62,10 +62,12 @@ func computeGlobalDisplacements(
 	}
 }
 
-func computePreconditioner(m mat.ReadOnlyMatrix) mat.ReadOnlyMatrix {
-	precond := mat.MakeSparse(m.Rows(), m.Cols())
-	for i := 0; i < m.Rows(); i++ {
-		precond.SetValue(i, i, 1.0/m.Value(i, i))
+// computePreconditioner computes the preconditioner of the system matrix for the conjugate
+// gradient method to converge faster.
+func computePreconditioner(sysMat mat.ReadOnlyMatrix) mat.ReadOnlyMatrix {
+	precond := mat.MakeSparse(sysMat.Rows(), sysMat.Cols())
+	for i := 0; i < sysMat.Rows(); i++ {
+		precond.SetValue(i, i, 1.0/sysMat.Value(i, i))
 	}
 
 	return precond
