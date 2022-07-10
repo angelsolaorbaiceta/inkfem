@@ -5,8 +5,10 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-// StructureModel preprocesses the structure by concurrently slicing each of the structural members.
-// The resulting sliced structure includes the degrees of freedom numbering.
+// StructureModel preprocesses the structure by concurrently slicing each of the
+// structural members: the bars.
+// The resulting sliced structure includes the degrees of freedom numbering needed
+// in the resolution of the system of equations.
 func StructureModel(str *structure.Structure) *Structure {
 	var (
 		numOfBars      = str.ElementsCount()
