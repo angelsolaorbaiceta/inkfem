@@ -14,9 +14,9 @@ var (
 	preUseVerbose       bool
 
 	preCommand = &cobra.Command{
-		Use:   "pre <inkfem file path>",
+		Use:   "pre [-w] [-v] <.inkfem file path>",
 		Short: "Preprocess structure",
-		Long:  "Preprocesses the structure definition (.inkfem file) and saves it as a .inkfempre file.",
+		Long:  "Preprocesses the structure definition (.inkfem file), slicing it and distributing the loads into the nodes, and saves it as a .inkfempre file.",
 		Args:  cobra.ExactArgs(1),
 		Run:   preStructure,
 	}
@@ -25,7 +25,7 @@ var (
 func init() {
 	preCommand.
 		Flags().
-		BoolVarP(&preIncludeOwnWeight, "weight", "w", false, "include the weight of each barsas a distributed load")
+		BoolVarP(&preIncludeOwnWeight, "weight", "w", false, "include the weight of each bar as a distributed load")
 
 	preCommand.
 		Flags().

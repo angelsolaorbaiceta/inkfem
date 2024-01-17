@@ -11,6 +11,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
+// readStructureFromFile reads the structure definition from the given file.
 func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *structure.Structure {
 	if !io.IsDefinitionFile(filePath) {
 		panic(fmt.Sprintf("Expected %s file: %s", io.DefinitionFileExt, filePath))

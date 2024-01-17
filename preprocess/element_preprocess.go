@@ -7,6 +7,8 @@ import (
 const (
 	elementWithLoadsSlices    = 10
 	elementWithoutLoadsSlices = 6
+	// Minimum distance between two consecutive t values in the slices.
+	minDistBetweenTSlices = 1e-3
 )
 
 // sliceElement slices the given bar into finite elements.

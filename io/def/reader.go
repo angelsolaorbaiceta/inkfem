@@ -9,7 +9,7 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
-// Read Reads the given .inkfem file and tries to parse a structure from the data defined.
+// Reads the given .inkfem file and tries to parse a structure from the data defined.
 //
 // The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm' are the major and
 // minor version numbers of inkfem used to produce the file or required to compute the structure.

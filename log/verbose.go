@@ -47,16 +47,16 @@ func StartProcess() {
 	}
 }
 
-// StartReadFile should be called when the process of reading and parsing the input structure
-// file is about to start.
+// StartReadFile should be called when the process of reading and parsing the
+// input structure file is about to start.
 func StartReadFile() {
 	if isVerbose {
 		readFileStartTime = time.Now()
 	}
 }
 
-// EndReadFile should be called when the process of reading and parsing the input structure
-// has been completed successfully.
+// EndReadFile should be called when the process of reading and parsing the input
+// structure has been completed successfully.
 func EndReadFile(fileType string, nodesCount, elementsCount int) {
 	if isVerbose {
 		readFileElapsedTime = time.Since(readFileStartTime)
