@@ -16,9 +16,20 @@ var (
 	preCommand = &cobra.Command{
 		Use:   "pre [-w] [-v] <.inkfem file path>",
 		Short: "Preprocess structure",
-		Long:  "Preprocesses the structure definition (.inkfem file), slicing it and distributing the loads into the nodes, and saves it as a .inkfempre file.",
-		Args:  cobra.ExactArgs(1),
-		Run:   preStructure,
+		Long: `Preprocess the structure definition (.inkfem file), slicing it and distributing the loads into the nodes, and saves it as a .inkfempre file.
+
+Each bar is sliced into a number of elements, and the loads are distributed into the nodes of the structure.
+How many elements each bar is sliced into depends on its end supports and applied loads.
+There are three different cases:
+
+1. Axial bars: These are not sliced at all.
+2. Bars without loads: These are sliced into a maximum of 6 elements.
+3. Bars with loads: These are sliced into a maximum of 10 elements.
+
+Intermediate points where a concentrated load is applied also generate intermediate nodes for the load to be included.
+		`,
+		Args: cobra.ExactArgs(1),
+		Run:  preStructure,
 	}
 )
 
