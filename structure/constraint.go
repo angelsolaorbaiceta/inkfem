@@ -13,10 +13,10 @@ var (
 	FullConstraint = Constraint{true, true, true}
 )
 
-//  A Constraint represents a condition on displacements and rotations.
+// A Constraint represents a condition on displacements and rotations.
 //
-//  Constraints are immutable, and therefore can be shared amont the elements that use them.
-//  Use the `MakeConstraint` factory function to get an existing instance of a constraint.
+// Constraints are immutable, and therefore can be shared amont the elements that use them.
+// Use the `MakeConstraint` factory function to get an existing instance of a constraint.
 type Constraint struct {
 	isDxConstr, isDyConstr, isRzConst bool
 }

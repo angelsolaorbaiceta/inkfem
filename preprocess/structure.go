@@ -14,6 +14,7 @@ import (
 // A preprocessed structure can be created using the MakeStructure function. The created
 // structure doesn't have the degrees of freedom assigned. For that, the following function
 // must be called:
+//
 //	structure.AssignDof()
 type Structure struct {
 	Metadata structure.StrMetadata

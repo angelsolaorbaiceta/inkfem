@@ -37,13 +37,7 @@ This will generate an additional file with the _.inkfempre_ extension containing
 To build the `inkfem` binary:
 
 ```sh
-$ ./build.sh
-```
-
-or alternatively:
-
-```sh
-$ go build inkfem.go
+$ make build
 ```
 
 This creates the `inkfem` binary at the project's top level.
@@ -52,13 +46,7 @@ See the [Usage](#usage) section below to learn how to execute the binary program
 To run the tests:
 
 ```sh
-$ ./test.sh
-```
-
-or alternatively:
-
-```sh
-$ go test ./...
+$ make test
 ```
 
 ## Docs
