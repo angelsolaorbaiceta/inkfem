@@ -10,10 +10,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type GenerateTypology string
+
 const (
-	reticType     = "retic"
-	reticLongType = "reticular"
+	// The reticular typology is a frame made of beams and columns in a grid-like pattern.
+	reticularTypology GenerateTypology = "retic"
 )
+
+func parseTypology(s string) (GenerateTypology, error) {
+	switch s {
+	case string(reticularTypology):
+		return reticularTypology, nil
+	case "reticular":
+		return reticularTypology, nil
+	default:
+		return "", fmt.Errorf("unknown typology: \"%s\"", s)
+	}
+}
 
 var (
 	generateType        string
@@ -21,20 +34,27 @@ var (
 	generateSpanLength  float64
 	generateLevels      int
 	generateLevelHeight float64
-	generateloadValue   float64
+	generateLoadValue   float64
 
 	generateCommand = &cobra.Command{
 		Use:   "generate --type=<type>",
-		Short: "Generates a structure",
-		Long:  "Generates a structure with the given typology.",
-		Run:   generateStructure,
+		Short: "Generate a structure of a given typology.",
+		Long: `Generate a structure of a given typology. All bars will get assigned the same section and material.
+
+The resulting structure will be written to the standard output in the INKFEM definition format.
+Redirection to a file can be done by using the ">" operator.
+
+The typology of structure to generate can be one of the following:
+	- "retic" or "reticular": A reticular frame made of beams and columns with "spans" beams per level and "levels" columns.
+		`,
+		Run: generateStructure,
 	}
 )
 
 func init() {
 	generateCommand.
 		Flags().
-		StringVarP(&generateType, "type", "t", reticType, "the typology of structure to generate")
+		StringVarP(&generateType, "type", "t", string(reticularTypology), "the typology of structure to generate. Use one of: retic, reticular")
 	generateCommand.MarkFlagRequired("type")
 
 	generateCommand.
@@ -55,7 +75,7 @@ func init() {
 
 	generateCommand.
 		Flags().
-		Float64VarP(&generateloadValue, "load", "o", 50.0, "the value of the vertical load (distributed or concentrated)")
+		Float64VarP(&generateLoadValue, "load", "o", 50.0, "the value of the vertical load (distributed or concentrated)")
 
 	rootCmd.AddCommand(generateCommand)
 }
@@ -66,31 +86,25 @@ func generateStructure(cmd *cobra.Command, args []string) {
 		steelS275Material = structure.MakeMaterial("mat", 0.00000785, 21000000, 8100000, 0.3, 27500, 43000)
 	)
 
-	switch generateType {
-	case reticType, reticLongType:
+	typology, err := parseTypology(generateType)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	switch typology {
+	case reticularTypology:
 		{
 			str := generate.Reticular(generate.ReticStructureParams{
 				Spans:         generateSpans,
 				Span:          generateSpanLength,
 				Levels:        generateLevels,
 				Height:        generateLevelHeight,
-				LoadDistValue: generateloadValue,
+				LoadDistValue: generateLoadValue,
 				Section:       ipe100Section,
 				Material:      steelS275Material,
 			})
 			iodef.Write(str, os.Stdout)
-		}
-	default:
-		{
-			fmt.Printf("Unknown structure typology: \"%s\".\n", generateType)
-			fmt.Println("Use one of the following:")
-			fmt.Printf(
-				"\t- \"%s\" or \"%s\": A reticular frame made of beams and columns with \"spans\" beams per level and \"levels\" columns.\n",
-				reticType,
-				reticLongType,
-			)
-
-			os.Exit(1)
 		}
 	}
 }
