@@ -99,6 +99,17 @@ func TestAxialMemberWithConstantDistributedLoad(t *testing.T) {
 		solutionElement = sol.Elements[0]
 	)
 
+	t.Run("Reaction", func(t *testing.T) {
+		var (
+			got  = sol.NodeReactions()["fixed-node"]
+			want = strmath.MakeTorsor(-l.ValueAt(nums.MinT)*length, 0.0, 0.0)
+		)
+
+		if !got.Equals(want) {
+			t.Errorf("Expected reaction %v, but got %v", want, got)
+		}
+	})
+
 	t.Run("X displacements", func(t *testing.T) {
 		var (
 			ea                   = material.YoungMod * section.Area
