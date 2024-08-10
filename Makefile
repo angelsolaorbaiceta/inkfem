@@ -14,7 +14,11 @@ version: ## Print the current app version
 
 .PHONY: build
 build: ## Build the inkfem binary
-	go build -o bin/inkfem inkfem.go 
+	go build -o inkfem inkfem.go 
+	
+.PHONY: buildall
+buildall: ## Build the inkfem binary for all platforms
+	./build_all.sh
 	
 .PHONY: test
 test: ## Run all the tests

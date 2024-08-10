@@ -1,4 +1,5 @@
 # Ignore compiled binaries
+inkfem
 bin/
 
 # Ignore sliced structure files & matrix images

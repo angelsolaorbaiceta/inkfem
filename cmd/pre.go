@@ -27,6 +27,8 @@ There are three different cases:
 3. Bars with loads: These are sliced into a maximum of 10 elements.
 
 Intermediate points where a concentrated load is applied also generate intermediate nodes for the load to be included.
+
+When the -w flag is used, the weight of each bar is included as a distributed load.
 		`,
 		Args: cobra.ExactArgs(1),
 		Run:  preStructure,

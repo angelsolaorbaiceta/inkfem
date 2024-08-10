@@ -7,15 +7,26 @@ import (
 	"strings"
 )
 
-// A LinesReader reads lines from a buffered scanner one by one, ignoring blank and commented
-// lines. All returned lines are trimmed to remove the blank space around them.
+// A LinesReader reads lines from a buffered scanner one by one, ignoring blank
+// and commented lines. All returned lines are trimmed to remove the blank space
+// around them.
+//
+// The LinesReader is used by calling ReadNext to read the next line, and then
+// GetNextLine and GetNextLineNumber to get the line and its original line number:
+//
+//	reader := MakeLinesReader(reader)
+//	for reader.ReadNext() {
+//	  line := reader.GetNextLine()
+//	  lineNumber := reader.GetNextLineNumber()
+//	  // Do something with the line
+//	}
 type LinesReader struct {
 	scanner        *bufio.Scanner
 	nextLine       *string
 	nextLineNumber int
 }
 
-// MakeLinesReader creates a lines using the passed in reader.
+// MakeLinesReader creates a lines reader using the passed in reader.
 func MakeLinesReader(reader io.Reader) *LinesReader {
 	scanner := bufio.NewScanner(reader)
 	scanner.Split(bufio.ScanLines)
@@ -24,8 +35,8 @@ func MakeLinesReader(reader io.Reader) *LinesReader {
 }
 
 // ReadNext checks if there are more lines available and reads the next one.
-// If HasMoreLines returns "true", GetNextLine and GetNextLineNumber can be called to get the
-// next line and its original line number.
+// If HasMoreLines returns "true", GetNextLine and GetNextLineNumber can be
+// called to get the next line and its original line number.
 func (lr *LinesReader) ReadNext() bool {
 	lr.nextLine = nil
 	var line string
@@ -58,7 +69,9 @@ func (lr *LinesReader) GetNextLineNumber() int {
 	return lr.nextLineNumber
 }
 
-// GetNextLines gets the next "count" lines from the reader, ignoring comments and blank lines.
+// GetNextLines gets the next "count" lines from the reader, ignoring comments
+// and blank lines.
+//
 // Panics if there're not enough lines left in the reader.
 func (lr *LinesReader) GetNextLines(count int) []string {
 	var (
