@@ -15,10 +15,14 @@ var (
 
 	plotCommand = &cobra.Command{
 		Use:   "plot <inkfem file path>",
-		Short: "Plots the structure to one or multiple SVG files",
-		Long:  "Plots the structure to one of multiple SVG files.",
-		Args:  cobra.ExactArgs(1),
-		Run:   plotStructure,
+		Short: "Plot the structure to one or multiple SVG files",
+		Long: `Plot the structure to one of multiple SVG files.
+	
+The original structure definition (.inkfem file) is plotted to an SVG file with the same name, but with the .svg extension.
+This plot includes the bars, node supports, and loads.
+		`,
+		Args: cobra.ExactArgs(1),
+		Run:  plotStructure,
 	}
 )
 
@@ -33,7 +37,7 @@ func init() {
 
 	plotCommand.
 		Flags().
-		BoolVarP(&plotPreprocessedFile, "preprocess", "p", false, "plot the preprocessed structure")
+		BoolVarP(&plotPreprocessedFile, "preprocess", "p", false, "plot the preprocessed structure (if the file can be found)")
 
 	rootCmd.AddCommand(plotCommand)
 }

@@ -38,7 +38,7 @@ var (
 
 	generateCommand = &cobra.Command{
 		Use:   "generate --type=<type>",
-		Short: "Generate a structure of a given typology.",
+		Short: "Generate a structure of a given typology",
 		Long: `Generate a structure of a given typology. All bars will get assigned the same section and material.
 
 The resulting structure will be written to the standard output in the INKFEM definition format.
