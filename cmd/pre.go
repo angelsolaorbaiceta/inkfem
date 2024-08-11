@@ -55,8 +55,11 @@ func preStructure(cmd *cobra.Command, args []string) {
 		inputFilePath = args[0]
 		outPath       = strings.TrimSuffix(inputFilePath, inkio.DefinitionFileExt)
 		structure     = readStructureFromFile(inputFilePath)
-		preStructure  = preprocessStructure(structure)
 	)
+
+	// TODO: add the weight of each bar as a distributed load if the flag is set
+
+	preStructure := preprocessStructure(structure)
 
 	file := inkio.CreateFile(outPath + inkio.PreFileExt)
 	defer file.Close()
