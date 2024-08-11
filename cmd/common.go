@@ -13,7 +13,7 @@ import (
 
 // readStructureFromFile reads the structure definition from the given .inkfem file.
 // If the file is not a .inkfem file, it panics.
-func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *structure.Structure {
+func readStructureFromFile(filePath string) *structure.Structure {
 	if !io.IsDefinitionFile(filePath) {
 		panic(fmt.Sprintf("Expected %s file: %s", io.DefinitionFileExt, filePath))
 	}
@@ -23,7 +23,7 @@ func readStructureFromFile(filePath string, readerOptions io.ReaderOptions) *str
 	file := io.OpenFile(filePath)
 	defer file.Close()
 
-	structure := iodef.Read(file, readerOptions)
+	structure := iodef.Read(file)
 	log.EndReadFile(io.DefinitionFileExt, structure.NodesCount(), structure.ElementsCount())
 
 	return structure

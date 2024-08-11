@@ -54,8 +54,7 @@ func preStructure(cmd *cobra.Command, args []string) {
 	var (
 		inputFilePath = args[0]
 		outPath       = strings.TrimSuffix(inputFilePath, inkio.DefinitionFileExt)
-		readerOptions = inkio.ReaderOptions{ShouldIncludeOwnWeight: solveIncludeOwnWeight}
-		structure     = readStructureFromFile(inputFilePath, readerOptions)
+		structure     = readStructureFromFile(inputFilePath)
 		preStructure  = preprocessStructure(structure)
 	)
 

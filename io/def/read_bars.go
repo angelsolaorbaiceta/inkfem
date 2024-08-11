@@ -32,7 +32,15 @@ var elementDefinitionRegex = regexp.MustCompile(
 		"$",
 )
 
-type DeserializeBarDTO struct {
+// A DeserializedBarDTO is a data transfer object that contains the data needed
+// to create a bar. The information contains the ids if the nodes, the names of
+// the materials and sections, but it lacks the references to the actual nodes,
+// materials and sections.
+//
+// This DTO is used in an intermediate step to parse the bars from the definition.
+// They are first deserialized into this DTO and then linked with the actual data
+// to create the structure elements.
+type DeserializedBarDTO struct {
 	Id           contracts.StrID
 	StartNodeId  contracts.StrID
 	StartLink    *structure.Constraint
@@ -42,7 +50,7 @@ type DeserializeBarDTO struct {
 	SectionName  string
 }
 
-func (bar *DeserializeBarDTO) Equals(other *DeserializeBarDTO) bool {
+func (bar *DeserializedBarDTO) Equals(other *DeserializedBarDTO) bool {
 	return bar.Id == other.Id &&
 		bar.StartNodeId == other.StartNodeId &&
 		bar.EndNodeId == other.EndNodeId &&
@@ -52,13 +60,13 @@ func (bar *DeserializeBarDTO) Equals(other *DeserializeBarDTO) bool {
 		bar.EndLink.Equals(other.EndLink)
 }
 
-// DeserializeBar parses a bar from the definition line. The bar is a deserialization data transfer
-// object containing the data needed to create the bar. It references the ids of the nodes and names
-// of the materials and sections.
+// DeserializeBar parses a bar from the definition line. The bar is a
+// deserialization data transfer object containing the data needed to create the
+// bar. It references the ids of the nodes and names of the materials and sections.
 //
-// If the bar has the preprocess format, it also reads the number of nodes of the sliced bar
-// and returns the number as the second argument.
-func DeserializeBar(line string) (*DeserializeBarDTO, int) {
+// If the bar has the preprocess format, it also reads the number of nodes of
+// the sliced bar and returns the number as the second argument.
+func DeserializeBar(line string) (*DeserializedBarDTO, int) {
 	var (
 		groups        = inkio.ExtractNamedGroups(elementDefinitionRegex, line)
 		id            = groups[inkio.IdGrpName]
@@ -71,7 +79,7 @@ func DeserializeBar(line string) (*DeserializeBarDTO, int) {
 		numberOfNodes = 2
 	)
 
-	bar := &DeserializeBarDTO{
+	bar := &DeserializedBarDTO{
 		Id:           id,
 		StartNodeId:  startNodeId,
 		StartLink:    startLink,
@@ -88,28 +96,26 @@ func DeserializeBar(line string) (*DeserializeBarDTO, int) {
 	return bar, numberOfNodes
 }
 
-// BarsFromDeserialization maps the deserialization data transfer objects to the structure elements
-// given the structure data (nodes, sections, materials and loads).
-//
-// Using the reader options, the bar can be added loads for its own weight.
+// BarsFromDeserialization maps the deserialization data transfer objects to the
+// structure elements given the structure data (nodes, sections, materials and loads).
 func BarsFromDeserialization(
-	deserializedBars []*DeserializeBarDTO,
+	deserializedBars []*DeserializedBarDTO,
 	data *structure.StructureData,
-	readerOptions inkio.ReaderOptions,
 ) []*structure.Element {
-	var bars []*structure.Element
+	bars := make([]*structure.Element, len(deserializedBars))
 
-	for _, deserializedBar := range deserializedBars {
-		bars = append(bars, BarFromDeserialization(deserializedBar, data, readerOptions))
+	for i, deserializedBar := range deserializedBars {
+		bars[i] = BarFromDeserialization(deserializedBar, data)
 	}
 
 	return bars
 }
 
+// BarFromDeserialization maps a bar deserialization data transfer object to a
+// structure element given the structure data (nodes, sections, materials and loads).
 func BarFromDeserialization(
-	bar *DeserializeBarDTO,
+	bar *DeserializedBarDTO,
 	data *structure.StructureData,
-	readerOptions inkio.ReaderOptions,
 ) *structure.Element {
 	var (
 		startNode = data.Nodes[bar.StartNodeId]
@@ -125,10 +131,6 @@ func BarFromDeserialization(
 		WithSection(section).
 		AddConcentratedLoads(data.ConcentratedLoads[bar.Id]).
 		AddDistributedLoads(data.DistributedLoads[bar.Id])
-
-	if readerOptions.ShouldIncludeOwnWeight {
-		builder.IncludeOwnWeightLoad()
-	}
 
 	return builder.Build()
 }

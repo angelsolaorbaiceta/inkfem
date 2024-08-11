@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
-	"github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
+	"github.com/stretchr/testify/assert"
 )
 
 // TODO: test preprocessed nodes
@@ -31,10 +31,6 @@ func TestDeserializeBars(t *testing.T) {
 			"1": {load.MakeConcentrated(load.FY, true, nums.MinT, -50)},
 			"2": {load.MakeConcentrated(load.MZ, true, nums.MaxT, -30)},
 		}
-		ownWeightLoadVal = -materials["mat"].Density * sections["sec"].Area
-		ownWeightLoad    = []*load.DistributedLoad{
-			load.MakeDistributed(load.FY, false, nums.MinT, ownWeightLoadVal, nums.MaxT, ownWeightLoadVal),
-		}
 		distributedLoads = structure.DistLoadsById{}
 		data             = &structure.StructureData{
 			Nodes:             nodes,
@@ -44,7 +40,7 @@ func TestDeserializeBars(t *testing.T) {
 			DistributedLoads:  distributedLoads,
 		}
 
-		wantBarOneDTO = &DeserializeBarDTO{
+		wantBarOneDTO = &DeserializedBarDTO{
 			Id:           "1",
 			StartNodeId:  nodes["1"].GetID(),
 			StartLink:    &structure.FullConstraint,
@@ -53,7 +49,7 @@ func TestDeserializeBars(t *testing.T) {
 			MaterialName: "mat",
 			SectionName:  "sec",
 		}
-		wantBarTwoDTO = &DeserializeBarDTO{
+		wantBarTwoDTO = &DeserializedBarDTO{
 			Id:           "2",
 			StartNodeId:  nodes["1"].GetID(),
 			StartLink:    &structure.DispConstraint,
@@ -100,56 +96,20 @@ func TestDeserializeBars(t *testing.T) {
 		barOneDTO, _ = DeserializeBar(lineOne)
 		barTwoDTO, _ = DeserializeBar(lineTwo)
 		bars         = BarsFromDeserialization(
-			[]*DeserializeBarDTO{barOneDTO, barTwoDTO},
+			[]*DeserializedBarDTO{barOneDTO, barTwoDTO},
 			data,
-			io.ReaderOptions{ShouldIncludeOwnWeight: true},
 		)
 	)
 
-	t.Run("Deserialize bars DTO", func(t *testing.T) {
-		if !barOneDTO.Equals(wantBarOneDTO) {
-			t.Errorf("Expected element %v, got %v", wantBarOne, barOneDTO)
-		}
-		if !barTwoDTO.Equals(wantBarTwoDTO) {
-			t.Errorf("Expected element %v, got %v", wantBarTwo, barTwoDTO)
-		}
+	t.Run("Deserialize bars into a DTO", func(t *testing.T) {
+		assert.Equal(t, wantBarOneDTO, barOneDTO)
+		assert.Equal(t, wantBarTwoDTO, barTwoDTO)
 	})
 
 	t.Run("Bars concentrated loads", func(t *testing.T) {
 		barOne, barTwo := bars[0], bars[1]
 
-		if !load.ConcentratedLoadsEqual(barOne.ConcentratedLoads, wantBarOne.ConcentratedLoads) {
-			t.Errorf(
-				"Expected element concentrated loads %v, but got %v",
-				wantBarOne.ConcentratedLoads,
-				barOne.ConcentratedLoads,
-			)
-		}
-		if !load.ConcentratedLoadsEqual(barTwo.ConcentratedLoads, wantBarTwo.ConcentratedLoads) {
-			t.Errorf(
-				"Expected element concentrated loads %v, but got %v",
-				wantBarTwo.ConcentratedLoads,
-				barTwo.ConcentratedLoads,
-			)
-		}
-	})
-
-	t.Run("Bars distributed loads (including own weight)", func(t *testing.T) {
-		barOne, barTwo := bars[0], bars[1]
-
-		if !load.DistributedLoadsEqual(barOne.DistributedLoads, ownWeightLoad) {
-			t.Errorf(
-				"Expected element distributed loads %v, but got %v",
-				ownWeightLoad,
-				barOne.DistributedLoads,
-			)
-		}
-		if !load.DistributedLoadsEqual(barTwo.DistributedLoads, ownWeightLoad) {
-			t.Errorf(
-				"Expected element distributed loads %v, but got %v",
-				ownWeightLoad,
-				barTwo.DistributedLoads,
-			)
-		}
+		assert.Equal(t, wantBarOne.ConcentratedLoads, barOne.ConcentratedLoads)
+		assert.Equal(t, wantBarTwo.ConcentratedLoads, barTwo.ConcentratedLoads)
 	})
 }

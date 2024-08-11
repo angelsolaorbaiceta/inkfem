@@ -6,6 +6,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/build"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTwoElementsCantileverReactions(t *testing.T) {
@@ -24,25 +25,22 @@ func TestTwoElementsCantileverReactions(t *testing.T) {
 
 	t.Run("Fx reaction", func(t *testing.T) {
 		want := fyValue * math.Sin(elTwoAngle)
+		got := reactions.Fx()
 
-		if got := reactions.Fx(); !nums.FloatsEqualEps(got, want, reactionsErrorEps) {
-			t.Errorf("Expected Fx = %f, but got %f", want, got)
-		}
+		assert.True(t, nums.FloatsEqualEps(got, want, reactionsErrorEps))
 	})
 
 	t.Run("Fy reaction", func(t *testing.T) {
 		want := -fyValue*math.Cos(elTwoAngle) - qyValue*length
+		got := reactions.Fy()
 
-		if got := reactions.Fy(); !nums.FloatsEqualEps(got, want, reactionsErrorEps) {
-			t.Errorf("Expected Fy = %f, but got %f", want, got)
-		}
+		assert.True(t, nums.FloatsEqualEps(got, want, reactionsErrorEps))
 	})
 
 	t.Run("Mz reaction", func(t *testing.T) {
 		want := -fyValue*elTwoLength + qyValue*length*length*0.5
+		got := reactions.Mz()
 
-		if got := reactions.Mz(); !nums.FloatsEqualEps(got, want, reactionsErrorEps) {
-			t.Errorf("Expected Mz = %f, but got %f", want, got)
-		}
+		assert.True(t, nums.FloatsEqualEps(got, want, reactionsErrorEps))
 	})
 }

@@ -15,9 +15,8 @@ func BenchmarkSolveStructure(b *testing.B) {
 	build.Info = &build.BuildInfo{MajorVersion: 3, MinorVersion: 2}
 
 	var (
-		readerOptions = io.ReaderOptions{ShouldIncludeOwnWeight: true}
-		file          = io.OpenFile("./retic_10x5.inkfem")
-		str           = iodef.Read(file, readerOptions)
+		file = io.OpenFile("./retic_10x5.inkfem")
+		str  = iodef.Read(file)
 	)
 	defer file.Close()
 

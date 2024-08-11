@@ -4,8 +4,8 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 )
 
-// A Structure is a group of linear resistant elements joined together designed to withstand the
-// application of external loads, concentrated and distributed.
+// A Structure is a group of linear resistant elements joined together designed
+// to withstand the application of external loads, concentrated and distributed.
 type Structure struct {
 	Metadata StrMetadata
 	NodesById

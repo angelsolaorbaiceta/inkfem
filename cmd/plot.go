@@ -3,14 +3,12 @@ package cmd
 import (
 	"os"
 
-	"github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/plot"
 	"github.com/spf13/cobra"
 )
 
 var (
 	plotScale            float64
-	plotIncludeOwnWeight bool
 	plotPreprocessedFile bool
 
 	plotCommand = &cobra.Command{
@@ -29,10 +27,6 @@ func init() {
 
 	plotCommand.
 		Flags().
-		BoolVarP(&plotIncludeOwnWeight, "weight", "w", false, "include the weight of each bar as a distributed load")
-
-	plotCommand.
-		Flags().
 		BoolVarP(&plotPreprocessedFile, "preprocess", "p", false, "plot the preprocessed structure")
 
 	rootCmd.AddCommand(plotCommand)
@@ -42,8 +36,7 @@ func plotStructure(cmd *cobra.Command, args []string) {
 	var (
 		inputFilePath         = args[0]
 		structurePlotFilePath = inputFilePath + ".svg"
-		readerOptions         = io.ReaderOptions{ShouldIncludeOwnWeight: plotIncludeOwnWeight}
-		structure             = readStructureFromFile(inputFilePath, readerOptions)
+		structure             = readStructureFromFile(inputFilePath)
 		strPlotOptions        = plot.StructurePlotOps{
 			Scale:     plotScale,
 			MinMargin: 100,
