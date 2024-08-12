@@ -1,6 +1,7 @@
 package plot
 
 import (
+	"fmt"
 	"io"
 
 	svg "github.com/ajstarks/svgo"
@@ -20,9 +21,21 @@ func StructureToSVG(st *structure.Structure, options StructurePlotOps, w io.Writ
 	var (
 		rectBounds = structureRectBounds(st, options)
 		canvas     = svg.New(w)
+		config     = defaultPlotConfig()
 	)
 
 	canvas.Start(int(rectBounds.Width()), int(rectBounds.Height()))
-	drawGeometry(canvas, st, options, rectBounds)
+	canvas.Gtransform(
+		fmt.Sprintf(
+			"matrix(%f,0,0,%f,%d,%f)",
+			options.Scale,
+			-options.Scale,
+			options.MinMargin,
+			rectBounds.Height()-float64(options.MinMargin),
+		),
+	)
+	drawGeometry(canvas, st, &config)
+	drawExternalConstraints(canvas, st, &config)
+	canvas.Gend()
 	canvas.End()
 }
