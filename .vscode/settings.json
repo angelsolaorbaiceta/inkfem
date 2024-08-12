@@ -1,10 +1,12 @@
 {
   "cSpell.words": [
+    "Dofs",
     "inkfem",
     "inkfempre",
     "inkgeom",
     "iodef",
     "iopre",
+    "iosol",
     "nums",
     "preprocess",
     "Preprocesses"

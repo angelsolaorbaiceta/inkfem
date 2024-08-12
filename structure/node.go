@@ -56,6 +56,10 @@ func MakeFreeNodeAtPosition(id contracts.StrID, x, y float64) *Node {
 	}
 }
 
+func (n Node) Copy() *Node {
+	return MakeNode(n.id, n.Position, n.ExternalConstraint)
+}
+
 // IsExternallyConstrained returns true if this node is externally constrained.
 func (n Node) IsExternallyConstrained() bool {
 	return n.ExternalConstraint != &NilConstraint
@@ -64,6 +68,18 @@ func (n Node) IsExternallyConstrained() bool {
 // DegreesOfFreedomNum returns the degrees of freedom numbers assigned to the node.
 func (n Node) DegreesOfFreedomNum() [3]int {
 	return n.globalDof
+}
+
+func (n Node) DxDegreeOfFreedomNum() int {
+	return n.globalDof[0]
+}
+
+func (n Node) DyDegreeOfFreedomNum() int {
+	return n.globalDof[1]
+}
+
+func (n Node) RzDegreeOfFreedomNum() int {
+	return n.globalDof[2]
 }
 
 // HasDegreesOfFreedomNum returns true if the node has already been assigned degress of freedom.

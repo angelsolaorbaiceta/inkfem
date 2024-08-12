@@ -29,6 +29,9 @@ func readStructureFromFile(filePath string) *structure.Structure {
 	return structure
 }
 
+// readPreprocessedStructureFromFile reads the preprocessed structure from the
+// given .inkfempre file.
+// If the file is not a .inkfempre file, it panics.
 func readPreprocessedStructureFromFile(filePath string) *preprocess.Structure {
 	if !io.IsPreprocessedFile(filePath) {
 		panic(fmt.Sprintf("Expected %s file: %s", io.PreFileExt, filePath))
@@ -45,9 +48,16 @@ func readPreprocessedStructureFromFile(filePath string) *preprocess.Structure {
 	return preStructure
 }
 
-func preprocessStructure(structure *structure.Structure) *preprocess.Structure {
+// preprocessStructure preprocesses the given structure, slicing it and distributing
+// the loads into the nodes.
+//
+// The passed in options are used to configure the preprocessing.
+func preprocessStructure(
+	structure *structure.Structure,
+	options *preprocess.PreprocessOptions,
+) *preprocess.Structure {
 	log.StartPreprocess()
-	preprocessedStructure := preprocess.StructureModel(structure)
+	preprocessedStructure := preprocess.StructureModel(structure, options)
 	log.EndPreprocess()
 
 	return preprocessedStructure

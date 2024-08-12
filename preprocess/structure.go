@@ -58,9 +58,10 @@ func (s *Structure) SetDofsCount(dofsCount int) *Structure {
 
 // AssignDof assigns degrees of freedom numbers to all nodes on sliced elements.
 //
-// Structural nodes are given degrees of freedom to help in the correct assignment of DOF numbers
-// to the elements that meet in the node. Structural elements are first sorted by their geometry
-// positions, so the degrees of freedom numbers follow a logical sequence.
+// Structural nodes are given degrees of freedom to help in the correct assignment
+// of DOF numbers to the elements that meet in the node. Structural elements are
+// first sorted by their geometry positions, so the degrees of freedom numbers
+// follow a logical sequence.
 func (str *Structure) AssignDof() *Structure {
 	sort.Sort(ByGeometryPos(str.Elements()))
 
@@ -71,6 +72,8 @@ func (str *Structure) AssignDof() *Structure {
 		dof                = 0
 	)
 
+	// Assigns DOF numbers to a node if it doesn't have them already.
+	// Nodes with DOF numbers are skipped.
 	assignNodeDof := func(node *structure.Node) {
 		if !node.HasDegreesOfFreedomNum() {
 			node.SetDegreesOfFreedomNum(dof, dof+1, dof+2)
@@ -78,29 +81,36 @@ func (str *Structure) AssignDof() *Structure {
 		}
 	}
 
+	// Assign the DOF numbers to the start and end nodes of the element.
+	// These depend on the external nodes they are connected to, and the constraints
+	// they have with them.
 	endNodesDof := func(
 		link *structure.Constraint,
 		node *structure.Node,
 	) (dxDof, dyDof, rzDof int) {
+		dxDof = -1
+		dyDof = -1
+		rzDof = -1
+
 		if link.AllowsDispX() {
 			dxDof = dof
 			dof++
 		} else {
-			dxDof = node.DegreesOfFreedomNum()[0]
+			dxDof = node.DxDegreeOfFreedomNum()
 		}
 
 		if link.AllowsDispY() {
 			dyDof = dof
 			dof++
 		} else {
-			dyDof = node.DegreesOfFreedomNum()[1]
+			dyDof = node.DyDegreeOfFreedomNum()
 		}
 
 		if link.AllowsRotation() {
 			rzDof = dof
 			dof++
 		} else {
-			rzDof = node.DegreesOfFreedomNum()[2]
+			rzDof = node.RzDegreeOfFreedomNum()
 		}
 
 		return

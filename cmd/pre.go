@@ -6,6 +6,7 @@ import (
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
 	"github.com/angelsolaorbaiceta/inkfem/log"
+	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/spf13/cobra"
 )
 
@@ -55,11 +56,11 @@ func preStructure(cmd *cobra.Command, args []string) {
 		inputFilePath = args[0]
 		outPath       = strings.TrimSuffix(inputFilePath, inkio.DefinitionFileExt)
 		structure     = readStructureFromFile(inputFilePath)
+		options       = &preprocess.PreprocessOptions{
+			IncludeOwnWeight: preIncludeOwnWeight,
+		}
+		preStructure = preprocessStructure(structure, options)
 	)
-
-	// TODO: add the weight of each bar as a distributed load if the flag is set
-
-	preStructure := preprocessStructure(structure)
 
 	file := inkio.CreateFile(outPath + inkio.PreFileExt)
 	defer file.Close()

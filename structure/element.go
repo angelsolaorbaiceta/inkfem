@@ -105,6 +105,19 @@ func (e Element) HasLoadsApplied() bool {
 	return e.LoadsCount() > 0
 }
 
+// AddOwnWeight adds a distributed load to the element that represents the weight
+// of the element. The load's intensity per unit length is the product of the
+// material's density and the section's area. The load is applied in the negative
+// direction of the global Y axis.
+func (e *Element) AddOwnWeight() {
+	var (
+		value = -e.material.Density * e.section.Area
+		load  = load.MakeDistributed(load.FY, false, nums.MinT, value, nums.MaxT, value)
+	)
+
+	e.DistributedLoads = append(e.DistributedLoads, load)
+}
+
 // IsAxialMember returns true if this element is pinned in both ends and, in case of having
 // loads applied, they are always in the end positions of the directrix and does not include
 // moments about Z, but just forces in X and Y directions.

@@ -16,6 +16,16 @@ func MakeNodesById(nodes NodesByIdMap) NodesById {
 	return NodesById{nodes: nodes, allNodesCache: nil}
 }
 
+func (e *NodesById) Copy() NodesById {
+	nodes := make(NodesByIdMap)
+
+	for id, node := range e.nodes {
+		nodes[id] = node.Copy()
+	}
+
+	return MakeNodesById(nodes)
+}
+
 // NodesCount is the number of nodes in the structure.
 func (n *NodesById) NodesCount() int {
 	return len(n.nodes)

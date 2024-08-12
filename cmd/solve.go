@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/angelsolaorbaiceta/inkfem/io"
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
 	iosol "github.com/angelsolaorbaiceta/inkfem/io/sol"
@@ -60,14 +59,19 @@ func solveStructure(cmd *cobra.Command, args []string) {
 
 	var (
 		inputFilePath = args[0]
-		outPath       = strings.TrimSuffix(inputFilePath, io.DefinitionFileExt)
+		outPath       = strings.TrimSuffix(inputFilePath, inkio.DefinitionFileExt)
 		preStructure  *preprocess.Structure
 	)
 
 	if inkio.IsDefinitionFile(inputFilePath) {
-		structure := readStructureFromFile(inputFilePath)
-		// TODO: add own weight to the structure if solveIncludeOwnWeight is true
-		preStructure = preprocessStructure(structure)
+		var (
+			structure = readStructureFromFile(inputFilePath)
+			options   = &preprocess.PreprocessOptions{
+				IncludeOwnWeight: solveIncludeOwnWeight,
+			}
+		)
+
+		preStructure = preprocessStructure(structure, options)
 
 		if solvePreprocessToFile {
 			go (func() {
@@ -82,7 +86,7 @@ func solveStructure(cmd *cobra.Command, args []string) {
 		panic(
 			fmt.Sprintf(
 				"Unsupported file type: %s. Expected %s or %s\n",
-				inputFilePath, io.DefinitionFileExt, io.PreFileExt,
+				inputFilePath, inkio.DefinitionFileExt, inkio.PreFileExt,
 			),
 		)
 	}

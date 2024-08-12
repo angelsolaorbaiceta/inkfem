@@ -31,7 +31,7 @@ func init() {
 
 	plotCommand.
 		Flags().
-		BoolVarP(&plotPreprocessedFile, "preprocess", "p", false, "plot the preprocessed structure (if the file can be found)")
+		BoolVarP(&plotPreprocessedFile, "preprocess", "p", false, "plot the preprocessed structure (if the .inkfempre file can be found)")
 
 	rootCmd.AddCommand(plotCommand)
 }
