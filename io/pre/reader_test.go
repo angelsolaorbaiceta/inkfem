@@ -5,6 +5,7 @@ import (
 
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReadPreprocessModel(t *testing.T) {
@@ -20,15 +21,11 @@ func TestReadPreprocessModel(t *testing.T) {
 			got  = str.Metadata
 		)
 
-		if got.MajorVersion != want.MajorVersion || got.MinorVersion != want.MinorVersion {
-			t.Errorf("Want %v, got %v", want, got)
-		}
+		assert.Equal(t, want, got)
 	})
 
 	t.Run("parses the degrees of freedom count", func(t *testing.T) {
-		if got := str.DofsCount(); got != 9 {
-			t.Errorf("Want 9 DOFs, got %d", got)
-		}
+		assert.Equal(t, 9, str.DofsCount())
 	})
 
 	t.Run("parses the nodes", func(t *testing.T) {
@@ -37,43 +34,27 @@ func TestReadPreprocessModel(t *testing.T) {
 			wantN2 = wantStr.GetNodeById("n2")
 		)
 
-		if got := str.GetNodeById("n1"); !got.Equals(wantN1) {
-			t.Errorf("Want %v, got %v", wantN1, got)
-		}
-		if got := str.GetNodeById("n2"); !got.Equals(wantN2) {
-			t.Errorf("Want %v, got %v", wantN2, got)
-		}
+		assert.Equal(t, wantN1, str.GetNodeById("n1"))
+		assert.Equal(t, wantN2, str.GetNodeById("n2"))
 	})
 
 	t.Run("parses the materials", func(t *testing.T) {
 		wantMaterial := wantStr.GetMaterialsByName()["mat_yz"]
 
-		if str.MaterialsCount() != 1 {
-			t.Error("Want one material")
-		}
-
-		if got := str.GetMaterialsByName()[wantMaterial.Name]; !got.Equals(wantMaterial) {
-			t.Errorf("Want %v, got %v", wantMaterial, got)
-		}
+		assert.Equal(t, 1, str.MaterialsCount())
+		assert.Equal(t, wantMaterial, str.GetMaterialsByName()[wantMaterial.Name])
 	})
 
 	t.Run("parses the sections", func(t *testing.T) {
 		wantSection := wantStr.GetSectionsByName()["sec_xy"]
 
-		if str.SectionsCount() != 1 {
-			t.Error("Want one section")
-		}
-
-		if got := str.GetSectionsByName()[wantSection.Name]; !got.Equals(wantSection) {
-			t.Errorf("Want %v, got %v", wantSection, got)
-		}
+		assert.Equal(t, 1, str.SectionsCount())
+		assert.Equal(t, wantSection, str.GetSectionsByName()[wantSection.Name])
 	})
 
 	t.Run("parses the bars", func(t *testing.T) {
 		wantBar := wantStr.GetElementById("b1")
 
-		if got := str.GetElementById("b1"); !got.Equals(wantBar) {
-			t.Errorf("Want %v, got %v", wantBar, got)
-		}
+		assert.True(t, wantBar.Equals(str.GetElementById("b1")))
 	})
 }
