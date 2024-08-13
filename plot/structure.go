@@ -31,7 +31,7 @@ func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Wri
 	canvas.Start(int(rectBounds.Width()), int(rectBounds.Height()))
 
 	canvas.Def()
-	defineExtConstrainPattern(canvas, config)
+	defineExtConstrainGroundPattern(canvas, config)
 	canvas.DefEnd()
 
 	canvas.Gtransform(
@@ -49,7 +49,7 @@ func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Wri
 	canvas.End()
 }
 
-func defineExtConstrainPattern(canvas *svg.SVG, config *plotConfig) {
+func defineExtConstrainGroundPattern(canvas *svg.SVG, config *plotConfig) {
 	canvas.Pattern(diagonalLinesPatternId, 0, 0, 10, 10, "user", "patternTransform=\"rotate(30)\"")
 	canvas.Line(0, 0, 0, 10, fmt.Sprintf("stroke:%s;stroke-width:%d", config.ExternalConstColor, config.ExternalConstWidth))
 	canvas.PatternEnd()

@@ -16,8 +16,11 @@ func drawGeometry(
 	st *structure.Structure,
 	config *plotConfig,
 ) {
+	// TODO: Derive the radius from the average element length.
+	radius := 10
+
 	canvas.Gstyle(
-		fmt.Sprintf("stroke:%s;stroke-width:%d", config.GeometryColor, config.GeometryWidth),
+		fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none", config.GeometryColor, config.GeometryWidth),
 	)
 
 	var startPoint, endPoint *g2d.Point
@@ -29,8 +32,11 @@ func drawGeometry(
 		canvas.Line(
 			int(startPoint.X()), int(startPoint.Y()),
 			int(endPoint.X()), int(endPoint.Y()),
-			"vector-effect=\"non-scaling-stroke\"",
+			// "vector-effect=\"non-scaling-stroke\"",
 		)
+
+		canvas.Circle(int(startPoint.X()), int(startPoint.Y()), radius)
+		canvas.Circle(int(endPoint.X()), int(endPoint.Y()), radius)
 	}
 
 	canvas.Gend()

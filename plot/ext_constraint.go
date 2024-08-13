@@ -13,7 +13,7 @@ func drawExternalConstraints(
 	config *plotConfig,
 ) {
 	// TODO: Derive the length from the average element length.
-	l := 50
+	l := 75
 
 	canvas.Gstyle(
 		fmt.Sprintf("stroke:%s;stroke-width:%d", config.ExternalConstColor, config.ExternalConstWidth),
@@ -44,5 +44,5 @@ func drawGround(canvas *svg.SVG, l int) {
 	halfL := l / 2
 
 	canvas.Rect(-halfL, 0, l, halfL, "stroke=\"none\"", fmt.Sprintf("fill=\"url(#%s)\"", diagonalLinesPatternId))
-	canvas.Line(-halfL, 0, halfL, 0, "vector-effect=\"non-scaling-stroke\"")
+	canvas.Line(-halfL, 0, halfL, 0)
 }
