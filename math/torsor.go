@@ -7,6 +7,9 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
+// NilTorsor is a torsor with all components to zero.
+var NilTorsor = MakeNilTorsor()
+
 // A Torsor is a force-moment tuple: {fx, fy, mz}, where {fx, fy} are the x and y components
 // of the force and mz is the moment around z.
 //

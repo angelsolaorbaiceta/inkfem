@@ -3,21 +3,21 @@ package pre
 import (
 	"bytes"
 	"fmt"
-	"regexp"
 	"strings"
 	"testing"
 
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestWritePreprocessedStructure(t *testing.T) {
 	var (
-		str            = inkio.MakeTestPreprocessedStructure()
-		writer         bytes.Buffer
-		nodesOffset    = 2
-		materiasOffset = nodesOffset + 3
-		sectionsOffset = materiasOffset + 2
-		barsOffset     = sectionsOffset + 2
+		str             = inkio.MakeTestPreprocessedStructure()
+		writer          bytes.Buffer
+		nodesOffset     = 3
+		materialsOffset = nodesOffset + 3
+		sectionsOffset  = materialsOffset + 2
+		barsOffset      = sectionsOffset + 2
 	)
 
 	Write(str, &writer)
@@ -30,17 +30,16 @@ func TestWritePreprocessedStructure(t *testing.T) {
 
 	t.Run("first line is always the header with the version", func(t *testing.T) {
 		want := fmt.Sprintf("inkfem v%d.%d", str.Metadata.MajorVersion, str.Metadata.MinorVersion)
-		if got := gotLines[0]; got != want {
-			t.Errorf("Want '%s', got '%s'", want, got)
-		}
+		assert.Equal(t, want, gotLines[0])
 	})
 
-	t.Run("then goes the degrees of freedom count", func(t *testing.T) {
+	t.Run("the second line is the degrees of freedom count", func(t *testing.T) {
 		// 3 nodes x 3dof = 9 total dofs
-		want := "dof_count: 9"
-		if got := gotLines[1]; got != want {
-			t.Errorf("Want '%s', got '%s'", want, got)
-		}
+		assert.Equal(t, "dof_count: 9", gotLines[1])
+	})
+
+	t.Run("the third line is the own weight inclusion", func(t *testing.T) {
+		assert.Equal(t, "includes_own_weight: no", gotLines[2])
 	})
 
 	t.Run("then go the original nodes", func(t *testing.T) {
@@ -50,19 +49,13 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			wantNodeTwoPattern = `n2 -> 200(\.[0]+)? 0(\.[0]+)? { dx dy rz } | \[0 1 2\]`
 		)
 
-		if got := gotLines[nodesOffset]; got != wantHeader {
-			t.Errorf("Want '%s', got '%s'", wantHeader, got)
-		}
+		assert.Equal(t, wantHeader, gotLines[nodesOffset])
 
 		// Order in which the nodes appear isn't guaranteed
 		nodeLines := gotLines[nodesOffset+1] + " " + gotLines[nodesOffset+2]
 
-		if match, _ := regexp.MatchString(wantNodeOnePattern, nodeLines); !match {
-			t.Error("Want node one")
-		}
-		if match, _ := regexp.MatchString(wantNodeTwoPattern, nodeLines); !match {
-			t.Error("Want node two")
-		}
+		assert.Regexp(t, wantNodeOnePattern, nodeLines)
+		assert.Regexp(t, wantNodeTwoPattern, nodeLines)
 	})
 
 	t.Run("then go the materials", func(t *testing.T) {
@@ -71,12 +64,8 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			wantMaterialPattern = `'mat_yz' -> 1(\.[0]*)? 2(\.[0]*)? 3(\.[0]*)? 4(\.[0]*)? 5(\.[0]*)? 6(\.[0]*)?`
 		)
 
-		if got := gotLines[materiasOffset]; got != wantHeader {
-			t.Errorf("want '%s', got '%s'", wantHeader, got)
-		}
-		if matches, _ := regexp.MatchString(wantMaterialPattern, gotLines[materiasOffset+1]); !matches {
-			t.Errorf("Want material: %s", gotLines[materiasOffset+1])
-		}
+		assert.Equal(t, wantHeader, gotLines[materialsOffset])
+		assert.Regexp(t, wantMaterialPattern, gotLines[materialsOffset+1])
 	})
 
 	t.Run("then go the sections", func(t *testing.T) {
@@ -85,12 +74,8 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			wantSectionPattern = `'sec_xy' -> 1(\.[0]*)? 2(\.[0]*)? 3(\.[0]*)? 4(\.[0]*)? 5(\.[0]*)?`
 		)
 
-		if got := gotLines[sectionsOffset]; got != wantHeader {
-			t.Errorf("want '%s', got '%s'", wantHeader, got)
-		}
-		if matches, _ := regexp.MatchString(wantSectionPattern, gotLines[sectionsOffset+1]); !matches {
-			t.Errorf("Want section: %s", gotLines[sectionsOffset+1])
-		}
+		assert.Equal(t, wantHeader, gotLines[sectionsOffset])
+		assert.Regexp(t, wantSectionPattern, gotLines[sectionsOffset+1])
 	})
 
 	t.Run("lastly go the bars", func(t *testing.T) {
@@ -99,12 +84,8 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			wantBar    = "b1 -> n1 { dx dy rz } n2 { dx dy rz } 'mat_yz' 'sec_xy' >> 3"
 		)
 
-		if got := gotLines[barsOffset]; got != wantHeader {
-			t.Errorf("want '%s', got '%s'", wantHeader, got)
-		}
-		if got := gotLines[barsOffset+1]; got != wantBar {
-			t.Errorf("want '%s', got '%s'", wantBar, got)
-		}
+		assert.Equal(t, wantHeader, gotLines[barsOffset])
+		assert.Equal(t, wantBar, gotLines[barsOffset+1])
 
 		// first node
 		var (
@@ -115,24 +96,12 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			wantFirstNodeNetPattern   = `\s+net\s+: {15(\.[0]+)? 30(\.[0]+)? 45(\.[0]+)?}`
 			wantFirstNodeDofPattern   = `\s+dof\s+: \[0 1 2\]`
 		)
-		if matches, _ := regexp.MatchString(wantFirstNodePattern, gotLines[barsOffset+2]); !matches {
-			t.Errorf("Want first node position, got: %s", gotLines[barsOffset+2])
-		}
-		if matches, _ := regexp.MatchString(wantFirstNodeExtPattern, gotLines[barsOffset+3]); !matches {
-			t.Errorf("Want first node external load, got: %s", gotLines[barsOffset+3])
-		}
-		if matches, _ := regexp.MatchString(wantFirstNodeLeftPattern, gotLines[barsOffset+4]); !matches {
-			t.Errorf("Want first node left load, got: %s", gotLines[barsOffset+4])
-		}
-		if matches, _ := regexp.MatchString(wantFirstNodeRightPattern, gotLines[barsOffset+5]); !matches {
-			t.Errorf("Want first node right load, got: %s", gotLines[barsOffset+5])
-		}
-		if matches, _ := regexp.MatchString(wantFirstNodeNetPattern, gotLines[barsOffset+6]); !matches {
-			t.Errorf("Want first node net load, got: %s", gotLines[barsOffset+6])
-		}
-		if matches, _ := regexp.MatchString(wantFirstNodeDofPattern, gotLines[barsOffset+7]); !matches {
-			t.Errorf("Want first node dofs, got: %s", gotLines[barsOffset+7])
-		}
+		assert.Regexp(t, wantFirstNodePattern, gotLines[barsOffset+2])
+		assert.Regexp(t, wantFirstNodeExtPattern, gotLines[barsOffset+3])
+		assert.Regexp(t, wantFirstNodeLeftPattern, gotLines[barsOffset+4])
+		assert.Regexp(t, wantFirstNodeRightPattern, gotLines[barsOffset+5])
+		assert.Regexp(t, wantFirstNodeNetPattern, gotLines[barsOffset+6])
+		assert.Regexp(t, wantFirstNodeDofPattern, gotLines[barsOffset+7])
 
 		// second node
 		var (
@@ -143,24 +112,12 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			wantSecondNodeNetPattern   = `\s+net\s+: {11(\.[0]+)? 21(\.[0]+)? 31(\.[0]+)?}`
 			wantSecondNodeDofPattern   = `\s+dof\s+: \[3 4 5\]`
 		)
-		if matches, _ := regexp.MatchString(wantSecondNodePattern, gotLines[barsOffset+8]); !matches {
-			t.Errorf("Want second node positi:n, got: %s", gotLines[barsOffset+8])
-		}
-		if matches, _ := regexp.MatchString(wantSecondNodeExtPattern, gotLines[barsOffset+9]); !matches {
-			t.Errorf("Want seconde node external load, got: %s", gotLines[barsOffset+9])
-		}
-		if matches, _ := regexp.MatchString(wantSecondNodeLeftPattern, gotLines[barsOffset+10]); !matches {
-			t.Errorf("Want second node left load, got: %s", gotLines[barsOffset+10])
-		}
-		if matches, _ := regexp.MatchString(wantSecondNodeRightPattern, gotLines[barsOffset+11]); !matches {
-			t.Errorf("Want second node right load, got: %s", gotLines[barsOffset+11])
-		}
-		if matches, _ := regexp.MatchString(wantSecondNodeNetPattern, gotLines[barsOffset+12]); !matches {
-			t.Errorf("Want second node net load, got: %s", gotLines[barsOffset+12])
-		}
-		if matches, _ := regexp.MatchString(wantSecondNodeDofPattern, gotLines[barsOffset+13]); !matches {
-			t.Errorf("Want second node dofs, got: %s", gotLines[barsOffset+13])
-		}
+		assert.Regexp(t, wantSecondNodePattern, gotLines[barsOffset+8])
+		assert.Regexp(t, wantSecondNodeExtPattern, gotLines[barsOffset+9])
+		assert.Regexp(t, wantSecondNodeLeftPattern, gotLines[barsOffset+10])
+		assert.Regexp(t, wantSecondNodeRightPattern, gotLines[barsOffset+11])
+		assert.Regexp(t, wantSecondNodeNetPattern, gotLines[barsOffset+12])
+		assert.Regexp(t, wantSecondNodeDofPattern, gotLines[barsOffset+13])
 
 		// third node
 		var (
@@ -171,23 +128,11 @@ func TestWritePreprocessedStructure(t *testing.T) {
 			wantThirdNodeNetPattern   = `\s+net\s+: {7(\.[0]+)? 12(\.[0]+)? 17(\.[0]+)?}`
 			wantThirdNodeDofPattern   = `\s+dof\s+: \[6 7 8\]`
 		)
-		if matches, _ := regexp.MatchString(wantThirdNodePattern, gotLines[barsOffset+14]); !matches {
-			t.Errorf("Want third node position: %s", gotLines[barsOffset+14])
-		}
-		if matches, _ := regexp.MatchString(wantThirdNodeExtPattern, gotLines[barsOffset+15]); !matches {
-			t.Errorf("Want third node external load, got: %s", gotLines[barsOffset+15])
-		}
-		if matches, _ := regexp.MatchString(wantThirdNodeLeftPattern, gotLines[barsOffset+16]); !matches {
-			t.Errorf("Want third node left load: %s", gotLines[barsOffset+16])
-		}
-		if matches, _ := regexp.MatchString(wantThirdNodeRightPattern, gotLines[barsOffset+17]); !matches {
-			t.Errorf("Want third node right load: %s", gotLines[barsOffset+17])
-		}
-		if matches, _ := regexp.MatchString(wantThirdNodeNetPattern, gotLines[barsOffset+18]); !matches {
-			t.Errorf("Want third node net load: %s", gotLines[barsOffset+18])
-		}
-		if matches, _ := regexp.MatchString(wantThirdNodeDofPattern, gotLines[barsOffset+19]); !matches {
-			t.Errorf("Want third node dofs: %s", gotLines[barsOffset+19])
-		}
+		assert.Regexp(t, wantThirdNodePattern, gotLines[barsOffset+14])
+		assert.Regexp(t, wantThirdNodeExtPattern, gotLines[barsOffset+15])
+		assert.Regexp(t, wantThirdNodeLeftPattern, gotLines[barsOffset+16])
+		assert.Regexp(t, wantThirdNodeRightPattern, gotLines[barsOffset+17])
+		assert.Regexp(t, wantThirdNodeNetPattern, gotLines[barsOffset+18])
+		assert.Regexp(t, wantThirdNodeDofPattern, gotLines[barsOffset+19])
 	})
 }

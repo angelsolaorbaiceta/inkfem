@@ -14,25 +14,27 @@ import (
 )
 
 var (
-	dofRegex = regexp.MustCompile(`dof_count:\s*(\d+)`)
+	dofRegex       = regexp.MustCompile(`dof_count:\s*(\d+)`)
+	ownWeightRegex = regexp.MustCompile(`includes_own_weight:\s*(yes|no)`)
 )
 
-// Read parses a preprocessed structure from a file.
+// Read parses a preprocessed structure from an .inkfempre file.
 func Read(reader io.Reader) *preprocess.Structure {
 	linesReader := inkio.MakeLinesReader(reader)
 
 	var (
-		metadata         = inkio.ParseMetadata(linesReader)
-		numberOfDof      = extractNumberOfDof(linesReader)
-		nodes            = make(map[contracts.StrID]*structure.Node)
-		materials        = make(structure.MaterialsByName)
-		sections         = make(structure.SectionsByName)
-		bars             = make([]*preprocess.Element, 0)
-		nodesDefined     = false
-		materialsDefined = false
-		sectionsDefined  = false
-		line             string
-		currentSection   string
+		metadata          = inkio.ParseMetadata(linesReader)
+		numberOfDof       = extractNumberOfDof(linesReader)
+		includesOwnWeight = extractIncludesOwnWeight(linesReader)
+		nodes             = make(map[contracts.StrID]*structure.Node)
+		materials         = make(structure.MaterialsByName)
+		sections          = make(structure.SectionsByName)
+		bars              = make([]*preprocess.Element, 0)
+		nodesDefined      = false
+		materialsDefined  = false
+		sectionsDefined   = false
+		line              string
+		currentSection    string
 	)
 
 	for linesReader.ReadNext() {
@@ -93,7 +95,8 @@ func Read(reader io.Reader) *preprocess.Structure {
 		metadata,
 		structure.MakeNodesById(nodes),
 		bars,
-	).SetDofsCount(numberOfDof)
+		includesOwnWeight,
+	).SetDofsCount(numberOfDof) // TODO: should read the DOFs from the file, not reassign them
 }
 
 func extractNumberOfDof(linesReader *inkio.LinesReader) int {
@@ -110,4 +113,15 @@ func extractNumberOfDof(linesReader *inkio.LinesReader) int {
 	}
 
 	panic("Preprocessed file without 'dof_count' set")
+}
+
+func extractIncludesOwnWeight(linesReader *inkio.LinesReader) bool {
+	linesReader.ReadNext()
+
+	line := linesReader.GetNextLine()
+	if ownWeightRegex.MatchString(line) {
+		return ownWeightRegex.FindStringSubmatch(line)[1] == "yes"
+	}
+
+	panic("Preprocessed file without 'includes_own_weight' set")
 }

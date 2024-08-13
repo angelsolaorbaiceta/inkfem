@@ -35,12 +35,18 @@ var (
 )
 
 func solveStructure(str *structure.Structure) *process.Solution {
-	solveOptions := process.SolveOptions{
-		OutputPath:            "",
-		SafeChecks:            true,
-		MaxDisplacementsError: displError,
-	}
-	pre := preprocess.StructureModel(str)
+	var (
+		solveOptions = process.SolveOptions{
+			OutputPath:            "",
+			SafeChecks:            true,
+			MaxDisplacementsError: displError,
+		}
+		preOptions = &preprocess.PreprocessOptions{
+			IncludeOwnWeight: false,
+		}
+		pre = preprocess.StructureModel(str, preOptions)
+	)
+
 	return process.Solve(pre, solveOptions)
 }
 

@@ -6,6 +6,7 @@ import (
 	inkio "github.com/angelsolaorbaiceta/inkfem/io"
 	iopre "github.com/angelsolaorbaiceta/inkfem/io/pre"
 	"github.com/angelsolaorbaiceta/inkfem/log"
+	"github.com/angelsolaorbaiceta/inkfem/preprocess"
 	"github.com/spf13/cobra"
 )
 
@@ -54,9 +55,11 @@ func preStructure(cmd *cobra.Command, args []string) {
 	var (
 		inputFilePath = args[0]
 		outPath       = strings.TrimSuffix(inputFilePath, inkio.DefinitionFileExt)
-		readerOptions = inkio.ReaderOptions{ShouldIncludeOwnWeight: solveIncludeOwnWeight}
-		structure     = readStructureFromFile(inputFilePath, readerOptions)
-		preStructure  = preprocessStructure(structure)
+		structure     = readStructureFromFile(inputFilePath)
+		options       = &preprocess.PreprocessOptions{
+			IncludeOwnWeight: preIncludeOwnWeight,
+		}
+		preStructure = preprocessStructure(structure, options)
 	)
 
 	file := inkio.CreateFile(outPath + inkio.PreFileExt)

@@ -7,6 +7,8 @@ import (
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
+// An ElementBuilder is a helper to construct an element (bar) with the desired
+// properties and loads.
 type ElementBuilder struct {
 	id                 contracts.StrID
 	startNode, endNode *Node
@@ -17,6 +19,8 @@ type ElementBuilder struct {
 	distributedLoads   []*load.DistributedLoad
 }
 
+// MakeElementBuilder creates a new builder to construct an element (bar) using
+// the given id. The builder is used to define the element's properties and loads.
 func MakeElementBuilder(id contracts.StrID) *ElementBuilder {
 	builder := ElementBuilder{}
 	builder.id = id

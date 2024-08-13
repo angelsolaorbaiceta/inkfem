@@ -11,17 +11,15 @@ import (
 
 // Reads the given .inkfem file and tries to parse a structure from the data defined.
 //
-// The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm' are the major and
-// minor version numbers of inkfem used to produce the file or required to compute the structure.
-func Read(reader io.Reader, options inkio.ReaderOptions) *structure.Structure {
+// The first line in the file should be as follows: 'inkfem vM.m', where 'M' and 'm'
+// are the major and minor version numbers of inkfem used to produce the file or
+// required to compute the structure.
+func Read(reader io.Reader) *structure.Structure {
 	linesReader := inkio.MakeLinesReader(reader)
-	return parseStructure(linesReader, options)
+	return parseStructure(linesReader)
 }
 
-func parseStructure(
-	linesReader *inkio.LinesReader,
-	options inkio.ReaderOptions,
-) *structure.Structure {
+func parseStructure(linesReader *inkio.LinesReader) *structure.Structure {
 	var (
 		line              string
 		nodes             = make(map[contracts.StrID]*structure.Node)
@@ -29,7 +27,7 @@ func parseStructure(
 		sections          = make(structure.SectionsByName)
 		concentratedLoads = make(structure.ConcLoadsById)
 		distributedLoads  = make(structure.DistLoadsById)
-		deserializedBars  = make([]*DeserializeBarDTO, 0)
+		deserializedBars  = make([]*DeserializedBarDTO, 0)
 		currentSection    string
 	)
 
@@ -91,7 +89,7 @@ func parseStructure(
 		ConcentratedLoads: concentratedLoads,
 		DistributedLoads:  distributedLoads,
 	}
-	bars := BarsFromDeserialization(deserializedBars, data, options)
+	bars := BarsFromDeserialization(deserializedBars, data)
 
 	// TODO: lines reader error handling?
 	// if err := scanner.Err(); err != nil {

@@ -20,7 +20,8 @@ type Structure struct {
 	Metadata structure.StrMetadata
 	structure.NodesById
 	ElementsSeq
-	dofsCount int
+	dofsCount         int
+	includesOwnWeight bool
 }
 
 // MakeStructure creates a preprocessed structure.
@@ -28,11 +29,13 @@ func MakeStructure(
 	metadata structure.StrMetadata,
 	nodesById structure.NodesById,
 	elements []*Element,
+	includesOwnWeight bool,
 ) *Structure {
 	str := &Structure{
-		Metadata:    metadata,
-		NodesById:   nodesById,
-		ElementsSeq: ElementsSeq{elements: elements},
+		Metadata:          metadata,
+		NodesById:         nodesById,
+		ElementsSeq:       ElementsSeq{elements: elements},
+		includesOwnWeight: includesOwnWeight,
 	}
 
 	return str
@@ -48,6 +51,12 @@ func (s *Structure) DofsCount() int {
 	return s.dofsCount
 }
 
+// IncludesOwnWeight returns true if the structure has been preprocessed with
+// the bars' own weight included as a distributed load.
+func (s *Structure) IncludesOwnWeight() bool {
+	return s.includesOwnWeight
+}
+
 // SetDofsCount sets the number of degrees of freedom the preprocessed structure has.
 // This method is to be used when the structure is read from a file where the DOFs are
 // already assigned.
@@ -58,9 +67,10 @@ func (s *Structure) SetDofsCount(dofsCount int) *Structure {
 
 // AssignDof assigns degrees of freedom numbers to all nodes on sliced elements.
 //
-// Structural nodes are given degrees of freedom to help in the correct assignment of DOF numbers
-// to the elements that meet in the node. Structural elements are first sorted by their geometry
-// positions, so the degrees of freedom numbers follow a logical sequence.
+// Structural nodes are given degrees of freedom to help in the correct assignment
+// of DOF numbers to the elements that meet in the node. Structural elements are
+// first sorted by their geometry positions, so the degrees of freedom numbers
+// follow a logical sequence.
 func (str *Structure) AssignDof() *Structure {
 	sort.Sort(ByGeometryPos(str.Elements()))
 
@@ -71,6 +81,8 @@ func (str *Structure) AssignDof() *Structure {
 		dof                = 0
 	)
 
+	// Assigns DOF numbers to a node if it doesn't have them already.
+	// Nodes with DOF numbers are skipped.
 	assignNodeDof := func(node *structure.Node) {
 		if !node.HasDegreesOfFreedomNum() {
 			node.SetDegreesOfFreedomNum(dof, dof+1, dof+2)
@@ -78,29 +90,36 @@ func (str *Structure) AssignDof() *Structure {
 		}
 	}
 
+	// Assign the DOF numbers to the start and end nodes of the element.
+	// These depend on the external nodes they are connected to, and the constraints
+	// they have with them.
 	endNodesDof := func(
 		link *structure.Constraint,
 		node *structure.Node,
 	) (dxDof, dyDof, rzDof int) {
+		dxDof = -1
+		dyDof = -1
+		rzDof = -1
+
 		if link.AllowsDispX() {
 			dxDof = dof
 			dof++
 		} else {
-			dxDof = node.DegreesOfFreedomNum()[0]
+			dxDof = node.DxDegreeOfFreedomNum()
 		}
 
 		if link.AllowsDispY() {
 			dyDof = dof
 			dof++
 		} else {
-			dyDof = node.DegreesOfFreedomNum()[1]
+			dyDof = node.DyDegreeOfFreedomNum()
 		}
 
 		if link.AllowsRotation() {
 			rzDof = dof
 			dof++
 		} else {
-			rzDof = node.DegreesOfFreedomNum()[2]
+			rzDof = node.RzDegreeOfFreedomNum()
 		}
 
 		return

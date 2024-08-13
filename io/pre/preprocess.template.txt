@@ -1,6 +1,7 @@
 inkfem v{{.Metadata.MajorVersion}}.{{.Metadata.MinorVersion}}
 
 dof_count: {{.DofsCount}}
+includes_own_weight: {{if .IncludesOwnWeight}}yes{{else}}no{{end}}
 
 |nodes|{{range .GetAllNodes}}
 {{.GetID}} -> {{.Position.X}} {{.Position.Y}} {{.ExternalConstraint}} | {{.DegreesOfFreedomNum}}{{end}}

@@ -105,7 +105,7 @@ func MakeTestPreprocessedStructure() *preprocess.Structure {
 	preNodes[2].AddLocalRightLoad(-5, -10, -15)
 
 	return preprocess.
-		MakeStructure(original.Metadata, original.NodesById, elements).
+		MakeStructure(original.Metadata, original.NodesById, elements, false).
 		AssignDof()
 }
 
@@ -136,6 +136,7 @@ func MakeTestPreprocessedReader() io.Reader {
 	return strings.NewReader(`inkfem v2.3
 	
 	dof_count: 9
+	includes_own_weight: no
 	
 	|nodes|
 	n1 -> 0.000000 0.000000 { dx dy rz } | [0 1 2]
