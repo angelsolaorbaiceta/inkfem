@@ -16,7 +16,7 @@ func drawExternalConstraints(
 	l := 75
 
 	canvas.Gstyle(
-		fmt.Sprintf("stroke:%s;stroke-width:%d", config.ExternalConstColor, config.ExternalConstWidth),
+		fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none", config.ExternalConstColor, config.ExternalConstWidth),
 	)
 
 	for _, node := range st.GetAllNodes() {
@@ -29,8 +29,15 @@ func drawExternalConstraints(
 				),
 			)
 
-			if node.ExternalConstraint == &structure.FullConstraint {
-				drawGround(canvas, l)
+			if node.ExternalConstraint.Equals(&structure.FullConstraint) {
+				drawGround(canvas, l, 0)
+			} else if node.ExternalConstraint.Equals(&structure.DispConstraint) {
+				drawTriangle(canvas, l)
+				drawGround(canvas, l, int(l/2))
+			} else if node.ExternalConstraint.Equals(&structure.DispYConstraint) {
+				drawTriangle(canvas, l)
+				drawWheels(canvas, l)
+				drawGround(canvas, l, int(3*l/4))
 			}
 
 			canvas.Gend()
@@ -40,9 +47,40 @@ func drawExternalConstraints(
 	canvas.Gend()
 }
 
-func drawGround(canvas *svg.SVG, l int) {
-	halfL := l / 2
+func drawTriangle(canvas *svg.SVG, l int) {
+	var (
+		halfL   = int(l / 2)
+		fourthL = int(l / 4)
+	)
 
-	canvas.Rect(-halfL, 0, l, halfL, "stroke=\"none\"", fmt.Sprintf("fill=\"url(#%s)\"", diagonalLinesPatternId))
-	canvas.Line(-halfL, 0, halfL, 0)
+	canvas.Polygon(
+		[]int{0, -fourthL, fourthL},
+		[]int{0, halfL, halfL},
+	)
+}
+
+func drawWheels(canvas *svg.SVG, l int) {
+	var (
+		r      = int(l / 8)
+		y      = int(l/2) + r
+		leftX  = -int(l/4) + r
+		rightX = int(l/4) - r
+	)
+
+	canvas.Circle(leftX, y, r)
+	canvas.Circle(rightX, y, r)
+}
+
+func drawGround(canvas *svg.SVG, l int, deltaY int) {
+	var (
+		halfL = l / 2
+		y     = deltaY
+	)
+
+	canvas.Rect(
+		-halfL, y, l, halfL,
+		"stroke=\"none\"",
+		fmt.Sprintf("fill=\"url(#%s)\"", diagonalLinesPatternId),
+	)
+	canvas.Line(-halfL, y, halfL, y)
 }
