@@ -20,7 +20,8 @@ type Structure struct {
 	Metadata structure.StrMetadata
 	structure.NodesById
 	ElementsSeq
-	dofsCount int
+	dofsCount         int
+	includesOwnWeight bool
 }
 
 // MakeStructure creates a preprocessed structure.
@@ -28,11 +29,13 @@ func MakeStructure(
 	metadata structure.StrMetadata,
 	nodesById structure.NodesById,
 	elements []*Element,
+	includesOwnWeight bool,
 ) *Structure {
 	str := &Structure{
-		Metadata:    metadata,
-		NodesById:   nodesById,
-		ElementsSeq: ElementsSeq{elements: elements},
+		Metadata:          metadata,
+		NodesById:         nodesById,
+		ElementsSeq:       ElementsSeq{elements: elements},
+		includesOwnWeight: includesOwnWeight,
 	}
 
 	return str
@@ -46,6 +49,12 @@ func (s *Structure) GetElementNodes(element *Element) (*structure.Node, *structu
 // DofsCount is the number of degrees of freedom in the preprocessed structure.
 func (s *Structure) DofsCount() int {
 	return s.dofsCount
+}
+
+// IncludesOwnWeight returns true if the structure has been preprocessed with
+// the bars' own weight included as a distributed load.
+func (s *Structure) IncludesOwnWeight() bool {
+	return s.includesOwnWeight
 }
 
 // SetDofsCount sets the number of degrees of freedom the preprocessed structure has.

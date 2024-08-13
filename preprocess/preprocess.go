@@ -44,5 +44,10 @@ func StructureModel(str *structure.Structure, options *PreprocessOptions) *Struc
 	}
 	close(channel)
 
-	return MakeStructure(metadata, str.NodesById.Copy(), slicedElements).AssignDof()
+	return MakeStructure(
+		metadata,
+		str.NodesById.Copy(),
+		slicedElements,
+		options.IncludeOwnWeight,
+	).AssignDof()
 }
