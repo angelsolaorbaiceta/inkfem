@@ -5,11 +5,16 @@ package plot
 type plotConfig struct {
 	GeometryColor string
 	GeometryWidth int
+
+	ExternalConstColor string
+	ExternalConstWidth int
 }
 
-func defaultPlotConfig() plotConfig {
-	return plotConfig{
-		GeometryColor: "black",
-		GeometryWidth: 1,
+func defaultPlotConfig() *plotConfig {
+	return &plotConfig{
+		GeometryColor:      "black",
+		GeometryWidth:      2,
+		ExternalConstColor: "black",
+		ExternalConstWidth: 2,
 	}
 }

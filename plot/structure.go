@@ -8,6 +8,10 @@ import (
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 )
 
+const (
+	diagonalLinesPatternId = "diagonalLines"
+)
+
 // StructurePlotOps are the options that can be passed to the StructureToSVG function to tweak
 // how the structure definition is drawn.
 type StructurePlotOps struct {
@@ -17,7 +21,7 @@ type StructurePlotOps struct {
 
 // StructureToSVG generates an SVG diagram representing the structure's definition and writes
 // the result to the given writer.
-func StructureToSVG(st *structure.Structure, options StructurePlotOps, w io.Writer) {
+func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Writer) {
 	var (
 		rectBounds = structureRectBounds(st, options)
 		canvas     = svg.New(w)
@@ -25,6 +29,11 @@ func StructureToSVG(st *structure.Structure, options StructurePlotOps, w io.Writ
 	)
 
 	canvas.Start(int(rectBounds.Width()), int(rectBounds.Height()))
+
+	canvas.Def()
+	defineExtConstrainPattern(canvas, config)
+	canvas.DefEnd()
+
 	canvas.Gtransform(
 		fmt.Sprintf(
 			"matrix(%f,0,0,%f,%d,%f)",
@@ -34,8 +43,14 @@ func StructureToSVG(st *structure.Structure, options StructurePlotOps, w io.Writ
 			rectBounds.Height()-float64(options.MinMargin),
 		),
 	)
-	drawGeometry(canvas, st, &config)
-	drawExternalConstraints(canvas, st, &config)
+	drawGeometry(canvas, st, config)
+	drawExternalConstraints(canvas, st, config)
 	canvas.Gend()
 	canvas.End()
+}
+
+func defineExtConstrainPattern(canvas *svg.SVG, config *plotConfig) {
+	canvas.Pattern(diagonalLinesPatternId, 0, 0, 10, 10, "user", "patternTransform=\"rotate(30)\"")
+	canvas.Line(0, 0, 0, 10, fmt.Sprintf("stroke:%s;stroke-width:%d", config.ExternalConstColor, config.ExternalConstWidth))
+	canvas.PatternEnd()
 }

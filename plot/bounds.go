@@ -7,7 +7,7 @@ import (
 
 // structureRectBounds computes the rectangle containing the structure's geometry after applying
 // the chosen drawing scale and adding, at least, the minimum margin specified in the options.
-func structureRectBounds(st *structure.Structure, options StructurePlotOps) *g2d.Rect {
+func structureRectBounds(st *structure.Structure, options *StructurePlotOps) *g2d.Rect {
 	nodePositions := make([]*g2d.Point, 0, st.NodesCount())
 
 	var failIfError = func(err error) {
