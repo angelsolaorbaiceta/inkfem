@@ -8,6 +8,9 @@ type plotConfig struct {
 
 	ExternalConstColor string
 	ExternalConstWidth int
+
+	NodeRadius       int
+	ConstraintLength int
 }
 
 func defaultPlotConfig() *plotConfig {
@@ -16,5 +19,7 @@ func defaultPlotConfig() *plotConfig {
 		GeometryWidth:      2,
 		ExternalConstColor: "black",
 		ExternalConstWidth: 2,
+		NodeRadius:         10,
+		ConstraintLength:   80,
 	}
 }

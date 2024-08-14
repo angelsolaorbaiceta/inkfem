@@ -15,28 +15,26 @@ func drawGeometry(
 	canvas *svg.SVG,
 	st *structure.Structure,
 	config *plotConfig,
+	scale unitsScale,
 ) {
-	// TODO: Derive the radius from the average element length.
-	radius := 10
-
 	canvas.Gstyle(
 		fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none", config.GeometryColor, config.GeometryWidth),
 	)
 
-	var startPoint, endPoint *g2d.Point
+	var (
+		startPoint, endPoint       *g2d.Point
+		startX, startY, endX, endY int
+	)
 
 	for _, element := range st.Elements() {
-		startPoint = element.StartPoint()
-		endPoint = element.EndPoint()
+		startPoint = scale.applyToPoint(element.StartPoint())
+		endPoint = scale.applyToPoint((element.EndPoint()))
+		startX, startY = int(startPoint.X()), int(startPoint.Y())
+		endX, endY = int(endPoint.X()), int(endPoint.Y())
 
-		canvas.Line(
-			int(startPoint.X()), int(startPoint.Y()),
-			int(endPoint.X()), int(endPoint.Y()),
-			// "vector-effect=\"non-scaling-stroke\"",
-		)
-
-		canvas.Circle(int(startPoint.X()), int(startPoint.Y()), radius)
-		canvas.Circle(int(endPoint.X()), int(endPoint.Y()), radius)
+		canvas.Line(startX, startY, endX, endY)
+		canvas.Circle(startX, startY, config.NodeRadius)
+		canvas.Circle(endX, endY, config.NodeRadius)
 	}
 
 	canvas.Gend()

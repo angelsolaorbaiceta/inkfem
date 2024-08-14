@@ -5,15 +5,20 @@ import (
 
 	svg "github.com/ajstarks/svgo"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 func drawExternalConstraints(
 	canvas *svg.SVG,
 	st *structure.Structure,
 	config *plotConfig,
+	scale unitsScale,
 ) {
-	// TODO: Derive the length from the average element length.
-	l := 75
+	var (
+		l    = config.ConstraintLength
+		pos  *g2d.Point
+		x, y int
+	)
 
 	canvas.Gstyle(
 		fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none", config.ExternalConstColor, config.ExternalConstWidth),
@@ -21,12 +26,13 @@ func drawExternalConstraints(
 
 	for _, node := range st.GetAllNodes() {
 		if node.IsExternallyConstrained() {
+			pos = scale.applyToPoint(node.Position)
+			x, y = int(pos.X()), int(pos.Y())
+
 			// A group that sets the coordinate origin at the node's position and the
 			// y-axis pointing downwards.
 			canvas.Gtransform(
-				fmt.Sprintf("translate(%d,%d) scale(1,-1)",
-					int(node.Position.X()), int(node.Position.Y()),
-				),
+				fmt.Sprintf("translate(%d,%d) scale(1,-1)", x, y),
 			)
 
 			if node.ExternalConstraint.Equals(&structure.FullConstraint) {
