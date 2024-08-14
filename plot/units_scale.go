@@ -11,10 +11,10 @@ const (
 	xSmallScaleFactor unitsScale = 150.0
 	// smallScaleFactor is the scale factor applied to the structure geometry
 	// when the units appear to be in the order of feet.
-	smallScaleFactor unitsScale = 30.0
+	smallScaleFactor unitsScale = 50.0
 	// mediumScaleFactor is the scale factor applied to the structure geometry
 	// when the units appear to be in the order of inches.
-	mediumScaleFactor unitsScale = 10.0
+	mediumScaleFactor unitsScale = 4.0
 )
 
 // unitsScale is a scale factor that applied to the structure geometry to make

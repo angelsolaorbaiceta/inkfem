@@ -90,3 +90,23 @@ func drawGround(canvas *svg.SVG, l int, deltaY int) {
 	)
 	canvas.Line(-halfL, y, halfL, y)
 }
+
+// Defines the pattern used to draw the ground in the external constraints.
+// The pattern is a set of diagonal lines.
+func defineExtConstrainGroundPattern(canvas *svg.SVG, config *plotConfig) {
+	canvas.Pattern(
+		diagonalLinesPatternId,
+		0, 0, 10, 10,
+		"user",
+		"patternTransform=\"rotate(30)\"",
+	)
+	canvas.Line(
+		0, 0, 0, 10,
+		fmt.Sprintf(
+			"stroke:%s;stroke-width:%d",
+			config.ExternalConstColor,
+			config.ExternalConstWidth,
+		),
+	)
+	canvas.PatternEnd()
+}
