@@ -43,7 +43,7 @@ func TestStructureToSVG(t *testing.T) {
 			[]*structure.Element{barOne, barTwo},
 		)
 
-		plotOps = StructurePlotOps{
+		plotOps = &StructurePlotOps{
 			Scale:     5.0,
 			MinMargin: 100,
 		}
