@@ -11,6 +11,14 @@
       "mode": "auto",
       "program": "${workspaceFolder}/inkfem.go",
       "args": ["solve", "examples/retic_10x5.inkfem"]
+    },
+    {
+      "name": "Plot Structure",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/inkfem.go",
+      "args": ["plot", "examples/retic_10x5.inkfem"]
     }
   ]
 }

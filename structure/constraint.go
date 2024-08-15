@@ -9,6 +9,9 @@ var (
 	// DispConstraint is a constraint where the displacement DOFs are constrained.
 	DispConstraint = Constraint{true, true, false}
 
+	// DispYConstraint is a constraint where the displacement in the y direction is constrained.
+	DispYConstraint = Constraint{false, true, false}
+
 	// FullConstraint is a constraint where all the DOFs are constrained.
 	FullConstraint = Constraint{true, true, true}
 )

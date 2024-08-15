@@ -15,22 +15,26 @@ func drawGeometry(
 	canvas *svg.SVG,
 	st *structure.Structure,
 	config *plotConfig,
+	scale unitsScale,
 ) {
 	canvas.Gstyle(
-		fmt.Sprintf("stroke:%s;stroke-width:%d", config.GeometryColor, config.GeometryWidth),
+		fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none", config.GeometryColor, config.GeometryWidth),
 	)
 
-	var startPoint, endPoint *g2d.Point
+	var (
+		startPoint, endPoint       *g2d.Point
+		startX, startY, endX, endY int
+	)
 
 	for _, element := range st.Elements() {
-		startPoint = element.StartPoint()
-		endPoint = element.EndPoint()
+		startPoint = scale.applyToPoint(element.StartPoint())
+		endPoint = scale.applyToPoint((element.EndPoint()))
+		startX, startY = int(startPoint.X()), int(startPoint.Y())
+		endX, endY = int(endPoint.X()), int(endPoint.Y())
 
-		canvas.Line(
-			int(startPoint.X()), int(startPoint.Y()),
-			int(endPoint.X()), int(endPoint.Y()),
-			"vector-effect=\"non-scaling-stroke\"",
-		)
+		canvas.Line(startX, startY, endX, endY)
+		canvas.Circle(startX, startY, config.NodeRadius)
+		canvas.Circle(endX, endY, config.NodeRadius)
 	}
 
 	canvas.Gend()

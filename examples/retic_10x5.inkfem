@@ -8,15 +8,15 @@ inkfem v1.1
 
 |nodes|
 1 -> 0 0 {dx dy rz}
-2 -> 700 0 {dx dy rz}
+2 -> 700 0 {dx dy}
 3 -> 1400 0 {dx dy rz}
 4 -> 2100 0 {dx dy rz}
 5 -> 2800 0 {dx dy rz}
-6 -> 3500 0 {dx dy rz}
-7 -> 4200 0 {dx dy rz}
+6 -> 3500 0 {dy}
+7 -> 4200 0 {dy}
 8 -> 4900 0 {dx dy rz}
 9 -> 5600 0 {dx dy rz}
-10 -> 6300 0 {dx dy rz}
+10 -> 6300 0 {dx dy}
 11 -> 7000 0 {dx dy rz}
 12 -> 0 300 {}
 13 -> 700 300 {}
