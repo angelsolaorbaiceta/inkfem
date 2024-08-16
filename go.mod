@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/ajstarks/svgo v0.0.0-20211024235047-1546f124cd8b
-	github.com/angelsolaorbaiceta/inkgeom v0.1.4
+	github.com/angelsolaorbaiceta/inkgeom v0.1.5
 	github.com/angelsolaorbaiceta/inkmath v0.2.6
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.9.0

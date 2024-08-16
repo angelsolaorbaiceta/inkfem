@@ -13,6 +13,8 @@ const (
 
 // StructurePlotOps are the options that can be passed to the StructureToSVG
 // function to tweak how the structure is drawn.
+//
+// These options are passed by the user when calling the plot command.
 type StructurePlotOps struct {
 	Scale     float64
 	MinMargin int
@@ -58,6 +60,7 @@ func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Wri
 			float64(options.MinMargin), rectBounds.Height()-float64(options.MinMargin),
 		),
 	)
+	drawLoads(st, &ctx)
 	drawGeometry(st, &ctx)
 	drawExternalConstraints(st, &ctx)
 	canvas.Gend()
