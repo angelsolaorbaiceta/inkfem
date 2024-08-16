@@ -67,15 +67,16 @@ func drawLocalDistributedLoad(
 	ctx *plotContext,
 ) {
 	var (
-		canvas = ctx.canvas
-		scale  = ctx.unitsScale
+		canvas    = ctx.canvas
+		scale     = ctx.unitsScale
+		loadScale = ctx.options.DistLoadScale
 
-		endX = int(scale.applyToLength(bar.Length()))
-		// TODO: apply the load plot scale
-		startY = int(-dLoad.StartValue)
-		endY   = int(-dLoad.EndValue)
-		x      = []int{0, 0, endX, endX}
-		y      = []int{0, startY, endY, 0}
+		endX   = int(scale.applyToLength(bar.Length()))
+		startY = int(-dLoad.StartValue * loadScale)
+		endY   = int(-dLoad.EndValue * loadScale)
+
+		x = []int{0, 0, endX, endX}
+		y = []int{0, startY, endY, 0}
 	)
 
 	canvas.Polygon(x, y)

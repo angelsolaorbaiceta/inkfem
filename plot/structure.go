@@ -16,7 +16,11 @@ const (
 //
 // These options are passed by the user when calling the plot command.
 type StructurePlotOps struct {
-	Scale     float64
+	// Scale is the scale factor applied to the structure geometry.
+	Scale float64
+	// DistLoadScale is the scale factor applied to the distributed loads.
+	DistLoadScale float64
+	// MinMargin is the minimum margin between the structure and the canvas border.
 	MinMargin int
 }
 
@@ -26,6 +30,7 @@ type StructurePlotOps struct {
 type plotContext struct {
 	canvas     *svg.SVG
 	config     *plotConfig
+	options    *StructurePlotOps
 	unitsScale unitsScale
 }
 
@@ -42,6 +47,7 @@ func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Wri
 		ctx        = plotContext{
 			canvas:     canvas,
 			config:     config,
+			options:    options,
 			unitsScale: unitsScale,
 		}
 	)
