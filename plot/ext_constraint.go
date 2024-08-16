@@ -9,12 +9,14 @@ import (
 )
 
 func drawExternalConstraints(
-	canvas *svg.SVG,
 	st *structure.Structure,
-	config *plotConfig,
-	scale unitsScale,
+	ctx *plotContext,
 ) {
 	var (
+		canvas = ctx.canvas
+		config = ctx.config
+		scale  = ctx.unitsScale
+
 		l    = config.ConstraintLength
 		pos  *g2d.Point
 		x, y int

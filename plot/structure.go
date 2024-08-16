@@ -1,7 +1,6 @@
 package plot
 
 import (
-	"fmt"
 	"io"
 
 	svg "github.com/ajstarks/svgo"
@@ -19,6 +18,15 @@ type StructurePlotOps struct {
 	MinMargin int
 }
 
+// plotContext is a structure that holds the context for the plot drawing functions.
+// It includes the canvas where the drawing is done, the configuration for the plot,
+// and the units scale to draw the elements with the right size.
+type plotContext struct {
+	canvas     *svg.SVG
+	config     *plotConfig
+	unitsScale unitsScale
+}
+
 // StructureToSVG generates an SVG diagram representing the structure's definition
 // and writes the result to the given writer.
 func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Writer) {
@@ -29,6 +37,11 @@ func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Wri
 		rectBounds = structureRectBounds(st, options, unitsScale)
 		canvas     = svg.New(w)
 		config     = defaultPlotConfig()
+		ctx        = plotContext{
+			canvas:     canvas,
+			config:     config,
+			unitsScale: unitsScale,
+		}
 	)
 
 	canvas.Start(int(rectBounds.Width()), int(rectBounds.Height()))
@@ -40,16 +53,13 @@ func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Wri
 	// The canvas is scaled so the Y axis points upwards and the scale is applied.
 	// The origin is set at the bottom left corner of the canvas, including a margin.
 	canvas.Gtransform(
-		fmt.Sprintf(
-			"matrix(%f,0,0,%f,%d,%f)",
-			options.Scale,
-			-options.Scale,
-			options.MinMargin,
-			rectBounds.Height()-float64(options.MinMargin),
+		transformMatrix(
+			options.Scale, -options.Scale,
+			float64(options.MinMargin), rectBounds.Height()-float64(options.MinMargin),
 		),
 	)
-	drawGeometry(canvas, st, config, unitsScale)
-	drawExternalConstraints(canvas, st, config, unitsScale)
+	drawGeometry(st, &ctx)
+	drawExternalConstraints(st, &ctx)
 	canvas.Gend()
 	canvas.End()
 }
