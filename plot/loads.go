@@ -80,4 +80,15 @@ func drawLocalDistributedLoad(
 	)
 
 	canvas.Polygon(x, y)
+	canvas.Text(0, 0, fmt.Sprintf("%.2f", dLoad.StartValue), textTransform(0, startY), fmt.Sprintf("fill:%s", ctx.config.DistLoadColor))
+	canvas.Text(0, 0, fmt.Sprintf("%.2f", dLoad.EndValue), textTransform(endX, endY), fmt.Sprintf("fill:%s", ctx.config.DistLoadColor))
+}
+
+func textTransform(x, y int) string {
+	var (
+		translate = translate(float64(x), float64(y))
+		scale     = scale(1, -1)
+	)
+
+	return fmt.Sprintf("transform=\"%s %s\"", translate, scale)
 }
