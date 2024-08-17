@@ -31,21 +31,25 @@ type StructurePlotOps struct {
 // and the units scale to draw the elements with the right size.
 type plotContext struct {
 	canvas     *svg.SVG
-	config     *plotConfig
+	config     *PlotConfig
 	options    *StructurePlotOps
 	unitsScale unitsScale
 }
 
 // StructureToSVG generates an SVG diagram representing the structure's definition
 // and writes the result to the given writer.
-func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Writer) {
+func StructureToSVG(
+	st *structure.Structure,
+	options *StructurePlotOps,
+	config *PlotConfig,
+	w io.Writer,
+) {
 	var (
 		// The units scale is a scale factor to account for the units used to define the
 		// structure. It makes sure that the size of the bars is adequate for the plot.
 		unitsScale = determineUnitsScale(st)
 		rectBounds = structureRectBounds(st, options, unitsScale)
 		canvas     = svg.New(w)
-		config     = defaultPlotConfig()
 		ctx        = plotContext{
 			canvas:     canvas,
 			config:     config,
@@ -76,7 +80,7 @@ func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Wri
 	canvas.End()
 }
 
-func defineLoadArrowMarker(canvas *svg.SVG, config *plotConfig) {
+func defineLoadArrowMarker(canvas *svg.SVG, config *PlotConfig) {
 	size := config.DistLoadArrowSize
 
 	canvas.Marker(

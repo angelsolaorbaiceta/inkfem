@@ -1,8 +1,8 @@
 package plot
 
-// plotConfig is a struct that holds the configuration options to control the
+// PlotConfig is a struct that holds the configuration options to control the
 // appearance of the structural plot.
-type plotConfig struct {
+type PlotConfig struct {
 	GeometryColor string
 	GeometryWidth int
 
@@ -18,8 +18,8 @@ type plotConfig struct {
 	DistLoadArrowSize int
 }
 
-func defaultPlotConfig() *plotConfig {
-	return &plotConfig{
+func DefaultPlotConfig() *PlotConfig {
+	return &PlotConfig{
 		GeometryColor: "black",
 		GeometryWidth: 2,
 
@@ -30,6 +30,24 @@ func defaultPlotConfig() *plotConfig {
 		ConstraintLength: 80,
 
 		DistLoadColor:     "#558B2F",
+		DistLoadFillColor: "#9CCC6533",
+		DistLoadWidth:     1,
+		DistLoadArrowSize: 30,
+	}
+}
+
+func DarkPlotConfig() *PlotConfig {
+	return &PlotConfig{
+		GeometryColor: "#FAFAFA",
+		GeometryWidth: 2,
+
+		ExternalConstColor: "#FAFAFA",
+		ExternalConstWidth: 2,
+
+		NodeRadius:       10,
+		ConstraintLength: 80,
+
+		DistLoadColor:     "#9CCC65",
 		DistLoadFillColor: "#9CCC6533",
 		DistLoadWidth:     1,
 		DistLoadArrowSize: 30,

@@ -10,6 +10,7 @@ import (
 var (
 	plotScale            float64
 	plotPreprocessedFile bool
+	plotUseDarkTheme     bool
 
 	plotCommand = &cobra.Command{
 		Use:   "plot <inkfem file path>",
@@ -33,6 +34,10 @@ func init() {
 		Flags().
 		BoolVarP(&plotPreprocessedFile, "preprocess", "p", false, "plot the preprocessed structure (if the .inkfempre file can be found)")
 
+	plotCommand.
+		Flags().
+		BoolVarP(&plotUseDarkTheme, "dark", "d", false, "use a dark theme for the plot")
+
 	rootCmd.AddCommand(plotCommand)
 }
 
@@ -47,7 +52,14 @@ func plotStructure(cmd *cobra.Command, args []string) {
 			DistLoadScale: 0.5,
 			MinMargin:     150,
 		}
+		plotConfig *plot.PlotConfig
 	)
+
+	if plotUseDarkTheme {
+		plotConfig = plot.DarkPlotConfig()
+	} else {
+		plotConfig = plot.DefaultPlotConfig()
+	}
 
 	strPlotFile, err := os.Create(structurePlotFilePath)
 	if err != nil {
@@ -55,5 +67,5 @@ func plotStructure(cmd *cobra.Command, args []string) {
 	}
 	defer strPlotFile.Close()
 
-	plot.StructureToSVG(structure, strPlotOptions, strPlotFile)
+	plot.StructureToSVG(structure, strPlotOptions, plotConfig, strPlotFile)
 }
