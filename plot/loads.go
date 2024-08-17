@@ -3,8 +3,26 @@ package plot
 import (
 	"fmt"
 
+	"github.com/angelsolaorbaiceta/inkfem/math"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
+)
+
+var (
+	// distLoadLinePositions are the positions where the distributed load lines
+	// with the arrowheads are drawn.
+	distLoadLinePositions = []nums.TParam{
+		nums.MakeTParam(0.1),
+		nums.MakeTParam(0.2),
+		nums.MakeTParam(0.3),
+		nums.MakeTParam(0.4),
+		nums.MakeTParam(0.5),
+		nums.MakeTParam(0.6),
+		nums.MakeTParam(0.7),
+		nums.MakeTParam(0.8),
+		nums.MakeTParam(0.9),
+	}
 )
 
 func drawLoads(st *structure.Structure, ctx *plotContext) {
@@ -35,7 +53,10 @@ func drawDistributedLoads(bar *structure.Element, ctx *plotContext) {
 	)
 
 	canvas.Gstyle(
-		fmt.Sprintf("stroke-width:%d;stroke:%s;fill:none", config.DistLoadWidth, config.DistLoadColor),
+		fmt.Sprintf(
+			"stroke-width:%d;stroke:%s;fill:%s",
+			config.DistLoadWidth, config.DistLoadColor, config.DistLoadFillColor,
+		),
 	)
 
 	for _, dLoad := range bar.DistributedLoads {
@@ -82,6 +103,22 @@ func drawLocalDistributedLoad(
 	canvas.Polygon(x, y)
 	canvas.Text(0, 0, fmt.Sprintf("%.2f", dLoad.StartValue), textTransform(0, startY), fmt.Sprintf("fill:%s", ctx.config.DistLoadColor))
 	canvas.Text(0, 0, fmt.Sprintf("%.2f", dLoad.EndValue), textTransform(endX, endY), fmt.Sprintf("fill:%s", ctx.config.DistLoadColor))
+
+	for _, t := range distLoadLinePositions {
+		var (
+			scaledLength = scale.applyToLength(bar.Length())
+			loadX        = int(scaledLength * t.Value())
+			loadY        = int(-dLoad.ValueAt(t) * loadScale)
+		)
+
+		if math.AbsInt(loadY) > ctx.config.DistLoadArrowSize {
+			canvas.Line(
+				loadX, loadY, loadX, 0,
+				fmt.Sprintf("marker-end=\"url(#%s)\"", loadArrowMarkerId),
+				fmt.Sprintf("stroke=\"%s\"", ctx.config.DistLoadColor),
+			)
+		}
+	}
 }
 
 func textTransform(x, y int) string {

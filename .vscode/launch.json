@@ -18,7 +18,7 @@
       "request": "launch",
       "mode": "auto",
       "program": "${workspaceFolder}/inkfem.go",
-      "args": ["plot", "examples/retic_10x5.inkfem"]
+      "args": ["plot", "examples/minihouse.inkfem"]
     }
   ]
 }

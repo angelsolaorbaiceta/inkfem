@@ -1,6 +1,7 @@
 package plot
 
 import (
+	"fmt"
 	"io"
 
 	svg "github.com/ajstarks/svgo"
@@ -9,6 +10,7 @@ import (
 
 const (
 	diagonalLinesPatternId = "diagonalLines"
+	loadArrowMarkerId      = "loadArrow"
 )
 
 // StructurePlotOps are the options that can be passed to the StructureToSVG
@@ -56,6 +58,7 @@ func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Wri
 
 	canvas.Def()
 	defineExtConstrainGroundPattern(canvas, config)
+	defineLoadArrowMarker(canvas, config)
 	canvas.DefEnd()
 
 	// The canvas is scaled so the Y axis points upwards and the scale is applied.
@@ -71,4 +74,27 @@ func StructureToSVG(st *structure.Structure, options *StructurePlotOps, w io.Wri
 	drawExternalConstraints(st, &ctx)
 	canvas.Gend()
 	canvas.End()
+}
+
+func defineLoadArrowMarker(canvas *svg.SVG, config *plotConfig) {
+	size := config.DistLoadArrowSize
+
+	canvas.Marker(
+		loadArrowMarkerId,
+		9,          // refX
+		2,          // refY
+		size, size, // markerWidth, markerHeight
+		"orient=\"auto\"",
+		"markerUnits=\"userSpaceOnUse\"",
+		"viewBox=\"-2 -2 12 12\"",
+	)
+	canvas.Path(
+		"M0,0 L9,2 L0,4",
+		"vector-effect=\"non-scaling-stroke\"",
+		fmt.Sprintf(
+			"stroke:%s;stroke-width:%d;fill:none",
+			config.DistLoadColor, config.DistLoadWidth,
+		),
+	)
+	canvas.MarkerEnd()
 }

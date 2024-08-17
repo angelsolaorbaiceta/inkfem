@@ -12,8 +12,10 @@ type plotConfig struct {
 	NodeRadius       int
 	ConstraintLength int
 
-	DistLoadColor string
-	DistLoadWidth int
+	DistLoadColor     string
+	DistLoadFillColor string
+	DistLoadWidth     int
+	DistLoadArrowSize int
 }
 
 func defaultPlotConfig() *plotConfig {
@@ -27,7 +29,9 @@ func defaultPlotConfig() *plotConfig {
 		NodeRadius:       10,
 		ConstraintLength: 80,
 
-		DistLoadColor: "red",
-		DistLoadWidth: 1,
+		DistLoadColor:     "#558B2F",
+		DistLoadFillColor: "#9CCC6533",
+		DistLoadWidth:     1,
+		DistLoadArrowSize: 30,
 	}
 }
