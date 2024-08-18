@@ -43,7 +43,8 @@ func TestStructureToSVG(t *testing.T) {
 			[]*structure.Element{barOne, barTwo},
 		)
 
-		plotOps = &StructurePlotOps{
+		plotConfig = DefaultPlotConfig()
+		plotOps    = &StructurePlotOps{
 			Scale:     5.0,
 			MinMargin: 100,
 		}
@@ -52,7 +53,7 @@ func TestStructureToSVG(t *testing.T) {
 	t.Run("computes the right image size given the scale and margin", func(t *testing.T) {
 		var b bytes.Buffer
 
-		StructureToSVG(strDefinition, plotOps, &b)
+		StructureToSVG(strDefinition, plotOps, plotConfig, &b)
 		// structure has a width of 200, times the scale plus the two lateral margins = 1200px
 		// structure has a height of 300, times the scale plust the two vertical margins = 1700px
 		var (
@@ -73,7 +74,7 @@ func TestStructureToSVG(t *testing.T) {
 	t.Run("applies an affine transformation", func(t *testing.T) {
 		var b bytes.Buffer
 
-		StructureToSVG(strDefinition, plotOps, &b)
+		StructureToSVG(strDefinition, plotOps, plotConfig, &b)
 		// sx = 5, sy = -5, tx = 100, ty = 1700 - 100 = 1600
 		var (
 			got                  = b.String()
@@ -88,7 +89,7 @@ func TestStructureToSVG(t *testing.T) {
 	t.Run("draws the bars", func(t *testing.T) {
 		var b bytes.Buffer
 
-		StructureToSVG(strDefinition, plotOps, &b)
+		StructureToSVG(strDefinition, plotOps, plotConfig, &b)
 		var (
 			got               = b.String()
 			wantBarOnePattern = "<line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"300\""
