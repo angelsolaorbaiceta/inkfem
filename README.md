@@ -1,6 +1,6 @@
 # inkFEM
 
-2D structural analysis program using the Finite Element Method.
+An open-source, 2D structural analysis CLI that implements the Finite Element Method to calculate, generate and plot structures made of linear bars.
 
 ## Usage
 
