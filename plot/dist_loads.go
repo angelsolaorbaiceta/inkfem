@@ -33,6 +33,7 @@ var (
 	}
 )
 
+// drawDistributedLoads draws all the distributed loads of a bar element.
 func drawDistributedLoads(bar *structure.Element, ctx *plotContext) {
 	var (
 		canvas = ctx.canvas
@@ -53,6 +54,7 @@ func drawDistributedLoads(bar *structure.Element, ctx *plotContext) {
 	canvas.Gend()
 }
 
+// drawDistributedLoad draws a distributed load in the bar element.
 func drawDistributedLoad(
 	dLoad *load.DistributedLoad,
 	bar *structure.Element,
@@ -77,8 +79,10 @@ func drawDistributedLoad(
 //  3. With x = endX, move y by the value of the load's end value.
 //  4. The end node, which is at (endX, 0) due to the transformation.
 //
-// By convention, the value of the Fx load is drawn in the Y axis, with the arrows
-// pointing in the X axis direction, according to the load's sign.
+// By convention, the value of the Fx load is drawn in the Y axis, with the
+// arrows pointing in the X axis direction, according to the load's sign.
+// Positive values point to the X axis direction, while negative values point
+// to the opposite direction.
 func drawLocalDistributedFxLoad(
 	dLoad *load.DistributedLoad,
 	bar *structure.Element,
@@ -112,13 +116,14 @@ func drawLocalDistributedFxLoad(
 		lineYPos             int
 		lineXStart, lineXEnd int
 	)
+
 	for _, t := range fxDistLoadLinePositions {
 		// The Y coordinate where the line is drawn
 		lineYPos = interval.ValueAt(t)
 
 		// The X coordinate where the line starts.
 		// If the Y position is between the load's start value and 0, the line starts
-		// at the load's start T position.
+		// at the load's start T position. Otherwise, it starts at the load's slope.
 		if math.IntIsBetweenCloseRange(lineYPos, startY, 0) {
 			lineXStart = startX
 		} else {
@@ -192,6 +197,7 @@ func drawLocalDistributedFyLoad(
 			loadY        = int(-dLoad.ValueAt(t) * loadScale)
 		)
 
+		// Draw the line if there is enough space to draw the arrow.
 		if math.AbsInt(loadY) > ctx.config.DistLoadArrowSize {
 			canvas.Line(
 				loadX, loadY, loadX, 0,
