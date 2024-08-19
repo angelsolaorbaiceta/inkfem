@@ -8,18 +8,18 @@ Structures are defined as plain-text files following the [_.inkfem_ input file f
 Let's define a simple structure made of two columns, a beam, and a vertical distributed load over the beam like the following:
 
 ```
-                                                           
-                 qy = -100 N/cm                           
-                ┌─────┬─────┬─────┬─────┐                  
-                │     │     │     │     │                  
-                │     ▼     ▼     ▼     │                  
- nodeC (0, 200) O───────────────────────O nodeD (300, 200) 
-                │                       │                              
-                │                       │                        
-                │                       │                  
-                │                       │                  
-                │nodeA (0, 0)           │nodeB (300, 0)    
-              ──O──                   ──O──                
+
+                 qy = -100 N/cm
+                ┌─────┬─────┬─────┬─────┐
+                │     │     │     │     │
+                │     ▼     ▼     ▼     │
+ nodeC (0, 200) O───────────────────────O nodeD (300, 200)
+                │                       │
+                │                       │
+                │                       │
+                │                       │
+                │nodeA (0, 0)           │nodeB (300, 0)
+              ──O──                   ──O──
 ```
 
 Define it in a file called _structure.inkfem_ like so:
@@ -59,6 +59,7 @@ You can plot the structure using the `plot` command:
 $ inkfem plot path/to/structure.inkfem --scale 1.0 --dark
 ```
 
+![structure inkfem](docs/img/structure.inkfem.svg)
 
 To solve the structure defined in the _structure.inkfem_ file:
 
@@ -76,7 +77,6 @@ $ inkfem solve path/to/structure.inkfem -p
 ```
 
 This will generate an additional file with the _.inkfempre_ extension containing the information about how the structure has been sliced into finite elements.
-
 
 ### Available Flags
 
