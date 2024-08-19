@@ -2,10 +2,55 @@
 
 An open-source, 2D structural analysis CLI that implements the Finite Element Method to calculate, generate and plot structures made of linear bars.
 
-## Usage
+## Quick Tutorial
 
-Structures are defined following the [_.inkfem_ input file format](./io/README.md).
-To calculate a structure defined in a _.inkfem_ file:
+Structures are defined as plain-text files following the [_.inkfem_ input file format](./io/README.md).
+Let's define a simple structure made of two columns, a beam, and a vertical distributed load over the beam like the following:
+
+```
+                                                           
+                 qy = -100 N/cm                           
+                ┌─────┬─────┬─────┬─────┐                  
+                │     │     │     │     │                  
+                │     ▼     ▼     ▼     │                  
+ nodeC (0, 200) O───────────────────────O nodeD (300, 200) 
+                │                       │                              
+                │                       │                        
+                │                       │                  
+                │                       │                  
+                │nodeA (0, 0)           │nodeB (300, 0)    
+              ──O──                   ──O──                
+```
+
+Define it in a file called _structure.inkfem_ like so:
+
+```
+inkfem v1.1
+
+|nodes|
+nodeA -> 0.0 0.0 {dx dy rz}
+nodeB -> 300.0 0.0 {dy dy rz}
+nodeC -> 0.0 200.0 {}
+nodeD -> 300.0 200.0 {}
+
+|materials|
+'steel' -> 1.0 20000000 1.0 1.0 25000 40000
+
+|sections|
+'ipe_120' -> 14 318 28 53 9
+
+|loads|
+fy ld beam 0.0 -100.0 1.00 -100.00
+
+|bars|
+# Columns
+col1 -> nodeA{dx dy rz} nodeC{dx dy rz} 'steel' 'ipe_120'
+col2 -> nodeB{dx dy rz} nodeD{dx dy rz} 'steel' 'ipe_120'
+# Beam
+beam -> nodeC{dx dy rz} nodeD{dx dy rz} 'steel' 'ipe_120'
+```
+
+To solve the structure defined in the _structure.inkfem_ file:
 
 ```bash
 $ inkfem solve path/to/structure.inkfem
@@ -21,6 +66,7 @@ $ inkfem solve path/to/structure.inkfem -p
 ```
 
 This will generate an additional file with the _.inkfempre_ extension containing the information about how the structure has been sliced into finite elements.
+
 
 ### Available Flags
 
