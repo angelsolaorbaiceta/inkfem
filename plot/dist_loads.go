@@ -93,11 +93,12 @@ func drawLocalDistributedFxLoad(
 		scale     = ctx.unitsScale
 		loadScale = ctx.options.DistLoadScale
 
-		endX   = int(scale.applyToLength(bar.Length()))
+		startX = int(scale.applyToLength(bar.Length() * dLoad.StartT.Value()))
+		endX   = int(scale.applyToLength(bar.Length() * dLoad.EndT.Value()))
 		startY = int(dLoad.StartValue * loadScale)
 		endY   = int(dLoad.EndValue * loadScale)
 
-		x = []int{0, 0, endX, endX}
+		x = []int{startX, startX, endX, endX}
 		y = []int{0, startY, endY, 0}
 	)
 
@@ -117,9 +118,9 @@ func drawLocalDistributedFxLoad(
 
 		// The X coordinate where the line starts.
 		// If the Y position is between the load's start value and 0, the line starts
-		// at the start node.
+		// at the load's start T position.
 		if math.IntIsBetweenCloseRange(lineYPos, startY, 0) {
-			lineXStart = 0
+			lineXStart = startX
 		} else {
 			lineXStart = endX
 		}
