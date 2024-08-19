@@ -29,6 +29,18 @@ func TestMakeSVLE(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
+	t.Run("is not a horizontal line", func(t *testing.T) {
+		svle := MakeSVLE(2, 3)
+
+		assert.False(t, svle.IsHorizontal())
+	})
+
+	t.Run("is a horizontal line", func(t *testing.T) {
+		svle := MakeSVLE(0, 3)
+
+		assert.True(t, svle.IsHorizontal())
+	})
+
 	t.Run("find Y value for a given X value", func(t *testing.T) {
 		svle := MakeSVLE(2, 3)
 

@@ -22,6 +22,12 @@ func (svle SingleVarLinEq) Slope() float64 {
 	return svle.a
 }
 
+// IsHorizontal returns true if the single variable linear equation is a
+// horizontal line, that is, the slope is zero.
+func (svle SingleVarLinEq) IsHorizontal() bool {
+	return svle.isHorizontal
+}
+
 // MakeSVLE creates a new single variable linear equation from the given coefficients.
 func MakeSVLE(a, b float64) SingleVarLinEq {
 	isHorizontal := nums.FloatsEqual(a, 0.0)
