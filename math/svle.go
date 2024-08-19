@@ -64,3 +64,8 @@ func (svle SingleVarLinEq) XAt(y float64) (float64, error) {
 
 	return (y - svle.b) / svle.a, nil
 }
+
+func (svle SingleVarLinEq) Equals(other SingleVarLinEq) bool {
+	return nums.FloatsEqual(svle.a, other.a) &&
+		nums.FloatsEqual(svle.b, other.b)
+}

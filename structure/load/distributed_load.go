@@ -85,6 +85,26 @@ func (load *DistributedLoad) Equals(other *DistributedLoad) bool {
 		nums.FloatsEqual(load.EndValue, other.EndValue)
 }
 
+// AsEquation returns a single variable linear equation representing the
+// distributed load value along an X axis of the given length. The length
+// of the X axis is used to project the load's start and end T positions.
+//
+// If the start and end T values are equal, an error is returned, as there is
+// no linear interpolation to be done.
+func (load *DistributedLoad) AsEquation(
+	xAxisLength float64,
+	yScale float64,
+) (*math.SingleVarLinEq, error) {
+	var (
+		startX = xAxisLength * load.StartT.Value()
+		endX   = xAxisLength * load.EndT.Value()
+		startY = load.StartValue * yScale
+		endY   = load.EndValue * yScale
+	)
+
+	return math.MakeSVLEFromPoints(startX, startY, endX, endY)
+}
+
 func DistributedLoadsEqual(a, b []*DistributedLoad) bool {
 	if len(a) != len(b) {
 		return false
