@@ -2,11 +2,11 @@ package plot
 
 import (
 	"bytes"
-	"regexp"
 	"testing"
 
 	"github.com/angelsolaorbaiceta/inkfem/contracts"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestStructureToSVG(t *testing.T) {
@@ -48,59 +48,51 @@ func TestStructureToSVG(t *testing.T) {
 			Scale:     5.0,
 			MinMargin: 100,
 		}
+
+		b   bytes.Buffer
+		got string
 	)
 
-	t.Run("computes the right image size given the scale and margin", func(t *testing.T) {
-		var b bytes.Buffer
+	StructureToSVG(strDefinition, plotOps, plotConfig, &b)
+	got = b.String()
 
-		StructureToSVG(strDefinition, plotOps, plotConfig, &b)
+	t.Run("computes the right image size given the scale and margin", func(t *testing.T) {
 		// structure has a width of 200, times the scale plus the two lateral margins = 1200px
-		// structure has a height of 300, times the scale plust the two vertical margins = 1700px
+		// structure has a height of 300, times the scale plus the two vertical margins = 1700px
 		var (
-			got               = b.String()
 			wantWidthPattern  = "width=\"1200\""
 			wantHeightPattern = "height=\"1700\""
 		)
 
-		if match, err := regexp.MatchString(wantWidthPattern, got); !match || err != nil {
-			t.Errorf("Want %s, but didn't find in:\n%s\n", wantWidthPattern, got)
-		}
-
-		if match, err := regexp.MatchString(wantHeightPattern, got); !match || err != nil {
-			t.Errorf("Want %s, but didn't find in:\n%s\n", wantHeightPattern, got)
-		}
+		assert.Regexp(t, wantWidthPattern, got)
+		assert.Regexp(t, wantHeightPattern, got)
 	})
 
 	t.Run("applies an affine transformation", func(t *testing.T) {
-		var b bytes.Buffer
-
-		StructureToSVG(strDefinition, plotOps, plotConfig, &b)
 		// sx = 5, sy = -5, tx = 100, ty = 1700 - 100 = 1600
-		var (
-			got                  = b.String()
-			wantTransformPattern = "matrix\\(5(\\.[0]+)?,0,0,-5(\\.[0]+)?,100(\\.[0]+)?,1600(\\.[0]+)?\\)"
-		)
-
-		if match, err := regexp.MatchString(wantTransformPattern, got); !match || err != nil {
-			t.Errorf("Want %s, but didn't find in:\n%s\n", wantTransformPattern, got)
-		}
+		wantTransformPattern := "matrix\\(5(\\.[0]+)?,0,0,-5(\\.[0]+)?,100(\\.[0]+)?,1600(\\.[0]+)?\\)"
+		assert.Regexp(t, wantTransformPattern, got)
 	})
 
 	t.Run("draws the bars", func(t *testing.T) {
-		var b bytes.Buffer
-
-		StructureToSVG(strDefinition, plotOps, plotConfig, &b)
 		var (
-			got               = b.String()
-			wantBarOnePattern = "<line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"300\""
-			wantBarTwoPattern = "<line x1=\"0\" y1=\"300\" x2=\"200\" y2=\"300\""
+			wantBarOnePattern = "<line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"300\" id=\"bar__b1\""
+			wantBarTwoPattern = "<line x1=\"0\" y1=\"300\" x2=\"200\" y2=\"300\" id=\"bar__b2\""
 		)
 
-		if match, err := regexp.MatchString(wantBarOnePattern, got); !match || err != nil {
-			t.Errorf("Want %s, but didn't find in:\n%s\n", wantBarOnePattern, got)
-		}
-		if match, err := regexp.MatchString(wantBarTwoPattern, got); !match || err != nil {
-			t.Errorf("Want %s, but didn't find in:\n%s\n", wantBarTwoPattern, got)
-		}
+		assert.Regexp(t, wantBarOnePattern, got)
+		assert.Regexp(t, wantBarTwoPattern, got)
+	})
+
+	t.Run("draws the nodes", func(t *testing.T) {
+		var (
+			wantNodeOnePattern   = "<circle cx=\"0\" cy=\"0\" r=\"10\" id=\"node__n1\""
+			wantNodeTwoPattern   = "<circle cx=\"0\" cy=\"300\" r=\"10\" id=\"node__n2\""
+			wantNodeThreePattern = "<circle cx=\"200\" cy=\"300\" r=\"10\" id=\"node__n3\""
+		)
+
+		assert.Regexp(t, wantNodeOnePattern, got)
+		assert.Regexp(t, wantNodeTwoPattern, got)
+		assert.Regexp(t, wantNodeThreePattern, got)
 	})
 }
