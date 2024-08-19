@@ -1,4 +1,4 @@
-![structure inkfem](https://github.com/user-attachments/assets/11e7b870-5d96-4cf3-a2a3-a6ab3a09e097)# inkFEM
+# inkFEM
 
 An open-source, 2D structural analysis CLI that implements the Finite Element Method to calculate, generate and plot structures made of linear bars.
 
