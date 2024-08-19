@@ -1,4 +1,4 @@
-# inkFEM
+![structure inkfem](https://github.com/user-attachments/assets/11e7b870-5d96-4cf3-a2a3-a6ab3a09e097)# inkFEM
 
 An open-source, 2D structural analysis CLI that implements the Finite Element Method to calculate, generate and plot structures made of linear bars.
 
@@ -29,7 +29,7 @@ inkfem v1.1
 
 |nodes|
 nodeA -> 0.0    0.0    {dx dy rz}
-nodeB -> 300.0  0.0    {dy dy rz}
+nodeB -> 300.0  0.0    {dx dy rz}
 nodeC -> 0.0    200.0  {}
 nodeD -> 300.0  200.0  {}
 
@@ -52,6 +52,13 @@ beam -> nodeC{dx dy rz} nodeD{dx dy rz} 'steel' 'ipe_120'
 
 > [!NOTE]
 > To understand how to define structures using the _.inkfem_ file format, read the [specs here](./io/README.md).
+
+You can plot the structure using the `plot` command:
+
+```bash
+$ inkfem plot path/to/structure.inkfem --scale 1.0 --dark
+```
+
 
 To solve the structure defined in the _structure.inkfem_ file:
 
