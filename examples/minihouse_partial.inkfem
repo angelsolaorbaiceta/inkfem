@@ -1,0 +1,39 @@
+inkfem v1.1
+
+|nodes|
+1 -> 0.0 0.0 {dx dy}
+2 -> 10.0 0.0 {dy}
+3 -> 0.0 3.0 {}
+4 -> 4.0 3.0 {}
+5 -> 10.0 3.0 {}
+6 -> 4.0 4.5 {}
+
+|materials|
+'steel' -> 1.0 20000000 1.0 1.0 25000 40000
+
+|sections|
+'ipe_120' -> 14 318 28 53 9
+
+|loads|
+fy ld 1 0.2 -300.0 0.75 200.0
+fy ld 8 0.4 -400.0 0.8 -200.0 
+fy ld 9 0.15 -400.0 0.45 -200.0 
+
+fx ld 6 0.0  100.0 1.0  300.0
+fx ld 7 0.0 -150.0 1.0  100.0
+
+mz ld 2 0.0 300 1.0 200
+
+|bars|
+# Columns
+1 -> 1{dx dy rz} 3{dx dy rz} 'steel' 'ipe_120'
+2 -> 2{dx dy rz} 5{dx dy rz} 'steel' 'ipe_120'
+10 -> 4{dx dy rz} 6{dx dy rz} 'steel' 'ipe_120'
+# Beams
+3 -> 3{dx dy rz} 4{dx dy rz} 'steel' 'ipe_120'
+4 -> 4{dx dy rz} 5{dx dy rz} 'steel' 'ipe_120'
+# Diagonals
+6 -> 1{dx dy rz} 4{dx dy rz} 'steel' 'ipe_120'
+7 -> 4{dx dy rz} 2{dx dy rz} 'steel' 'ipe_120'
+8 -> 3{dx dy rz} 6{dx dy rz} 'steel' 'ipe_120'
+9 -> 5{dx dy rz} 6{dx dy rz} 'steel' 'ipe_120'

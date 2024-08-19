@@ -33,3 +33,14 @@ func IntMin(nums ...int) int {
 
 	return min
 }
+
+// IntIsBetweenCloseRange returns true if x is between min(a, b) and max(a, b),
+// inclusive. The order of a and b doesn't matter.
+func IntIsBetweenCloseRange(x, a, b int) bool {
+	var (
+		min = IntMin(a, b)
+		max = IntMax(a, b)
+	)
+
+	return x >= min && x <= max
+}
