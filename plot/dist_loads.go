@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	// distLoadLinePositions are the positions where the distributed load lines
+	// fyDistLoadLinePositions are the positions where the distributed Fy load lines
 	// with the arrowheads are drawn. We draw them at 10% intervals of the length.
-	distLoadLinePositions = []nums.TParam{
+	fyDistLoadLinePositions = []nums.TParam{
 		nums.MakeTParam(0.1),
 		nums.MakeTParam(0.2),
 		nums.MakeTParam(0.3),
@@ -22,6 +22,14 @@ var (
 		nums.MakeTParam(0.7),
 		nums.MakeTParam(0.8),
 		nums.MakeTParam(0.9),
+	}
+	// fxDistLoadLinePositions are the positions where the distributed Fx load lines
+	// with the arrowheads are drawn. We draw them at 20% intervals of the length.
+	fxDistLoadLinePositions = []nums.TParam{
+		nums.MakeTParam(0.2),
+		nums.MakeTParam(0.4),
+		nums.MakeTParam(0.6),
+		nums.MakeTParam(0.8),
 	}
 )
 
@@ -94,6 +102,36 @@ func drawLocalDistributedFxLoad(
 	)
 
 	canvas.Polygon(x, y)
+
+	// To draw the arrow lines, we first need to determine the Y interval between
+	// where the arrow lines are drawn. This is the two Y limit coordinates of
+	// the polygon.
+	var (
+		interval             = math.MakeIntCloseInterval([]int{0, startY, endY})
+		lineYPos             int
+		lineXStart, lineXEnd int
+	)
+	for _, t := range fxDistLoadLinePositions {
+		// The Y coordinate where the line is drawn
+		lineYPos = interval.ValueAt(t)
+
+		// The X coordinate where the line starts. It has to be either 0 (when the
+		// line starts from the load's start node) or a point in the load's polygon.
+		lineXStart = 0
+
+		// The X coordinate where the line ends. It has to be either the end of the
+		// bar (when the line ends at the load's end node) or a point in the load's
+		// polygon.
+		lineXEnd = endX
+
+		if lineXEnd-lineXStart > ctx.config.DistLoadArrowSize {
+			canvas.Line(
+				lineXStart, lineYPos, lineXEnd, lineYPos,
+				fmt.Sprintf("marker-end=\"url(#%s)\"", loadArrowMarkerId),
+				fmt.Sprintf("stroke=\"%s\"", ctx.config.DistLoadColor),
+			)
+		}
+	}
 }
 
 // The Fy load is represented as a polygon with the following vertices:
@@ -132,7 +170,7 @@ func drawLocalDistributedFyLoad(
 	canvas.Text(0, 0, fmt.Sprintf("%.2f", dLoad.StartValue), textTransform(0, startY), fmt.Sprintf("fill:%s", ctx.config.DistLoadColor))
 	canvas.Text(0, 0, fmt.Sprintf("%.2f", dLoad.EndValue), textTransform(endX, endY), fmt.Sprintf("fill:%s", ctx.config.DistLoadColor))
 
-	for _, t := range distLoadLinePositions {
+	for _, t := range fyDistLoadLinePositions {
 		var (
 			scaledLength = scale.applyToLength(bar.Length())
 			loadX        = int(scaledLength * t.Value())
