@@ -28,10 +28,10 @@ Define it in a file called _structure.inkfem_ like so:
 inkfem v1.1
 
 |nodes|
-nodeA -> 0.0 0.0 {dx dy rz}
-nodeB -> 300.0 0.0 {dy dy rz}
-nodeC -> 0.0 200.0 {}
-nodeD -> 300.0 200.0 {}
+nodeA -> 0.0    0.0    {dx dy rz}
+nodeB -> 300.0  0.0    {dy dy rz}
+nodeC -> 0.0    200.0  {}
+nodeD -> 300.0  200.0  {}
 
 |materials|
 'steel' -> 1.0 20000000 1.0 1.0 25000 40000
@@ -49,6 +49,9 @@ col2 -> nodeB{dx dy rz} nodeD{dx dy rz} 'steel' 'ipe_120'
 # Beam
 beam -> nodeC{dx dy rz} nodeD{dx dy rz} 'steel' 'ipe_120'
 ```
+
+> [!NOTE]
+> To understand how to define structures using the _.inkfem_ file format, read the [specs here](./io/README.md).
 
 To solve the structure defined in the _structure.inkfem_ file:
 
