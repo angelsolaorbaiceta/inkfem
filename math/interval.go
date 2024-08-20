@@ -1,6 +1,10 @@
 package math
 
-import "github.com/angelsolaorbaiceta/inkgeom/nums"
+import (
+	"math"
+
+	"github.com/angelsolaorbaiceta/inkgeom/nums"
+)
 
 // IntCloseInterval represents a closed interval of integers.
 type IntCloseInterval struct {
@@ -19,10 +23,10 @@ func (i IntCloseInterval) Max() int {
 }
 
 // MakeIntCloseInterval creates a new IntCloseInterval from a list of integers.
-func MakeIntCloseInterval(nums []int) IntCloseInterval {
-	min, max := nums[0], nums[0]
+func MakeIntCloseInterval(numbers []int) IntCloseInterval {
+	min, max := numbers[0], numbers[0]
 
-	for _, n := range nums[1:] {
+	for _, n := range numbers[1:] {
 		if n < min {
 			min = n
 		}
@@ -35,7 +39,7 @@ func MakeIntCloseInterval(nums []int) IntCloseInterval {
 }
 
 // ValueAt returns the value at a given parameter t in the interval.
-// The value is calculated as min + t*(max - min), rounded to the nearest integer.
 func (i IntCloseInterval) ValueAt(t nums.TParam) int {
-	return i.min + int(t.Value()*float64(i.max-i.min))
+	steps := t.Value() * float64(i.max-i.min) / nums.MaxT.Value()
+	return i.min + int(math.Round(steps))
 }
