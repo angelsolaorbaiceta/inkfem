@@ -56,6 +56,18 @@ func drawLocalDistributedFxLoad(
 	)
 
 	canvas.Polygon(x, y)
+	canvas.Text(
+		0, 0,
+		fmt.Sprintf("%.2f", dLoad.StartValue),
+		textTransform(startX, startY),
+		fmt.Sprintf("fill=\"%s\"", ctx.config.DistLoadColor),
+	)
+	canvas.Text(
+		0, 0,
+		fmt.Sprintf("%.2f", dLoad.EndValue),
+		textTransform(endX, endY),
+		fmt.Sprintf("fill=\"%s\"", ctx.config.DistLoadColor),
+	)
 
 	// To draw the arrow lines, we first need to determine the Y yInterval between
 	// where the arrow lines are drawn. This is the two Y limit coordinates of

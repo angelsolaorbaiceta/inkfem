@@ -62,12 +62,14 @@ func drawLocalDistributedFyLoad(
 	canvas.Text(
 		0, 0,
 		fmt.Sprintf("%.2f", dLoad.StartValue),
-		textTransform(startX, startY), fmt.Sprintf("fill:%s", ctx.config.DistLoadColor),
+		textTransform(startX, startY),
+		fmt.Sprintf("fill:%s", ctx.config.DistLoadColor),
 	)
 	canvas.Text(
 		0, 0,
 		fmt.Sprintf("%.2f", dLoad.EndValue),
-		textTransform(endX, endY), fmt.Sprintf("fill:%s", ctx.config.DistLoadColor),
+		textTransform(endX, endY),
+		fmt.Sprintf("fill:%s", ctx.config.DistLoadColor),
 	)
 
 	for _, t := range fyDistLoadLinePositions {
