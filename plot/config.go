@@ -32,7 +32,7 @@ func DefaultPlotConfig() *PlotConfig {
 		DistLoadColor:     "#558B2F",
 		DistLoadFillColor: "#9CCC6533",
 		DistLoadWidth:     1,
-		DistLoadArrowSize: 30,
+		DistLoadArrowSize: 20,
 	}
 }
 
@@ -50,6 +50,6 @@ func DarkPlotConfig() *PlotConfig {
 		DistLoadColor:     "#9CCC65",
 		DistLoadFillColor: "#9CCC6533",
 		DistLoadWidth:     1,
-		DistLoadArrowSize: 30,
+		DistLoadArrowSize: 20,
 	}
 }

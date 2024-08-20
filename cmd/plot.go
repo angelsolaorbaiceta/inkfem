@@ -11,6 +11,7 @@ var (
 	plotScale            float64
 	plotPreprocessedFile bool
 	plotUseDarkTheme     bool
+	plotDistLoadScale    float64
 
 	plotCommand = &cobra.Command{
 		Use:   "plot <inkfem file path>",
@@ -29,6 +30,9 @@ func init() {
 	plotCommand.
 		Flags().
 		Float64VarP(&plotScale, "scale", "s", 0.25, "Plot scale")
+	plotCommand.
+		Flags().
+		Float64Var(&plotDistLoadScale, "dload-scale", 0.5, "Scale factor for distributed loads")
 
 	plotCommand.
 		Flags().
@@ -49,7 +53,7 @@ func plotStructure(cmd *cobra.Command, args []string) {
 		strPlotOptions        = &plot.StructurePlotOps{
 			Scale: plotScale,
 			// TODO: read these two values from the command line
-			DistLoadScale: 0.5,
+			DistLoadScale: plotDistLoadScale,
 			MinMargin:     150,
 		}
 		plotConfig *plot.PlotConfig
