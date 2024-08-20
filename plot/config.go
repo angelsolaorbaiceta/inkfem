@@ -16,6 +16,15 @@ type PlotConfig struct {
 	DistLoadFillColor string
 	DistLoadWidth     int
 	DistLoadArrowSize int
+
+	ShearColor     string
+	ShearFillColor string
+
+	AxialColor     string
+	AxialFillColor string
+
+	BendingColor     string
+	BendingFillColor string
 }
 
 func DefaultPlotConfig() *PlotConfig {
@@ -33,6 +42,15 @@ func DefaultPlotConfig() *PlotConfig {
 		DistLoadFillColor: "#9CCC6533",
 		DistLoadWidth:     1,
 		DistLoadArrowSize: 20,
+
+		ShearColor:     "#FB8C00",
+		ShearFillColor: "#FFA72633",
+
+		AxialColor:     "#8E24AA",
+		AxialFillColor: "#AB47BC33",
+
+		BendingColor:     "#1E88E5",
+		BendingFillColor: "#42A5F533",
 	}
 }
 
@@ -51,5 +69,14 @@ func DarkPlotConfig() *PlotConfig {
 		DistLoadFillColor: "#9CCC6533",
 		DistLoadWidth:     1,
 		DistLoadArrowSize: 20,
+
+		ShearColor:     "#FFA726",
+		ShearFillColor: "#FFA72633",
+
+		AxialColor:     "#CE93D8",
+		AxialFillColor: "#CE93D833",
+
+		BendingColor:     "#42A5F5",
+		BendingFillColor: "#42A5F533",
 	}
 }
