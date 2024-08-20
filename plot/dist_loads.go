@@ -97,10 +97,11 @@ func drawLocalDistributedFxLoad(
 		scale     = ctx.unitsScale
 		loadScale = ctx.options.DistLoadScale
 
-		startX = int(scale.applyToLength(bar.Length() * dLoad.StartT.Value()))
-		endX   = int(scale.applyToLength(bar.Length() * dLoad.EndT.Value()))
-		startY = int(dLoad.StartValue * loadScale)
-		endY   = int(dLoad.EndValue * loadScale)
+		xLength = scale.applyToLength(bar.Length())
+		startX  = int(scale.applyToLength(bar.Length() * dLoad.StartT.Value()))
+		endX    = int(scale.applyToLength(bar.Length() * dLoad.EndT.Value()))
+		startY  = int(dLoad.StartValue * loadScale)
+		endY    = int(dLoad.EndValue * loadScale)
 
 		x = []int{startX, startX, endX, endX}
 		y = []int{0, startY, endY, 0}
@@ -108,18 +109,28 @@ func drawLocalDistributedFxLoad(
 
 	canvas.Polygon(x, y)
 
-	// To draw the arrow lines, we first need to determine the Y interval between
+	// To draw the arrow lines, we first need to determine the Y yInterval between
 	// where the arrow lines are drawn. This is the two Y limit coordinates of
 	// the polygon.
 	var (
-		interval             = math.MakeIntCloseInterval([]int{0, startY, endY})
+		yInterval            = math.MakeIntCloseInterval([]int{0, startY, endY})
 		lineYPos             int
 		lineXStart, lineXEnd int
 	)
 
+	loadEq, err := dLoad.AsEquation(xLength, loadScale)
+	if err != nil {
+		panic(err)
+	}
+
 	for _, t := range fxDistLoadLinePositions {
 		// The Y coordinate where the line is drawn
-		lineYPos = interval.ValueAt(t)
+		lineYPos = yInterval.ValueAt(t)
+
+		loadX, err := loadEq.XAt(float64(lineYPos))
+		if err != nil {
+			continue
+		}
 
 		// The X coordinate where the line starts.
 		// If the Y position is between the load's start value and 0, the line starts
@@ -127,15 +138,24 @@ func drawLocalDistributedFxLoad(
 		if math.IntIsBetweenCloseRange(lineYPos, startY, 0) {
 			lineXStart = startX
 		} else {
-			lineXStart = endX
+			lineXStart = int(loadX)
 		}
 
 		// The X coordinate where the line ends. It has to be either the end of the
 		// bar (when the line ends at the load's end node) or a point in the load's
 		// polygon.
-		lineXEnd = endX
+		if math.IntIsBetweenCloseRange(lineYPos, endY, 0) {
+			lineXEnd = endX
+		} else {
+			lineXEnd = int(loadX)
+		}
 
-		if lineXEnd-lineXStart > ctx.config.DistLoadArrowSize {
+		// If the value of the load is negative, switch the start and end points.
+		if lineYPos < 0 {
+			lineXStart, lineXEnd = lineXEnd, lineXStart
+		}
+
+		if math.AbsInt(lineXEnd-lineXStart) > ctx.config.DistLoadArrowSize {
 			canvas.Line(
 				lineXStart, lineYPos, lineXEnd, lineYPos,
 				fmt.Sprintf("marker-end=\"url(#%s)\"", loadArrowMarkerId),
