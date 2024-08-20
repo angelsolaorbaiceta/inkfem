@@ -17,7 +17,7 @@ func drawExternalConstraints(
 		config = ctx.config
 		scale  = ctx.unitsScale
 
-		l    = config.ConstraintLength
+		l    = ctx.options.ApplyDrawingScale(config.ConstraintLength)
 		pos  *g2d.Point
 		x, y int
 	)

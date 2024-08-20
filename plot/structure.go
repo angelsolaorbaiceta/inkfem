@@ -3,6 +3,7 @@ package plot
 import (
 	"fmt"
 	"io"
+	"math"
 
 	svg "github.com/ajstarks/svgo"
 	"github.com/angelsolaorbaiceta/inkfem/structure"
@@ -24,6 +25,10 @@ type StructurePlotOps struct {
 	DistLoadScale float64
 	// MinMargin is the minimum margin between the structure and the canvas border.
 	MinMargin int
+}
+
+func (ops StructurePlotOps) ApplyDrawingScale(value int) int {
+	return int(math.Ceil(float64(value) * ops.Scale))
 }
 
 // plotContext is a structure that holds the context for the plot drawing functions.

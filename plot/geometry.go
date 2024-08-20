@@ -12,9 +12,10 @@ import (
 // pointing upwards and the chosen drawing scale.
 func drawGeometry(st *structure.Structure, ctx *plotContext) {
 	var (
-		scale  = ctx.unitsScale
-		canvas = ctx.canvas
-		config = ctx.config
+		scale      = ctx.unitsScale
+		canvas     = ctx.canvas
+		config     = ctx.config
+		nodeRadius = ctx.options.ApplyDrawingScale(config.NodeRadius)
 	)
 
 	canvas.Gstyle(
@@ -46,7 +47,7 @@ func drawGeometry(st *structure.Structure, ctx *plotContext) {
 		x, y := int(point.X()), int(point.Y())
 
 		canvas.Circle(
-			x, y, config.NodeRadius,
+			x, y, nodeRadius,
 			fmt.Sprintf("id=\"node__%s\"", node.GetID()),
 		)
 	}
