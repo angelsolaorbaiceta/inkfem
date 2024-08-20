@@ -5,6 +5,7 @@ import (
 
 	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 func drawLoads(st *structure.Structure, ctx *plotContext) {
@@ -43,7 +44,7 @@ func drawDistributedLoads(bar *structure.Element, ctx *plotContext) {
 	)
 
 	for _, dLoad := range bar.DistributedLoads {
-		drawDistributedLoad(dLoad, bar, ctx)
+		drawDistributedLoad(dLoad, bar.Geometry(), ctx)
 	}
 
 	canvas.Gend()
@@ -52,17 +53,17 @@ func drawDistributedLoads(bar *structure.Element, ctx *plotContext) {
 // drawDistributedLoad draws a distributed load in the bar element.
 func drawDistributedLoad(
 	dLoad *load.DistributedLoad,
-	bar *structure.Element,
+	barGeometry *g2d.Segment,
 	ctx *plotContext,
 ) {
 	if dLoad.IsInLocalCoords {
 		switch dLoad.Term {
 		case load.FX:
-			drawLocalDistributedFxLoad(dLoad, bar, ctx)
+			drawLocalDistributedFxLoad(dLoad, barGeometry, ctx)
 		case load.FY:
-			drawLocalDistributedFyLoad(dLoad, bar, ctx)
+			drawLocalDistributedFyLoad(dLoad, barGeometry, ctx)
 		case load.MZ:
-			drawLocalDistributedMzLoad(dLoad, bar, ctx)
+			drawLocalDistributedMzLoad(dLoad, barGeometry, ctx)
 		}
 	} else {
 		// TODO: draw distributed load in global coords

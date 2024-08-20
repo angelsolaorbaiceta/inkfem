@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/angelsolaorbaiceta/inkfem/math"
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 	"github.com/angelsolaorbaiceta/inkgeom/nums"
 )
 
@@ -37,7 +37,7 @@ var (
 // we need to invert the sign of the load values.
 func drawLocalDistributedFyLoad(
 	dLoad *load.DistributedLoad,
-	bar *structure.Element,
+	barGeometry *g2d.Segment,
 	ctx *plotContext,
 ) {
 	if dLoad.Term != load.FY {
@@ -48,9 +48,10 @@ func drawLocalDistributedFyLoad(
 		canvas    = ctx.canvas
 		scale     = ctx.unitsScale
 		loadScale = ctx.options.DistLoadScale
+		length    = barGeometry.Length()
 
-		startX = int(scale.applyToLength(bar.Length() * dLoad.StartT.Value()))
-		endX   = int(scale.applyToLength(bar.Length() * dLoad.EndT.Value()))
+		startX = int(scale.applyToLength(length * dLoad.StartT.Value()))
+		endX   = int(scale.applyToLength(length * dLoad.EndT.Value()))
 		startY = int(-dLoad.StartValue * loadScale)
 		endY   = int(-dLoad.EndValue * loadScale)
 
@@ -74,7 +75,7 @@ func drawLocalDistributedFyLoad(
 
 	for _, t := range fyDistLoadLinePositions {
 		var (
-			scaledLength = scale.applyToLength(bar.Length())
+			scaledLength = scale.applyToLength(length)
 			loadX        = int(scaledLength * t.Value())
 			loadY        = int(-dLoad.ValueAt(t) * loadScale)
 		)

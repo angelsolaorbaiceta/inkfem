@@ -3,13 +3,13 @@ package plot
 import (
 	"fmt"
 
-	"github.com/angelsolaorbaiceta/inkfem/structure"
 	"github.com/angelsolaorbaiceta/inkfem/structure/load"
+	"github.com/angelsolaorbaiceta/inkgeom/g2d"
 )
 
 func drawLocalDistributedMzLoad(
 	dLoad *load.DistributedLoad,
-	bar *structure.Element,
+	barGeometry *g2d.Segment,
 	ctx *plotContext,
 ) {
 	if dLoad.Term != load.MZ {
@@ -20,9 +20,10 @@ func drawLocalDistributedMzLoad(
 		canvas    = ctx.canvas
 		scale     = ctx.unitsScale
 		loadScale = ctx.options.DistLoadScale
+		length    = barGeometry.Length()
 
-		startX = int(scale.applyToLength(bar.Length() * dLoad.StartT.Value()))
-		endX   = int(scale.applyToLength(bar.Length() * dLoad.EndT.Value()))
+		startX = int(scale.applyToLength(length * dLoad.StartT.Value()))
+		endX   = int(scale.applyToLength(length * dLoad.EndT.Value()))
 		startY = int(dLoad.StartValue * loadScale)
 		endY   = int(dLoad.EndValue * loadScale)
 
