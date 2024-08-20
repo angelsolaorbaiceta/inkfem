@@ -1,7 +1,10 @@
 package plot
 
 import (
+	"fmt"
+
 	"github.com/angelsolaorbaiceta/inkfem/structure"
+	"github.com/angelsolaorbaiceta/inkfem/structure/load"
 )
 
 func drawLoads(st *structure.Structure, ctx *plotContext) {
@@ -23,4 +26,52 @@ func drawLoadForBar(bar *structure.Element, ctx *plotContext) {
 	canvas.Gtransform(transformToLocalBar(bar, scale))
 	drawDistributedLoads(bar, ctx)
 	canvas.Gend()
+}
+
+// drawDistributedLoads draws all the distributed loads of a bar element.
+func drawDistributedLoads(bar *structure.Element, ctx *plotContext) {
+	var (
+		canvas = ctx.canvas
+		config = ctx.config
+	)
+
+	canvas.Gstyle(
+		fmt.Sprintf(
+			"stroke-width:%d;stroke:%s;fill:%s",
+			config.DistLoadWidth, config.DistLoadColor, config.DistLoadFillColor,
+		),
+	)
+
+	for _, dLoad := range bar.DistributedLoads {
+		drawDistributedLoad(dLoad, bar, ctx)
+	}
+
+	canvas.Gend()
+}
+
+// drawDistributedLoad draws a distributed load in the bar element.
+func drawDistributedLoad(
+	dLoad *load.DistributedLoad,
+	bar *structure.Element,
+	ctx *plotContext,
+) {
+	if dLoad.IsInLocalCoords {
+		switch dLoad.Term {
+		case load.FX:
+			drawLocalDistributedFxLoad(dLoad, bar, ctx)
+		case load.FY:
+			drawLocalDistributedFyLoad(dLoad, bar, ctx)
+		}
+	} else {
+		// TODO: draw distributed load in global coords
+	}
+}
+
+func textTransform(x, y int) string {
+	var (
+		translate = translate(float64(x), float64(y))
+		scale     = scale(1, -1)
+	)
+
+	return fmt.Sprintf("transform=\"%s %s\"", translate, scale)
 }
