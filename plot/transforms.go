@@ -56,3 +56,17 @@ func transformToLocalBar(bar *structure.Element, scale unitsScale) string {
 
 	return fmt.Sprintf("%s %s", translate, rotation)
 }
+
+// textTransform returns a string representation of a transformation for text
+// elements, whose Y axis has to be inverted, as the global Y axis points upwards
+// after the main, top-level transformation.
+//
+// It locates the text element at the given (x, y) position.
+func textTransform(x, y int) string {
+	var (
+		translate = translate(float64(x), float64(y))
+		scale     = scale(1, -1)
+	)
+
+	return fmt.Sprintf("transform=\"%s %s\"", translate, scale)
+}

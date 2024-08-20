@@ -66,12 +66,3 @@ func drawDistributedLoad(
 		// TODO: draw distributed load in global coords
 	}
 }
-
-func textTransform(x, y int) string {
-	var (
-		translate = translate(float64(x), float64(y))
-		scale     = scale(1, -1)
-	)
-
-	return fmt.Sprintf("transform=\"%s %s\"", translate, scale)
-}
