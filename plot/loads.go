@@ -61,6 +61,8 @@ func drawDistributedLoad(
 			drawLocalDistributedFxLoad(dLoad, bar, ctx)
 		case load.FY:
 			drawLocalDistributedFyLoad(dLoad, bar, ctx)
+		case load.MZ:
+			drawLocalDistributedMzLoad(dLoad, bar, ctx)
 		}
 	} else {
 		// TODO: draw distributed load in global coords

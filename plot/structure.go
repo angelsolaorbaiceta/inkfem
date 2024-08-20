@@ -12,6 +12,9 @@ import (
 const (
 	diagonalLinesPatternId = "diagonalLines"
 	loadArrowMarkerId      = "loadArrow"
+	shearArrowMarkerId     = "shearArrow"
+	axialArrowMarkerId     = "axialArrow"
+	bendingArrowMarkerId   = "bendingArrow"
 )
 
 // StructurePlotOps are the options that can be passed to the StructureToSVG
