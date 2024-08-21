@@ -103,4 +103,41 @@ func TestDrawLocalDistributedFyLoad(t *testing.T) {
 		assert.Equal(t, wantPolygon, gotPoly)
 		assert.Equal(t, wantArrows, gotArrows)
 	})
+
+	t.Run("Fy positive to negative load, full length, scaled", func(t *testing.T) {
+		var (
+			scale   = 5
+			writer  bytes.Buffer
+			context = makeContext(&writer, float64(scale))
+			startT  = nums.MinT
+			endT    = nums.MaxT
+			startV  = 200.0
+			endV    = -400.0
+			dLoad   = load.MakeDistributed(load.FY, true, startT, startV, endT, endV)
+
+			wantPolygon   = "<polygon points=\"0,0 0,-1000 100,2000 100,0\" />"
+			wantArrowXPos = []int{10, 20, 30, 40, 50, 60, 70, 80, 90}
+			wantArrows    = make([]string, len(wantArrowXPos))
+		)
+
+		for i, x := range wantArrowXPos {
+			y := scale * (6*x - 200)
+
+			wantArrows[i] = fmt.Sprintf(
+				"<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"0\" marker-end=\"url(#%s)\" stroke=\"%s\" />",
+				x, y, x, arrowId, stroke,
+			)
+		}
+
+		drawLocalDistributedFyLoad(dLoad, barGeometry, context)
+
+		var (
+			gotLines  = strings.Split(writer.String(), "\n")
+			gotPoly   = gotLines[0]
+			gotArrows = gotLines[3:12]
+		)
+
+		assert.Equal(t, wantPolygon, gotPoly)
+		assert.Equal(t, wantArrows, gotArrows)
+	})
 }
