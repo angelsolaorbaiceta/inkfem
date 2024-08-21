@@ -97,7 +97,7 @@ func TestDrawLocalDistributedFyLoad(t *testing.T) {
 		var (
 			gotLines  = strings.Split(writer.String(), "\n")
 			gotPoly   = gotLines[0]
-			gotArrows = gotLines[3:11]
+			gotArrows = gotLines[3 : len(wantArrows)+3]
 		)
 
 		assert.Equal(t, wantPolygon, gotPoly)
@@ -134,7 +134,7 @@ func TestDrawLocalDistributedFyLoad(t *testing.T) {
 		var (
 			gotLines  = strings.Split(writer.String(), "\n")
 			gotPoly   = gotLines[0]
-			gotArrows = gotLines[3:12]
+			gotArrows = gotLines[3 : len(wantArrows)+3]
 		)
 
 		assert.Equal(t, wantPolygon, gotPoly)

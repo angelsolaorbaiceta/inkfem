@@ -90,25 +90,27 @@ func drawLocalDistributedFxLoad(
 
 		loadX, err := loadEq.XAt(float64(lineYPos))
 		if err != nil {
-			continue
-		}
-
-		// The X coordinate where the line starts.
-		// If the Y position is between the load's start value and 0, the line starts
-		// at the load's start T position. Otherwise, it starts at the load's slope.
-		if math.IntIsBetweenCloseRange(lineYPos, startY, 0) {
-			lineXStart = startX
+			// The load is constant (same value for all the length)
+			lineXStart, lineXEnd = startX, endX
 		} else {
-			lineXStart = int(loadX)
-		}
 
-		// The X coordinate where the line ends. It has to be either the end of the
-		// bar (when the line ends at the load's end node) or a point in the load's
-		// polygon.
-		if math.IntIsBetweenCloseRange(lineYPos, endY, 0) {
-			lineXEnd = endX
-		} else {
-			lineXEnd = int(loadX)
+			// The X coordinate where the line starts.
+			// If the Y position is between the load's start value and 0, the line starts
+			// at the load's start T position. Otherwise, it starts at the load's slope.
+			if math.IntIsBetweenCloseRange(lineYPos, startY, 0) {
+				lineXStart = startX
+			} else {
+				lineXStart = int(loadX)
+			}
+
+			// The X coordinate where the line ends. It has to be either the end of the
+			// bar (when the line ends at the load's end node) or a point in the load's
+			// polygon.
+			if math.IntIsBetweenCloseRange(lineYPos, endY, 0) {
+				lineXEnd = endX
+			} else {
+				lineXEnd = int(loadX)
+			}
 		}
 
 		// If the value of the load is negative, switch the start and end points.
