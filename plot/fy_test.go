@@ -2,6 +2,8 @@ package plot
 
 import (
 	"bytes"
+	"fmt"
+	"io"
 	"strings"
 	"testing"
 
@@ -13,63 +15,92 @@ import (
 )
 
 func TestDrawLocalDistributedFyLoad(t *testing.T) {
-	var (
-		writer  bytes.Buffer
-		context = &plotContext{
-			canvas: svg.New(&writer),
+	var makeContext = func(w io.Writer, loadScale float64) *plotContext {
+		return &plotContext{
+			canvas: svg.New(w),
 			config: DefaultPlotConfig(),
 			options: &StructurePlotOps{
 				Scale:         1.0,
-				DistLoadScale: 1.0,
+				DistLoadScale: loadScale,
 				MinMargin:     0,
 			},
 			unitsScale: unitsScale(1.0),
 		}
+	}
+
+	var (
 		barGeometry = g2d.MakeSegment(g2d.MakePoint(0, 0), g2d.MakePoint(100, 0))
+		arrowId     = loadArrowMarkerId
+		stroke      = DefaultPlotConfig().DistLoadColor
 	)
 
-	t.Cleanup(func() {
-	})
-
-	t.Run("Constant Fy positive load", func(t *testing.T) {
+	t.Run("Constant Fy positive load, partial length", func(t *testing.T) {
 		var (
-			startT = nums.MakeTParam(0.2)
-			endT   = nums.MakeTParam(0.8)
-			value  = 200.0
-			dLoad  = load.MakeDistributed(load.FY, true, startT, value, endT, value)
+			writer  bytes.Buffer
+			context = makeContext(&writer, 1.0)
+			startT  = nums.MakeTParam(0.2)
+			endT    = nums.MakeTParam(0.8)
+			value   = 200.0
+			dLoad   = load.MakeDistributed(load.FY, true, startT, value, endT, value)
 
-			wantPolygon = "<polygon points=\"20,0 20,-200 80,-200 80,0\" />"
-			wantArrow1  = "<line x1=\"20\" y1=\"-200\" x2=\"20\" y2=\"0\" marker-end=\"url(#loadArrow)\" stroke=\"#558B2F\" />"
-			wantArrow2  = "<line x1=\"30\" y1=\"-200\" x2=\"30\" y2=\"0\" marker-end=\"url(#loadArrow)\" stroke=\"#558B2F\" />"
-			wantArrow3  = "<line x1=\"40\" y1=\"-200\" x2=\"40\" y2=\"0\" marker-end=\"url(#loadArrow)\" stroke=\"#558B2F\" />"
-			wantArrow4  = "<line x1=\"50\" y1=\"-200\" x2=\"50\" y2=\"0\" marker-end=\"url(#loadArrow)\" stroke=\"#558B2F\" />"
-			wantArrow5  = "<line x1=\"60\" y1=\"-200\" x2=\"60\" y2=\"0\" marker-end=\"url(#loadArrow)\" stroke=\"#558B2F\" />"
-			wantArrow6  = "<line x1=\"70\" y1=\"-200\" x2=\"70\" y2=\"0\" marker-end=\"url(#loadArrow)\" stroke=\"#558B2F\" />"
-			wantArrow7  = "<line x1=\"80\" y1=\"-200\" x2=\"80\" y2=\"0\" marker-end=\"url(#loadArrow)\" stroke=\"#558B2F\" />"
+			wantPolygon   = "<polygon points=\"20,0 20,-200 80,-200 80,0\" />"
+			wantArrowXPos = []int{20, 30, 40, 50, 60, 70, 80}
+			wantArrows    = make([]string, len(wantArrowXPos))
 		)
+
+		for i, x := range wantArrowXPos {
+			wantArrows[i] = fmt.Sprintf(
+				"<line x1=\"%d\" y1=\"-200\" x2=\"%d\" y2=\"0\" marker-end=\"url(#%s)\" stroke=\"%s\" />",
+				x, x, arrowId, stroke,
+			)
+		}
 
 		drawLocalDistributedFyLoad(dLoad, barGeometry, context)
 
-		// split lines
 		var (
 			gotLines  = strings.Split(writer.String(), "\n")
 			gotPoly   = gotLines[0]
-			gotArrow1 = gotLines[3]
-			gotArrow2 = gotLines[4]
-			gotArrow3 = gotLines[5]
-			gotArrow4 = gotLines[6]
-			gotArrow5 = gotLines[7]
-			gotArrow6 = gotLines[8]
-			gotArrow7 = gotLines[9]
+			gotArrows = gotLines[3:10]
 		)
 
 		assert.Equal(t, wantPolygon, gotPoly)
-		assert.Equal(t, wantArrow1, gotArrow1)
-		assert.Equal(t, wantArrow2, gotArrow2)
-		assert.Equal(t, wantArrow3, gotArrow3)
-		assert.Equal(t, wantArrow4, gotArrow4)
-		assert.Equal(t, wantArrow5, gotArrow5)
-		assert.Equal(t, wantArrow6, gotArrow6)
-		assert.Equal(t, wantArrow7, gotArrow7)
+		assert.Equal(t, wantArrows, gotArrows)
+	})
+
+	t.Run("Fy positive to negative load, full length", func(t *testing.T) {
+		var (
+			writer  bytes.Buffer
+			context = makeContext(&writer, 1.0)
+			startT  = nums.MinT
+			endT    = nums.MaxT
+			startV  = 200.0
+			endV    = -400.0
+			dLoad   = load.MakeDistributed(load.FY, true, startT, startV, endT, endV)
+
+			wantPolygon = "<polygon points=\"0,0 0,-200 100,400 100,0\" />"
+			// The arrow at x=30 doesn't have enough space to draw the arrow.
+			wantArrowXPos = []int{10, 20, 40, 50, 60, 70, 80, 90}
+			wantArrows    = make([]string, len(wantArrowXPos))
+		)
+
+		for i, x := range wantArrowXPos {
+			y := 6*x - 200
+
+			wantArrows[i] = fmt.Sprintf(
+				"<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"0\" marker-end=\"url(#%s)\" stroke=\"%s\" />",
+				x, y, x, arrowId, stroke,
+			)
+		}
+
+		drawLocalDistributedFyLoad(dLoad, barGeometry, context)
+
+		var (
+			gotLines  = strings.Split(writer.String(), "\n")
+			gotPoly   = gotLines[0]
+			gotArrows = gotLines[3:11]
+		)
+
+		assert.Equal(t, wantPolygon, gotPoly)
+		assert.Equal(t, wantArrows, gotArrows)
 	})
 }
