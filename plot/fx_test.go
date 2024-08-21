@@ -89,6 +89,74 @@ func TestDrawLocalDistributedFxLoad(t *testing.T) {
 		}
 
 		drawLocalDistributedFxLoad(dLoad, barGeometry, context)
+
+		var (
+			gotLines  = strings.Split(writer.String(), "\n")
+			gotPoly   = gotLines[0]
+			gotArrows = gotLines[3 : len(wantArrows)+3]
+		)
+
+		assert.Equal(t, wantPolygon, gotPoly)
+		assert.Equal(t, wantArrows, gotArrows)
+	})
+
+	t.Run("Increasing Fx positive load, full length", func(t *testing.T) {
+		var (
+			writer  bytes.Buffer
+			context = makeContext(&writer, 1.0)
+			startT  = nums.MinT
+			endT    = nums.MaxT
+			dLoad   = load.MakeDistributed(load.FX, true, startT, 120, endT, 200)
+
+			wantPolygon        = "<polygon points=\"0,0 0,120 100,200 100,0\" />"
+			wantArrowYPos      = []int{40, 80, 120, 160}
+			wantArrowXStartPos = []int{0, 0, 0, 50}
+			wantArrows         = make([]string, len(wantArrowYPos))
+		)
+
+		for i, y := range wantArrowYPos {
+			x := wantArrowXStartPos[i]
+			wantArrows[i] = fmt.Sprintf(
+				"<line x1=\"%d\" y1=\"%d\" x2=\"100\" y2=\"%d\" marker-end=\"url(#%s)\" stroke=\"%s\" />",
+				x, y, y, arrowId, stroke,
+			)
+		}
+
+		drawLocalDistributedFxLoad(dLoad, barGeometry, context)
+
+		var (
+			gotLines  = strings.Split(writer.String(), "\n")
+			gotPoly   = gotLines[0]
+			gotArrows = gotLines[3 : len(wantArrows)+3]
+		)
+
+		assert.Equal(t, wantPolygon, gotPoly)
+		assert.Equal(t, wantArrows, gotArrows)
+	})
+
+	t.Run("Increasing Fx negative load, full length", func(t *testing.T) {
+		var (
+			writer  bytes.Buffer
+			context = makeContext(&writer, 1.0)
+			startT  = nums.MinT
+			endT    = nums.MaxT
+			dLoad   = load.MakeDistributed(load.FX, false, startT, -200, endT, -400)
+
+			wantPolygon      = "<polygon points=\"0,0 0,-200 100,-400 100,0\" />"
+			wantArrowYPos    = []int{-320, -240, -160, -80}
+			wantArrowXEndPos = []int{60, 20, 0, 0}
+			wantArrows       = make([]string, len(wantArrowYPos))
+		)
+
+		for i, y := range wantArrowYPos {
+			x := wantArrowXEndPos[i]
+			wantArrows[i] = fmt.Sprintf(
+				"<line x1=\"100\" y1=\"%d\" x2=\"%d\" y2=\"%d\" marker-end=\"url(#%s)\" stroke=\"%s\" />",
+				y, x, y, arrowId, stroke,
+			)
+		}
+
+		drawLocalDistributedFxLoad(dLoad, barGeometry, context)
 		fmt.Println(writer.String())
 
 		var (
