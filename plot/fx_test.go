@@ -29,9 +29,10 @@ func TestDrawLocalDistributedFxLoad(t *testing.T) {
 	}
 
 	var (
-		barGeometry = g2d.MakeSegment(g2d.MakePoint(0, 0), g2d.MakePoint(100, 0))
-		arrowId     = loadArrowMarkerId
-		stroke      = DefaultPlotConfig().DistLoadColor
+		barGeometry     = g2d.MakeSegment(g2d.MakePoint(0, 0), g2d.MakePoint(100, 0))
+		longBarGeometry = g2d.MakeSegment(g2d.MakePoint(0, 0), g2d.MakePoint(1000, 0))
+		arrowId         = loadArrowMarkerId
+		stroke          = DefaultPlotConfig().DistLoadColor
 	)
 
 	t.Run("Constant Fx positive load, partial length", func(t *testing.T) {
@@ -157,7 +158,43 @@ func TestDrawLocalDistributedFxLoad(t *testing.T) {
 		}
 
 		drawLocalDistributedFxLoad(dLoad, barGeometry, context)
-		fmt.Println(writer.String())
+
+		var (
+			gotLines  = strings.Split(writer.String(), "\n")
+			gotPoly   = gotLines[0]
+			gotArrows = gotLines[3 : len(wantArrows)+3]
+		)
+
+		assert.Equal(t, wantPolygon, gotPoly)
+		assert.Equal(t, wantArrows, gotArrows)
+	})
+
+	t.Run("Scaled Fx positive to negative load, full length", func(t *testing.T) {
+		var (
+			writer  bytes.Buffer
+			context = makeContext(&writer, 2.0)
+			startT  = nums.MinT
+			endT    = nums.MaxT
+			dLoad   = load.MakeDistributed(load.FX, true, startT, 200, endT, -300)
+
+			wantPolygon   = "<polygon points=\"0,0 0,400 1000,-600 1000,0\" />"
+			wantArrowYPos = []int{-400, -200, 0, 200}
+			wantArrowX1   = []int{1000, 1000, 0, 0}
+			wantArrowX2   = []int{800, 600, 1000, 200}
+			wantArrows    = make([]string, len(wantArrowYPos))
+		)
+
+		for i, y := range wantArrowYPos {
+			x1 := wantArrowX1[i]
+			x2 := wantArrowX2[i]
+
+			wantArrows[i] = fmt.Sprintf(
+				"<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" marker-end=\"url(#%s)\" stroke=\"%s\" />",
+				x1, y, x2, y, arrowId, stroke,
+			)
+		}
+
+		drawLocalDistributedFxLoad(dLoad, longBarGeometry, context)
 
 		var (
 			gotLines  = strings.Split(writer.String(), "\n")
