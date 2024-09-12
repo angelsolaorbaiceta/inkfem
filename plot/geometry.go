@@ -35,9 +35,20 @@ func drawGeometry(st *structure.Structure, ctx *plotContext) {
 		startX, startY = int(startPoint.X()), int(startPoint.Y())
 		endX, endY = int(endPoint.X()), int(endPoint.Y())
 
-		canvas.Line(startX, startY, endX, endY)
-		canvas.Circle(startX, startY, config.NodeRadius)
-		canvas.Circle(endX, endY, config.NodeRadius)
+		canvas.Line(
+			startX, startY, endX, endY,
+			fmt.Sprintf("id=\"bar__%s\"", element.GetID()),
+		)
+	}
+
+	for _, node := range st.GetAllNodes() {
+		point := scale.applyToPoint(node.Position)
+		x, y := int(point.X()), int(point.Y())
+
+		canvas.Circle(
+			x, y, config.NodeRadius,
+			fmt.Sprintf("id=\"node__%s\"", node.GetID()),
+		)
 	}
 
 	canvas.Gend()

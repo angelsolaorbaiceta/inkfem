@@ -29,6 +29,10 @@ type Element struct {
 	DistributedLoads           []*load.DistributedLoad
 }
 
+func (e Element) Geometry() *g2d.Segment {
+	return e.geometry
+}
+
 func (e Element) GetID() contracts.StrID {
 	return e.id
 }

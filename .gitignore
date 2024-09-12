@@ -10,3 +10,7 @@ examples/*.svg
 
 # Ignore GoLand files
 .idea
+
+# DS Store files
+.DS_Store
+

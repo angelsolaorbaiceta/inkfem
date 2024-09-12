@@ -34,6 +34,10 @@ func (s unitsScale) applyToPoint(p *g2d.Point) *g2d.Point {
 	)
 }
 
+func (s unitsScale) applyToLength(l float64) float64 {
+	return l * float64(s)
+}
+
 // determineUnitsScale determines the scale factor that should be applied to the
 // plot to make the bars visible and proportional to the size of the structure.
 //
